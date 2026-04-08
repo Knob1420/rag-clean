@@ -1,0 +1,21 @@
+# 虚拟环境
+.env
+
+# Python 缓存
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# 日志、数据、临时文件
+logs/
+log/
+*.log
+tmp/
+temp/
+
+# 数据集、大文件、向量库
+data/
+docs/
+
+*.pdf

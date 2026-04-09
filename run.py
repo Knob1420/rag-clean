@@ -36,12 +36,18 @@ def run_service(service_name: str, module: str, port: int):
 
 
 def run_frontend():
-    """启动前端界面"""
+    """启动前端界面 (Chainlit)"""
     print(f"\n{'='*50}")
-    print(f"Starting Frontend (port 7860)")
+    print(f"Starting Frontend - Chainlit (port 7860)")
     print(f"{'='*50}\n")
 
-    cmd = [sys.executable, "-m", "ui.gradio_app", "--host", "0.0.0.0", "--port", "7860"]
+    cmd = [
+        sys.executable, "-m", "chainlit",
+        "run", "ui/chainlit_app.py",
+        "--host", "0.0.0.0",
+        "--port", "7860",
+        "--root-path", "",
+    ]
     subprocess.run(cmd)
 
 

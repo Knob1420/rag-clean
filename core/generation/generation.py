@@ -7,7 +7,7 @@ RAG 回答生成服务
 - _build_context 适配扁平字段结构，parent 内容通过 get_store().get_parent() 加载
 """
 
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, Generator, List, Optional, Tuple
 
 from loguru import logger
 
@@ -249,6 +249,75 @@ class GenerationService:
                     prompt_tokens=0, completion_tokens=0, total_tokens=0
                 ),
             )
+
+    # ============================================================
+    # 流式生成回答
+    # ============================================================
+
+    def generate_stream(
+        self,
+        query: str,
+        chunks: List[RetrievedChunk],
+        chat_history: Optional[List[Dict[str, str]]] = None,
+        query_intent: Optional[str] = None,
+        query_entities: Optional[Dict[str, str]] = None,
+    ) -> Generator[str, None, None]:
+        """
+        流式生成 RAG 回答
+
+        Yields:
+            逐个 token 字符串
+        """
+        import openai
+        from config import settings
+
+        if not settings.deepseek_api_key:
+            yield "抱歉，当前使用 Mock 模式。请配置 API Key 以获得真实回复。"
+            return
+
+        # 构建 Prompt（同 generate）
+        if chat_history and len(chat_history) > 0:
+            system_prompt, user_prompt = self._build_multi_turn_prompt(
+                query=query,
+                chunks=chunks,
+                chat_history=chat_history,
+                query_intent=query_intent,
+                query_entities=query_entities,
+            )
+        else:
+            system_prompt, user_prompt = self._build_rag_prompt(
+                query=query,
+                chunks=chunks,
+                query_intent=query_intent,
+                query_entities=query_entities,
+            )
+
+        messages = [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt},
+        ]
+
+        try:
+            client = openai.OpenAI(
+                api_key=settings.deepseek_api_key,
+                base_url=settings.deepseek_base_url,
+            )
+            stream = client.chat.completions.create(
+                model=settings.deepseek_model,
+                messages=messages,
+                temperature=0.3,
+                max_tokens=2000,
+                stream=True,
+            )
+
+            for chunk in stream:
+                delta = chunk.choices[0].delta
+                if delta.content:
+                    yield delta.content
+
+        except Exception as e:
+            logger.error(f"LLM 流式生成失败: {e}")
+            yield f"\n\n抱歉，生成回答时出现错误: {str(e)}"
 
 
 # ── 全局实例 ──────────────────────────────────────────

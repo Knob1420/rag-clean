@@ -12,6 +12,7 @@ RAG API 服务 — FastAPI 接口
 - 文档上传/管理端点（rag-clean 有自己的 pipeline）
 """
 
+import json
 import time
 from typing import Optional
 
@@ -19,6 +20,7 @@ import httpx
 import uvicorn
 from fastapi import FastAPI, HTTPException, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import StreamingResponse
 from loguru import logger
 
 from config import settings
@@ -303,6 +305,139 @@ async def chat_completion(request: ChatRequest):
     except Exception as e:
         logger.error(f"问答失败: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail=f"问答处理失败: {str(e)}")
+
+
+# ============================================================
+# 流式 RAG 问答接口 (SSE)
+# ============================================================
+
+
+@app.post("/api/v1/chat/stream")
+async def chat_stream(request: ChatRequest):
+    """
+    流式 RAG 问答 — SSE 端点
+
+    事件格式:
+    - event: sources  data: {sources: [...]}
+    - event: token    data: {content: "..."}
+    - event: done     data: {usage: {...}, time: {...}}
+    - event: error    data: {error: "..."}
+    """
+    import openai
+    from config import settings
+
+    async def event_stream():
+        timing = {}
+        frontend_time = time.time()
+
+        try:
+            retrieval_svc = get_retrieval_service()
+            rewrite_svc = get_query_rewrite_service()
+            generation_svc = get_generation_service()
+
+            # ---- 1. Query Rewrite ----
+            rewritten: Optional[RewrittenQuery] = None
+            timing["query_rewrite"] = 0
+
+            if request.use_rewrite:
+                t0 = time.time()
+                rewritten = rewrite_svc.rewrite(request.query)
+                timing["query_rewrite"] = time.time() - t0
+
+                intent_types = None
+                if rewritten.intent_type and rewritten.intent_type != "other":
+                    intent_types = [
+                        t.strip() for t in rewritten.intent_type.split(",") if t.strip()
+                    ]
+
+                options = RetrievalOptions(
+                    top_k=request.top_k,
+                    target_models=(
+                        rewritten.target_entities if rewritten.target_entities else None
+                    ),
+                    keywords=rewritten.keywords if rewritten.keywords else None,
+                    chunk_types=intent_types,
+                    use_rerank=request.use_rerank,
+                    rerank_top_k=request.rerank_top_k,
+                    min_score=request.min_score,
+                )
+                search_query = rewritten.rewritten_query
+
+                strategy = getattr(rewritten, "strategy", "direct")
+                if strategy == "direct":
+                    retrieval_result = retrieval_svc.search(
+                        query=search_query, options=options, use_hybrid=True
+                    )
+                elif strategy == "parallel" and rewritten.sub_queries:
+                    retrieval_result = retrieval_svc.search_routed(
+                        rewritten_query=rewritten.rewritten_query,
+                        sub_queries=rewritten.sub_queries,
+                        options=options,
+                    )
+                else:
+                    react_svc = get_react_reasoning_service()
+                    retrieval_result = react_svc.reason(
+                        original_query=request.query,
+                        rewritten=rewritten,
+                        options=options,
+                    )
+            else:
+                options = RetrievalOptions(
+                    top_k=request.top_k,
+                    use_rerank=request.use_rerank,
+                    rerank_top_k=request.rerank_top_k,
+                    min_score=request.min_score,
+                )
+                search_query = request.query
+                retrieval_result = retrieval_svc.search(
+                    query=search_query, options=options, use_hybrid=True
+                )
+
+            timing.update(retrieval_result.timing)
+            chunks = retrieval_result.chunks
+
+            if not chunks:
+                yield f"event: error\ndata: {json.dumps({'error': '未找到相关内容'}, ensure_ascii=False)}\n\n"
+                return
+
+            # ---- 2. 发送 sources 事件 ----
+            sources = chunks_to_sources(chunks)
+            sources_data = [s.model_dump() for s in sources]
+            yield f"event: sources\ndata: {json.dumps({'sources': sources_data}, ensure_ascii=False)}\n\n"
+
+            # ---- 3. 流式生成 ----
+            gen_kwargs = {
+                "query": request.query,
+                "chunks": chunks,
+                "chat_history": None,
+            }
+            if rewritten:
+                gen_kwargs["query_intent"] = rewritten.intent_type
+                gen_kwargs["query_entities"] = rewritten.entities
+
+            gen_start = time.time()
+            for token in generation_svc.generate_stream(**gen_kwargs):
+                yield f"event: token\ndata: {json.dumps({'content': token}, ensure_ascii=False)}\n\n"
+
+            timing["generation"] = time.time() - gen_start
+            timing["total"] = time.time() - frontend_time
+
+            # ---- 4. 发送 done 事件 ----
+            yield f"event: done\ndata: {json.dumps({'time': timing, 'chunks_count': len(chunks)}, ensure_ascii=False)}\n\n"
+
+        except Exception as e:
+            logger.error(f"流式问答失败: {e}", exc_info=True)
+            yield f"event: error\ndata: {json.dumps({'error': str(e)}, ensure_ascii=False)}\n\n"
+
+    return StreamingResponse(
+        event_stream(),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "Connection": "keep-alive",
+            "X-Accel-Buffering": "no",
+        },
+    )
 
 
 # ============================================================

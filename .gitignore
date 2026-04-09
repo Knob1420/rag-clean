@@ -19,3 +19,5 @@ data/
 docs/
 
 *.pdf
+
+.files/

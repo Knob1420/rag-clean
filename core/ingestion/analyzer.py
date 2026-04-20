@@ -10,7 +10,7 @@ from typing import List, Dict, Optional, Tuple
 
 from loguru import logger
 
-from models import TableSpec, DocumentAnalysis
+from core.model.models import TableSpec, DocumentAnalysis
 
 
 # ── domain 合法枚举 ──────────────────────────────────────

@@ -21,12 +21,13 @@ from typing import Optional, List
 
 from loguru import logger
 
-from core.model.models import Document
+from core.model.models import Document, SummaryDocument, ChildDocument
 from core.ingestion.chunker import SmartChunker
 from core.ingestion.cleaner import clean_text
 from store import DocumentStore, get_store
-from core.retrieve.embedder import encode
+from core.client.embedder import encode, encode_batch
 from core.ingestion.extractor import detect_format, convert_to_markdown
+from core.generation.llm import get_llm_client
 
 # ── 目录配置 ──────────────────────────────────────────
 PROCESSED_DIR = Path(__file__).parent.parent.parent / "data" / "processed"
@@ -41,6 +42,8 @@ def process_document(
     save_intermediate: bool = True,
     load_intermediate: bool = False,
     processed_dir: Optional[Path] = None,
+    use_summary: bool = True,
+    chunk_mode: str = "recursive",
 ) -> List[Document]:
     """
     唯一的数据处理入口（从文件路径）。
@@ -56,6 +59,8 @@ def process_document(
         save_intermediate: 是否保存中间结果到 JSON
         load_intermediate: 是否从 JSON 加载中间结果（跳过处理）
         processed_dir: 中间结果保存目录（默认使用 PROCESSED_DIR）
+        use_summary: 是否生成 summary（默认 True，关闭可节省处理时间）
+        chunk_mode: 分块模式，"recursive"（默认）或 "semantic"
 
     Returns:
         List[Document]: 处理后的 Document 列表
@@ -80,12 +85,13 @@ def process_document(
         title=title,
         doc_id=None,
         dataset_id=dataset_id,
-        filename=path.name,
         store=store,
         chunker=chunker,
         save_intermediate=save_intermediate,
         load_intermediate=load_intermediate,
         processed_dir=processed_dir,
+        use_summary=use_summary,
+        chunk_mode=chunk_mode,
     )
 
 
@@ -94,12 +100,13 @@ def process_markdown(
     title: str,
     doc_id: Optional[str] = None,
     dataset_id: Optional[str] = None,
-    filename: Optional[str] = None,
     store: Optional[DocumentStore] = None,
     chunker: Optional[SmartChunker] = None,
     save_intermediate: bool = True,
     load_intermediate: bool = False,
     processed_dir: Optional[Path] = None,
+    use_summary: bool = True,
+    chunk_mode: str = "recursive",
 ) -> List[Document]:
     """
     直接处理 Markdown 文本（不需要文件路径）。
@@ -108,26 +115,28 @@ def process_markdown(
     1. 清洗文本（cleaner）
     2. 父子分块（chunker）
     3. 计算向量（embedder）
-    4. 保存中间结果（可选）
-    5. 索引到 ES
+    4. 生成 summary（可选，默认开启）
+    5. 保存中间结果（可选）
+    6. 索引到 ES
 
     Args:
         content: Markdown 文本
         title: 文档标题
         doc_id: 文档 ID（默认自动生成）
         dataset_id: 知识库 ID（用于中间结果路径）
-        filename: 原文件名（用于中间结果路径）
         store: ES 存储
         chunker: 分块器
         save_intermediate: 是否保存中间结果到 JSON
         load_intermediate: 是否从 JSON 加载中间结果
         processed_dir: 中间结果保存目录（默认使用 PROCESSED_DIR）
+        use_summary: 是否生成 summary（默认 True）
+        chunk_mode: 分块模式，"recursive"（默认）或 "semantic"
 
     Returns:
-        处理后的 Document 列表
+        List[Document]: 处理后的 Document 列表
     """
     store = store or get_store()
-    chunker = chunker or SmartChunker()
+    chunker = chunker or SmartChunker(dataset_id=dataset_id or "")
     processed_dir = processed_dir or PROCESSED_DIR
 
     if doc_id is None:
@@ -138,8 +147,8 @@ def process_markdown(
     )
 
     # 尝试加载中间结果
-    if load_intermediate and dataset_id and filename:
-        documents = _load_intermediate(dataset_id, filename, processed_dir)
+    if load_intermediate and dataset_id and title:
+        documents = _load_intermediate(dataset_id, title, processed_dir)
         if documents is not None:
             logger.info(f"  [Intermediate] 从缓存加载: {len(documents)} documents")
             # 重新计算向量（缓存中没有向量）
@@ -148,13 +157,14 @@ def process_markdown(
             _index_documents(store, doc_id, documents)
             return documents
 
-    # 1. 清洗文本
-    cleaned = clean_text(content, remove_images=True)
-    logger.info(f"  [Cleaner] 清洗完成: {len(cleaned)} chars")
-
-    # 2. 父子分块
-    documents = chunker.chunk(cleaned, title, doc_id)
+    # 1. 父子分块（chunker 内部调用 clean_text）
+    documents = chunker.chunk(content, title, doc_id, mode=chunk_mode)
     logger.info(f"  [Chunker] 分块完成: {len(documents)} parent documents")
+
+    # 2. 生成 summary（每个 parent 一个 summary chunk，可选）
+    if use_summary:
+        _generate_summaries(documents, doc_id)
+        logger.info(f"  [Summary] 生成完成")
 
     # 3. 计算向量
     _embed_documents(documents)
@@ -164,8 +174,8 @@ def process_markdown(
         _add_dataset_id(documents, dataset_id)
 
     # 5. 保存中间结果
-    if save_intermediate and dataset_id and filename:
-        _save_intermediate(documents, dataset_id, filename, processed_dir)
+    if save_intermediate and dataset_id and title:
+        _save_intermediate(documents, dataset_id, title, processed_dir)
 
     # 6. 索引到 ES
     _index_documents(store, doc_id, documents)
@@ -174,31 +184,48 @@ def process_markdown(
     return documents
 
 
-def _save_intermediate(documents: List[Document], dataset_id: str, filename: str, processed_dir: Path) -> Path:
-    """保存中间结果到 JSON"""
+def _save_intermediate(
+    documents: List[Document], dataset_id: str, title: str, processed_dir: Path
+) -> Path:
+    """保存中间结果到 JSON（不包含 vector，vector 仅存 ES）"""
+    import copy
+
     output_dir = processed_dir / dataset_id
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    safe_name = Path(filename).stem
-    for ch in ['/', '\\', ':', '*', '?', '"', '<', '>', '|']:
-        safe_name = safe_name.replace(ch, '_')
+    safe_name = title
+    for ch in ["/", "\\", ":", "*", "?", '"', "<", ">", "|"]:
+        safe_name = safe_name.replace(ch, "_")
     out_path = output_dir / f"{safe_name}.json"
 
-    data = [doc.to_dict() for doc in documents]
+    # 深拷贝并清除 vector，避免 JSON 无法序列化 numpy array，也减小文件体积
+    data = []
+    for doc in documents:
+        doc_copy = copy.deepcopy(doc)
+        doc_copy.vector = None
+        if doc_copy.children:
+            for child in doc_copy.children:
+                child.vector = None
+        if doc_copy.summaries:
+            for summary in doc_copy.summaries:
+                summary.vector = None
+        data.append(doc_copy.to_dict())
+
     out_path.write_text(
-        json.dumps(data, ensure_ascii=False, indent=2),
-        encoding="utf-8"
+        json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8"
     )
     logger.info(f"  [Intermediate] 已保存: {out_path}")
     return out_path
 
 
-def _load_intermediate(dataset_id: str, filename: str, processed_dir: Path) -> Optional[List[Document]]:
+def _load_intermediate(
+    dataset_id: str, title: str, processed_dir: Path
+) -> Optional[List[Document]]:
     """从 JSON 加载中间结果"""
     output_dir = processed_dir / dataset_id
-    safe_name = Path(filename).stem
-    for ch in ['/', '\\', ':', '*', '?', '"', '<', '>', '|']:
-        safe_name = safe_name.replace(ch, '_')
+    safe_name = title
+    for ch in ["/", "\\", ":", "*", "?", '"', "<", ">", "|"]:
+        safe_name = safe_name.replace(ch, "_")
     json_path = output_dir / f"{safe_name}.json"
 
     if not json_path.exists():
@@ -227,17 +254,86 @@ def _index_documents(store: DocumentStore, doc_id: str, documents: List[Document
 # ── 内部函数 ──────────────────────────────────────────
 
 
-def _embed_documents(documents: List[Document]):
-    """计算每个 Document 及其 children 的向量"""
-    for doc in documents:
-        # 主块向量
-        vector = encode(doc.content)
-        if vector is not None:
-            doc.vector = vector.tolist()
+def _generate_summaries(documents: List[Document], doc_id: str):
+    """
+    为每个 Document 生成 summary chunk（批量并发 LLM 调用）。
 
-        # children 向量
+    summary 作为特殊的 child chunk 保存，关联到对应的 parent_id。
+    同时设置 doc.summary、doc.primary_entity，以及每个 child 的 primary_entity。
+    """
+    if not documents:
+        return
+
+    llm = get_llm_client()
+
+    # 批量并发生成 summaries
+    contents = [doc.content for doc in documents]
+    results = llm.generate_summary_batch(contents)
+
+    # 回填结果到 documents
+    summary_idx = 0
+    for doc, result in zip(documents, results):
+        parent_id = doc.metadata.get("chunk_id", "")
+
+        summary_content = result["summary"]
+        primary_entity = result["primary_entity"]
+
+        # 设置 parent chunk 的 summary 和 primary_entity 字段
+        doc.summary = summary_content
+        doc.primary_entity = primary_entity
+
+        # 创建 summary chunk
+        summary_id = f"{doc_id}_s{summary_idx}"
+        summary_doc = SummaryDocument(
+            content=summary_content,
+            primary_entity=primary_entity,
+            metadata={
+                "doc_id": doc_id,
+                "doc_title": doc.metadata.get("doc_title", ""),
+                "chunk_id": summary_id,
+                "parent_id": parent_id,
+                "doc_hash": doc.metadata.get("doc_hash", ""),
+            },
+        )
+        summary_idx += 1
+
+        # 设置每个 child 的 primary_entity 字段
         if doc.children:
             for child in doc.children:
-                child_vector = encode(child.content)
-                if child_vector is not None:
-                    child.vector = child_vector.tolist()
+                child.primary_entity = primary_entity
+
+        # 保存 summary 到 document.summaries
+        doc.summaries = [summary_doc]
+
+
+def _embed_documents(documents: List[Document]):
+    """
+    批量计算每个 Document 及其 children、summaries 的向量。
+
+    策略：收集所有文本，一次 encode_batch 调用，再逐个回填。
+    """
+    # 1. 收集所有待向量化的文本及其引用
+    texts: list[str] = []
+    refs: list[tuple[object, str]] = []  # (doc/child/summary, field)
+
+    for doc in documents:
+        texts.append(doc.content)
+        refs.append((doc, "vector"))
+
+        if doc.children:
+            for child in doc.children:
+                texts.append(child.content)
+                refs.append((child, "vector"))
+
+        if doc.summaries:
+            for summary in doc.summaries:
+                texts.append(summary.content)
+                refs.append((summary, "vector"))
+
+    # 2. 批量向量化
+    embeddings = encode_batch(texts)
+
+    # 3. 回填结果
+    for (obj, field), embedding in zip(refs, embeddings):
+        if embedding is not None:
+            setattr(obj, field, embedding.tolist())

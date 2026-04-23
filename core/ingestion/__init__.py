@@ -2,7 +2,7 @@
 数据处理层 — 文档分块、提取、清洗、Pipeline
 """
 
-from core.ingestion.pipeline import process_document, process_markdown
+from core.ingestion.document_processor import process_document, process_markdown
 from core.ingestion.chunker import SmartChunker
 from core.ingestion.extractor import (
     detect_format,

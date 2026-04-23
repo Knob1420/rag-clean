@@ -18,7 +18,7 @@ from typing import List, Optional
 from loguru import logger
 
 from core.generation.llm import LLMClient, get_llm_client
-from core.retrieve.embedder import EmbeddingClient, get_embedder
+from core.client.embedder import EmbeddingClient, get_embedder
 from prompt import HYDE_SYSTEM_PROMPT, HYDE_USER_TEMPLATE
 
 

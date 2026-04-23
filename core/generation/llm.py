@@ -8,6 +8,7 @@ LLM 调用 — 从 generation.py 精简
 - extract_chunk_info_batch() — 供 pipeline 调用
 """
 
+import asyncio
 import json
 import re
 from typing import Any, Dict, List, Optional
@@ -17,10 +18,8 @@ from openai import OpenAI
 
 from config import settings
 from prompt import (
-    DOC_INFO_SYSTEM_PROMPT,
-    CHUNK_INFO_SYSTEM_PROMPT,
-    build_doc_info_prompt,
-    build_chunk_info_prompt,
+    SUMMARY_SYSTEM_PROMPT,
+    build_summary_prompt,
 )
 
 
@@ -62,99 +61,104 @@ class LLMClient:
         )
         return content
 
-    def extract_doc_info(self, doc_id: str, title: str, content: str) -> Dict[str, Any]:
+    def generate_summary(self, content: str) -> Dict[str, Any]:
         """
-        提取文档级信息：doc_type + domain + entities + filter_terms + summary
+        为文档片段生成 summary 和 primary_entity。
 
         Args:
-            doc_id: 文档 ID（用于日志）
-            title: 文档标题
-            content: 文档内容预览
+            content: 文档内容
 
         Returns:
-            {"doc_type": str, "domain": str, "entities": dict,
-             "filter_terms": list, "topics": list, "doc_intent": str,
-             "summary": str, "confidence": int}
+            {"summary": str, "primary_entity": str}
         """
-        content_preview = content[:4000]
-        if len(content) > 4000:
-            content_preview += "\n...(内容已截断)"
-
-        prompt = build_doc_info_prompt(title, content_preview)
+        prompt = build_summary_prompt(content)
 
         try:
             response = self.call(
                 [
-                    {
-                        "role": "system",
-                        "content": DOC_INFO_SYSTEM_PROMPT,
-                    },
-                    {"role": "user", "content": prompt},
-                ],
-                temperature=0.1,
-            )
-            return parse_json_response(response)
-        except Exception as e:
-            logger.error(f"文档信息提取失败 {doc_id}: {e}")
-            return {
-                "doc_type": "其他",
-                "domain": "Product_Tech",
-                "entities": {},
-                "filter_terms": [],
-                "topics": [],
-                "doc_intent": None,
-                "summary": "暂无摘要",
-                "confidence": 0,
-            }
-
-    def extract_chunk_info_batch(
-        self,
-        chunks: List[Dict[str, Any]],
-        doc_context: Dict[str, Any],
-    ) -> List[Dict[str, Any]]:
-        """
-        批量提取 chunk 信息（section_title, chunk_type, keywords, context_summary）。
-
-        Args:
-            chunks: chunk 列表，每个包含 chunk_index, content, section_title
-            doc_context: 文档级上下文
-
-        Returns:
-            chunk 信息列表
-        """
-        chunks_content = []
-        for chunk in chunks:
-            index = chunk.get("chunk_index", 0)
-            content = chunk.get("content", "")
-            orig_title = chunk.get("section_title") or "（无）"
-            chunks_content.append(f"[Chunk {index}]（原标题：{orig_title}）\n{content}")
-
-        prompt = build_chunk_info_prompt(chunks_content, doc_context, len(chunks))
-
-        try:
-            response = self.call(
-                [
-                    {
-                        "role": "system",
-                        "content": CHUNK_INFO_SYSTEM_PROMPT,
-                    },
+                    {"role": "system", "content": SUMMARY_SYSTEM_PROMPT},
                     {"role": "user", "content": prompt},
                 ]
             )
             result = parse_json_response(response)
-            return result.get("chunks", [])
+            return {
+                "summary": result.get("summary", ""),
+                "primary_entity": result.get("primary_entity", ""),
+            }
         except Exception as e:
-            logger.warning(f"Chunk 信息提取失败: {e}，使用默认值")
-            return [
-                {
-                    "index": i,
-                    "section_title": None,
-                    "chunk_type": "other",
-                    "keywords": [],
-                    "context_summary": chunk.get("content", "")[:100] + "...",
-                }
-                for i, chunk in enumerate(chunks)
-            ]
+            logger.warning(f"Summary 生成失败: {e}，使用默认值")
+            return {
+                "summary": content[:100] + "...",
+                "primary_entity": "",
+            }
+
+    async def _call_async(self, messages: List[Dict[str, str]]) -> str:
+        """异步调用 DeepSeek API"""
+        import httpx
+
+        if not self.api_key:
+            return '{"summary": "暂无摘要", "primary_entity": ""}'
+
+        async with httpx.AsyncClient(timeout=60.0) as client:
+            response = await client.post(
+                f"{self.base_url}/chat/completions",
+                headers={"Authorization": f"Bearer {self.api_key}"},
+                json={
+                    "model": settings.deepseek_model,
+                    "messages": messages,
+                    "temperature": 0.3,
+                },
+            )
+            response.raise_for_status()
+            data = response.json()
+            return data["choices"][0]["message"]["content"]
+
+    def generate_summary_batch(
+        self, contents: List[str], max_concurrency: int = 10
+    ) -> List[Dict[str, Any]]:
+        """
+        批量为多个文档片段生成 summary（asyncio 并发）。
+
+        Args:
+            contents: 文档内容列表
+            max_concurrency: 最大并发数，默认 10
+
+        Returns:
+            [{"summary": str, "primary_entity": str}, ...]
+        """
+        if not contents:
+            return []
+
+        async def _run() -> List[Dict[str, Any]]:
+            semaphore = asyncio.Semaphore(max_concurrency)
+
+            async def _call_one(idx: int, content: str) -> tuple[int, Dict[str, Any]]:
+                async with semaphore:
+                    prompt = build_summary_prompt(content)
+                    messages = [
+                        {"role": "system", "content": SUMMARY_SYSTEM_PROMPT},
+                        {"role": "user", "content": prompt},
+                    ]
+                    try:
+                        response = await self._call_async(messages)
+                        result = parse_json_response(response)
+                        return idx, {
+                            "summary": result.get("summary", ""),
+                            "primary_entity": result.get("primary_entity", ""),
+                        }
+                    except Exception as e:
+                        logger.warning(f"Summary 批量生成失败 [{idx}]: {e}，使用默认值")
+                        return idx, {
+                            "summary": content[:100] + "...",
+                            "primary_entity": "",
+                        }
+
+            tasks = [_call_one(i, c) for i, c in enumerate(contents)]
+            results = await asyncio.gather(*tasks)
+            # 按原始顺序返回
+            return [r for _, r in sorted(results, key=lambda x: x[0])]
+
+        return asyncio.run(_run())
 
 
 # ── JSON 解析 ──────────────────────────────────────────

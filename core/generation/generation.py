@@ -4,17 +4,34 @@ RAG 回答生成服务
 基于 rag-knowledge-base generation.py，适配 rag-clean：
 - 复用 llm.py 的 LLMClient + parse_json_response，不再内部实现
 - Prompt 模板: [章节] 引用代替 P[页码]
-- _build_context 适配扁平字段结构，parent 内容通过 get_store().get_parent() 加载
+- _build_context 使用 chunk.doc_title，parent context 在 pipeline 中注入
 """
 
-from typing import Any, Dict, Generator, List, Optional, Tuple
+from typing import Dict, Generator, List, Optional, Tuple
 
 from loguru import logger
 
-from core.generation.llm import LLMClient, get_llm_client
-from prompt import RAG_SYSTEM_PROMPT, RAG_USER_PROMPT_TEMPLATE, MULTI_TURN_SYSTEM_PROMPT
+from core.generation.llm import get_llm_client
+from core.router.models import (
+    INTENT_SIMPLE_LOOKUP,
+    INTENT_COMPARE,
+    INTENT_RECOMMEND,
+    INTENT_AGGREGATE,
+)
+from core.products.specs_service import build_specs_context
+from prompt import (
+    RAG_SYSTEM_PROMPT,
+    RAG_USER_PROMPT_TEMPLATE,
+    SIMPLE_LOOKUP_SYSTEM_PROMPT,
+    SIMPLE_LOOKUP_USER_PROMPT_TEMPLATE,
+    COMPARE_SYSTEM_PROMPT,
+    COMPARE_USER_PROMPT,
+    RECOMMEND_SYSTEM_PROMPT,
+    RECOMMEND_USER_PROMPT,
+    AGGREGATE_SYSTEM_PROMPT,
+    AGGREGATE_USER_PROMPT,
+)
 from core.retrieve.retrieval_models import RetrievedChunk, TokenUsage
-from store import get_store
 
 
 class GenerationService:
@@ -29,57 +46,50 @@ class GenerationService:
 
     def _build_context(
         self,
+        query: str,
         chunks: List[RetrievedChunk],
-        max_context_length: int = 4000,
-        use_parent_context: bool = True,
+        max_context_length: int = 10000,
+        spec_context: str = "",
     ) -> str:
         """
-        构建上下文
+        构建上下文（parent context 已在 pipeline 中注入）
 
-        适配 rag-clean 扁平字段：
-        - 批量查询 doc_id → title，显示文档标题
-        - parent 内容通过 get_store().get_parent() 加载
+        Args:
+            query: 用户查询
+            chunks: 检索到的文档块
+            max_context_length: 最大上下文长度
+            spec_context: 结构化产品参数字符串（来自 pipeline 的 dual-path 检索）
+                         如果提供，优先使用；否则使用关键词检测作为后备
         """
         if not chunks:
             return "知识库中暂无相关内容。"
 
-        store = get_store()
-
-        # 批量获取 doc_id → title 映射
-        doc_ids = list({c.doc_id for c in chunks})
-        doc_titles = store.get_doc_titles(doc_ids)
+        # 优先使用 pipeline 传来的 spec_context（LLM-based intent routing 结果）
+        # 如果没有，则使用后备的关键词检测
+        if not spec_context:
+            spec_context = build_specs_context(query)
 
         context_parts = []
         current_length = 0
 
-        for chunk in chunks:
-            # 来源标注 — 使用文档标题
-            doc_name = doc_titles.get(chunk.doc_id, chunk.doc_id)
-            source_info = f"[来源: {doc_name}"
-            if chunk.section_title:
-                source_info += f" | 章节: {chunk.section_title}"
-            if chunk.chunk_type:
-                source_info += f" | 类型: {chunk.chunk_type}"
-            source_info += "]"
+        # 先加入产品参数上下文
+        if spec_context:
+            context_parts.append(spec_context)
+            current_length += len(spec_context)
 
-            # 构建内容
-            content_parts = []
+        for i, chunk in enumerate(chunks):
+            # 来源标注 — 直接使用 chunk.doc_title
+            doc_name = chunk.doc_title or chunk.doc_id
+            source_info = f"[来源: {doc_name}]"
 
-            # 加载父块内容扩展上下文
-            if use_parent_context and chunk.parent_id:
-                parent_data = store.get_parent(chunk.parent_id)
-                if parent_data and parent_data.get("content"):
-                    content_parts.append(
-                        f"[父块上下文]\n{parent_data['content']}"
-                    )
-
-            content_parts.append(f"[检索内容]\n{chunk.content}")
-            full_content = "\n\n".join(content_parts)
-
-            chunk_text = f"{source_info}\n{full_content}"
+            # 内容已在 pipeline 中注入 parent context，直接使用
+            chunk_text = f"{source_info}\n{chunk.content}"
 
             if current_length + len(chunk_text) > max_context_length:
-                logger.info(f"上下文长度达到上限 {max_context_length}，截断")
+                logger.info(
+                    f"上下文长度达到上限 {max_context_length}，截断: "
+                    f"第 {i+1}/{len(chunks)} 个 chunk"
+                )
                 break
 
             context_parts.append(chunk_text)
@@ -96,69 +106,61 @@ class GenerationService:
         query: str,
         chunks: List[RetrievedChunk],
         query_intent: Optional[str] = None,
-        query_entities: Optional[Dict[str, str]] = None,
+        spec_context: str = "",
     ) -> Tuple[str, str]:
-        """构建 RAG Prompt"""
-        context = self._build_context(chunks)
-        intent_context = self._build_intent_context(query_intent, query_entities)
+        """构建 RAG Prompt（根据 intent 选择不同模板）"""
+        context = self._build_context(query, chunks, spec_context=spec_context)
+        intent_context = self._build_intent_context(query_intent)
 
-        system_prompt = RAG_SYSTEM_PROMPT
-        user_prompt = RAG_USER_PROMPT_TEMPLATE.format(
-            context=context,
-            intent_context=intent_context,
-            query=query,
-        )
-
-        return system_prompt, user_prompt
-
-    def _build_multi_turn_prompt(
-        self,
-        query: str,
-        chunks: List[RetrievedChunk],
-        chat_history: List[Dict[str, str]],
-        query_intent: Optional[str] = None,
-        query_entities: Optional[Dict[str, str]] = None,
-    ) -> Tuple[str, str]:
-        """构建多轮对话 Prompt"""
-        context = self._build_context(chunks)
-        intent_context = self._build_intent_context(query_intent, query_entities)
-
-        history_lines = []
-        for msg in chat_history[-6:]:
-            role = "用户" if msg["role"] == "user" else "助手"
-            history_lines.append(f"{role}: {msg['content']}")
-
-        chat_history_str = "\n".join(history_lines) if history_lines else "无历史对话"
-
-        system_prompt = MULTI_TURN_SYSTEM_PROMPT.format(
-            chat_history=chat_history_str,
-        )
-
-        user_prompt = RAG_USER_PROMPT_TEMPLATE.format(
-            context=context,
-            intent_context=intent_context,
-            query=query,
-        )
+        # 根据 intent 选择不同模板
+        if query_intent == INTENT_COMPARE:
+            system_prompt = COMPARE_SYSTEM_PROMPT
+            user_prompt = COMPARE_USER_PROMPT.format(
+                query=query,
+                context=context,
+            )
+        elif query_intent == INTENT_RECOMMEND:
+            system_prompt = RECOMMEND_SYSTEM_PROMPT
+            user_prompt = RECOMMEND_USER_PROMPT.format(
+                comparison_matrix=context,
+                query=query,
+            )
+        elif query_intent == INTENT_AGGREGATE:
+            system_prompt = AGGREGATE_SYSTEM_PROMPT
+            user_prompt = AGGREGATE_USER_PROMPT.format(
+                structured_data=context,
+                query=query,
+            )
+        elif query_intent == INTENT_SIMPLE_LOOKUP:
+            # simple_lookup 使用专用模板
+            system_prompt = SIMPLE_LOOKUP_SYSTEM_PROMPT
+            user_prompt = SIMPLE_LOOKUP_USER_PROMPT_TEMPLATE.format(
+                context=context,
+                query=query,
+            )
+        else:
+            # 默认使用通用 RAG 模板
+            system_prompt = RAG_SYSTEM_PROMPT
+            user_prompt = RAG_USER_PROMPT_TEMPLATE.format(
+                context=context,
+                intent_context=intent_context,
+                query=query,
+            )
 
         return system_prompt, user_prompt
 
     def _build_intent_context(
         self,
         query_intent: Optional[str],
-        query_entities: Optional[Dict[str, str]],
     ) -> str:
         """构建意图上下文"""
-        if not query_intent and not query_entities:
+        if not query_intent:
             return ""
 
         parts = []
 
         if query_intent:
             parts.append(f"## 查询意图\n意图类型: {query_intent}")
-
-        if query_entities:
-            entity_str = "、".join([f"{k}: {v}" for k, v in query_entities.items()])
-            parts.append(f"## 提取实体\n{entity_str}")
 
         return "\n".join(parts) + "\n" if parts else ""
 
@@ -170,32 +172,30 @@ class GenerationService:
         self,
         query: str,
         chunks: List[RetrievedChunk],
-        chat_history: Optional[List[Dict[str, str]]] = None,
         query_intent: Optional[str] = None,
-        query_entities: Optional[Dict[str, str]] = None,
+        spec_context: str = "",
     ) -> Tuple[str, TokenUsage]:
         """
         生成 RAG 回答
+
+        Args:
+            query: 用户查询
+            chunks: 检索到的 chunks
+            query_intent: 查询意图类型
+            query_entities: 查询实体
+            intent: 路由意图（simple_lookup/compare/recommend/aggregate）
+            spec_context: 结构化产品参数字符串（来自 pipeline dual-path 检索）
 
         Returns:
             (回复内容, TokenUsage)
         """
         # 构建 Prompt
-        if chat_history and len(chat_history) > 0:
-            system_prompt, user_prompt = self._build_multi_turn_prompt(
-                query=query,
-                chunks=chunks,
-                chat_history=chat_history,
-                query_intent=query_intent,
-                query_entities=query_entities,
-            )
-        else:
-            system_prompt, user_prompt = self._build_rag_prompt(
-                query=query,
-                chunks=chunks,
-                query_intent=query_intent,
-                query_entities=query_entities,
-            )
+        system_prompt, user_prompt = self._build_rag_prompt(
+            query=query,
+            chunks=chunks,
+            query_intent=query_intent,
+            spec_context=spec_context,
+        )
 
         messages = [
             {"role": "system", "content": system_prompt},
@@ -210,9 +210,7 @@ class GenerationService:
             if not settings.deepseek_api_key:
                 return (
                     "抱歉，当前使用 Mock 模式。请配置 API Key 以获得真实回复。",
-                    TokenUsage(
-                        prompt_tokens=0, completion_tokens=0, total_tokens=0
-                    ),
+                    TokenUsage(prompt_tokens=0, completion_tokens=0, total_tokens=0),
                 )
 
             client = openai.OpenAI(
@@ -245,9 +243,7 @@ class GenerationService:
             logger.error(f"LLM 生成失败: {e}")
             return (
                 f"抱歉，生成回答时出现错误: {str(e)}",
-                TokenUsage(
-                    prompt_tokens=0, completion_tokens=0, total_tokens=0
-                ),
+                TokenUsage(prompt_tokens=0, completion_tokens=0, total_tokens=0),
             )
 
     # ============================================================
@@ -258,9 +254,10 @@ class GenerationService:
         self,
         query: str,
         chunks: List[RetrievedChunk],
-        chat_history: Optional[List[Dict[str, str]]] = None,
         query_intent: Optional[str] = None,
         query_entities: Optional[Dict[str, str]] = None,
+        intent: Optional[str] = None,
+        spec_context: str = "",
     ) -> Generator[str, None, None]:
         """
         流式生成 RAG 回答
@@ -275,22 +272,13 @@ class GenerationService:
             yield "抱歉，当前使用 Mock 模式。请配置 API Key 以获得真实回复。"
             return
 
-        # 构建 Prompt（同 generate）
-        if chat_history and len(chat_history) > 0:
-            system_prompt, user_prompt = self._build_multi_turn_prompt(
-                query=query,
-                chunks=chunks,
-                chat_history=chat_history,
-                query_intent=query_intent,
-                query_entities=query_entities,
-            )
-        else:
-            system_prompt, user_prompt = self._build_rag_prompt(
-                query=query,
-                chunks=chunks,
-                query_intent=query_intent,
-                query_entities=query_entities,
-            )
+        # 构建 Prompt
+        system_prompt, user_prompt = self._build_rag_prompt(
+            query=query,
+            chunks=chunks,
+            query_intent=intent or query_intent,
+            spec_context=spec_context,
+        )
 
         messages = [
             {"role": "system", "content": system_prompt},
@@ -311,12 +299,76 @@ class GenerationService:
             )
 
             for chunk in stream:
+                if not chunk.choices:
+                    continue
                 delta = chunk.choices[0].delta
                 if delta.content:
                     yield delta.content
 
         except Exception as e:
             logger.error(f"LLM 流式生成失败: {e}")
+            yield f"\n\n抱歉，生成回答时出现错误: {str(e)}"
+
+    # ============================================================
+    # 异步流式生成回答
+    # ============================================================
+
+    async def async_generate_stream(
+        self,
+        query: str,
+        chunks: List[RetrievedChunk],
+        query_intent: Optional[str] = None,
+        query_entities: Optional[Dict[str, str]] = None,
+        intent: Optional[str] = None,
+        spec_context: str = "",
+    ):
+        """
+        异步流式生成 RAG 回答（使用 AsyncOpenAI，不阻塞事件循环）
+
+        Yields:
+            逐个 token 字符串
+        """
+        from openai import AsyncOpenAI
+        from config import settings
+
+        if not settings.deepseek_api_key:
+            yield "抱歉，当前使用 Mock 模式。请配置 API Key 以获得真实回复。"
+            return
+
+        # 构建 Prompt
+        system_prompt, user_prompt = self._build_rag_prompt(
+            query=query,
+            chunks=chunks,
+            query_intent=intent or query_intent,
+            spec_context=spec_context,
+        )
+
+        messages = [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt},
+        ]
+
+        try:
+            client = AsyncOpenAI(
+                api_key=settings.deepseek_api_key,
+                base_url=settings.deepseek_base_url,
+            )
+            stream = await client.chat.completions.create(
+                model=settings.deepseek_model,
+                messages=messages,
+                temperature=0.3,
+                max_tokens=2000,
+                stream=True,
+            )
+            async for chunk in stream:
+                if not chunk.choices:
+                    continue
+                delta = chunk.choices[0].delta
+                if delta.content:
+                    yield delta.content
+
+        except Exception as e:
+            logger.error(f"LLM 异步流式生成失败: {e}")
             yield f"\n\n抱歉，生成回答时出现错误: {str(e)}"
 
 

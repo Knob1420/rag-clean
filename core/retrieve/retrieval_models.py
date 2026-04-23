@@ -17,29 +17,19 @@ class RetrievedChunk(BaseModel):
     chunk_id: str
     doc_id: str
     content: str
-    section_title: Optional[str] = None
     score: float = 0.0
 
-    # 文档级字段（扁平存储）
-    doc_type: Optional[str] = None
-    domain: Optional[str] = None
-    filter_terms: List[str] = Field(default_factory=list)
+    # 文档级字段
+    doc_title: Optional[str] = None
+    dataset_id: Optional[str] = None
 
     # chunk 级字段
-    chunk_type: Optional[str] = None
-    spec_table: Optional[Dict[str, Any]] = None
-    spec_rows: Optional[List[Any]] = None  # ES 中存为 list of dict
-
-    # Enrichment 字段
-    entities_text: Optional[str] = None
-    keywords: List[str] = Field(default_factory=list)
-    context_summary: Optional[str] = None
+    chunk_type: Optional[str] = None  # "parent" | "child" | "summary"
+    doc_hash: Optional[str] = None
+    section_title: Optional[str] = None  # 章节标题
 
     # 父子导航
-    parent_id: Optional[str] = None
-
-    # 高亮
-    highlight: Dict[str, List[str]] = Field(default_factory=dict)
+    parent_id: Optional[str] = None  # child 有，parent 无
 
 
 class RetrievalResult(BaseModel):
@@ -57,18 +47,7 @@ class RetrievalOptions(BaseModel):
     top_k: int = Field(20, ge=1, le=100, description="返回结果数量")
     min_score: float = Field(0.0, ge=0.0, le=1.0, description="最小相关性评分")
     doc_ids: Optional[List[str]] = Field(None, description="按文档ID列表筛选")
-
-    # Query Rewrite 结果字段
-    target_models: Optional[List[str]] = Field(
-        None, description="目标实体列表（用于检索加权）"
-    )
-    keywords: Optional[List[str]] = Field(None, description="关键词列表")
-    chunk_types: Optional[List[str]] = Field(
-        None, description="chunk类型列表，用于BM25加权覆盖多个类型"
-    )
-
-    # Enrichment 过滤 (暂保留，未使用)
-    # chunk_types: Optional[List[str]] = Field(None, description="按chunk类型筛选")
+    dataset_ids: Optional[List[str]] = Field(None, description="按数据集ID列表筛选")
 
     # Rerank 选项
     use_rerank: bool = Field(True, description="是否使用 Rerank")

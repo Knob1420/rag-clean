@@ -4,7 +4,9 @@ RAG 知识库前端 - Chainlit 界面
 功能：
 - 流式聊天问答（SSE 对接后端）
 - Sources 引用展示
-- 文档管理（侧边栏）
+- 用户反馈（点赞/点踩）
+- 聊天设置侧边栏（检索参数）
+- 快速启动按钮
 """
 
 import json
@@ -25,6 +27,26 @@ BACKEND_URL = "http://localhost:8000"
 
 
 # ============================================================
+# 快速启动
+# ============================================================
+
+
+@cl.set_starters
+async def set_starters():
+    """聊天启动时的快捷按钮"""
+    return [
+        cl.Starter(
+            label="文档管理",
+            message="/docs",
+        ),
+        cl.Starter(
+            label="使用帮助",
+            message="/help",
+        ),
+    ]
+
+
+# ============================================================
 # 启动 / 欢迎
 # ============================================================
 
@@ -32,6 +54,15 @@ BACKEND_URL = "http://localhost:8000"
 @cl.on_chat_start
 async def on_chat_start():
     """会话开始"""
+    # 配置数据层以启用反馈功能
+    from chainlit.data.sql_alchemy import SQLAlchemyDataLayer
+
+    data_layer = SQLAlchemyDataLayer(
+        conninfo="sqlite+aiosqlite:///.chainlit/data.db"
+    )
+    cl.data_layer = data_layer
+    logger.info("Data layer configured for feedback")
+
     # 检查后端健康
     healthy = await _check_health()
     if not healthy:
@@ -40,20 +71,108 @@ async def on_chat_start():
         ).send()
         return
 
+    # 聊天设置侧边栏（检索参数）
+    chat_settings = cl.ChatSettings(
+        inputs=[
+            cl.input_widget.Switch(
+                id="use_rewrite",
+                label="Query Rewrite（查询改写）",
+                initial=True,
+            ),
+            cl.input_widget.Switch(
+                id="use_rerank",
+                label="Rerank（重排序）",
+                initial=True,
+            ),
+            cl.input_widget.Slider(
+                id="top_k",
+                label="检索 Top K",
+                min=1,
+                max=30,
+                initial=10,
+                step=1,
+            ),
+            cl.input_widget.Slider(
+                id="rerank_top_k",
+                label="Rerank Top K",
+                min=1,
+                max=15,
+                initial=5,
+                step=1,
+            ),
+        ]
+    )
+    await chat_settings.send()
+
     # 显示欢迎信息
+    welcome_actions = [
+        cl.Action(
+            name="action_docs",
+            payload={"action": "docs"},
+            label="文档管理",
+            icon="book-open",
+        ),
+        cl.Action(
+            name="action_help",
+            payload={"action": "help"},
+            label="使用帮助",
+            icon="help-circle",
+        ),
+    ]
     await cl.Message(
         content=(
             "## RAG Knowledge Base\n"
             "基于文档的智能问答系统，支持流式输出和来源引用。\n\n"
             "**使用方式：**\n"
             "- 直接输入问题进行问答\n"
-            "- 回答下方会展示检索到的来源引用\n"
-            "- 点击侧边栏「文档管理」查看知识库文档\n"
-        )
+            "- 回答右侧会展示来源引用\n"
+            "- 输入 `/docs` 查看知识库文档\n"
+            "- 点击右上角设置图标调整检索参数\n"
+        ),
+        actions=welcome_actions,
     ).send()
 
     # 设置默认参数到 session
     cl.user_session.set("chat_history", [])
+
+
+@cl.on_settings_update
+async def on_settings_update(settings: Dict):
+    """用户修改聊天设置时的回调"""
+    logger.info(f"Settings updated: {settings}")
+
+
+# ============================================================
+# Action 回调
+# ============================================================
+
+
+@cl.action_callback("action_docs")
+async def on_action_docs(action: cl.Action):
+    """文档管理按钮"""
+    await _show_documents()
+
+
+@cl.action_callback("action_help")
+async def on_action_help(action: cl.Action):
+    """使用帮助按钮"""
+    await _show_help()
+
+
+# ============================================================
+# 用户反馈
+# ============================================================
+
+
+@cl.on_feedback
+async def on_feedback(feedback: cl.types.Feedback):
+    """处理用户反馈（点赞/点踩）"""
+    value = "👍 Like" if feedback.value == 1 else "👎 Dislike"
+    comment = feedback.comment or ""
+    logger.info(
+        f"User feedback: {value} for message {feedback.forId}"
+        f"{f', comment: {comment}' if comment else ''}"
+    )
 
 
 # ============================================================
@@ -83,6 +202,12 @@ async def on_message(message: cl.Message):
     chat_history.append({"role": "user", "content": query})
     cl.user_session.set("chat_history", chat_history)
 
+    # 从 ChatSettings 读取参数（有默认值兜底）
+    use_rewrite = cl.user_session.get("use_rewrite", True)
+    use_rerank = cl.user_session.get("use_rerank", True)
+    top_k = int(cl.user_session.get("top_k", 10))
+    rerank_top_k = int(cl.user_session.get("rerank_top_k", 5))
+
     # 调用后端流式端点
     msg = cl.Message(content="")
     await msg.send()
@@ -93,10 +218,10 @@ async def on_message(message: cl.Message):
     try:
         request_data = {
             "query": query,
-            "top_k": 10,
-            "use_rewrite": True,
-            "use_rerank": True,
-            "rerank_top_k": 5,
+            "top_k": top_k,
+            "use_rewrite": use_rewrite,
+            "use_rerank": use_rerank,
+            "rerank_top_k": rerank_top_k,
         }
 
         async with httpx.AsyncClient(timeout=180.0) as client:
@@ -152,18 +277,16 @@ async def on_message(message: cl.Message):
                         error_msg = data.get("error", "未知错误")
                         await msg.stream_token(f"\n\n**Error:** {error_msg}")
 
-        await msg.update()
-
-        # 展示 sources 作为引用
+        # 将 sources 作为引用附加到回答消息上
         if sources_list:
             elements = []
-            for src in sources_list[:10]:
+            for idx, src in enumerate(sources_list[:10], 1):
                 doc_name = src.get("doc_name", "Unknown")
                 section = src.get("section_title", "")
                 score = src.get("score", 0)
                 snippet = src.get("snippet", "")
 
-                label = f"{doc_name}"
+                label = f"[{idx}] {doc_name}"
                 if section:
                     label += f" > {section}"
                 label += f" ({score:.2f})"
@@ -175,13 +298,9 @@ async def on_message(message: cl.Message):
                         display="side",
                     )
                 )
+            msg.elements = elements
 
-            # 发送 sources 消息
-            sources_msg = cl.Message(
-                content=f"**引用来源 ({len(sources_list)})**",
-                elements=elements,
-            )
-            await sources_msg.send()
+        await msg.update()
 
         # 更新聊天历史
         chat_history.append({"role": "assistant", "content": full_answer})
@@ -197,7 +316,7 @@ async def on_message(message: cl.Message):
 
 
 # ============================================================
-# 文档管理（命令）
+# 文档管理
 # ============================================================
 
 
@@ -244,7 +363,9 @@ async def _show_help():
         "**直接输入问题** 进行问答\n\n"
         "**命令：**\n"
         "- `/docs` 或 `文档管理` — 查看知识库文档列表\n"
-        "- `/help` 或 `帮助` — 显示帮助\n"
+        "- `/help` 或 `帮助` — 显示帮助\n\n"
+        "**设置：**\n"
+        "- 点击右上角设置图标调整检索参数（Top K、Rerank 等）\n"
     )
     await cl.Message(content=help_text).send()
 

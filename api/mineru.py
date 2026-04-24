@@ -30,8 +30,8 @@ from starlette.middleware.base import BaseHTTPMiddleware
 
 from config import settings
 
-# MinerU 可用性检测 — 复用 core/ingestion/parser.py
-from core.ingestion.parser import MinerUPDFProcessor, MINERU_AVAILABLE
+# MinerU 可用性检测 — 复用 core/ingestion/extractor.py
+from core.ingestion.extractor import MinerUPDFProcessor, MINERU_AVAILABLE
 
 
 # ============================================================

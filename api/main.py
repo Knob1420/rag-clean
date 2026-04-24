@@ -26,7 +26,6 @@ from loguru import logger
 from config import settings
 from core.generation import get_generation_service
 from core.query_engineer.query_rewrite import get_query_rewrite_service, RewrittenQuery
-from core.query_engineer.react_reasoning import get_react_reasoning_service
 from core.retrieve.retrieval import get_retrieval_service
 from core.retrieve.retrieval_models import (
     ChatRequest,
@@ -40,6 +39,7 @@ from core.retrieve.retrieval_models import (
     TokenUsage,
 )
 from store import get_store
+from core.products.specs_service import query_specs, get_specs
 
 
 # ============================================================
@@ -315,7 +315,7 @@ async def chat_completion(request: ChatRequest):
 @app.post("/api/v1/chat/stream")
 async def chat_stream(request: ChatRequest):
     """
-    流式 RAG 问答 — SSE 端点
+    流式 RAG 问答 — SSE 端点（使用 V2 Pipeline）
 
     事件格式:
     - event: sources  data: {sources: [...]}
@@ -323,78 +323,30 @@ async def chat_stream(request: ChatRequest):
     - event: done     data: {usage: {...}, time: {...}}
     - event: error    data: {error: "..."}
     """
-    import openai
-    from config import settings
+    from core.pipeline import QueryRewriteRetrievalPipeline
 
     async def event_stream():
         timing = {}
         frontend_time = time.time()
 
         try:
-            retrieval_svc = get_retrieval_service()
-            rewrite_svc = get_query_rewrite_service()
+            pipeline = QueryRewriteRetrievalPipeline()
             generation_svc = get_generation_service()
 
-            # ---- 1. Query Rewrite ----
-            rewritten: Optional[RewrittenQuery] = None
-            timing["query_rewrite"] = 0
+            # ---- 1. Query Rewrite + Retrieval (V2 Pipeline) ----
+            t0 = time.time()
+            pipeline_result = pipeline.run(
+                query=request.query,
+                top_k=request.top_k,
+                use_rewrite=request.use_rewrite,
+                use_rerank=request.use_rerank,
+                rerank_top_k=request.rerank_top_k,
+            )
+            timing["query_rewrite"] = pipeline_result.timing.get("rewrite", 0)
+            timing["retrieve"] = pipeline_result.timing.get("retrieve", 0)
 
-            if request.use_rewrite:
-                t0 = time.time()
-                rewritten = rewrite_svc.rewrite(request.query)
-                timing["query_rewrite"] = time.time() - t0
-
-                intent_types = None
-                if rewritten.intent_type and rewritten.intent_type != "other":
-                    intent_types = [
-                        t.strip() for t in rewritten.intent_type.split(",") if t.strip()
-                    ]
-
-                options = RetrievalOptions(
-                    top_k=request.top_k,
-                    target_models=(
-                        rewritten.target_entities if rewritten.target_entities else None
-                    ),
-                    keywords=rewritten.keywords if rewritten.keywords else None,
-                    chunk_types=intent_types,
-                    use_rerank=request.use_rerank,
-                    rerank_top_k=request.rerank_top_k,
-                    min_score=request.min_score,
-                )
-                search_query = rewritten.rewritten_query
-
-                strategy = getattr(rewritten, "strategy", "direct")
-                if strategy == "direct":
-                    retrieval_result = retrieval_svc.search(
-                        query=search_query, options=options, use_hybrid=True
-                    )
-                elif strategy == "parallel" and rewritten.sub_queries:
-                    retrieval_result = retrieval_svc.search_routed(
-                        rewritten_query=rewritten.rewritten_query,
-                        sub_queries=rewritten.sub_queries,
-                        options=options,
-                    )
-                else:
-                    react_svc = get_react_reasoning_service()
-                    retrieval_result = react_svc.reason(
-                        original_query=request.query,
-                        rewritten=rewritten,
-                        options=options,
-                    )
-            else:
-                options = RetrievalOptions(
-                    top_k=request.top_k,
-                    use_rerank=request.use_rerank,
-                    rerank_top_k=request.rerank_top_k,
-                    min_score=request.min_score,
-                )
-                search_query = request.query
-                retrieval_result = retrieval_svc.search(
-                    query=search_query, options=options, use_hybrid=True
-                )
-
-            timing.update(retrieval_result.timing)
-            chunks = retrieval_result.chunks
+            chunks = pipeline_result.chunks
+            spec_context = pipeline_result.spec_context
 
             if not chunks:
                 yield f"event: error\ndata: {json.dumps({'error': '未找到相关内容'}, ensure_ascii=False)}\n\n"
@@ -409,14 +361,14 @@ async def chat_stream(request: ChatRequest):
             gen_kwargs = {
                 "query": request.query,
                 "chunks": chunks,
-                "chat_history": None,
+                "query_intent": pipeline_result.intent,
             }
-            if rewritten:
-                gen_kwargs["query_intent"] = rewritten.intent_type
-                gen_kwargs["query_entities"] = rewritten.entities
+            # 如果有结构化查询结果，追加到 context
+            if spec_context:
+                gen_kwargs["spec_context"] = spec_context
 
             gen_start = time.time()
-            for token in generation_svc.generate_stream(**gen_kwargs):
+            async for token in generation_svc.async_generate_stream(**gen_kwargs):
                 yield f"event: token\ndata: {json.dumps({'content': token}, ensure_ascii=False)}\n\n"
 
             timing["generation"] = time.time() - gen_start
@@ -633,6 +585,57 @@ async def search(request: SearchRequest):
     except Exception as e:
         logger.error(f"检索失败: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail=f"检索失败: {str(e)}")
+
+
+# ============================================================
+# 产品参数查询
+# ============================================================
+
+
+@app.get("/api/v1/products/specs")
+async def get_product_specs(
+    product: Optional[str] = None,
+    model: Optional[str] = None,
+    filter: Optional[str] = None,
+):
+    """
+    产品参数查询接口
+
+    Args:
+        product: 产品类型（星载智算机 / 星载路由器 / 星载激光通信机）
+        model: 型号（如 NX1, G1, 智加G3）
+        filter: 过滤条件，支持 <, <=, >, >=, ==（如 "重量<3kg", "算力>=10"）
+
+    Examples:
+        GET /api/v1/products/specs                           # 返回所有产品
+        GET /api/v1/products/specs?product=星载智算机         # 返回智算机全系
+        GET /api/v1/products/specs?product=星载智算机&model=NX1  # 返回 NX1
+        GET /api/v1/products/specs?filter=重量<3kg           # 返回重量<3kg的型号
+    """
+    try:
+        results = query_specs(product=product, model=model, filter_field=filter)
+        return {
+            "total": len(results),
+            "results": results,
+        }
+    except Exception as e:
+        logger.error(f"产品参数查询失败: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f"查询失败: {str(e)}")
+
+
+@app.get("/api/v1/products")
+async def list_products():
+    """返回所有产品类型和型号列表"""
+    specs = get_specs()
+    return {
+        "products": [
+            {
+                "type": prod_type,
+                "models": list(models.keys()) if isinstance(models, dict) else [],
+            }
+            for prod_type, models in specs.items()
+        ]
+    }
 
 
 # ============================================================

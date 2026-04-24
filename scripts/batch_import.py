@@ -41,7 +41,7 @@ from core.ingestion.document_processor import process_document
 # ── 目录配置 ──────────────────────────────────────────
 DATA_ROOT = Path("/home/zjlab/Documents/build_LLMs/NLP_course_hf/RAG/data")
 RAW_DIR = DATA_ROOT / "raw"
-PROCESSED_DIR = DATA_ROOT / "processed-new-0422"
+PROCESSED_DIR = DATA_ROOT / "processed-new-0424"
 
 
 def collect_files(dataset_id: Optional[str] = None) -> list[tuple[Path, str, str]]:

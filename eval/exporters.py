@@ -13,7 +13,7 @@ from typing import Any, Dict, List, Optional, Set
 from loguru import logger
 
 from config import settings
-from core.retrieve.embedder import encode
+from core.client.embedder import encode
 from core.retrieve.retrieval_models import (
     HighlightOptions,
     RetrievedChunk,

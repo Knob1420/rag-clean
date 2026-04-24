@@ -47,10 +47,6 @@ CHILD_CHUNK_OVERLAP = 100
 
 # 表格匹配正则
 _TABLE_PATTERN = re.compile(r"<table[^>]*>.*?</table>", re.DOTALL | re.IGNORECASE)
-_MD_TABLE_PATTERN = re.compile(
-    r"(?:^\|.*\|$)\n(?:^\|[\s\-:|\s]+\|$)\n(?:(?:^\|.*\|$)\n?)+",
-    re.MULTILINE,
-)
 
 
 def _html_table_to_text(html: str) -> str:
@@ -70,16 +66,20 @@ def _html_table_to_text(html: str) -> str:
     if headers:
         md_lines.append("| " + " | ".join(headers) + " |")
         md_lines.append("| " + " | ".join(["---"] * len(headers)) + " |")
+        data_rows = rows[1:]
+    else:
+        # 无表头时，第一行当作数据行，后面才是真正的数据行
+        data_rows = rows
 
-    # 处理后续数据行
-    for row in rows[1:] if len(rows) > 1 else []:
+    # 处理数据行
+    for row in data_rows:
         cells = _re.findall(r"<td[^>]*>(.*?)</td>", row, _re.DOTALL | _re.IGNORECASE)
         cells = [_re.sub(r"<[^>]+>", "", c).strip() for c in cells]
         if cells:
             md_lines.append("| " + " | ".join(cells) + " |")
 
     # 如果没有提取到有效内容，返回原始 HTML
-    if len(md_lines) <= 2:
+    if not md_lines:
         return html
 
     return "\n".join(md_lines)
@@ -181,21 +181,21 @@ class SmartChunker:
             # 给 p_doc.metadata 添加 doc_title（child 需要用到）
             p_doc.metadata["doc_title"] = title
 
-            # ── 4a. 切 child chunks（表格不被拆分）────────────────────────────
-            child_document_list, content_for_parent = self._split_children_with_tables(
+            # ── 4a. 切 child chunks ─────────────────────────────────────────
+            child_document_list = self._split_children(
                 p_doc.page_content, p_doc.metadata, doc_id, parent_id, child_global_idx
             )
             if child_document_list:
                 child_global_idx += len(child_document_list)
 
-            # ── 4b. 创建 Document（主块 content = parent 内容 + children）───────
+            # content_for_parent 始终为 parent 原始内容（已含 HTML→MD 转换）
             document = Document(
-                content=content_for_parent,
+                content=p_doc.page_content,
                 metadata={
                     "doc_id": doc_id,
                     "doc_title": title,
                     "chunk_id": parent_id,
-                    "doc_hash": _generate_doc_hash(content_for_parent),
+                    "doc_hash": _generate_doc_hash(p_doc.page_content),
                 },
                 children=child_document_list if child_document_list else None,
             )
@@ -210,41 +210,50 @@ class SmartChunker:
 
         return documents
 
-    # ── child chunk 切分（表格不被拆分）────────────────────────────────────
+    # ── child chunk 切分 ─────────────────────────────────────────────────
 
-    def _split_children_with_tables(
+    def _split_children(
         self,
         content: str,
         parent_metadata: dict,
         doc_id: str,
         parent_id: str,
         start_child_idx: int,
-    ) -> tuple[List[ChildDocument], str]:
+    ) -> List[ChildDocument]:
         """
-        切分 child chunks，确保表格内容不被拆分。
-
-        Returns:
-            (child_document_list, content_with_converted_tables):
-            - child_document_list: ChildDocument 列表
-            - content_with_converted_tables: HTML 表格已转为 Markdown 的 content
+        将 parent content 切分为 child chunks。
 
         策略：
-        1. 先将 HTML 表格转为 Markdown 格式
-        2. 找到所有 Markdown 表格（支持单元格内换行）
-        3. 表格作为整体，作为一个 child chunk
-        4. 非表格内容用 RecursiveCharacterTextSplitter 切分
+        - 含 HTML 表格 → 整个 parent 作为 1 个 child（HTML→MD 转换）
+        - 不含 HTML 表格 → RecursiveCharacterTextSplitter 正常切分
         """
-        # 先将 HTML 表格转为 Markdown 格式
+        # HTML→MD 转换
         content = self._convert_tables_to_markdown(content)
 
-        # 收集所有表格的位置和内容（支持单元格内换行）
-        tables = self._find_markdown_tables(content)
+        # 判断是否含表格
+        has_table = bool(_TABLE_PATTERN.search(content)) or bool(
+            re.search(r"^\|.*\|", content, re.MULTILINE)
+        )
 
         child_document_list: List[ChildDocument] = []
         child_idx = start_child_idx
 
-        if not tables:
-            # 没有表格，直接用 RecursiveCharacterTextSplitter 切分
+        if has_table:
+            # 含表格：整个 parent 作为 1 个 child
+            child_id = f"{doc_id}_c{child_idx}"
+            child_document = ChildDocument(
+                content=content,
+                metadata={
+                    "doc_id": doc_id,
+                    "doc_title": parent_metadata.get("doc_title", ""),
+                    "chunk_id": child_id,
+                    "doc_hash": _generate_doc_hash(content),
+                    "parent_id": parent_id,
+                },
+            )
+            child_document_list.append(child_document)
+        else:
+            # 无表格：RecursiveCharacterTextSplitter 正常切分
             parent_doc = LCDocument(page_content=content, metadata=parent_metadata)
             child_docs = self._child_splitter.split_documents([parent_doc])
             for c_doc in child_docs:
@@ -264,108 +273,11 @@ class SmartChunker:
                 )
                 child_document_list.append(child_document)
                 child_idx += 1
+
             # 合并过短 chunks
             child_document_list = self._merge_short_children(child_document_list)
-            return child_document_list, content
 
-        # 按位置排序表格
-        tables.sort(key=lambda x: x[0])
-
-        # 切分：表格作为整体，非表格内容单独切分
-        # 追溯最近的 section header 合并到表格
-        prev_end = 0
-
-        for start, end, table_text in tables:
-            # 在当前表格前的范围内追溯 section header
-            section_header = (
-                self._find_last_section_header(
-                    content[prev_end:start], len(content[prev_end:start])
-                )
-                if start > prev_end
-                else ""
-            )
-            if section_header:
-                table_text = section_header + "\n\n" + table_text
-
-            # 处理表格前的非表格内容（不含 section header）
-            before_text = content[prev_end:start].strip()
-            if before_text and section_header:
-                # 去掉 section header 部分
-                header_pos = before_text.rfind(section_header)
-                if header_pos >= 0:
-                    before_text = before_text[:header_pos].rstrip()
-
-            if before_text:
-                # 短 caption（如 "表7随机振动试验条件"）直接拼入 table_text，不单独生成 chunk
-                if len(before_text) < self.MIN_CHILD_CHUNK_SIZE and not section_header:
-                    table_text = before_text + "\n\n" + table_text
-                else:
-                    before_doc = LCDocument(
-                        page_content=before_text, metadata=parent_metadata
-                    )
-                    child_docs = self._child_splitter.split_documents([before_doc])
-                    for c_doc in child_docs:
-                        child_content = c_doc.page_content.strip()
-                        if not child_content:
-                            continue
-                        child_id = f"{doc_id}_c{child_idx}"
-                        child_document = ChildDocument(
-                            content=child_content,
-                            metadata={
-                                "doc_id": doc_id,
-                                "doc_title": parent_metadata.get("doc_title", ""),
-                                "chunk_id": child_id,
-                                "doc_hash": _generate_doc_hash(child_content),
-                                "parent_id": parent_id,
-                            },
-                        )
-                        child_document_list.append(child_document)
-                        child_idx += 1
-
-            # 表格作为整体（不被切分）
-            if table_text:
-                child_id = f"{doc_id}_c{child_idx}"
-                child_document = ChildDocument(
-                    content=table_text,
-                    metadata={
-                        "doc_id": doc_id,
-                        "doc_title": parent_metadata.get("doc_title", ""),
-                        "chunk_id": child_id,
-                        "doc_hash": _generate_doc_hash(table_text),
-                        "parent_id": parent_id,
-                    },
-                )
-                child_document_list.append(child_document)
-                child_idx += 1
-
-            prev_end = end
-
-        # 处理最后一个表格之后的内容
-        after_text = content[prev_end:].strip()
-        if after_text:
-            after_doc = LCDocument(page_content=after_text, metadata=parent_metadata)
-            child_docs = self._child_splitter.split_documents([after_doc])
-            for c_doc in child_docs:
-                child_content = c_doc.page_content.strip()
-                if not child_content:
-                    continue
-                child_id = f"{doc_id}_c{child_idx}"
-                child_document = ChildDocument(
-                    content=child_content,
-                    metadata={
-                        "doc_id": doc_id,
-                        "doc_title": parent_metadata.get("doc_title", ""),
-                        "chunk_id": child_id,
-                        "doc_hash": _generate_doc_hash(child_content),
-                        "parent_id": parent_id,
-                    },
-                )
-                child_document_list.append(child_document)
-                child_idx += 1
-
-        # 合并过短 chunks
-        child_document_list = self._merge_short_children(child_document_list)
-        return child_document_list, content
+        return child_document_list
 
     # ── parent 合并/拆分/清理 ───────────────────────────────────────────────
 
@@ -435,146 +347,11 @@ class SmartChunker:
 
         return cleaned
 
-    # ── 表格提取 ─────────────────────────────────────────────────────────
-
-    def _extract_spec_sections(
-        self,
-        sections: list,
-    ) -> tuple[list, list]:
-        """
-        识别包含结构化表格的 section，将表格提取为独立 section。
-
-        Returns:
-            (spec_sections, table_free_sections)
-            - spec_sections: 表格 LCDocument 列表
-            - table_free_sections: 去除表格后的 section 列表
-        """
-        spec_sections: list = []
-        table_free_sections: list = []
-
-        for sec_doc in sections:
-            sec_text = sec_doc.page_content
-            if not sec_text:
-                continue
-
-            table_text, other_text = self._separate_table_content(sec_text)
-
-            if table_text:
-                spec_sections.append(
-                    LCDocument(page_content=table_text, metadata=sec_doc.metadata)
-                )
-
-                if other_text and len(other_text.strip()) > 50:
-                    sec_doc.page_content = other_text
-                    table_free_sections.append(sec_doc)
-            else:
-                table_free_sections.append(sec_doc)
-
-        return spec_sections, table_free_sections
-
-    def _separate_table_content(self, text: str) -> tuple[str, str]:
-        """将文本中的表格部分和非表格部分分离"""
-        html_match = _TABLE_PATTERN.search(text)
-        if html_match:
-            html_table = html_match.group(0)
-            # 将 HTML 表格转为 Markdown 格式
-            md_table = _html_table_to_text(html_table)
-            return md_table, _TABLE_PATTERN.sub("", text).strip()
-
-        md_match = _MD_TABLE_PATTERN.search(text)
-        if md_match:
-            return md_match.group(0).strip(), _MD_TABLE_PATTERN.sub("", text).strip()
-
-        return "", text
-
     # ── 辅助方法 ─────────────────────────────────────────────────────────
-
-    def _find_markdown_tables(self, text: str) -> List[tuple[int, int, str]]:
-        """
-        查找所有 Markdown 表格，返回 (start, end, table_text) 列表。
-        支持单元格内换行的表格。
-        """
-        tables: List[tuple[int, int, str]] = []
-        lines = text.split("\n")
-
-        i = 0
-        while i < len(lines):
-            line = lines[i].strip()
-            # 检查是否可能是表格的第一行
-            if line.startswith("|") and line.endswith("|") and line.count("|") >= 2:
-                table_lines = [line]
-                table_start_line = i
-
-                j = i + 1
-                while j < len(lines):
-                    next_line = lines[j].strip()
-
-                    # 如果不是以 | 开头，说明表格结束
-                    if not next_line.startswith("|"):
-                        # 检查是否是延续行（不以 | 开头但可能是多行单元格内容）
-                        if next_line:
-                            # 非空行且不以 | 开头，可能是上一行的延续
-                            if table_lines and not table_lines[-1].rstrip().endswith(
-                                "|"
-                            ):
-                                table_lines[-1] += "\n" + next_line
-                                j += 1
-                                continue
-                        break
-
-                    # 检查是否是分隔行（|---|格式）
-                    if re.match(r"^\|[\s\-:|]+\|$", next_line):
-                        table_lines.append(next_line)
-                        j += 1
-                        # 继续读取数据行
-                        while j < len(lines):
-                            data_line = lines[j].strip()
-                            if data_line.startswith("|"):
-                                table_lines.append(data_line)
-                                j += 1
-                            else:
-                                break
-                        break
-                    else:
-                        table_lines.append(next_line)
-                        j += 1
-
-                table_text = "\n".join(table_lines)
-                # 计算在原始文本中的字符位置
-                char_start = sum(len(lines[k]) + 1 for k in range(table_start_line))
-                char_end = char_start + len(table_text)
-                tables.append((char_start, char_end, table_text))
-                i = j
-            else:
-                i += 1
-
-        return tables
-
-    def _find_last_section_header(self, text: str, before_pos: int) -> str:
-        """找到 text 中 before_pos 之前的最后一个 Markdown section header"""
-        lines = text[:before_pos].split("\n")
-        for i in range(len(lines) - 1, -1, -1):
-            line = lines[i].strip()
-            if re.match(r"^#{1,6}\s+", line):
-                return line
-        return ""
 
     def _convert_tables_to_markdown(self, text: str) -> str:
         """将文本中所有 HTML 表格转为 Markdown 格式"""
-        # 递归替换所有 HTML 表格，防止死循环（如果转换后仍是原始 HTML 则不再重复匹配）
-        max_iterations = 100
-        for _ in range(max_iterations):
-            match = _TABLE_PATTERN.search(text)
-            if not match:
-                break
-            html_table = match.group(0)
-            md_table = _html_table_to_text(html_table)
-            # 如果转换后内容没变，说明无法转换，不再重复处理
-            if md_table == html_table:
-                text = _TABLE_PATTERN.sub("", text, count=1)
-            else:
-                text = text.replace(html_table, md_table, 1)
-        return text
+        return _TABLE_PATTERN.sub(lambda m: _html_table_to_text(m.group(0)), text)
 
     @staticmethod
     def _merge_metadata(target, source):

@@ -14,7 +14,7 @@ from elasticsearch import Elasticsearch
 from loguru import logger
 
 from config import settings
-from core.model.models import Document, ChildDocument
+from core.model.models import Document, ChildDocument, SummaryDocument
 
 
 # ============================================================
@@ -31,8 +31,11 @@ CHUNKS_MAPPING = {
         "doc_title": {"type": "text", "analyzer": "ik_max_word"},
         "dataset_id": {"type": "keyword"},     # 知识库ID（后续扩展）
         # chunk 级
-        "chunk_type": {"type": "keyword"},     # "parent" | "child"
+        "chunk_type": {"type": "keyword"},     # "parent" | "child" | "summary"
         "content": {"type": "text", "analyzer": "ik_max_word", "search_analyzer": "ik_smart"},
+        # summary 相关（parent chunk 有）
+        "summary": {"type": "text", "analyzer": "ik_max_word"},
+        "primary_entity": {"type": "keyword"}, # 核心实体（parent 和 child 都有）
         # 父子关系
         "parent_id": {"type": "keyword"},       # child 有，parent 无
         # 向量
@@ -93,10 +96,13 @@ class DocumentStore:
             total_chunks += 1  # parent chunk
             if doc.children:
                 total_chunks += len(doc.children)
+            if doc.summaries:
+                total_chunks += len(doc.summaries)
 
-        # 索引所有 chunks（parent + children）
+        # 索引所有 chunks（parent + children + summaries）
         success_count = 0
         child_idx = 0
+        summary_idx = 0
         for doc in documents:
             parent_id = doc.metadata.get("chunk_id", "")
 
@@ -111,6 +117,22 @@ class DocumentStore:
                 success_count += 1
             except Exception as e:
                 logger.warning(f"  索引失败 parent {parent_id}: {e}")
+
+            # 索引 summaries（在 children 之前索引，便于关联）
+            if doc.summaries:
+                for summary in doc.summaries:
+                    summary_id = summary.metadata.get("chunk_id", f"{doc_id}_s{summary_idx}")
+                    try:
+                        summary_doc = self._summary_to_es_doc(summary, summary_id, parent_id, now)
+                        self.es.index(
+                            index=settings.es_index_chunks,
+                            id=summary_id,
+                            document=summary_doc,
+                        )
+                        success_count += 1
+                    except Exception as e:
+                        logger.warning(f"  索引失败 summary {summary_id}: {e}")
+                    summary_idx += 1
 
             # 索引 children
             if doc.children:
@@ -151,6 +173,9 @@ class DocumentStore:
             "content": doc.content,
             # chunk 级
             "chunk_type": chunk_type,
+            # summary 相关（parent chunk 有）
+            "summary": getattr(doc, "summary", ""),
+            "primary_entity": getattr(doc, "primary_entity", ""),
             # 父子关系
             "parent_id": None,  # parent 没有父块
             # 基础
@@ -177,6 +202,8 @@ class DocumentStore:
             "content": child.content,
             # chunk 级
             "chunk_type": "child",
+            # primary_entity
+            "primary_entity": getattr(child, "primary_entity", ""),
             # 父子关系
             "parent_id": parent_id,
             # 基础
@@ -187,6 +214,33 @@ class DocumentStore:
         # embedding_vector 如果已有则添加
         if hasattr(child, "vector") and child.vector is not None:
             es_doc["embedding_vector"] = child.vector
+
+        return es_doc
+
+    def _summary_to_es_doc(
+        self, summary, chunk_id: str, parent_id: str, created_at: str
+    ) -> Dict[str, Any]:
+        """将 SummaryDocument 转为 ES 文档"""
+        es_doc: Dict[str, Any] = {
+            "chunk_id": chunk_id,
+            "doc_id": summary.metadata.get("doc_id", ""),
+            "doc_title": summary.metadata.get("doc_title", ""),
+            "doc_hash": summary.metadata.get("doc_hash", ""),
+            "dataset_id": summary.metadata.get("dataset_id", ""),
+            "content": summary.content,
+            "primary_entity": summary.primary_entity,
+            # chunk 级
+            "chunk_type": "summary",
+            # 父子关系
+            "parent_id": parent_id,
+            # 基础
+            "is_latest": True,
+            "created_at": created_at,
+        }
+
+        # embedding_vector 如果已有则添加
+        if hasattr(summary, "vector") and summary.vector is not None:
+            es_doc["embedding_vector"] = summary.vector
 
         return es_doc
 
@@ -257,18 +311,21 @@ class DocumentStore:
             resp = self.es.search(
                 index=settings.es_index_chunks,
                 body={
-                    "query": {"bool": {"must": [
-                        {"terms": {"doc_id": list(doc_ids)}},
-                        {"term": {"chunk_type": "parent"}},
-                    ]}},
+                    "query": {"terms": {"doc_id": list(doc_ids)}},
                     "size": len(doc_ids),
                     "_source": ["doc_id", "doc_title"],
                 },
             )
-            return {
-                hit["_source"]["doc_id"]: hit["_source"].get("doc_title", "")
-                for hit in resp.get("hits", {}).get("hits", [])
-            }
+            # 优先取 parent chunk 的 title，其次取任何 chunk 的 title
+            result: Dict[str, str] = {}
+            for hit in resp.get("hits", {}).get("hits", []):
+                doc_id = hit["_source"]["doc_id"]
+                title = hit["_source"].get("doc_title", "")
+                if title and doc_id not in result:
+                    result[doc_id] = title
+                elif title and doc_id in result and not result[doc_id]:
+                    result[doc_id] = title
+            return result
         except Exception as e:
             logger.warning(f"获取 doc_titles 失败: {e}")
             return {}

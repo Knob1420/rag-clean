@@ -36,13 +36,20 @@ class EmbeddingClient:
             return None
 
     def encode_batch(self, texts: List[str]) -> List[Optional[np.ndarray]]:
-        """批量向量化"""
+        """批量向量化，失败后降级为逐条调用"""
         try:
             with httpx.Client(timeout=self.timeout) as client:
                 response = client.post(
                     f"{self.base_url}/encode_batch",
                     json={"texts": texts, "max_batch_size": 32},
                 )
+                if response.status_code >= 400:
+                    # 降级：逐条调用，附带调试信息
+                    logger.warning(
+                        f"批量接口返回 {response.status_code}，降级为逐条调用。 "
+                        f"内容长度: {[len(t) for t in texts[:5]]}..."
+                    )
+                    return [self.encode(t) if t else None for t in texts]
                 response.raise_for_status()
                 data = response.json()
                 return [
@@ -50,8 +57,8 @@ class EmbeddingClient:
                     for emb in data["embeddings"]
                 ]
         except Exception as e:
-            logger.error(f"批量向量化失败: {e}")
-            return [None] * len(texts)
+            logger.warning(f"批量向量化失败，降级为逐条调用: {e}")
+            return [self.encode(t) if t else None for t in texts]
 
 
 # ── 全局实例 ──────────────────────────────────────────

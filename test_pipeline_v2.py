@@ -114,35 +114,83 @@ def run_single_query(
         if query_rewrite_only:
             return response
 
-# LLM 生成 — 每个 sub_question 单独 generate（chunks 已合并去重 + 独立 rerank）
+        # LLM 生成 — 多子问句合并逻辑
         if use_generation and generation_svc and result.chunks:
-            answers = []
-            total_usage = None
-
             understanding = result.understanding_result
-            for sq in understanding.sub_queries:
-                sq_chunks = result.per_sub_question_chunks.get(sq.query, [])
-                if not sq_chunks:
-                    continue
+            sub_queries = understanding.sub_queries if understanding else []
 
-                gen_kwargs = {
-                    "query": sq.query,
-                    "chunks": sq_chunks,
-                    "query_intent": sq.intent,
-                }
-                sq_spec = result.per_sub_question_spec_context.get(sq.query)
-                if sq_spec:
-                    gen_kwargs["spec_context"] = sq_spec
+            if len(sub_queries) == 1:
+                # 单子问句：直接生成
+                sq = sub_queries[0]
+                sq_chunks = result.per_sub_question_chunks.get(sq.query, result.chunks)
+                sq_spec = result.per_sub_question_spec_context.get(sq.query, "")
                 sq_constraints = result.per_sub_question_generation_constraints.get(sq.query, [])
-                if sq_constraints:
-                    gen_kwargs["generation_constraints"] = sq_constraints
+                answer, usage = generation_svc.generate(
+                    query=request.query,
+                    chunks=sq_chunks,
+                    query_intent=sq.intent,
+                    spec_context=sq_spec,
+                    generation_constraints=sq_constraints,
+                )
+                response["generation_answer"] = answer
+                response["generation_usage"] = usage
+            else:
+                # 多子问句：逐条生成 → 合并 → 整合生成
+                merged_answers = []
+                all_chunks = []
+                total_usage = None
 
-                a, usage = generation_svc.generate(**gen_kwargs)
-                answers.append(f"【{sq.query}】\n{a}")
-                total_usage = usage
+                for sq in sub_queries:
+                    sq_chunks = result.per_sub_question_chunks.get(sq.query, [])
+                    if not sq_chunks:
+                        continue
+                    all_chunks.extend(sq_chunks)
+                    sq_spec = result.per_sub_question_spec_context.get(sq.query, "")
+                    sq_constraints = result.per_sub_question_generation_constraints.get(sq.query, [])
+                    sub_answer, sub_usage = generation_svc.generate(
+                        query=sq.query,
+                        chunks=sq_chunks,
+                        query_intent=sq.intent,
+                        spec_context=sq_spec,
+                        generation_constraints=sq_constraints,
+                    )
+                    merged_answers.append(f"【{sq.query}】\n{sub_answer}")
+                    total_usage = sub_usage
 
-            response["generation_answer"] = "\n\n---\n\n".join(answers)
-            response["generation_usage"] = total_usage
+                if merged_answers:
+                    # 整合生成
+                    integrated = "\n\n---\n\n".join(merged_answers)
+                    system_prompt, user_prompt = generation_svc._build_integration_prompt(
+                        original_query=query,
+                        merged_answers=integrated,
+                    )
+                    messages = [
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": user_prompt},
+                    ]
+                    import openai
+                    from config import settings
+                    if settings.deepseek_api_key:
+                        client = openai.OpenAI(
+                            api_key=settings.deepseek_api_key,
+                            base_url=settings.deepseek_base_url,
+                        )
+                        resp = client.chat.completions.create(
+                            model=settings.deepseek_model,
+                            messages=messages,
+                            temperature=0.3,
+                            max_tokens=2000,
+                        )
+                        answer = resp.choices[0].message.content
+                        usage = total_usage
+                    else:
+                        answer = integrated
+
+                    response["generation_answer"] = answer
+                    response["generation_usage"] = usage
+                else:
+                    response["generation_answer"] = None
+                    response["generation_usage"] = None
         else:
             response["generation_answer"] = None
             response["generation_usage"] = None
@@ -432,7 +480,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--dataset-ids",
         nargs="+",
-        default=["产品", "合同"],
+        default=["产品", "合同", "测试"],
         help="按数据集 ID 筛选（如 products contracts）",
     )
 

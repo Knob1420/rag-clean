@@ -17,6 +17,7 @@ from core.router.models import (
     INTENT_COMPARE,
     INTENT_RECOMMEND,
     INTENT_AGGREGATE,
+    INTENT_GENERATE,
 )
 from core.products.specs_service import build_specs_context
 from prompt import (
@@ -30,6 +31,8 @@ from prompt import (
     RECOMMEND_USER_PROMPT,
     AGGREGATE_SYSTEM_PROMPT,
     AGGREGATE_USER_PROMPT,
+    INTEGRATION_SYSTEM_PROMPT,
+    INTEGRATION_USER_PROMPT,
 )
 from core.retrieve.retrieval_models import RetrievedChunk, TokenUsage
 
@@ -172,6 +175,23 @@ class GenerationService:
             parts.append(f"## 查询意图\n意图类型: {query_intent}")
 
         return "\n".join(parts) + "\n" if parts else ""
+
+    # ============================================================
+    # Integration Prompt（多子问句合并）
+    # ============================================================
+
+    def _build_integration_prompt(
+        self,
+        original_query: str,
+        merged_answers: str,
+    ) -> Tuple[str, str]:
+        """构建多子问句整合的 Prompt"""
+        system_prompt = INTEGRATION_SYSTEM_PROMPT
+        user_prompt = INTEGRATION_USER_PROMPT.format(
+            original_query=original_query,
+            merged_answers=merged_answers,
+        )
+        return system_prompt, user_prompt
 
     # ============================================================
     # 生成回答

@@ -68,11 +68,7 @@ app.add_middleware(
 
 def chunks_to_sources(chunks: list) -> list:
     """将检索分块转换为来源信息（含文档标题）"""
-    # 批量获取 doc_id → title 映射
-    doc_ids = {c.doc_id for c in chunks}
-    store = get_store()
-    doc_titles = store.get_doc_titles(list(doc_ids))
-
+    # chunk.doc_title 已在 RetrievalService 中从 ES 填充，直接使用
     sources = []
     for chunk in chunks:
         snippet = (
@@ -82,7 +78,7 @@ def chunks_to_sources(chunks: list) -> list:
             SourceInfo(
                 chunk_id=chunk.chunk_id,
                 doc_id=chunk.doc_id,
-                doc_name=doc_titles.get(chunk.doc_id, ""),
+                doc_name=chunk.doc_title or "",
                 section_title=chunk.section_title,
                 score=chunk.score,
                 snippet=snippet,
@@ -173,7 +169,7 @@ async def chat_completion(request: ChatRequest):
         pipeline = QueryRewriteRetrievalPipeline()
         query_rewrite_svc = QueryRewriteServiceV2()
 
-        # ---- Query Rewrite + Retrieval Pipeline（内含 Query Understanding）----
+        # ---- Query Rewrite + Retrieval Pipeline ----
         t0 = time.time()
         pipeline_result = pipeline.run(
             query=request.query,
@@ -185,47 +181,97 @@ async def chat_completion(request: ChatRequest):
         timing = pipeline_result.timing
         timing["total"] = time.time() - frontend_time
 
-        # ---- 生成回答 ----
-        # 每个 sub_question 单独 generate（内部 chunks 已合并去重 + 独立 rerank）
-        answers: List[str] = []
+        # ---- 生成回答（多子问句合并逻辑）----
+        answer = None
+        usage = TokenUsage(prompt_tokens=0, completion_tokens=0, total_tokens=0)
 
-        understanding = pipeline_result.understanding_result
-        for sq in understanding.sub_queries:
-            sq_chunks = pipeline_result.per_sub_question_chunks.get(sq.query, [])
-            if not sq_chunks:
-                continue
+        if pipeline_result.chunks:
+            understanding = pipeline_result.understanding_result
+            sub_queries = understanding.sub_queries if understanding else []
 
-            gen_kwargs = {
-                "query": sq.query,
-                "chunks": sq_chunks,
-                "chat_history": None,
-                "query_intent": sq.intent,
-            }
-            sq_spec = pipeline_result.per_sub_question_spec_context.get(sq.query)
-            if sq_spec:
-                gen_kwargs["spec_context"] = sq_spec
-            sq_constraints = pipeline_result.per_sub_question_generation_constraints.get(sq.query, [])
-            if sq_constraints:
-                gen_kwargs["generation_constraints"] = sq_constraints
+            if len(sub_queries) == 1:
+                # 单子问句：直接生成
+                sq = sub_queries[0]
+                sq_chunks = pipeline_result.per_sub_question_chunks.get(sq.query, pipeline_result.chunks)
+                sq_spec = pipeline_result.per_sub_question_spec_context.get(sq.query, "")
+                sq_constraints = pipeline_result.per_sub_question_generation_constraints.get(sq.query, [])
+                answer, usage = generation_svc.generate(
+                    query=request.query,
+                    chunks=sq_chunks,
+                    query_intent=sq.intent,
+                    spec_context=sq_spec,
+                    generation_constraints=sq_constraints,
+                )
+            else:
+                # 多子问句：逐条生成 → 合并 → 整合生成
+                merged_answers = []
+                all_chunks = []
+                for sq in sub_queries:
+                    sq_chunks = pipeline_result.per_sub_question_chunks.get(sq.query, [])
+                    if not sq_chunks:
+                        continue
+                    all_chunks.extend(sq_chunks)
+                    sq_spec = pipeline_result.per_sub_question_spec_context.get(sq.query, "")
+                    sq_constraints = pipeline_result.per_sub_question_generation_constraints.get(sq.query, [])
+                    sub_answer, sub_usage = generation_svc.generate(
+                        query=sq.query,
+                        chunks=sq_chunks,
+                        query_intent=sq.intent,
+                        spec_context=sq_spec,
+                        generation_constraints=sq_constraints,
+                    )
+                    merged_answers.append(f"【{sq.query}】\n{sub_answer}")
 
-            a, _ = generation_svc.generate(**gen_kwargs)
-            answers.append(f"【{sq.query}】\n{a}")
+                if merged_answers:
+                    # 整合生成
+                    integrated = "\n\n---\n\n".join(merged_answers)
+                    answer, usage = generation_svc.generate(
+                        query=request.query,
+                        chunks=all_chunks,
+                        spec_context="",
+                    )
+                    # 使用整合 prompt
+                    system_prompt, user_prompt = generation_svc._build_integration_prompt(
+                        original_query=request.query,
+                        merged_answers=integrated,
+                    )
+                    messages = [
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": user_prompt},
+                    ]
+                    # 直接调用 LLM 做整合
+                    import openai
+                    from config import settings
+                    if settings.deepseek_api_key:
+                        client = openai.OpenAI(
+                            api_key=settings.deepseek_api_key,
+                            base_url=settings.deepseek_base_url,
+                        )
+                        response = client.chat.completions.create(
+                            model=settings.deepseek_model,
+                            messages=messages,
+                            temperature=0.3,
+                            max_tokens=2000,
+                        )
+                        answer = response.choices[0].message.content
+                        usage = TokenUsage(
+                            prompt_tokens=response.usage.prompt_tokens,
+                            completion_tokens=response.usage.completion_tokens,
+                            total_tokens=response.usage.total_tokens,
+                        )
 
-        if not answers:
+        if not answer:
             raise HTTPException(
                 status_code=404,
                 detail="未找到相关内容，请尝试其他问题或上传相关文档",
             )
-
-        answer = "\n\n---\n\n".join(answers)
-        usage = TokenUsage(prompt_tokens=0, completion_tokens=0, total_tokens=0)
 
         # 构建响应
         sources = chunks_to_sources(pipeline_result.chunks)
 
         logger.info(
             f"问答成功: query='{request.query}', "
-            f"sub_queries={len(understanding.sub_queries)}, "
+            f"sub_queries={len(sub_queries)}, "
             f"chunks={len(sources)}, "
             f"time={timing.get('total', 0):.1f}s"
         )

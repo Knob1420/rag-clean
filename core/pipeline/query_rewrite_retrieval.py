@@ -3,6 +3,8 @@ Query Rewrite + Retrieval Pipeline
 
 基于 QueryRewriteServiceV2 + RetrievalService 的串联 pipeline
 支持 Intent 路由：high confidence 时使用不同策略
+
+流程：Query Understanding → Query Rewrite → 混合检索 → Rerank
 """
 
 from typing import Any, Dict, List, Optional, Tuple
@@ -10,6 +12,10 @@ from typing import Any, Dict, List, Optional, Tuple
 from loguru import logger
 
 from core.query_engineer.query_rewrite import QueryRewriteServiceV2, RewrittenQueryV2
+from core.query_engineer.query_understanding import (
+    QueryUnderstandingService,
+    QueryUnderstandingResult,
+)
 from core.retrieve.retrieval import RetrievalService, RetrievalOptions
 from core.retrieve.retrieval_models import RetrievedChunk
 from core.router import RoutingResult
@@ -22,29 +28,38 @@ class PipelineResult:
     def __init__(
         self,
         original_query: str,
+        understanding_result: Optional[QueryUnderstandingResult],
         rewritten_queries: List[str],
         chunks: List[RetrievedChunk],
-        per_query_chunks: Dict[str, List[RetrievedChunk]],
+        per_sub_question_chunks: Dict[str, List[RetrievedChunk]],
+        rq_intent_map: Dict[str, str],
         total: int,
         timing: dict,
         routing_result: Optional[RoutingResult] = None,
-        per_query_bm25_chunks: Optional[Dict[str, List[RetrievedChunk]]] = None,
-        per_query_vector_chunks: Optional[Dict[str, List[RetrievedChunk]]] = None,
         extracted_params: Optional[Dict[str, Any]] = None,
         spec_context: str = "",
+        per_sub_question_spec_context: Optional[Dict[str, str]] = None,
+        per_sub_question_generation_constraints: Optional[Dict[str, List[str]]] = None,
         intent: str = "",
     ):
         self.original_query = original_query
+        self.understanding_result = understanding_result
         self.rewritten_queries = rewritten_queries
         self.chunks = chunks
-        self.per_query_chunks = per_query_chunks
+        # per_sub_question_chunks: key = sub_question 字符串, value = 该 sub_question 合并去重 + 独立 rerank 后的 chunks
+        self.per_sub_question_chunks = per_sub_question_chunks
+        # rq_intent_map: key = rewritten_query 字符串, value = 所属 sub_question 的 intent
+        self.rq_intent_map = rq_intent_map
         self.total = total
         self.timing = timing
         self.routing_result = routing_result
-        self.per_query_bm25_chunks = per_query_bm25_chunks or {}
-        self.per_query_vector_chunks = per_query_vector_chunks or {}
         self.extracted_params = extracted_params or {}
+        # spec_context: 兼容旧代码，取第一条 sub_question 的结构化上下文
         self.spec_context = spec_context
+        # per_sub_question_spec_context: key = sub_question 字符串, value = 该 sub_question 的结构化上下文
+        self.per_sub_question_spec_context = per_sub_question_spec_context or {}
+        # per_sub_question_generation_constraints: key = sub_question 字符串, value = 该 sub_question 的生成约束
+        self.per_sub_question_generation_constraints = per_sub_question_generation_constraints or {}
         self.intent = intent
 
     @property
@@ -54,9 +69,9 @@ class PipelineResult:
 
     def __repr__(self):
         return (
-            f"PipelineResult(queries={self.rewritten_queries}, "
-            f"chunks={len(self.chunks)}, total={self.total}, "
-            f"intent={self.intent}, conf={self.intent_confidence:.2f})"
+            f"PipelineResult(query={self.original_query[:30]!r}..., "
+            f"sub_questions={len(self.understanding_result.sub_queries) if self.understanding_result else 0}, "
+            f"chunks={len(self.chunks)}, intent={self.intent})"
         )
 
 
@@ -67,9 +82,13 @@ class QueryRewriteRetrievalPipeline:
         self,
         retrieval_service: Optional[RetrievalService] = None,
         query_rewrite_service: Optional[QueryRewriteServiceV2] = None,
+        query_understanding_service: Optional[QueryUnderstandingService] = None,
     ):
         self.retrieval = retrieval_service or RetrievalService()
         self.query_rewrite = query_rewrite_service or QueryRewriteServiceV2()
+        self.query_understanding = (
+            query_understanding_service or QueryUnderstandingService()
+        )
 
     def run(
         self,
@@ -84,148 +103,189 @@ class QueryRewriteRetrievalPipeline:
         """
         执行 Query Rewrite + Retrieval pipeline
 
+        流程：
+        1. Query Understanding（多问句拆分 + 意图分类）
+        2. Query Rewrite（每条子问句重写）
+        3. 混合检索 + Rerank（每条 sub_question 独立 rerank）
+
         Args:
             query: 用户原始查询
             top_k: 检索返回数量
-            use_rewrite: 是否使用 Query Rewrite（默认 True，LLM 判断意图）
+            use_rewrite: 是否使用 Query Rewrite（默认 True）
             use_rerank: 是否使用 Rerank
             rerank_top_k: Rerank 后保留数量
-            dataset_ids: 按数据集 ID 列表筛选（如 ["products", "contracts"]）
-            use_rewrite: 是否使用 Query Rewrite（默认 True，LLM 判断意图）
-            use_rerank: 是否使用 Rerank
-            rerank_top_k: Rerank 后保留数量
+            dataset_ids: 按数据集 ID 列表筛选
 
         Returns:
-            PipelineResult: 包含原始查询、重写后的查询、检索结果等
+            PipelineResult
         """
         import time
 
         timing = {}
 
-        # 0. Query Rewrite（LLM 判断意图 + 提取参数）
+        # 0. Query Understanding（前置：多问句拆分 + 意图分类）
         t0 = time.time()
-        if use_rewrite:
-            rewrite_result = self.query_rewrite.rewrite(query)
-        else:
-            rewrite_result = RewrittenQueryV2(
-                original_query=query,
-                intent="lookup",
-                transform_strategy="direct",
-                rewritten_queries=[query],
-            )
+        understanding = self.query_understanding.parse(query)
+        timing["understanding"] = time.time() - t0
+
+        # 1. Query Rewrite（每条子问句单独 rewrite，建立 sub_question → rewrite 结果映射）
+        t0 = time.time()
+        sub_questions = understanding.sub_queries
+
+        rewritten_queries: List[str] = []
+        sub_question_rewrite_map: Dict[str, RewrittenQueryV2] = {}  # key = sub_question.query
+
+        for sq in sub_questions:
+            if use_rewrite:
+                rr = self.query_rewrite.rewrite(sq.query, sq.intent)
+            else:
+                rr = RewrittenQueryV2(
+                    original_query=sq.query,
+                    intent=sq.intent,
+                    transform_strategy="direct",
+                    rewritten_queries=[sq.query],
+                )
+            rewritten_queries.extend(rr.rewritten_queries)
+            sub_question_rewrite_map[sq.query] = rr
+
         timing["rewrite"] = time.time() - t0
 
-        # 记录 intent（如果有）
+        # 构建 rq → intent 映射（用于 generation 时按 intent 选模板）
+        rq_intent_map: Dict[str, str] = {}
+        for sq in sub_questions:
+            rr = sub_question_rewrite_map.get(sq.query)
+            for rq in (rr.rewritten_queries if rr else [sq.query]):
+                rq_intent_map[rq] = sq.intent
+
+        # 记录 intent（取第一条子问句的 intent 作为主 intent）
+        main_intent = sub_questions[0].intent if sub_questions else "lookup"
         routing_result = None
 
         # 如果只运行 query rewrite 阶段，跳过检索
         if query_rewrite_only:
             return PipelineResult(
                 original_query=query,
-                rewritten_queries=rewrite_result.rewritten_queries,
+                understanding_result=understanding,
+                rewritten_queries=rewritten_queries,
                 chunks=[],
-                per_query_chunks={},
+                per_sub_question_chunks={},
+                rq_intent_map=rq_intent_map,
                 total=0,
                 timing=timing,
                 routing_result=routing_result,
-                per_query_bm25_chunks={},
-                per_query_vector_chunks={},
-                extracted_params=rewrite_result.extracted_params,
+                extracted_params={},
                 spec_context="",
-                intent=rewrite_result.intent,
+                per_sub_question_spec_context={},
+                per_sub_question_generation_constraints={},
+                intent=main_intent,
             )
 
-        # 2. Retrieval（处理多个 rewritten_queries）
+        # 2. Retrieval（每条 sub_question 独立 retrieve → merge → rerank）
         t0 = time.time()
         all_chunks: List[RetrievedChunk] = []
         seen_chunk_ids = set()
-        per_query_chunks: Dict[str, List[RetrievedChunk]] = {}  # 每个 query 的检索结果
-        per_query_bm25_chunks: Dict[str, List[RetrievedChunk]] = {}
-        per_query_vector_chunks: Dict[str, List[RetrievedChunk]] = {}
+        per_sub_question_chunks: Dict[str, List[RetrievedChunk]] = {}
 
-        # 先收集各查询的 hybrid+RRF 结果（不 rerank）
-        query_results: List[Tuple[str, List[RetrievedChunk]]] = []
-        for rewritten_query in rewrite_result.rewritten_queries:
-            options = RetrievalOptions(
-                top_k=top_k,
-                use_rerank=False,
-                dataset_ids=dataset_ids,
-            )
-            # 分别执行 BM25 和 vector，保留分开的结果
-            bm25_chunks = self.retrieval._bm25_search(rewritten_query, options)
-            vector_chunks = self.retrieval._vector_search(rewritten_query, options)
+        for sq in sub_questions:
+            rr = sub_question_rewrite_map.get(sq.query)
+            rq_list = rr.rewritten_queries if rr else [sq.query]
 
-            # 融合
-            rrf_results = self.retrieval.rrf.fuse(
-                bm25_results=[(c, i) for i, c in enumerate(bm25_chunks)],
-                vector_results=[(c, i) for i, c in enumerate(vector_chunks)],
-            )
-            fused_chunks = []
-            for chunk, fused_score in rrf_results:
-                chunk.score = fused_score
-                fused_chunks.append(chunk)
+            # 该 sub_question 下所有 rewritten_query 的 chunks 合并去重（rerank 前）
+            sq_chunks: List[RetrievedChunk] = []
+            sq_seen = set()
 
-            query_results.append((rewritten_query, fused_chunks))
-            per_query_chunks[rewritten_query] = fused_chunks
-            per_query_bm25_chunks[rewritten_query] = bm25_chunks
-            per_query_vector_chunks[rewritten_query] = vector_chunks
+            for rq in rq_list:
+                options = RetrievalOptions(
+                    top_k=top_k,
+                    use_rerank=False,
+                    dataset_ids=dataset_ids,
+                )
+                bm25_chunks = self.retrieval._bm25_search(rq, options)
+                vector_chunks = self.retrieval._vector_search(rq, options)
 
-        # 合并所有查询结果（去重，保持顺序）
-        # 确保每个 sub_query 至少有 top_k_per_query 个候选
-        top_k_per_query = max(1, rerank_top_k // len(query_results) if query_results else 1)
-        for query, chunks in query_results:
-            for chunk in chunks[:top_k_per_query]:
+                # RRF 融合
+                rrf_results = self.retrieval.rrf.fuse(
+                    bm25_results=[(c, i) for i, c in enumerate(bm25_chunks)],
+                    vector_results=[(c, i) for i, c in enumerate(vector_chunks)],
+                )
+                fused_chunks = []
+                for chunk, fused_score in rrf_results:
+                    chunk.score = fused_score
+                    fused_chunks.append(chunk)
+
+                # 合并去重（该 sub_question 内）
+                top_k_per_rq = max(1, (rerank_top_k or top_k) // max(len(rq_list), 1))
+                for chunk in fused_chunks[:top_k_per_rq]:
+                    if chunk.chunk_id not in sq_seen:
+                        sq_chunks.append(chunk)
+                        sq_seen.add(chunk.chunk_id)
+
+            # 该 sub_question 独立 rerank
+            if use_rerank and sq_chunks:
+                sq_chunks = self.retrieval._rerank(
+                    sq.query,
+                    sq_chunks,
+                    RetrievalOptions(
+                        top_k=top_k,
+                        rerank_top_k=rerank_top_k or top_k,
+                        dataset_ids=dataset_ids,
+                    ),
+                )
+
+            per_sub_question_chunks[sq.query] = sq_chunks
+
+            # 汇总到 all_chunks
+            for chunk in sq_chunks:
                 if chunk.chunk_id not in seen_chunk_ids:
                     all_chunks.append(chunk)
                     seen_chunk_ids.add(chunk.chunk_id)
-            # 如果 top_k_per_query 之外还有不重复的，也加入（保证更多候选）
-            for chunk in chunks[top_k_per_query:]:
-                if chunk.chunk_id not in seen_chunk_ids:
-                    all_chunks.append(chunk)
-                    seen_chunk_ids.add(chunk.chunk_id)
-
-        # 最后统一做一次 rerank（使用原始 query）
-        if use_rerank and all_chunks:
-            all_chunks = self.retrieval._rerank(
-                query,
-                all_chunks,
-                RetrievalOptions(top_k=top_k, rerank_top_k=rerank_top_k or top_k, dataset_ids=dataset_ids),
-            )
-
-        # TODO: 暂时不使用 parent context injection，直接用 child chunk
-        # store = get_store()
-        # all_chunks = _inject_parent_context(all_chunks, store)
 
         timing["retrieve"] = time.time() - t0
 
-        # 3. 结构化参数查询（如果需要）
+        # 3. 结构化参数查询（每条 sub_question 独立查询）
         spec_context = ""
-        if rewrite_result.target_models or rewrite_result.required_fields:
-            spec_results = query_products(
-                target_models=rewrite_result.target_models,
-                required_fields=rewrite_result.required_fields,
-                numerical_constraints=rewrite_result.numerical_constraints,
-            )
-            spec_context = format_spec_context(spec_results, rewrite_result.intent)
-            logger.info(f"[Pipeline] 结构化查询结果: {len(spec_results)} 个产品匹配")
+        per_sub_question_spec_context: Dict[str, str] = {}
+        for sq in sub_questions:
+            rr = sub_question_rewrite_map.get(sq.query)
+            if rr and (rr.entities or rr.required_fields):
+                spec_results = query_products(
+                    target_models=rr.entities,
+                    required_fields=rr.required_fields,
+                    numerical_constraints=rr.numerical_constraints,
+                )
+                sq_spec = format_spec_context(spec_results, sq.intent)
+                per_sub_question_spec_context[sq.query] = sq_spec
+                logger.info(
+                    f"[Pipeline] sub_question='{sq.query}' 结构化查询: {len(spec_results)} 个产品匹配"
+                )
+        # 兼容旧代码：spec_context 取第一条 sub_question 的结果
+        if per_sub_question_spec_context and sub_questions:
+            spec_context = per_sub_question_spec_context.get(sub_questions[0].query, "")
+
+        # 构建 per_sub_question_generation_constraints
+        per_sub_question_generation_constraints: Dict[str, List[str]] = {}
+        for sq in sub_questions:
+            per_sub_question_generation_constraints[sq.query] = sq.generation_constraints
 
         logger.info(
             f"[Pipeline] 完成: original_query='{query}', "
-            f"rewritten_queries={rewrite_result.rewritten_queries}, "
+            f"sub_questions={len(sub_questions)}, rewritten={len(rewritten_queries)}, "
             f"total_chunks={len(all_chunks)}"
         )
 
         return PipelineResult(
             original_query=query,
-            rewritten_queries=rewrite_result.rewritten_queries,
+            understanding_result=understanding,
+            rewritten_queries=rewritten_queries,
             chunks=all_chunks,
-            per_query_chunks=per_query_chunks,
+            per_sub_question_chunks=per_sub_question_chunks,
+            rq_intent_map=rq_intent_map,
             total=len(all_chunks),
             timing=timing,
             routing_result=routing_result,
-            per_query_bm25_chunks=per_query_bm25_chunks,
-            per_query_vector_chunks=per_query_vector_chunks,
-            extracted_params=rewrite_result.extracted_params,
+            extracted_params=sub_question_rewrite_map.get(sub_questions[0].query, RewrittenQueryV2()).extracted_params if sub_questions else {},
             spec_context=spec_context,
-            intent=rewrite_result.intent,
+            per_sub_question_spec_context=per_sub_question_spec_context,
+            per_sub_question_generation_constraints=per_sub_question_generation_constraints,
+            intent=main_intent,
         )

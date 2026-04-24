@@ -14,7 +14,7 @@ RAG API 服务 — FastAPI 接口
 
 import json
 import time
-from typing import Optional
+from typing import Optional, List, Any
 
 import httpx
 import uvicorn
@@ -25,8 +25,8 @@ from loguru import logger
 
 from config import settings
 from core.generation import get_generation_service
-from core.query_engineer.query_rewrite import get_query_rewrite_service, RewrittenQuery
-from core.retrieve.retrieval import get_retrieval_service
+from core.pipeline.query_rewrite_retrieval import QueryRewriteRetrievalPipeline
+from core.query_engineer.query_rewrite import QueryRewriteServiceV2
 from core.retrieve.retrieval_models import (
     ChatRequest,
     ChatResponse,
@@ -38,8 +38,8 @@ from core.retrieve.retrieval_models import (
     SourceInfo,
     TokenUsage,
 )
-from store import get_store
 from core.products.specs_service import query_specs, get_specs
+from store import get_store
 
 
 # ============================================================
@@ -163,133 +163,71 @@ async def chat_completion(request: ChatRequest):
     """
     RAG 知识库问答接口
 
-    流程：Query Rewrite → 混合检索 → Rerank → LLM 生成回答
+    流程：Query Understanding → Query Rewrite → 混合检索 → Rerank → LLM 生成回答
     """
     timing = {}
     frontend_time = time.time()
 
     try:
-        retrieval_svc = get_retrieval_service()
-        rewrite_svc = get_query_rewrite_service()
         generation_svc = get_generation_service()
+        pipeline = QueryRewriteRetrievalPipeline()
+        query_rewrite_svc = QueryRewriteServiceV2()
 
-        # ---- 1. Query Rewrite ----
-        rewritten: Optional[RewrittenQuery] = None
-        timing["query_rewrite"] = 0
+        # ---- Query Rewrite + Retrieval Pipeline（内含 Query Understanding）----
+        t0 = time.time()
+        pipeline_result = pipeline.run(
+            query=request.query,
+            top_k=request.top_k,
+            use_rewrite=request.use_rewrite,
+            use_rerank=request.use_rerank,
+            rerank_top_k=request.rerank_top_k,
+        )
+        timing = pipeline_result.timing
+        timing["total"] = time.time() - frontend_time
 
-        if request.use_rewrite:
-            t0 = time.time()
-            rewritten = rewrite_svc.rewrite(request.query)
-            timing["query_rewrite"] = time.time() - t0
+        # ---- 生成回答 ----
+        # 每个 sub_question 单独 generate（内部 chunks 已合并去重 + 独立 rerank）
+        answers: List[str] = []
 
-            # 解析 intent_type: 支持逗号分隔多值
-            intent_types = None
-            if rewritten.intent_type and rewritten.intent_type != "other":
-                intent_types = [
-                    t.strip() for t in rewritten.intent_type.split(",") if t.strip()
-                ]
+        understanding = pipeline_result.understanding_result
+        for sq in understanding.sub_queries:
+            sq_chunks = pipeline_result.per_sub_question_chunks.get(sq.query, [])
+            if not sq_chunks:
+                continue
 
-            options = RetrievalOptions(
-                top_k=request.top_k,
-                target_models=(
-                    rewritten.target_entities if rewritten.target_entities else None
-                ),
-                keywords=rewritten.keywords if rewritten.keywords else None,
-                chunk_types=intent_types,
-                use_rerank=request.use_rerank,
-                rerank_top_k=request.rerank_top_k,
-                min_score=request.min_score,
-            )
-            search_query = rewritten.rewritten_query
+            gen_kwargs = {
+                "query": sq.query,
+                "chunks": sq_chunks,
+                "chat_history": None,
+                "query_intent": sq.intent,
+            }
+            sq_spec = pipeline_result.per_sub_question_spec_context.get(sq.query)
+            if sq_spec:
+                gen_kwargs["spec_context"] = sq_spec
+            sq_constraints = pipeline_result.per_sub_question_generation_constraints.get(sq.query, [])
+            if sq_constraints:
+                gen_kwargs["generation_constraints"] = sq_constraints
 
-            # 三路分流: direct / parallel / sequential
-            strategy = getattr(rewritten, "strategy", "direct")
+            a, _ = generation_svc.generate(**gen_kwargs)
+            answers.append(f"【{sq.query}】\n{a}")
 
-            if strategy == "direct":
-                # 直接检索（simple 或 strategy=direct）
-                logger.info(f"[路由] strategy=direct → 普通混合检索")
-                retrieval_result = retrieval_svc.search(
-                    query=search_query,
-                    options=options,
-                    use_hybrid=True,
-                )
-
-            elif strategy == "parallel" and rewritten.sub_queries:
-                # 独立子查询 → search_routed 并行检索
-                logger.info(
-                    f"[路由] strategy=parallel → search_routed "
-                    f"({len(rewritten.sub_queries)} sub_queries)"
-                )
-                retrieval_result = retrieval_svc.search_routed(
-                    rewritten_query=rewritten.rewritten_query,
-                    sub_queries=rewritten.sub_queries,
-                    options=options,
-                )
-
-            else:
-                # 多步推理 → ReAct（限制轮次）
-                logger.info(f"[路由] strategy=sequential → ReAct")
-                react_svc = get_react_reasoning_service()
-                retrieval_result = react_svc.reason(
-                    original_query=request.query,
-                    rewritten=rewritten,
-                    options=options,
-                )
-        else:
-            options = RetrievalOptions(
-                top_k=request.top_k,
-                use_rerank=request.use_rerank,
-                rerank_top_k=request.rerank_top_k,
-                min_score=request.min_score,
-            )
-            search_query = request.query
-
-            retrieval_result = retrieval_svc.search(
-                query=search_query,
-                options=options,
-                use_hybrid=True,
-            )
-
-        # 合并检索时间
-        timing.update(retrieval_result.timing)
-        chunks = retrieval_result.chunks
-
-        if not chunks:
+        if not answers:
             raise HTTPException(
-                status_code=404, detail="未找到相关内容，请尝试其他问题或上传相关文档"
+                status_code=404,
+                detail="未找到相关内容，请尝试其他问题或上传相关文档",
             )
 
-        # ---- 2. 生成回答 ----
-        gen_kwargs = {
-            "query": request.query,
-            "chunks": chunks,
-            "chat_history": None,
-        }
-        if rewritten:
-            gen_kwargs["query_intent"] = rewritten.intent_type
-            gen_kwargs["query_entities"] = rewritten.entities
-
-        gen_start = time.time()
-        answer, usage = generation_svc.generate(**gen_kwargs)
-        timing["generation"] = time.time() - gen_start
-
-        # 总时间
-        total_time = time.time() - frontend_time
-        timing["total"] = total_time
-
-        # 记录请求参数到 timing（用于日志）
-        timing["top_k"] = request.top_k
-        timing["use_rerank"] = request.use_rerank
-        timing["rerank_top_k"] = request.rerank_top_k or len(chunks)
+        answer = "\n\n---\n\n".join(answers)
+        usage = TokenUsage(prompt_tokens=0, completion_tokens=0, total_tokens=0)
 
         # 构建响应
-        sources = chunks_to_sources(chunks)
+        sources = chunks_to_sources(pipeline_result.chunks)
 
         logger.info(
             f"问答成功: query='{request.query}', "
-            f"chunks={len(chunks)}, "
-            f"tokens={usage.total_tokens}, "
-            f"time={total_time:.1f}s"
+            f"sub_queries={len(understanding.sub_queries)}, "
+            f"chunks={len(sources)}, "
+            f"time={timing.get('total', 0):.1f}s"
         )
 
         return ChatResponse(
@@ -297,7 +235,7 @@ async def chat_completion(request: ChatRequest):
             sources=sources,
             time=timing,
             usage=usage,
-            chunks_count=len(chunks),
+            chunks_count=len(sources),
         )
 
     except HTTPException:

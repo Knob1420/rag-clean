@@ -200,7 +200,7 @@ class RewrittenQueryV2(BaseModel):
     rewritten_queries: List[str] = Field(default_factory=list)
 
     # LLM 判断后的结构化结果
-    target_models: List[str] = Field(default_factory=list)  # 产品型号列表
+    entities: List[str] = Field(default_factory=list)  # 主要实体（产品型号/文档名/合作单位等）
     required_fields: List[str] = Field(default_factory=list)  # 关心的参数字段
     numerical_constraints: Dict[str, str] = Field(default_factory=dict)  # 数值约束，格式 {"重量": "<=3.0"}
 
@@ -319,34 +319,37 @@ Output JSON:
         # 解析 constraints（格式：{"重量": "<=3.0"} 或 {"重量": {"operator": "<=", "value": 3.0}}）
         constraints_raw = result.get("constraints", {})
         numerical_constraints = {}
-        for field, op_val in constraints_raw.items():
-            if isinstance(op_val, dict):
-                op = op_val.get("operator", "<=")
-                val = op_val.get("value", "")
-            else:
-                # 直接是字符串格式如 "<=3.0"
-                val = str(op_val)
-                op = ""
-            if op:
-                numerical_constraints[field] = f"{op}{val}"
-            else:
-                numerical_constraints[field] = val
+        if isinstance(constraints_raw, dict):
+            for field, op_val in constraints_raw.items():
+                if isinstance(op_val, dict):
+                    op = op_val.get("operator", "<=")
+                    val = op_val.get("value", "")
+                else:
+                    # 直接是字符串格式如 "<=3.0"
+                    val = str(op_val)
+                    op = ""
+                if op:
+                    numerical_constraints[field] = f"{op}{val}"
+                else:
+                    numerical_constraints[field] = val
+        elif isinstance(constraints_raw, list):
+            # LLM 有时返回 list 而非 dict，忽略
+            pass
 
-        # 提取字段
         rewritten = RewrittenQueryV2(
             original_query=query,
             intent=intent,
-            rewritten_queries=result.get("search_queries", []),
-            target_models=result.get("target_models", []),
-            required_fields=result.get("required_fields", []),
+            rewritten_queries=result.get("search_queries") if isinstance(result.get("search_queries"), list) else [],
+            entities=result.get("entities") if isinstance(result.get("entities"), list) else [],
+            required_fields=result.get("required_fields") if isinstance(result.get("required_fields"), list) else [],
             numerical_constraints=numerical_constraints,
-            extracted_params=result.get("extracted_params", {}),
+            extracted_params=result.get("extracted_params") if isinstance(result.get("extracted_params"), dict) else {},
         )
 
         logger.info(
             f"[Query Rewrite V2] 完成: intent={rewritten.intent}, "
             f"rewritten_queries={rewritten.rewritten_queries}, "
-            f"target_models={rewritten.target_models}, "
+            f"entities={rewritten.entities}, "
             f"constraints={rewritten.numerical_constraints}"
         )
         return rewritten

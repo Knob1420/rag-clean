@@ -107,8 +107,12 @@ class GenerationService:
         chunks: List[RetrievedChunk],
         query_intent: Optional[str] = None,
         spec_context: str = "",
+        generation_constraints: Optional[List[str]] = None,
     ) -> Tuple[str, str]:
         """构建 RAG Prompt（根据 intent 选择不同模板）"""
+        if generation_constraints is None:
+            generation_constraints = []
+
         context = self._build_context(query, chunks, spec_context=spec_context)
         intent_context = self._build_intent_context(query_intent)
 
@@ -147,6 +151,11 @@ class GenerationService:
                 query=query,
             )
 
+        # 追加生成约束（翻译、字数限制等）
+        if generation_constraints:
+            constraint_str = "\n".join([f"- {c}" for c in generation_constraints])
+            user_prompt += f"\n\n【回答格式要求】\n{constraint_str}"
+
         return system_prompt, user_prompt
 
     def _build_intent_context(
@@ -174,6 +183,7 @@ class GenerationService:
         chunks: List[RetrievedChunk],
         query_intent: Optional[str] = None,
         spec_context: str = "",
+        generation_constraints: Optional[List[str]] = None,
     ) -> Tuple[str, TokenUsage]:
         """
         生成 RAG 回答
@@ -182,19 +192,22 @@ class GenerationService:
             query: 用户查询
             chunks: 检索到的 chunks
             query_intent: 查询意图类型
-            query_entities: 查询实体
-            intent: 路由意图（simple_lookup/compare/recommend/aggregate）
             spec_context: 结构化产品参数字符串（来自 pipeline dual-path 检索）
+            generation_constraints: 生成约束列表（如 ["翻译成英文", "不超过50字"]）
 
         Returns:
             (回复内容, TokenUsage)
         """
+        if generation_constraints is None:
+            generation_constraints = []
+
         # 构建 Prompt
         system_prompt, user_prompt = self._build_rag_prompt(
             query=query,
             chunks=chunks,
             query_intent=query_intent,
             spec_context=spec_context,
+            generation_constraints=generation_constraints,
         )
 
         messages = [

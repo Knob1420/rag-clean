@@ -406,6 +406,7 @@ class RAGPipeline:
         query_rewrite_only: bool = False,
         dataset_ids: Optional[List[str]] = None,
         use_generation: bool = True,
+        use_dag: bool = False,
     ) -> PipelineResult:
         """
         执行 Query Rewrite + Retrieval + Generation pipeline
@@ -434,6 +435,17 @@ class RAGPipeline:
         import time
 
         timing = {}
+
+        # 如果启用 DAG 模式，走 DAG 路径
+        if use_dag:
+            return self.run_dag(
+                query=query,
+                top_k=top_k,
+                use_rerank=use_rerank,
+                rerank_top_k=rerank_top_k,
+                dataset_ids=dataset_ids,
+                use_generation=use_generation,
+            )
 
         # 0. Query Understanding（前置：多问句拆分 + 意图分类）
         t0 = time.time()
@@ -646,3 +658,130 @@ class RAGPipeline:
         result.generation_usage = generation_usage
 
         return result
+
+    def run_dag(
+        self,
+        query: str,
+        top_k: int = 20,
+        use_rerank: bool = True,
+        rerank_top_k: Optional[int] = None,
+        dataset_ids: Optional[List[str]] = None,
+        use_generation: bool = True,
+    ) -> "PipelineResult":
+        """
+        DAG 模式的 Pipeline
+
+        流程：QueryPlanner → QueryIR → DAGExecutor → Retrieval → Rerank → Generation
+        """
+        import time
+
+        timing = {}
+
+        # Step 1: QueryPlanner 生成 QueryIR
+        t0 = time.time()
+        from core.query_engineer.query_planner import QueryPlanner
+        planner = QueryPlanner()
+        query_ir = planner.plan(query)
+        timing["planning"] = time.time() - t0
+
+        # Step 2: DAGExecutor 执行
+        t0 = time.time()
+        from core.query_engineer.dag_executor import DAGExecutor
+        executor = DAGExecutor(retrieval_service=self.retrieval)
+        dag_result = executor.execute_query_ir(query_ir, top_k=top_k)
+        timing["dag_execution"] = time.time() - t0
+
+        chunks = dag_result.chunks or dag_result.filtered or []
+
+        # Step 3: 可选的 Rerank
+        if use_rerank and chunks:
+            t0 = time.time()
+            chunks = self.retrieval._rerank(
+                query,
+                chunks,
+                RetrievalOptions(
+                    top_k=top_k,
+                    rerank_top_k=rerank_top_k or top_k,
+                    dataset_ids=dataset_ids,
+                ),
+            )
+            timing["rerank"] = time.time() - t0
+
+        # Step 4: Parent 展开
+        t0 = time.time()
+        chunks = self._expand_to_parent_chunks(chunks)
+        timing["parent_expand"] = time.time() - t0
+
+        # Step 5: 结构化参数查询（复用现有 SpecMatcher）
+        spec_context = ""
+        if query_ir.entities or query_ir.required_fields:
+            spec_results = query_products(
+                target_models=query_ir.entities,
+                required_fields=query_ir.required_fields,
+                numerical_constraints={
+                    c.field: f"{c.op}{c.value}"
+                    for c in query_ir.constraints
+                    if c.type == "numeric"
+                },
+            )
+            spec_context = format_spec_context(spec_results, query_ir.intent)
+
+        # Step 6: Generation
+        generation_answer = None
+        generation_usage = None
+        if use_generation and chunks:
+            t0 = time.time()
+            try:
+                generation_svc = get_generation_service()
+                # 构建 fake understanding result（兼容现有 generation）
+                understanding = QueryUnderstandingResult(
+                    original_query=query,
+                    sub_queries=[SubQuery(query=query, intent=query_ir.intent)],
+                    generation_constraints=[],
+                )
+                # 构建 fake PipelineResult（复用 _generate）
+                temp_result = PipelineResult(
+                    original_query=query,
+                    understanding_result=understanding,
+                    rewritten_queries=[],
+                    chunks=chunks,
+                    per_sub_question_chunks={query: chunks},
+                    rq_intent_map={query: query_ir.intent},
+                    total=len(chunks),
+                    timing={},
+                    spec_context=spec_context,
+                    per_sub_question_spec_context={query: spec_context},
+                    per_sub_question_generation_constraints={},
+                    intent=query_ir.intent,
+                    per_query_bm25_chunks={},
+                    per_query_vector_chunks={},
+                    generation_answer=None,
+                    generation_usage=None,
+                )
+                answer, usage = self._generate(query, temp_result, generation_svc)
+                generation_answer = answer
+                generation_usage = usage
+            except Exception as e:
+                logger.warning(f"[Pipeline DAG] Generation failed: {e}")
+            timing["generation"] = time.time() - t0
+
+        timing["total"] = sum(timing.values())
+
+        return PipelineResult(
+            original_query=query,
+            understanding_result=None,  # DAG 模式不使用 Understand
+            rewritten_queries=[],
+            chunks=chunks,
+            per_sub_question_chunks={query: chunks},
+            rq_intent_map={},
+            total=len(chunks),
+            timing=timing,
+            spec_context=spec_context,
+            per_sub_question_spec_context={},
+            per_sub_question_generation_constraints={},
+            intent=query_ir.intent,
+            per_query_bm25_chunks={},
+            per_query_vector_chunks={},
+            generation_answer=generation_answer,
+            generation_usage=generation_usage,
+        )

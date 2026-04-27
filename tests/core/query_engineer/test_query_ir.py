@@ -1,4 +1,3 @@
-import pytest
 from core.query_engineer.query_ir import Constraint, QueryIR
 
 def test_constraint_numeric():
@@ -14,9 +13,9 @@ def test_constraint_region():
 
 def test_constraint_matches_numeric():
     c = Constraint(type="numeric", field="weight", op="<=", value=3, unit="kg")
-    assert c.matches(2.5) == True
-    assert c.matches(3.0) == True
-    assert c.matches(3.1) == False
+    assert c.matches(2.5)
+    assert c.matches(3.0)
+    assert not c.matches(3.1)
 
 def test_query_ir_full():
     ir = QueryIR(
@@ -38,7 +37,7 @@ def test_query_ir_full():
     assert ir.intent == "recommendation"
     assert len(ir.constraints) == 2
     assert "filter" in ir.operations
-    assert ir.needs_filter() == True
+    assert ir.needs_filter()
 
 def test_query_ir_helper_methods():
     ir = QueryIR(
@@ -47,6 +46,15 @@ def test_query_ir_helper_methods():
         target="test",
         operations=["filter", "expand"],
     )
-    assert ir.needs_filter() == True
-    assert ir.needs_expand() == True
-    assert ir.needs_aggregate() == False
+    assert ir.needs_filter()
+    assert ir.needs_expand()
+    assert not ir.needs_aggregate()
+
+def test_query_ir_empty_constraints():
+    ir = QueryIR(
+        original_query="test",
+        intent="lookup",
+        target="test",
+        constraints=[],
+    )
+    assert not ir.has_constraints()

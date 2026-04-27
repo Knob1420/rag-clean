@@ -82,12 +82,25 @@ FIELD_ALIAS = {
     "region": ["地区", "地域", "区域", "地点"],
 }
 
+# ── Category Expansion Map ───────────────────────────────────────────────────
+
+_CATEGORY_KEYWORDS = {
+    "太空计算组件": ["智算机", "激光通信机", "星载路由器"],
+    "太空计算产品": ["智算机", "激光通信机", "星载路由器"],
+    "产品": ["智算机", "激光通信机", "星载路由器"],
+    "智算机系列": ["NX1", "G1", "G2", "G3", "智加G3"],
+}
+
 def normalize_field(text: str) -> Optional[str]:
     text_lower = text.lower()
     for standard, aliases in FIELD_ALIAS.items():
         if text_lower in aliases or text_lower == standard:
             return standard
     return None
+
+# ── Temperature ─────────────────────────────────────────────────────────────
+
+PLANNER_TEMPERATURE = 0.1
 
 # ── QueryPlanner ────────────────────────────────────────────────────────────
 
@@ -152,7 +165,7 @@ class QueryPlanner:
                 {"role": "system", "content": PLANNER_SYSTEM_PROMPT},
                 {"role": "user", "content": PLANNER_USER_PROMPT.format(query=query)},
             ]
-            response = self.llm.call(messages, temperature=0.1)
+            response = self.llm.call(messages, temperature=PLANNER_TEMPERATURE)
             result = parse_json_response(response)
             return result
         except Exception as e:
@@ -214,15 +227,9 @@ class QueryPlanner:
 
     def _infer_expand_map(self, query: str, entities: List[str]) -> Dict[str, List[str]]:
         expand_map: Dict[str, List[str]] = {}
-        category_keywords = {
-            "太空计算组件": ["智算机", "激光通信机", "星载路由器"],
-            "太空计算产品": ["智算机", "激光通信机", "星载路由器"],
-            "产品": ["智算机", "激光通信机", "星载路由器"],
-            "智算机系列": ["NX1", "G1", "G2", "G3", "智加G3"],
-        }
         for entity in entities:
-            if entity in category_keywords:
-                expand_map[entity] = category_keywords[entity]
+            if entity in _CATEGORY_KEYWORDS:
+                expand_map[entity] = _CATEGORY_KEYWORDS[entity]
         return expand_map
 
     def _infer_dimensions(self, query: str, intent: str) -> List[str]:

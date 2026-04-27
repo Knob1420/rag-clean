@@ -1,4 +1,3 @@
-import pytest
 from unittest.mock import MagicMock
 from core.query_engineer.dag_executor import DAGExecutor, Step, Plan
 from core.query_engineer.query_ir import QueryIR, Constraint

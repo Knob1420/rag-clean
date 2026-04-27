@@ -12,13 +12,14 @@ _PROJECT_ROOT = Path(__file__).parent
 class Settings(BaseSettings):
     # ========== Elasticsearch ==========
     es_url: str = "http://localhost:9200"
-    es_index_chunks: str = "rag_chunks"
-    es_index_documents: str = "rag_documents"
+    es_index_chunks: str = "rag_chunks_new_0424"
+    # es_index_documents: str = "rag_documents"
 
     # ========== LLM ==========
     deepseek_api_key: str = ""
     deepseek_base_url: str = "https://api.deepseek.com/v1"
     deepseek_model: str = "deepseek-chat"
+    deepseek_r2_model: str = "deepseek-reasoner"
 
     # ========== Embedding ==========
     embedding_model: str = "BAAI/bge-m3"
@@ -36,12 +37,6 @@ class Settings(BaseSettings):
     # ========== 检索 ==========
     default_top_k: int = 25
     default_rerank_top_k: int = 12
-
-    # ========== ReAct 多跳推理 ==========
-    max_react_hops: int = 3  # 最大推理轮次（含 seed hop 0）
-    react_seed_top_k: int = 15  # 首轮种子检索数量
-    react_step_top_k: int = 15  # 后续轮次检索数量
-    react_consecutive_no_new: int = 1  # 连续无新结果立即停止
 
     # ========== 服务端口 ==========
     api_port: int = 8000  # 主 API 服务

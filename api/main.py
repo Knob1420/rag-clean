@@ -24,15 +24,11 @@ from fastapi.responses import StreamingResponse
 from loguru import logger
 
 from config import settings
-from core.generation import get_generation_service
-from core.pipeline.query_rewrite_retrieval import QueryRewriteRetrievalPipeline
-from core.query_engineer.query_rewrite import QueryRewriteServiceV2
+from core.pipeline.rag_pipeline import RAGPipeline
 from core.retrieve.retrieval_models import (
     ChatRequest,
     ChatResponse,
     HealthResponse,
-    HighlightOptions,
-    RetrievalOptions,
     SearchRequest,
     SearchResponse,
     SourceInfo,
@@ -79,7 +75,6 @@ def chunks_to_sources(chunks: list) -> list:
                 chunk_id=chunk.chunk_id,
                 doc_id=chunk.doc_id,
                 doc_name=chunk.doc_title or "",
-                section_title=chunk.section_title,
                 score=chunk.score,
                 snippet=snippet,
             )
@@ -102,7 +97,6 @@ async def root():
             "POST /api/v1/chat/completions": "RAG 问答",
             "POST /api/v1/search": "检索",
             "POST /api/v1/parse": "PDF 解析（代理到 MinerU）",
-            "GET /api/v1/parse/status/{parse_id}": "查询解析结果",
             "GET /api/v1/documents": "文档列表",
             "GET /health": "健康检查",
         },
@@ -165,100 +159,22 @@ async def chat_completion(request: ChatRequest):
     frontend_time = time.time()
 
     try:
-        generation_svc = get_generation_service()
-        pipeline = QueryRewriteRetrievalPipeline()
-        query_rewrite_svc = QueryRewriteServiceV2()
+        pipeline = RAGPipeline()
 
-        # ---- Query Rewrite + Retrieval Pipeline ----
-        t0 = time.time()
+        # ---- Query Rewrite + Retrieval + Generation Pipeline ----
         pipeline_result = pipeline.run(
             query=request.query,
             top_k=request.top_k,
             use_rewrite=request.use_rewrite,
             use_rerank=request.use_rerank,
             rerank_top_k=request.rerank_top_k,
+            use_generation=True,
         )
         timing = pipeline_result.timing
         timing["total"] = time.time() - frontend_time
 
-        # ---- 生成回答（多子问句合并逻辑）----
-        answer = None
-        usage = TokenUsage(prompt_tokens=0, completion_tokens=0, total_tokens=0)
-
-        if pipeline_result.chunks:
-            understanding = pipeline_result.understanding_result
-            sub_queries = understanding.sub_queries if understanding else []
-
-            if len(sub_queries) == 1:
-                # 单子问句：直接生成
-                sq = sub_queries[0]
-                sq_chunks = pipeline_result.per_sub_question_chunks.get(sq.query, pipeline_result.chunks)
-                sq_spec = pipeline_result.per_sub_question_spec_context.get(sq.query, "")
-                sq_constraints = pipeline_result.per_sub_question_generation_constraints.get(sq.query, [])
-                answer, usage = generation_svc.generate(
-                    query=request.query,
-                    chunks=sq_chunks,
-                    query_intent=sq.intent,
-                    spec_context=sq_spec,
-                    generation_constraints=sq_constraints,
-                )
-            else:
-                # 多子问句：逐条生成 → 合并 → 整合生成
-                merged_answers = []
-                all_chunks = []
-                for sq in sub_queries:
-                    sq_chunks = pipeline_result.per_sub_question_chunks.get(sq.query, [])
-                    if not sq_chunks:
-                        continue
-                    all_chunks.extend(sq_chunks)
-                    sq_spec = pipeline_result.per_sub_question_spec_context.get(sq.query, "")
-                    sq_constraints = pipeline_result.per_sub_question_generation_constraints.get(sq.query, [])
-                    sub_answer, sub_usage = generation_svc.generate(
-                        query=sq.query,
-                        chunks=sq_chunks,
-                        query_intent=sq.intent,
-                        spec_context=sq_spec,
-                        generation_constraints=sq_constraints,
-                    )
-                    merged_answers.append(f"【{sq.query}】\n{sub_answer}")
-
-                if merged_answers:
-                    # 整合生成
-                    integrated = "\n\n---\n\n".join(merged_answers)
-                    answer, usage = generation_svc.generate(
-                        query=request.query,
-                        chunks=all_chunks,
-                        spec_context="",
-                    )
-                    # 使用整合 prompt
-                    system_prompt, user_prompt = generation_svc._build_integration_prompt(
-                        original_query=request.query,
-                        merged_answers=integrated,
-                    )
-                    messages = [
-                        {"role": "system", "content": system_prompt},
-                        {"role": "user", "content": user_prompt},
-                    ]
-                    # 直接调用 LLM 做整合
-                    import openai
-                    from config import settings
-                    if settings.deepseek_api_key:
-                        client = openai.OpenAI(
-                            api_key=settings.deepseek_api_key,
-                            base_url=settings.deepseek_base_url,
-                        )
-                        response = client.chat.completions.create(
-                            model=settings.deepseek_model,
-                            messages=messages,
-                            temperature=0.3,
-                            max_tokens=2000,
-                        )
-                        answer = response.choices[0].message.content
-                        usage = TokenUsage(
-                            prompt_tokens=response.usage.prompt_tokens,
-                            completion_tokens=response.usage.completion_tokens,
-                            total_tokens=response.usage.total_tokens,
-                        )
+        answer = pipeline_result.generation_answer
+        usage = pipeline_result.generation_usage
 
         if not answer:
             raise HTTPException(
@@ -271,7 +187,7 @@ async def chat_completion(request: ChatRequest):
 
         logger.info(
             f"问答成功: query='{request.query}', "
-            f"sub_queries={len(sub_queries)}, "
+            f"rewritten_queries={pipeline_result.rewritten_queries}, "
             f"chunks={len(sources)}, "
             f"time={timing.get('total', 0):.1f}s"
         )
@@ -299,7 +215,10 @@ async def chat_completion(request: ChatRequest):
 @app.post("/api/v1/chat/stream")
 async def chat_stream(request: ChatRequest):
     """
-    流式 RAG 问答 — SSE 端点（使用 V2 Pipeline）
+    流式 RAG 问答 — SSE 端点
+
+    流程与 chat_completions 完全一致：pipeline.run(use_generation=True) 完成后，
+    将最终整合答案通过 SSE 流式推送给前端。
 
     事件格式:
     - event: sources  data: {sources: [...]}
@@ -307,32 +226,31 @@ async def chat_stream(request: ChatRequest):
     - event: done     data: {usage: {...}, time: {...}}
     - event: error    data: {error: "..."}
     """
-    from core.pipeline import QueryRewriteRetrievalPipeline
+    from core.pipeline import RAGPipeline
 
     async def event_stream():
         timing = {}
         frontend_time = time.time()
 
         try:
-            pipeline = QueryRewriteRetrievalPipeline()
-            generation_svc = get_generation_service()
+            pipeline = RAGPipeline()
 
-            # ---- 1. Query Rewrite + Retrieval (V2 Pipeline) ----
-            t0 = time.time()
+            # ---- 1. Query Rewrite + Retrieval + Generation ----
             pipeline_result = pipeline.run(
                 query=request.query,
                 top_k=request.top_k,
                 use_rewrite=request.use_rewrite,
                 use_rerank=request.use_rerank,
                 rerank_top_k=request.rerank_top_k,
+                use_generation=True,
             )
-            timing["query_rewrite"] = pipeline_result.timing.get("rewrite", 0)
-            timing["retrieve"] = pipeline_result.timing.get("retrieve", 0)
+            timing = pipeline_result.timing
+            timing["total"] = time.time() - frontend_time
 
             chunks = pipeline_result.chunks
-            spec_context = pipeline_result.spec_context
+            answer = pipeline_result.generation_answer
 
-            if not chunks:
+            if not chunks or not answer:
                 yield f"event: error\ndata: {json.dumps({'error': '未找到相关内容'}, ensure_ascii=False)}\n\n"
                 return
 
@@ -341,22 +259,9 @@ async def chat_stream(request: ChatRequest):
             sources_data = [s.model_dump() for s in sources]
             yield f"event: sources\ndata: {json.dumps({'sources': sources_data}, ensure_ascii=False)}\n\n"
 
-            # ---- 3. 流式生成 ----
-            gen_kwargs = {
-                "query": request.query,
-                "chunks": chunks,
-                "query_intent": pipeline_result.intent,
-            }
-            # 如果有结构化查询结果，追加到 context
-            if spec_context:
-                gen_kwargs["spec_context"] = spec_context
-
-            gen_start = time.time()
-            async for token in generation_svc.async_generate_stream(**gen_kwargs):
-                yield f"event: token\ndata: {json.dumps({'content': token}, ensure_ascii=False)}\n\n"
-
-            timing["generation"] = time.time() - gen_start
-            timing["total"] = time.time() - frontend_time
+            # ---- 3. 流式推送最终答案 ----
+            for char in answer:
+                yield f"event: token\ndata: {json.dumps({'content': char}, ensure_ascii=False)}\n\n"
 
             # ---- 4. 发送 done 事件 ----
             yield f"event: done\ndata: {json.dumps({'time': timing, 'chunks_count': len(chunks)}, ensure_ascii=False)}\n\n"
@@ -426,22 +331,6 @@ async def parse_pdf(file: UploadFile = File(..., description="PDF 文件")):
         raise HTTPException(status_code=e.response.status_code, detail=e.response.text)
 
 
-@app.get("/api/v1/parse/status/{parse_id}")
-async def get_parse_status(parse_id: str):
-    """查询 PDF 解析结果"""
-    try:
-        async with httpx.AsyncClient(timeout=10.0) as client:
-            resp = await client.get(
-                f"http://localhost:{settings.mineru_port}/parse/{parse_id}"
-            )
-            resp.raise_for_status()
-            return resp.json()
-    except httpx.ConnectError:
-        raise HTTPException(status_code=503, detail="MinerU 服务未启动")
-    except httpx.HTTPStatusError as e:
-        raise HTTPException(status_code=e.response.status_code, detail=e.response.text)
-
-
 # ============================================================
 # 检索接口
 # ============================================================
@@ -449,121 +338,47 @@ async def get_parse_status(parse_id: str):
 
 @app.post("/api/v1/search", response_model=SearchResponse)
 async def search(request: SearchRequest):
-    """检索接口（可选 Query Rewrite）"""
-    import time as _time
-
+    """检索接口 — 使用 RAGPipeline，支持 Query Understand + Query Rewrite 开关"""
     try:
-        retrieval_svc = get_retrieval_service()
-        timing = {}
+        pipeline = RAGPipeline()
 
-        # ---- Query Rewrite（可选） ----
-        rewritten = None
-        rewrite_data = None
-        search_query = request.query
+        # ---- Query Understand + Rewrite + Retrieval ----
+        pipeline_result = pipeline.run(
+            query=request.query,
+            top_k=request.top_k,
+            use_understand=request.use_understand,
+            use_rewrite=request.use_rewrite,
+            use_rerank=request.use_rerank,
+            rerank_top_k=request.rerank_top_k,
+            use_generation=False,
+            query_rewrite_only=False,
+        )
 
-        if request.use_rewrite:
-            t0 = _time.time()
-            rewrite_svc = get_query_rewrite_service()
-            rewritten = rewrite_svc.rewrite(request.query)
-            timing["query_rewrite"] = _time.time() - t0
+        chunks = pipeline_result.chunks
 
-            rewrite_data = {
-                "original_query": rewritten.original_query,
-                "rewritten_query": rewritten.rewritten_query,
-                "strategy": rewritten.strategy,
-                "intent_type": rewritten.intent_type,
-                "target_entities": rewritten.target_entities,
-                "keywords": rewritten.keywords,
-                "sub_queries": rewritten.sub_queries,
-            }
-
-            search_query = rewritten.rewritten_query
-
-            # 构建 options（含 rewrite 提取的实体、关键词、意图）
-            intent_types = None
-            if rewritten.intent_type and rewritten.intent_type != "other":
-                intent_types = [
-                    t.strip() for t in rewritten.intent_type.split(",") if t.strip()
-                ]
-
-            options = RetrievalOptions(
-                top_k=request.top_k,
-                target_models=(
-                    rewritten.target_entities if rewritten.target_entities else None
-                ),
-                keywords=rewritten.keywords if rewritten.keywords else None,
-                chunk_types=intent_types,
-                use_rerank=request.use_rerank,
-                min_score=request.min_score,
-            )
-
-            # 三路路由
-            strategy = rewritten.strategy
-            if strategy == "sequential":
-                react_svc = get_react_reasoning_service()
-                result = react_svc.reason(
-                    original_query=request.query,
-                    rewritten=rewritten,
-                    options=options,
-                )
-            elif strategy == "parallel" and rewritten.sub_queries:
-                result = retrieval_svc.search_routed(
-                    rewritten_query=rewritten.rewritten_query,
-                    sub_queries=rewritten.sub_queries,
-                    options=options,
-                )
-            else:
-                result = retrieval_svc.search(
-                    query=search_query,
-                    options=options,
-                    use_hybrid=True,
-                )
-        else:
-            options = RetrievalOptions(
-                top_k=request.top_k,
-                use_rerank=request.use_rerank,
-                min_score=request.min_score,
-            )
-            result = retrieval_svc.search(
-                query=search_query,
-                options=options,
-                use_hybrid=True,
-            )
-
-        timing.update(result.timing)
-
-        # 批量获取 doc_id → title
-        doc_ids = list({c.doc_id for c in result.chunks})
-        store = get_store()
-        doc_titles = store.get_doc_titles(doc_ids)
-
-        # 转换 chunk 为 dict
+        # 转换 chunk 为 dict（doc_title 已在 pipeline 解析时填充）
         chunks_dict = []
-        for chunk in result.chunks:
+        for chunk in chunks:
             chunks_dict.append(
                 {
                     "chunk_id": chunk.chunk_id,
                     "doc_id": chunk.doc_id,
-                    "doc_title": doc_titles.get(chunk.doc_id, ""),
+                    "doc_title": chunk.doc_title or "",
                     "content": (
                         chunk.content[:300] + "..."
                         if len(chunk.content) > 300
                         else chunk.content
                     ),
-                    "section_title": chunk.section_title,
                     "chunk_type": chunk.chunk_type,
-                    "doc_type": chunk.doc_type,
-                    "filter_terms": chunk.filter_terms,
                     "score": chunk.score,
                 }
             )
 
         return SearchResponse(
             query=request.query,
-            total=len(result.chunks),
+            total=len(chunks),
             chunks=chunks_dict,
-            timing=timing,
-            rewrite=rewrite_data,
+            timing=pipeline_result.timing,
         )
 
     except Exception as e:
@@ -580,6 +395,7 @@ async def search(request: SearchRequest):
 async def get_product_specs(
     product: Optional[str] = None,
     model: Optional[str] = None,
+    entity: Optional[str] = None,
     filter: Optional[str] = None,
 ):
     """
@@ -588,16 +404,28 @@ async def get_product_specs(
     Args:
         product: 产品类型（星载智算机 / 星载路由器 / 星载激光通信机）
         model: 型号（如 NX1, G1, 智加G3）
+        entity: 实体（如 G1、NX1），通过 query_products 智能匹配
         filter: 过滤条件，支持 <, <=, >, >=, ==（如 "重量<3kg", "算力>=10"）
 
     Examples:
         GET /api/v1/products/specs                           # 返回所有产品
         GET /api/v1/products/specs?product=星载智算机         # 返回智算机全系
-        GET /api/v1/products/specs?product=星载智算机&model=NX1  # 返回 NX1
+        GET /api/v1/products/specs?entity=G1                 # 通过实体查询（如 G1、NX1）
         GET /api/v1/products/specs?filter=重量<3kg           # 返回重量<3kg的型号
     """
     try:
-        results = query_specs(product=product, model=model, filter_field=filter)
+        if entity:
+            # 实体查询（通过 query_products 智能匹配产品类型和型号）
+            from core.products.spec_matcher import query_products
+
+            results = query_products(
+                target_models=[entity],
+                required_fields=[],
+                numerical_constraints={},
+            )
+        else:
+            results = query_specs(product=product, model=model, filter_field=filter)
+
         return {
             "total": len(results),
             "results": results,

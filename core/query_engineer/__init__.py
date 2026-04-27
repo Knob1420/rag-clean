@@ -4,8 +4,8 @@
 
 from core.query_engineer.hyde import HyDEQueryEngine, HyDEResult
 from core.query_engineer.query_rewrite import (
-    QueryRewriteServiceV2,
-    RewrittenQueryV2,
+    QueryRewriteService,
+    RewrittenQuery,
     get_query_rewrite_service,
 )
 from core.query_engineer.query_understanding import (
@@ -18,8 +18,8 @@ from core.query_engineer.query_understanding import (
 __all__ = [
     "HyDEQueryEngine",
     "HyDEResult",
-    "QueryRewriteServiceV2",
-    "RewrittenQueryV2",
+    "QueryRewriteService",
+    "RewrittenQuery",
     "get_query_rewrite_service",
     "QueryUnderstandingService",
     "QueryUnderstandingResult",

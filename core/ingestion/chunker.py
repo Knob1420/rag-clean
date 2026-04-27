@@ -368,7 +368,7 @@ class SmartChunker:
 
     # 需丢弃的 section header 关键词（大小写不敏感）
     _META_HEADER_KEYWORDS: list[str] = [
-        "目录", "索引", "table of contents", "index",
+        "目录", "table of contents", "index",
         "版本修订记录", "修订记录", "变更记录", "changelog", "版本历史",
         "免责声明", "版权声明", "声明", "注意事项", "重要声明",
         " preface", "preface", "foreword",

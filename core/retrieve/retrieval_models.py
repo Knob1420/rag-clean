@@ -26,7 +26,6 @@ class RetrievedChunk(BaseModel):
     # chunk 级字段
     chunk_type: Optional[str] = None  # "parent" | "child" | "summary"
     doc_hash: Optional[str] = None
-    section_title: Optional[str] = None  # 章节标题
 
     # 父子导航
     parent_id: Optional[str] = None  # child 有，parent 无
@@ -56,15 +55,6 @@ class RetrievalOptions(BaseModel):
     )
 
 
-class HighlightOptions(BaseModel):
-    """高亮选项"""
-
-    pre_tags: List[str] = Field(["<em>"], description="高亮前缀标签")
-    post_tags: List[str] = Field(["</em>"], description="高亮后缀标签")
-    fragment_size: int = Field(150, ge=50, le=500, description="摘要片段大小")
-    number_of_fragments: int = Field(3, ge=1, le=10, description="返回片段数量")
-
-
 # ========== RAG 问答模型 ==========
 
 
@@ -74,7 +64,6 @@ class SourceInfo(BaseModel):
     chunk_id: str
     doc_id: str
     doc_name: Optional[str] = None
-    section_title: Optional[str] = None
     score: float
     snippet: str
 
@@ -91,7 +80,7 @@ class ChatRequest(BaseModel):
     """RAG问答请求"""
 
     query: str = Field(..., min_length=1, description="用户问题")
-    top_k: int = Field(5, ge=1, le=50, description="召回数量")
+    top_k: int = Field(25, ge=1, le=50, description="召回数量")
     use_rewrite: bool = Field(True, description="是否使用Query Rewrite")
     use_rerank: bool = Field(True, description="是否使用Rerank")
     rerank_top_k: Optional[int] = Field(
@@ -114,9 +103,13 @@ class SearchRequest(BaseModel):
     """检索请求"""
 
     query: str = Field(..., min_length=1, description="检索查询")
-    top_k: int = Field(5, ge=1, le=50, description="召回数量")
-    use_rewrite: bool = Field(True, description="是否使用Query Rewrite")
-    use_rerank: bool = Field(True, description="是否使用Rerank")
+    top_k: int = Field(25, ge=1, le=50, description="召回数量")
+    use_understand: bool = Field(False, description="是否使用 Query Understand")
+    use_rewrite: bool = Field(False, description="是否使用 Query Rewrite")
+    use_rerank: bool = Field(True, description="是否使用 Rerank")
+    rerank_top_k: Optional[int] = Field(
+        None, ge=1, le=50, description="Rerank后保留数量"
+    )
     min_score: float = Field(0.0, ge=0.0, le=1.0, description="最低相关性评分")
 
 
@@ -127,7 +120,6 @@ class SearchResponse(BaseModel):
     total: int
     chunks: List[Dict[str, Any]]
     timing: Dict[str, float] = Field(default_factory=dict)
-    rewrite: Optional[Dict[str, Any]] = Field(None, description="Query Rewrite 结果")
 
 
 class HealthResponse(BaseModel):

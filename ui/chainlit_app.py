@@ -277,30 +277,19 @@ async def on_message(message: cl.Message):
                         error_msg = data.get("error", "未知错误")
                         await msg.stream_token(f"\n\n**Error:** {error_msg}")
 
-        # 将 sources 作为引用附加到回答消息上
-        if sources_list:
-            elements = []
-            for idx, src in enumerate(sources_list[:10], 1):
-                doc_name = src.get("doc_name", "Unknown")
-                section = src.get("section_title", "")
+        # ── 收集去重后的参考文档列表，追加到回答末尾 ──
+        seen = set()
+        doc_lines = []
+        for idx, src in enumerate(sources_list, 1):
+            doc_name = (src.get("doc_name") or "未知文档").strip()
+            if doc_name and doc_name not in seen:
+                seen.add(doc_name)
                 score = src.get("score", 0)
-                snippet = src.get("snippet", "")
+                doc_lines.append(f"  {len(seen)}️⃣ {doc_name}  (score={score:.2f})")
 
-                label = f"[{idx}] {doc_name}"
-                if section:
-                    label += f" > {section}"
-                label += f" ({score:.2f})"
-
-                elements.append(
-                    cl.Text(
-                        name=label,
-                        content=snippet,
-                        display="side",
-                    )
-                )
-            msg.elements = elements
-
-        await msg.update()
+        if doc_lines:
+            sources_text = "\n\n**📋 参考文档**\n" + "\n".join(doc_lines)
+            await msg.stream_token(sources_text)
 
         # 更新聊天历史
         chat_history.append({"role": "assistant", "content": full_answer})

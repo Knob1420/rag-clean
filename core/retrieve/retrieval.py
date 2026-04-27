@@ -104,6 +104,8 @@ class RetrievalService:
             chunks = self._bm25_search(query, options)
             timing["retrieve"] = time.time() - t0
 
+        # 父子块召回
+
         # Rerank
         if options.use_rerank and chunks:
             t0 = time.time()
@@ -114,8 +116,8 @@ class RetrievalService:
         if options.min_score > 0:
             chunks = [c for c in chunks if c.score >= options.min_score]
 
-        # 截断
-        chunks = chunks[: options.top_k]
+        # # 截断
+        # chunks = chunks[: options.top_k]
 
         timing_str = ", ".join([f"{k}={v:.0f}s" for k, v in timing.items()])
         logger.info(
@@ -144,7 +146,7 @@ class RetrievalService:
     ) -> List[RetrievedChunk]:
         """混合检索（BM25 + 向量 + RRF 融合）"""
         query_vector = encode(query)
-        candidate_k = options.top_k * 2
+        candidate_k = options.top_k
 
         # 1. BM25
         bm25_results = self._execute_bm25(query, options, candidate_k)
@@ -252,7 +254,7 @@ class RetrievalService:
         """
         filter_conditions = [
             {"term": {"is_latest": True}},
-            {"term": {"chunk_type": "child"}},
+            {"terms": {"chunk_type": ["child", "summary"]}},
         ]
         if options.doc_ids:
             filter_conditions.append({"terms": {"doc_id": options.doc_ids}})
@@ -266,7 +268,7 @@ class RetrievalService:
                     {
                         "multi_match": {
                             "query": query,
-                            "fields": ["content", "doc_title"],
+                            "fields": ["doc_title^3", "content"],
                             "type": "best_fields",
                         }
                     }
@@ -292,7 +294,7 @@ class RetrievalService:
         """
         filter_conditions = [
             {"term": {"is_latest": True}},
-            {"term": {"chunk_type": "child"}},
+            {"terms": {"chunk_type": ["child", "summary"]}},
         ]
         if options.doc_ids:
             filter_conditions.append({"terms": {"doc_id": options.doc_ids}})

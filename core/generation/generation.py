@@ -17,7 +17,6 @@ from core.router.models import (
     INTENT_COMPARE,
     INTENT_RECOMMEND,
     INTENT_AGGREGATE,
-    INTENT_GENERATE,
 )
 from core.products.specs_service import build_specs_context
 from prompt import (
@@ -251,7 +250,9 @@ class GenerationService:
                 base_url=settings.deepseek_base_url,
             )
             response = client.chat.completions.create(
-                model=settings.deepseek_model,
+                model=settings.deepseek_r2_model
+                if query_intent in (INTENT_COMPARE, INTENT_RECOMMEND)
+                else settings.deepseek_model,
                 messages=messages,
                 temperature=0.3,
                 max_tokens=2000,
@@ -324,7 +325,9 @@ class GenerationService:
                 base_url=settings.deepseek_base_url,
             )
             stream = client.chat.completions.create(
-                model=settings.deepseek_model,
+                model=settings.deepseek_r2_model
+                if (intent or query_intent) in (INTENT_COMPARE, INTENT_RECOMMEND)
+                else settings.deepseek_model,
                 messages=messages,
                 temperature=0.3,
                 max_tokens=2000,
@@ -387,7 +390,9 @@ class GenerationService:
                 base_url=settings.deepseek_base_url,
             )
             stream = await client.chat.completions.create(
-                model=settings.deepseek_model,
+                model=settings.deepseek_r2_model
+                if (intent or query_intent) in (INTENT_COMPARE, INTENT_RECOMMEND)
+                else settings.deepseek_model,
                 messages=messages,
                 temperature=0.3,
                 max_tokens=2000,

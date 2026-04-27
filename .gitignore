@@ -14,6 +14,9 @@ log/
 tmp/
 temp/
 
+# 测试报告
+test_reports/
+
 # 数据集、大文件、向量库
 data/
 docs/
@@ -21,3 +24,9 @@ docs/
 *.pdf
 
 .files/
+
+# 测试文件
+test_*.py
+test_*.json
+test_*.csv
+query.log

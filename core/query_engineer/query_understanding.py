@@ -22,7 +22,6 @@ class SubQuery:
     """单个子问句解析结果"""
     query: str
     intent: str  # lookup | compare | recommend | aggregate
-    generation_constraints: List[str] = field(default_factory=list)  # 格式/语言/字数限制
 
 
 @dataclass
@@ -85,7 +84,7 @@ class QueryUnderstandingResult:
 class QueryUnderstandingService:
     """Query Understanding 服务（卫星三体计算星座项目专用）"""
 
-    VALID_INTENTS = {"lookup", "compare", "recommend", "aggregate"}
+    VALID_INTENTS = {"simple_lookup", "compare", "recommend", "aggregate"}
 
     def parse(self, query: str) -> QueryUnderstandingResult:
         """
@@ -100,7 +99,7 @@ class QueryUnderstandingService:
         if not query or not query.strip():
             return QueryUnderstandingResult(
                 original_query=query,
-                sub_queries=[SubQuery(query=query, intent="lookup")]
+                sub_queries=[SubQuery(query=query, intent="simple_lookup")]
             )
 
         user_prompt = QUERY_UNDERSTANDING_USER_PROMPT.format(query=query)
@@ -119,8 +118,8 @@ class QueryUnderstandingService:
             # 校验 intent 合法性
             for sq in result.sub_queries:
                 if sq.intent not in self.VALID_INTENTS:
-                    logger.warning(f"无效 intent [{sq.intent}]，修正为 lookup")
-                    sq.intent = "lookup"
+                    logger.warning(f"无效 intent [{sq.intent}]，修正为 simple_lookup")
+                    sq.intent = "simple_lookup"
 
             logger.info(
                 f"[QueryUnderstanding] 拆分={len(result.sub_queries)} 条，"
@@ -129,10 +128,10 @@ class QueryUnderstandingService:
             return result
 
         except Exception as e:
-            logger.warning(f"Query Understanding 失败，降级为单句 lookup: {e}")
+            logger.warning(f"Query Understanding 失败，降级为单句 simple_lookup: {e}")
             return QueryUnderstandingResult(
                 original_query=query,
-                sub_queries=[SubQuery(query=query.strip(), intent="lookup")]
+                sub_queries=[SubQuery(query=query.strip(), intent="simple_lookup")]
             )
 
 

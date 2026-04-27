@@ -6,6 +6,7 @@ DAG Executor 的操作符定义
 所有操作均为确定性规则操作，不依赖 LLM
 """
 
+import re
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional
@@ -45,7 +46,7 @@ class RetrieveOperator(Operator):
     """检索操作 — 调用 RetrievalService 获取文档"""
     name = "retrieve"
 
-    def __init__(self, retrieval_service):
+    def __init__(self, retrieval_service: Any):
         self.retrieval_service = retrieval_service
 
     def execute(self, ctx: ExecutionContext, params: Dict[str, Any]) -> ExecutionContext:
@@ -77,6 +78,9 @@ class RetrieveOperator(Operator):
 class FilterOperator(Operator):
     """过滤操作 — 基于 constraints 过滤 chunks"""
     name = "filter"
+
+    # Pre-compiled pattern cache keyed by field name
+    _pattern_cache: Dict[str, tuple] = {}
 
     def execute(self, ctx: ExecutionContext, params: Dict[str, Any]) -> ExecutionContext:
         constraints_raw = params.get("constraints", [])
@@ -122,16 +126,22 @@ class FilterOperator(Operator):
         return ctx
 
     def _check_constraint(self, chunk, constraint, content_lower: str) -> bool:
-        import re
         field = constraint.field.lower()
-        patterns = [
-            rf"{field}[：:]\s*([^\n，,]+)",
-            rf"{field}\s*=\s*([^\n，,]+)",
-            rf"([^\n，,]+)\s*{field}",
-        ]
+
+        # Use cached compiled patterns
+        if field not in FilterOperator._pattern_cache:
+            FilterOperator._pattern_cache[field] = tuple(
+                re.compile(p) for p in [
+                    rf"{field}[：:]\s*([^\n，,]+)",
+                    rf"{field}\s*=\s*([^\n，,]+)",
+                    rf"([^\n，,]+)\s*{field}",
+                ]
+            )
+        compiled_patterns = FilterOperator._pattern_cache[field]
+
         value_str = None
-        for pattern in patterns:
-            match = re.search(pattern, content_lower)
+        for pattern in compiled_patterns:
+            match = pattern.search(content_lower)
             if match:
                 value_str = match.group(1).strip()
                 break
@@ -140,7 +150,10 @@ class FilterOperator(Operator):
 
         if constraint.type == "numeric":
             try:
-                numbers = re.findall(r"[\d.]+", value_str)
+                # Pre-compile number pattern
+                if not hasattr(FilterOperator, '_number_pattern'):
+                    FilterOperator._number_pattern = re.compile(r"[\d.]+")
+                numbers = FilterOperator._number_pattern.findall(value_str)
                 if not numbers:
                     return True
                 value = float(numbers[0])
@@ -167,6 +180,9 @@ class ExtractOperator(Operator):
     """提取操作 — 从 chunks 中提取结构化字段"""
     name = "extract"
 
+    # Pre-compiled pattern cache keyed by field name
+    _pattern_cache: Dict[str, re.Pattern] = {}
+
     def execute(self, ctx: ExecutionContext, params: Dict[str, Any]) -> ExecutionContext:
         fields = params.get("fields", [])
         if not fields:
@@ -177,13 +193,16 @@ class ExtractOperator(Operator):
         input_chunks = ctx.get_input_chunks()
         structured: Dict[str, List[Any]] = {f: [] for f in fields}
 
-        import re
         for chunk in input_chunks:
             content = chunk.content
             for field_name in fields:
                 field_lower = field_name.lower()
-                pattern = rf"{field_lower}[：:]\s*([^\n，,]+)"
-                match = re.search(pattern, content)
+                if field_lower not in ExtractOperator._pattern_cache:
+                    ExtractOperator._pattern_cache[field_lower] = re.compile(
+                        rf"{field_lower}[：:]\s*([^\n，,]+)"
+                    )
+                pattern = ExtractOperator._pattern_cache[field_lower]
+                match = pattern.search(content)
                 if match:
                     structured[field_name].append(match.group(1).strip())
                 else:
@@ -198,7 +217,7 @@ class ForeachOperator(Operator):
     """遍历操作 — 对每个实体独立执行子操作"""
     name = "foreach"
 
-    def __init__(self, operators):
+    def __init__(self, operators: "OperatorRegistry"):
         self.operators = operators
 
     def execute(self, ctx: ExecutionContext, params: Dict[str, Any]) -> ExecutionContext:

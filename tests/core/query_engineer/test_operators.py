@@ -1,8 +1,7 @@
-import pytest
 from unittest.mock import MagicMock
 from core.query_engineer.operators import (
     ExecutionContext, Operator, OperatorRegistry,
-    RetrieveOperator, FilterOperator, ExtractOperator,
+    FilterOperator, ExtractOperator,
     ForeachOperator, AggregateOperator
 )
 from core.query_engineer.query_ir import Constraint
@@ -110,3 +109,6 @@ def test_foreach_operator():
 
     # Should have called retrieve twice (once per entity)
     assert mock_retrieve_op.execute.call_count == 2
+    # Should have collected chunks from all entities
+    assert len(result_ctx.chunks) == 2
+    assert result_ctx.chunks == ["chunk1", "chunk1"]

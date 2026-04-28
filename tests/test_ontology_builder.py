@@ -79,3 +79,35 @@ def test_save_and_load_graph(tmp_path):
     loaded = load_graph(str(out))
     assert loaded["metadata"]["total_nodes"] == 1
     assert len(loaded["nodes"]) == 1
+
+def test_build_graph_with_real_data():
+    from core.preprocessing.ontology_builder import (
+        load_entity_raw, load_product_params, load_cooperation, build_graph
+    )
+    entity_raw = load_entity_raw("/home/zjlab/Documents/build_LLMs/NLP_course_hf/RAG/rag-clean/data/preprocessing/step2_entity_raw_cleaned.json")
+    product_params = load_product_params("/home/zjlab/Documents/build_LLMs/NLP_course_hf/RAG/rag-clean/data/preprocessing/step3_product_params.json")
+    cooperation = load_cooperation("/home/zjlab/Documents/build_LLMs/NLP_course_hf/RAG/rag-clean/data/preprocessing/step3_cooperation.json")
+
+    result = build_graph(entity_raw, product_params, cooperation)
+
+    assert "metadata" in result
+    assert "nodes" in result
+    assert "edges" in result
+    assert result["metadata"]["total_nodes"] > 0
+    assert result["metadata"]["total_edges"] > 0
+
+    # Check node types
+    node_types = [n["type"] for n in result["nodes"]]
+    assert "ORG" in node_types
+    assert "MODEL" in node_types
+
+    # Check edge types
+    edge_types = [e["type"] for e in result["edges"]]
+    assert "COOPERATION" in edge_types
+
+    # 之江实验室 node should exist and have aliases
+    zhijiang_nodes = [n for n in result["nodes"] if "之江实验室" in n.get("name", "")]
+    if zhijiang_nodes:
+        zn = zhijiang_nodes[0]
+        assert zn["type"] == "ORG"
+        assert isinstance(zn.get("aliases", []), list)

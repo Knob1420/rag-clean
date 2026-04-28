@@ -155,3 +155,204 @@ def build_org_alias_union(entities: list[dict]) -> dict[str, dict]:
         }
 
     return result
+
+
+def _build_org_node(repr_name: str, union_data: dict, product_params: list[dict], cooperation: list[dict]) -> dict:
+    """
+    从 ORG 并查集数据构建一个 ORG 节点。
+
+    Args:
+        repr_name: 并查集代表名（如"之江实验室"）
+        union_data: build_org_alias_union 返回的数据
+        product_params: 产品参数列表（用于收集合作产品）
+        cooperation: 合作关系列表（用于收集合作伙伴）
+    """
+    all_names = union_data["names"]
+    node_id = generate_node_id(repr_name, "ORG")
+
+    # 收集该 ORG 参与的产品型号（从 cooperation 的 products_or_projects 字段）
+    products: set[str] = set()
+    cooperators: set[str] = set()
+    for coop in cooperation:
+        units = coop.get("units", [])
+        if repr_name in units:
+            for proj in coop.get("products_or_projects", []):
+                if proj:
+                    products.add(proj)
+            for u in units:
+                if u != repr_name:
+                    cooperators.add(u)
+
+    # 也从 product_params 的合作单位字段匹配
+    for model in product_params:
+        cooperator = model.get("params", {}).get("合作单位", "")
+        if cooperator and (cooperator in all_names or cooperator in repr_name or repr_name in cooperator):
+            products.add(model.get("model", ""))
+
+    return {
+        "id": node_id,
+        "type": "ORG",
+        "name": repr_name,
+        "aliases": list(all_names - {repr_name}),
+        "frequency": union_data.get("frequency", 0),
+        "source_docs": union_data.get("source_docs", []),
+        "products": sorted(list(products)),
+        "cooperators": sorted(list(cooperators)),
+    }
+
+
+def _build_model_node(model: dict) -> dict:
+    """从 product_params 条目构建 MODEL 节点。"""
+    model_name = model.get("model", "")
+    node_id = generate_node_id(model_name, "MODEL")
+
+    params = model.get("params", {})
+    # filled_fields: 哪些字段有值（非空）
+    filled_fields = [k for k, v in params.items() if v and str(v).strip()]
+
+    # 收集 source_chunks（从所有 product_params 条目共享的 chunks，通过 model 名匹配）
+    source_chunks: list[str] = []
+    # 从 params 里找 source_chunks（如果有的话）
+    if params.get("source_chunks"):
+        source_chunks = params["source_chunks"]
+
+    return {
+        "id": node_id,
+        "type": "MODEL",
+        "category": model.get("category", ""),
+        "series": model.get("series", ""),
+        "model": model_name,
+        "filled_fields": filled_fields,
+        "source_chunks": source_chunks,
+        "params": params,  # 保留完整参数
+    }
+
+
+def _build_cooperation_edge(coop: dict, org_node_map: dict[str, dict]) -> dict:
+    """
+    从 cooperation 条目构建 COOPERATION 边。
+    from = 之江实验室（或第一个单位）
+    to = 合作单位
+    """
+    units = coop.get("units", [])
+    if len(units) < 2:
+        return None
+
+    from_org = units[0]
+    to_org = units[1] if len(units) > 1 else units[0]
+
+    from_id = org_node_map.get(from_org, {}).get("id", generate_node_id(from_org, "ORG"))
+    to_id = org_node_map.get(to_org, {}).get("id", generate_node_id(to_org, "ORG"))
+
+    return {
+        "id": f"coop_{len(units)}_{from_org[:4]}_{to_org[:4]}",
+        "type": "COOPERATION",
+        "from": from_id,
+        "to": to_id,
+        "units": units,
+        "content": coop.get("content", ""),
+        "products_or_projects": coop.get("products_or_projects", []),
+        "confidence": coop.get("confidence", 0.0),
+        "source_chunks": coop.get("source_chunks", []),
+    }
+
+
+def _build_owned_by_edge(model: dict, org_node_map: dict[str, dict]) -> dict:
+    """
+    从 product_params 的合作单位字段构建 OWNED_BY 边。
+    from = MODEL节点
+    to = ORG节点
+    """
+    cooperator = model.get("params", {}).get("合作单位", "")
+    if not cooperator:
+        return None
+
+    model_name = model.get("model", "")
+    model_id = generate_node_id(model_name, "MODEL")
+
+    # 找匹配的 ORG
+    to_id = None
+    for repr_name, node_data in org_node_map.items():
+        if cooperator in repr_name or repr_name in cooperator or cooperator in node_data.get("names", set()):
+            to_id = node_data.get("id")
+            break
+
+    if to_id is None:
+        to_id = generate_node_id(cooperator, "ORG")
+
+    return {
+        "id": f"own_{model_name[:8]}",
+        "type": "OWNED_BY",
+        "from": model_id,
+        "to": to_id,
+        "model": model_name,
+    }
+
+
+def build_graph(
+    entity_raw: list[dict],
+    product_params: list[dict],
+    cooperation: list[dict],
+) -> dict:
+    """
+    从三个数据源构建本体图。
+
+    Args:
+        entity_raw: entity_raw 列表
+        product_params: step3_product_params 列表
+        cooperation: step3_cooperation 列表
+
+    Returns:
+        {"metadata": {...}, "nodes": [...], "edges": [...]}
+    """
+    from datetime import date
+
+    nodes: list[dict] = []
+    edges: list[dict] = []
+
+    # 1. ORG并查集 + 构建 org_node_map{name→node}
+    org_entities = [e for e in entity_raw if e.get("entity_type") == "ORG"]
+    union_map = build_org_alias_union(org_entities)  # repr_name → union_data
+
+    # 2. ORG节点
+    org_node_map: dict[str, dict] = {}  # repr_name → node
+    for repr_name, union_data in union_map.items():
+        node = _build_org_node(repr_name, union_data, product_params, cooperation)
+        nodes.append(node)
+        org_node_map[repr_name] = node
+
+    # 3. MODEL节点
+    for model in product_params:
+        nodes.append(_build_model_node(model))
+
+    # 4. COOPERATION边
+    for coop in cooperation:
+        edge = _build_cooperation_edge(coop, org_node_map)
+        if edge:
+            edges.append(edge)
+
+    # 5. OWNED_BY边
+    for model in product_params:
+        edge = _build_owned_by_edge(model, org_node_map)
+        if edge:
+            edges.append(edge)
+
+    # 6. metadata
+    org_count = sum(1 for n in nodes if n["type"] == "ORG")
+    model_count = sum(1 for n in nodes if n["type"] == "MODEL")
+
+    coop_edges = sum(1 for e in edges if e["type"] == "COOPERATION")
+    own_edges = sum(1 for e in edges if e["type"] == "OWNED_BY")
+
+    metadata = {
+        "created_at": str(date.today()),
+        "total_nodes": len(nodes),
+        "total_edges": len(edges),
+        "org_count": org_count,
+        "model_count": model_count,
+        "product_count": model_count,
+        "coop_edge_count": coop_edges,
+        "owned_by_edge_count": own_edges,
+    }
+
+    return {"metadata": metadata, "nodes": nodes, "edges": edges}

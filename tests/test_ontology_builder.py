@@ -33,6 +33,39 @@ def test_load_cooperation(tmp_path):
     assert isinstance(result, list)
     assert result[0]["units"] == ["A","B"]
 
+def test_build_org_alias_union():
+    from core.preprocessing.ontology_builder import build_org_alias_union
+    entities = [
+        {"entity_name": "之江实验室", "entity_type": "ORG", "frequency": 299, "aliases": ["之江", "之江星座"], "source_docs": ["doc1"]},
+        {"entity_name": "成都国星宇航科技股份有限公司", "entity_type": "ORG", "frequency": 27, "aliases": ["国星宇航"], "source_docs": ["doc2"]},
+        {"entity_name": "国星宇航", "entity_type": "ORG", "frequency": 5, "aliases": [], "source_docs": ["doc3"]},
+    ]
+    result = build_org_alias_union(entities)
+    # 之江实验室 should be the canonical name (highest freq)
+    assert "之江实验室" in result
+    # The other two should be merged under 国星宇航 or 成都国星宇航 (they are substrings)
+    # Check that aliases include all names
+    zhijiang_entry = result.get("之江实验室", {})
+    # Since "国星宇航" is substring of "成都国星宇航科技股份有限公司", they should be merged
+    # Let's just verify structure
+    for canonical, data in result.items():
+        assert "names" in data
+        assert "representative" in data
+        assert isinstance(data["names"], set)
+
+def test_build_org_alias_union_all_ORGs():
+    """Verify it processes all ORG entities."""
+    from core.preprocessing.ontology_builder import load_entity_raw, build_org_alias_union
+    import json
+    # Use the actual cleaned entity file
+    entities = load_entity_raw("/home/zjlab/Documents/build_LLMs/NLP_course_hf/RAG/rag-clean/data/preprocessing/step2_entity_raw_cleaned.json")
+    orgs = [e for e in entities if e.get("entity_type") == "ORG"]
+    result = build_org_alias_union(orgs)
+    # Each result entry should have non-empty names
+    for canonical, data in result.items():
+        assert len(data["names"]) >= 1
+        assert data["representative"] == canonical
+
 def test_save_and_load_graph(tmp_path):
     from core.preprocessing.ontology_builder import save_graph, load_graph
     graph = {

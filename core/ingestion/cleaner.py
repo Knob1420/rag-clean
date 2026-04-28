@@ -106,9 +106,7 @@ class TextCleaner:
     _URL_PATTERN = re.compile(r"https?://\S+")
 
     @classmethod
-    def clean(
-        cls, text: str, remove_images: bool = True, dataset_id: str = ""
-    ) -> str:
+    def clean(cls, text: str, remove_images: bool = True, dataset_id: str = "") -> str:
         """
         清洗文本（默认执行所有清洗规则）。
 
@@ -149,7 +147,7 @@ class TextCleaner:
             text = cls._remove_images(text)
 
         # 6. 产品参数表格移除（仅产品数据集）
-        text = cls._remove_product_spec_tables(text, dataset_id)
+        # text = cls._remove_product_spec_tables(text, dataset_id)
 
         # 7. 页眉页脚清洗
         text = cls._clean_headers_footers(text)
@@ -292,8 +290,14 @@ class TextCleaner:
         """
         # 产品数据集标识（可按需扩展）
         PRODUCT_DATASET_KEYWORDS = [
-            "产品", "products", "specs", "星载智算机", "星载路由器",
-            "星载激光通信机", "智能计算机", "激光通信",
+            "产品",
+            "products",
+            "specs",
+            "星载智算机",
+            "星载路由器",
+            "星载激光通信机",
+            "智能计算机",
+            "激光通信",
         ]
         is_product_dataset = any(kw in dataset_id for kw in PRODUCT_DATASET_KEYWORDS)
         if not is_product_dataset:

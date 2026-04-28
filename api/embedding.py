@@ -278,6 +278,19 @@ async def encode(request: EncodeRequest):
         raise HTTPException(status_code=500, detail=f"向量化失败: {str(e)}")
 
 
+class EmbeddingsRequest(BaseModel):
+    model: str
+    input: List[str]
+    encoding_format: str = "float"
+    truncate_prompt_tokens: Optional[int] = None
+
+
+class EmbeddingsResponse(BaseModel):
+    data: List[dict]
+    model: str
+    usage: dict
+
+
 @app.post("/encode_batch", response_model=EncodeBatchResponse)
 async def encode_batch(request: EncodeBatchRequest):
     """批量向量化"""
@@ -315,6 +328,43 @@ async def encode_batch(request: EncodeBatchRequest):
     except Exception as e:
         logger.error(f"批量向量化错误: {e}")
         raise HTTPException(status_code=500, detail=f"批量向量化失败: {str(e)}")
+
+
+@app.post("/embeddings", response_model=EmbeddingsResponse)
+async def embeddings(request: EmbeddingsRequest):
+    """OpenAI 兼容端点 /embeddings"""
+    if embedding_service is None:
+        raise HTTPException(status_code=503, detail="服务未初始化")
+
+    if not request.input:
+        raise HTTPException(status_code=400, detail="input 列表不能为空")
+
+    try:
+        vectors = embedding_service.encode_batch(request.input)
+
+        data = []
+        valid_count = 0
+        for i, v in enumerate(vectors):
+            if v is not None:
+                data.append({"embedding": v.tolist(), "index": valid_count})
+                valid_count += 1
+            else:
+                logger.warning(f"第 {i} 个文本向量化失败")
+
+        if not data:
+            raise HTTPException(status_code=500, detail="所有文本向量化失败")
+
+        return EmbeddingsResponse(
+            data=data,
+            model=request.model,
+            usage={"total_tokens": sum(len(t) for t in request.input)},
+        )
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"向量化错误: {e}")
+        raise HTTPException(status_code=500, detail=f"向量化失败: {str(e)}")
 
 
 if __name__ == "__main__":

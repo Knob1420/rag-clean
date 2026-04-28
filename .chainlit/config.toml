@@ -95,9 +95,13 @@ reaction_on_message_received = false
 
 [UI]
 # Name of the assistant.
-name = "Assistant"
+name = "之江太空计算 RAG 助手"
 
-# default_theme = "dark"
+# 强制白色主题
+default_theme = "light"
+
+# Force a specific theme for all users
+force_theme = "light"
 
 # Force a specific language for all users (e.g., "en-US", "he-IL", "fr-FR")
 # If not set, the browser's language will be used

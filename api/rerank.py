@@ -137,6 +137,22 @@ class RerankRequest(BaseModel):
     top_k: Optional[int] = None
 
 
+# OpenAI 兼容格式
+class OpenAIRerankRequest(BaseModel):
+    model: str
+    query: str
+    documents: List[str]
+    truncate_prompt_tokens: Optional[int] = None
+    additional_data: Optional[dict] = None
+
+
+class OpenAIRerankResponse(BaseModel):
+    id: str
+    model: str
+    results: List[dict]
+    usage: dict
+
+
 class RerankResponse(BaseModel):
     results: List[tuple]
     count: int
@@ -239,6 +255,37 @@ async def rerank(request: RerankRequest):
         return RerankResponse(
             results=results,
             count=len(results),
+        )
+
+    except Exception as e:
+        logger.error(f"重排序失败: {e}")
+        raise HTTPException(status_code=500, detail=f"重排序失败: {str(e)}")
+
+
+@app.post("/v1/rerank", response_model=OpenAIRerankResponse)
+async def rerank_v1(request: OpenAIRerankRequest):
+    """OpenAI 兼容端点 /v1/rerank"""
+    if rerank_service is None:
+        raise HTTPException(status_code=503, detail="服务未初始化")
+
+    if not request.query:
+        raise HTTPException(status_code=400, detail="query 字段不能为空")
+
+    if not request.documents:
+        raise HTTPException(status_code=400, detail="documents 列表不能为空")
+
+    try:
+        results = rerank_service.rerank(
+            query=request.query,
+            documents=request.documents,
+            top_k=None,
+        )
+
+        return OpenAIRerankResponse(
+            id=f"rerank-{hash(request.query) % 100000}",
+            model=request.model,
+            results=[{"index": i, "relevance_score": score} for i, (_, score) in enumerate(results)],
+            usage={"total_tokens": len(request.documents)},
         )
 
     except Exception as e:

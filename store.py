@@ -279,7 +279,7 @@ class DocumentStore:
                         },
                         "aggs": {
                             "max_created": {"max": {"field": "created_at"}},
-                            "titles": {"top_hits": {"size": 1, "_source": ["title"]}},
+                            "titles": {"top_hits": {"size": 1, "_source": ["doc_title"]}},
                         },
                     },
                     "total": {"value_count": {"field": "doc_id"}},

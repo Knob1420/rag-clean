@@ -132,7 +132,7 @@ class RAGPipeline:
         for pid, children in parent_children.items():
             if any(c.chunk_type == "summary" for c in children):
                 parent_ids_to_expand.append(pid)
-            elif len(children) >= 2:
+            elif len(children) >= 1:
                 parent_ids_to_expand.append(pid)
             else:
                 single_child_ids.append(pid)
@@ -190,7 +190,7 @@ class RAGPipeline:
                 continue
 
             # 4b. >= 2 个 child from same parent → 展开为 parent
-            if len(children) >= 2:
+            if len(children) >= 1:
                 if chunk.parent_id in parent_map:
                     parent_src = parent_map[chunk.parent_id]
                     max_score = max(c.score for c in children)
@@ -276,13 +276,17 @@ class RAGPipeline:
         for i in range(current_idx - limit, current_idx):
             if i >= 0:
                 src = hits[i].get("_source", {})
-                siblings.append(self._make_retrieved_chunk(src, hits[i].get("_score", 0.0)))
+                siblings.append(
+                    self._make_retrieved_chunk(src, hits[i].get("_score", 0.0))
+                )
 
         # 后 N 个
         for i in range(current_idx + 1, current_idx + 1 + limit):
             if i < len(hits):
                 src = hits[i].get("_source", {})
-                siblings.append(self._make_retrieved_chunk(src, hits[i].get("_score", 0.0)))
+                siblings.append(
+                    self._make_retrieved_chunk(src, hits[i].get("_score", 0.0))
+                )
 
         return siblings
 
@@ -364,11 +368,9 @@ class RAGPipeline:
 
             # 整合生成
             integrated = "\n\n---\n\n".join(merged_answers)
-            system_prompt, user_prompt = (
-                generation_svc._build_integration_prompt(
-                    original_query=query,
-                    merged_answers=integrated,
-                )
+            system_prompt, user_prompt = generation_svc._build_integration_prompt(
+                original_query=query,
+                merged_answers=integrated,
             )
             messages = [
                 {"role": "system", "content": system_prompt},
@@ -680,6 +682,7 @@ class RAGPipeline:
         # Step 1: QueryPlanner 生成 QueryIR
         t0 = time.time()
         from core.query_engineer.query_planner import QueryPlanner
+
         planner = QueryPlanner()
         query_ir = planner.plan(query)
         timing["planning"] = time.time() - t0
@@ -687,6 +690,7 @@ class RAGPipeline:
         # Step 2: DAGExecutor 执行
         t0 = time.time()
         from core.query_engineer.dag_executor import DAGExecutor
+
         executor = DAGExecutor(retrieval_service=self.retrieval)
         dag_result = executor.execute_query_ir(query_ir, top_k=top_k)
         timing["dag_execution"] = time.time() - t0

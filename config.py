@@ -12,14 +12,17 @@ _PROJECT_ROOT = Path(__file__).parent
 class Settings(BaseSettings):
     # ========== Elasticsearch ==========
     es_url: str = "http://localhost:9200"
-    es_index_chunks: str = "rag_chunks_new_0424"
+    es_index_chunks: str = "rag_chunk_0506"
     # es_index_documents: str = "rag_documents"
 
     # ========== LLM ==========
-    deepseek_api_key: str = ""
-    deepseek_base_url: str = "https://api.deepseek.com/v1"
-    deepseek_model: str = "deepseek-chat"
-    deepseek_r2_model: str = "deepseek-reasoner"
+    # deepseek_api_key: str = "sk-Pju6YqJlun06bDUZSgDMU6XTajJDnxpOff3Fa2ha3EaabERf"
+    # deepseek_base_url: str = "https://api.agtcloud.ai/v1"
+    # deepseek_model: str = "deepseek-v4-flash"
+    deepseek_api_key: str = "Qwen3-30B-A3B"
+    deepseek_base_url: str = "http://10.107.207.88:8081/v1"
+    deepseek_model: str = "Qwen3-30B-A3B"
+    deepseek_r2_model: str = "Qwen3-30B-A3B"
 
     # ========== Embedding ==========
     embedding_model: str = "BAAI/bge-m3"

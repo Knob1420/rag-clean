@@ -132,9 +132,12 @@ rerank_service: Optional[RerankService] = None
 
 
 class RerankRequest(BaseModel):
+    model: Optional[str] = None
     query: str
     documents: List[str]
     top_k: Optional[int] = None
+    truncate_prompt_tokens: Optional[int] = None
+    additional_data: Optional[dict] = None
 
 
 # OpenAI 兼容格式
@@ -230,9 +233,9 @@ async def health():
     )
 
 
-@app.post("/rerank", response_model=RerankResponse)
+@app.post("/rerank")
 async def rerank(request: RerankRequest):
-    """重排序文档"""
+    """重排序文档 - OpenAI 兼容格式"""
     if rerank_service is None:
         raise HTTPException(status_code=503, detail="服务未初始化")
 
@@ -252,10 +255,15 @@ async def rerank(request: RerankRequest):
             top_k=request.top_k,
         )
 
-        return RerankResponse(
-            results=results,
-            count=len(results),
-        )
+        return {
+            "id": f"rerank-{hash(request.query) % 100000}",
+            "model": request.model or "rerank-model",
+            "results": [
+                {"index": i, "document": {"text": doc}, "relevance_score": score}
+                for i, (doc, score) in enumerate(results)
+            ],
+            "usage": {"total_tokens": len(request.documents)},
+        }
 
     except Exception as e:
         logger.error(f"重排序失败: {e}")
@@ -284,7 +292,7 @@ async def rerank_v1(request: OpenAIRerankRequest):
         return OpenAIRerankResponse(
             id=f"rerank-{hash(request.query) % 100000}",
             model=request.model,
-            results=[{"index": i, "relevance_score": score} for i, (_, score) in enumerate(results)],
+            results=[{"index": i, "document": {"text": doc}, "relevance_score": score} for i, (doc, score) in enumerate(results)],
             usage={"total_tokens": len(request.documents)},
         )
 

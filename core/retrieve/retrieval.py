@@ -23,7 +23,6 @@ from core.retrieve.retrieval_models import (
 )
 from store import DocumentStore, get_store
 
-
 # ============================================================
 # RRF 融合
 # ============================================================
@@ -39,8 +38,8 @@ class RRFFusion:
         self,
         bm25_results: List[Tuple[RetrievedChunk, int]],
         vector_results: List[Tuple[RetrievedChunk, int]],
-        bm25_weight: float = 0.5,
-        vector_weight: float = 0.5,
+        bm25_weight: float = 0.3,
+        vector_weight: float = 0.7,
     ) -> List[Tuple[RetrievedChunk, float]]:
         """融合两个检索结果，按融合得分降序排列"""
         scores: Dict[str, float] = defaultdict(float)

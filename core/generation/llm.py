@@ -12,7 +12,7 @@ import asyncio
 import json
 import re
 from typing import Any, Dict, List, Optional
-
+import httpx
 from loguru import logger
 from openai import OpenAI
 
@@ -46,7 +46,11 @@ class LLMClient:
             logger.warning("使用 Mock 模式（未配置 API Key）")
             return '{"doc_type": "其他", "domain": "Product_Tech", "entities": {}, "filter_terms": [], "topics": [], "doc_intent": null, "summary": "暂无摘要", "confidence": 0}'
 
-        client = OpenAI(api_key=self.api_key, base_url=self.base_url)
+        client = OpenAI(
+            api_key=self.api_key,
+            base_url=self.base_url,
+            timeout=120.0,
+        )
         response = client.chat.completions.create(
             model=self.model,
             messages=messages,
@@ -166,6 +170,11 @@ class LLMClient:
 
 def parse_json_response(response: str) -> Dict[str, Any]:
     """解析 LLM 返回的 JSON"""
+    # 如果返回了 HTML（API 错误/认证失败），直接抛出
+    if isinstance(response, str) and response.startswith("<"):
+        raise ValueError(
+            f"API 返回了 HTML 而非 JSON（可能是认证失败）: {response[:200]}"
+        )
     try:
         return json.loads(response)
     except json.JSONDecodeError:

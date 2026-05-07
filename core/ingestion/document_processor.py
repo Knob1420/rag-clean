@@ -105,7 +105,7 @@ def process_markdown(
     save_intermediate: bool = True,
     load_intermediate: bool = False,
     processed_dir: Optional[Path] = None,
-    use_summary: bool = True,
+    use_summary: bool = False,
     chunk_mode: str = "recursive",
 ) -> List[Document]:
     """

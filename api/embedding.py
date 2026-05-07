@@ -238,6 +238,22 @@ async def root():
     }
 
 
+@app.get("/v1/models")
+async def list_models():
+    """OpenAI 兼容的模型列表端点"""
+    return {
+        "object": "list",
+        "data": [
+            {
+                "id": "bge-m3",
+                "object": "model",
+                "created": 1234567890,
+                "owned_by": "local"
+            }
+        ]
+    }
+
+
 @app.get("/health", response_model=HealthResponse)
 async def health():
     """健康检查"""
@@ -328,6 +344,12 @@ async def encode_batch(request: EncodeBatchRequest):
     except Exception as e:
         logger.error(f"批量向量化错误: {e}")
         raise HTTPException(status_code=500, detail=f"批量向量化失败: {str(e)}")
+
+
+@app.post("/v1/embeddings")
+async def embeddings_v1(request: EmbeddingsRequest):
+    """OpenAI 兼容端点 /v1/embeddings"""
+    return await embeddings(request)
 
 
 @app.post("/embeddings", response_model=EmbeddingsResponse)

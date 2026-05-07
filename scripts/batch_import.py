@@ -41,7 +41,7 @@ from core.ingestion.document_processor import process_document
 # ── 目录配置 ──────────────────────────────────────────
 DATA_ROOT = Path("/home/zjlab/Documents/build_LLMs/NLP_course_hf/RAG/data")
 RAW_DIR = DATA_ROOT / "raw"
-PROCESSED_DIR = DATA_ROOT / "processed-new-0424"
+PROCESSED_DIR = DATA_ROOT / "processed-0506"
 
 
 def collect_files(dataset_id: Optional[str] = None) -> list[tuple[Path, str, str]]:
@@ -66,12 +66,13 @@ def collect_files(dataset_id: Optional[str] = None) -> list[tuple[Path, str, str
 
     for search_dir in search_dirs:
         current_dataset_id = search_dir.name
-        for ext in sorted(SUPPORTED_FORMATS):
-            for f in sorted(search_dir.rglob(f"*{ext}")):
-                fmt = detect_format(f)
-                if fmt == "unknown":
-                    continue
-                files.append((f, fmt, current_dataset_id))
+        # 只收集 .md 文件，排除重复（以 filename 为准）
+        seen_names: set[str] = set()
+        for f in sorted(search_dir.rglob("*.md")):
+            if f.name in seen_names:
+                continue
+            seen_names.add(f.name)
+            files.append((f, "md", current_dataset_id))
 
     return files
 

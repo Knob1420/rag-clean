@@ -8,8 +8,14 @@ from core.pipeline.rag_pipeline import (
     RAGPipeline,
     PipelineResult,
 )
+from core.pipeline.simple_pipeline import (
+    SimplePipeline,
+    SimplePipelineResult,
+)
 
 __all__ = [
     "RAGPipeline",
     "PipelineResult",
+    "SimplePipeline",
+    "SimplePipelineResult",
 ]

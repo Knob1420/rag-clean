@@ -48,6 +48,22 @@ class RetrievalOptions(BaseModel):
     doc_ids: Optional[List[str]] = Field(None, description="按文档ID列表筛选")
     dataset_ids: Optional[List[str]] = Field(None, description="按数据集ID列表筛选")
 
+    # RRF 融合权重（仅 hybrid 模式生效）
+    vector_weight: Optional[float] = Field(
+        0.7,
+        ge=0.0,
+        le=1.0,
+        description="向量检索权重（RRF 融合），默认 0.7；BM25 权重 = 1 - vector_weight",
+    )
+
+    # HyDE 选项
+    use_hyde: bool = Field(
+        False, description="是否使用 HyDE（假设性文档嵌入）提升向量检索"
+    )
+    hyde_num_hypotheses: int = Field(
+        1, ge=1, le=3, description="HyDE 生成假设性文档数量"
+    )
+
     # Rerank 选项
     use_rerank: bool = Field(True, description="是否使用 Rerank")
     rerank_top_k: Optional[int] = Field(
@@ -87,6 +103,15 @@ class ChatRequest(BaseModel):
         None, ge=1, le=50, description="Rerank后保留数量"
     )
     min_score: float = Field(0.0, ge=0.0, le=1.0, description="最低相关性评分")
+    mode: str = Field(
+        "quick",
+        pattern="^(quick|agent)$",
+        description="问答模式：quick=快速问答，agent=智能推理",
+    )
+    use_hyde: bool = Field(False, description="是否使用 HyDE")
+    max_iterations: int = Field(
+        10, ge=1, le=20, description="Agent 最大迭代数（仅 agent 模式）"
+    )
 
 
 class ChatResponse(BaseModel):

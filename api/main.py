@@ -24,7 +24,7 @@ from fastapi.responses import StreamingResponse
 from loguru import logger
 
 from config import settings
-from core.pipeline.rag_pipeline import RAGPipeline
+from core.pipeline.simple_pipeline import SimplePipeline
 from core.retrieve.retrieval_models import (
     ChatRequest,
     ChatResponse,
@@ -153,28 +153,78 @@ async def chat_completion(request: ChatRequest):
     """
     RAG 知识库问答接口
 
-    流程：Query Understanding → Query Rewrite → 混合检索 → Rerank → LLM 生成回答
+    流程（quick 模式）：BM25 + Vector + RRF → Rerank → Parent Expand → Spec → LLM 生成
+    流程（agent 模式）：ReAct Agent 自主推理检索 → 生成回答
     """
     timing = {}
     frontend_time = time.time()
 
     try:
-        pipeline = RAGPipeline()
+        if request.mode == "agent":
+            # ---- Agent 智能推理模式 ----
+            from core.agent.react_agent import ReActAgent
 
-        # ---- Query Rewrite + Retrieval + Generation Pipeline ----
+            agent = ReActAgent(max_iterations=request.max_iterations)
+            react_result = agent.run(query=request.query)
+
+            answer = react_result.answer
+            sources = chunks_to_sources(react_result.chunks)
+            usage = react_result.usage or TokenUsage(
+                prompt_tokens=0, completion_tokens=0, total_tokens=0
+            )
+            timing = react_result.timing
+            timing["total"] = time.time() - frontend_time
+
+            if not answer:
+                raise HTTPException(
+                    status_code=404,
+                    detail="Agent 未能生成有效回答，请尝试其他问题或切换到快速问答模式",
+                )
+
+            logger.info(
+                f"Agent问答成功: query='{request.query}', "
+                f"iterations={react_result.total_iterations}, "
+                f"reason={react_result.terminated_reason}, "
+                f"chunks={len(sources)}, "
+                f"time={timing.get('total', 0):.1f}s"
+            )
+
+            return ChatResponse(
+                answer=answer,
+                sources=sources,
+                time=timing,
+                usage=usage,
+                chunks_count=len(sources),
+            )
+
+        # ---- Quick 快速问答模式（SimplePipeline） ----
+        pipeline = SimplePipeline()
+
+        # ---- BM25 + Vector + RRF + Spec 检索 ----
         pipeline_result = pipeline.run(
             query=request.query,
             top_k=request.top_k,
-            use_rewrite=request.use_rewrite,
+            use_hyde=request.use_hyde,
             use_rerank=request.use_rerank,
             rerank_top_k=request.rerank_top_k,
-            use_generation=True,
         )
         timing = pipeline_result.timing
         timing["total"] = time.time() - frontend_time
 
-        answer = pipeline_result.generation_answer
-        usage = pipeline_result.generation_usage
+        # ---- LLM 生成 ----
+        chunks = pipeline_result.chunks
+        if not chunks:
+            raise HTTPException(
+                status_code=404,
+                detail="未找到相关内容，请尝试其他问题或上传相关文档",
+            )
+
+        generation_svc = get_generation_service()
+        answer, usage = generation_svc.generate(
+            query=request.query,
+            chunks=chunks,
+            spec_context=pipeline_result.spec_context or "",
+        )
 
         if not answer:
             raise HTTPException(
@@ -183,11 +233,11 @@ async def chat_completion(request: ChatRequest):
             )
 
         # 构建响应
-        sources = chunks_to_sources(pipeline_result.chunks)
+        sources = chunks_to_sources(chunks)
 
         logger.info(
             f"问答成功: query='{request.query}', "
-            f"rewritten_queries={pipeline_result.rewritten_queries}, "
+            f"use_hyde={request.use_hyde}, "
             f"chunks={len(sources)}, "
             f"time={timing.get('total', 0):.1f}s"
         )
@@ -217,54 +267,100 @@ async def chat_stream(request: ChatRequest):
     """
     流式 RAG 问答 — SSE 端点
 
-    流程与 chat_completions 完全一致：pipeline.run(use_generation=True) 完成后，
-    将最终整合答案通过 SSE 流式推送给前端。
+    流程与 chat_completions 完全一致：
+    - quick 模式：pipeline.run(use_generation=True) 完成后流式推送
+    - agent 模式：agent.run() 完成后流式推送
 
     事件格式:
     - event: sources  data: {sources: [...]}
+    - event: steps    data: {steps: [{action, duration}, ...]}  — 仅 agent 模式
     - event: token    data: {content: "..."}
     - event: done     data: {usage: {...}, time: {...}}
     - event: error    data: {error: "..."}
     """
-    from core.pipeline import RAGPipeline
-
     async def event_stream():
         timing = {}
         frontend_time = time.time()
 
         try:
-            pipeline = RAGPipeline()
+            if request.mode == "agent":
+                # ---- Agent 智能推理模式（真正流式） ----
+                from core.agent.react_agent import ReActAgent
 
-            # ---- 1. Query Rewrite + Retrieval + Generation ----
-            pipeline_result = pipeline.run(
-                query=request.query,
-                top_k=request.top_k,
-                use_rewrite=request.use_rewrite,
-                use_rerank=request.use_rerank,
-                rerank_top_k=request.rerank_top_k,
-                use_generation=True,
-            )
-            timing = pipeline_result.timing
-            timing["total"] = time.time() - frontend_time
+                agent = ReActAgent(max_iterations=request.max_iterations)
 
-            chunks = pipeline_result.chunks
-            answer = pipeline_result.generation_answer
+                accumulated_sources = []
 
-            if not chunks or not answer:
-                yield f"event: error\ndata: {json.dumps({'error': '未找到相关内容'}, ensure_ascii=False)}\n\n"
-                return
+                for event in agent.run_stream(query=request.query):
+                    if event.event_type == "step_start":
+                        yield f"event: step_start\ndata: {json.dumps(event.data, ensure_ascii=False)}\n\n"
 
-            # ---- 2. 发送 sources 事件 ----
-            sources = chunks_to_sources(chunks)
-            sources_data = [s.model_dump() for s in sources]
-            yield f"event: sources\ndata: {json.dumps({'sources': sources_data}, ensure_ascii=False)}\n\n"
+                    elif event.event_type == "step_end":
+                        yield f"event: step_end\ndata: {json.dumps(event.data, ensure_ascii=False)}\n\n"
 
-            # ---- 3. 流式推送最终答案 ----
-            for char in answer:
-                yield f"event: token\ndata: {json.dumps({'content': char}, ensure_ascii=False)}\n\n"
+                    elif event.event_type == "answer_token":
+                        yield f"event: token\ndata: {json.dumps({'content': event.data.get('content', '')}, ensure_ascii=False)}\n\n"
 
-            # ---- 4. 发送 done 事件 ----
-            yield f"event: done\ndata: {json.dumps({'time': timing, 'chunks_count': len(chunks)}, ensure_ascii=False)}\n\n"
+                    elif event.event_type == "done":
+                        # done 事件中收集 sources
+                        chunks = agent.tool_executor.accumulated_chunks
+                        sources = chunks_to_sources(chunks)
+                        sources_data = [s.model_dump() for s in sources]
+                        if sources_data:
+                            yield f"event: sources\ndata: {json.dumps({'sources': sources_data}, ensure_ascii=False)}\n\n"
+
+                        done_data = {
+                            **event.data,
+                            "chunks_count": len(chunks),
+                        }
+                        yield f"event: done\ndata: {json.dumps(done_data, ensure_ascii=False)}\n\n"
+
+                    elif event.event_type == "error":
+                        yield f"event: error\ndata: {json.dumps(event.data, ensure_ascii=False)}\n\n"
+
+            else:
+                # ---- Quick 快速问答模式（SimplePipeline + 真流式） ----
+                pipeline = SimplePipeline()
+
+                # ---- 1. 检索阶段 ----
+                pipeline_result = pipeline.run(
+                    query=request.query,
+                    top_k=request.top_k,
+                    use_hyde=request.use_hyde,
+                    use_rerank=request.use_rerank,
+                    rerank_top_k=request.rerank_top_k,
+                )
+                timing = pipeline_result.timing
+
+                chunks = pipeline_result.chunks
+
+                if not chunks:
+                    yield f"event: error\ndata: {json.dumps({'error': '未找到相关内容'}, ensure_ascii=False)}\n\n"
+                    return
+
+                # ---- 2. 发送 sources 事件 ----
+                sources = chunks_to_sources(chunks)
+                sources_data = [s.model_dump() for s in sources]
+                yield f"event: sources\ndata: {json.dumps({'sources': sources_data}, ensure_ascii=False)}\n\n"
+
+                # ---- 3. 流式生成回答（逐 token 推送） ----
+                from core.generation.generation import get_generation_service
+
+                generation_svc = get_generation_service()
+                gen_start = time.time()
+
+                async for token in generation_svc.async_generate_stream(
+                    query=request.query,
+                    chunks=chunks,
+                    spec_context=pipeline_result.spec_context or "",
+                ):
+                    yield f"event: token\ndata: {json.dumps({'content': token}, ensure_ascii=False)}\n\n"
+
+                timing["generation"] = time.time() - gen_start
+                timing["total"] = time.time() - frontend_time
+
+                # ---- 4. 发送 done 事件 ----
+                yield f"event: done\ndata: {json.dumps({'time': timing, 'chunks_count': len(chunks)}, ensure_ascii=False)}\n\n"
 
         except Exception as e:
             logger.error(f"流式问答失败: {e}", exc_info=True)

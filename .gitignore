@@ -1,3 +1,6 @@
+# Worktrees
+.worktrees/
+
 # 虚拟环境
 .env
 

@@ -9,76 +9,106 @@
 3. 多余空格/换行清洗（可选）
 4. URL/邮箱移除（可选）
 5. Markdown 图片移除（可选）
-6. 产品参数表格移除（从 products_specs.json 匹配参数字段）
 """
 
-import json
 import re
-from pathlib import Path
-
-# ── 产品参数配置（从 products_specs.json 加载）───────────────
 
 
-def _load_product_specs():
-    """从 products_specs.json 加载产品参数字段名和产品名"""
-    specs_path = Path(__file__).parent.parent.parent / "data" / "products_specs.json"
-    if not specs_path.exists():
-        return set(), set()
-
-    try:
-        with open(specs_path, "r", encoding="utf-8") as f:
-            data = json.load(f)
-
-        # 所有产品名
-        product_names: set[str] = set()
-
-        for products in data.values():
-            if isinstance(products, dict):
-                for product_name, params in products.items():
-                    if isinstance(params, dict):
-                        product_names.add(product_name)
-        return product_names
-    except Exception:
-        return set()
-
-
-_PRODUCT_NAMES = _load_product_specs()
-
-# 核心参数字段（用于快速判断）
-_CORE_PARAM_FIELDS = {
-    "重量",
-    "功耗",
-    "算力",
-    "尺寸",
-    "内存",
-    "存储",
-    "对外接口",
-    "工作温度",
-    "储存温度",
-    "输入电压",
-    "设计寿命",
-    "在轨情况",
-}
-
-
-def _is_product_spec_table(table_content: str) -> bool:
+def _is_meta_table(table_content: str) -> bool:
     """
-    判断 markdown table 是否为产品参数表。
+    判断表格是否为无意义/元信息表格（应删除）。
 
     判断逻辑（满足任一即删除）：
-    1. 包含已知产品名
-    2. 包含多个核心参数字段
+    1. 签字区/审批区表格（含"编制/审核/批准/会签"）
+    2. 文档封面信息表（含"文件编号/研制单位/阶段标记/版本"）
+    3. 全空或几乎全空的表格
     """
     content = table_content.lower()
 
-    # 检查是否包含已知产品名
-    for name in _PRODUCT_NAMES:
-        if name.lower() in content:
+    # ── 1. 签字区/审批区/封面信息表（所有数据集通用） ──────────
+    _META_TABLE_KEYWORDS = [
+        "编制",
+        "审核",
+        "批准",
+        "会签",
+        "签字",
+        "文件编号",
+        "研制单位",
+        "阶段标记",
+        "文档编号",
+        "版次",
+        "共.*页",
+    ]
+    for kw in _META_TABLE_KEYWORDS:
+        if re.search(kw, content):
             return True
 
-    # 检查包含多少核心参数字段
-    field_count = sum(1 for f in _CORE_PARAM_FIELDS if f.lower() in content)
-    if field_count >= 2:
+    # ── 2. 全空表格判断 ──────────────────────────────────────────
+    # 去掉所有 HTML 标签和空白后，剩余有效文本过少
+    plain = re.sub(r"<[^>]+>", "", table_content)
+    plain = re.sub(r"\s+", "", plain)
+    # 去掉 markdown 表格语法
+    plain = re.sub(r"[|\-:]", "", plain)
+    if len(plain) < 5:
+        return True
+
+    return False
+
+
+# ── 低质量内容判定（共享） ──────────────────────────────────────────
+
+# 预编译正则
+_HTML_TAG_RE = re.compile(r"<[^>]+>")
+_TABLE_FRAG_RE = re.compile(r"</td>\s*</tr>\s*<tr>\s*<td", re.IGNORECASE)
+_TD_CLOSE_RE = re.compile(r"</td>", re.IGNORECASE)
+_EFFECTIVE_WORD_RE = re.compile(r"[\u4e00-\u9fff]|[a-zA-Z]{2,}|\d+")
+
+
+def is_low_quality_content(text: str) -> bool:
+    """
+    判断文本是否为低质量内容（HTML 碎片等）。
+
+    五条信号（任一命中即判定为垃圾）：
+    1. HTML 标签占比 >50% 且去标签纯文本 <20 字符
+    2. 表格碎片签名：含 </td></tr><tr><td 模式（MinerU 表格切割残留）
+    3. 重复 HTML 单元格：</td> 出现 ≥3 次，且有效词 <15 个
+    4. 低内容密度：HTML 占比 >15%，且有效词 <15 个
+    5. 纯文本（无 HTML 标签）且有效词 <10 个
+
+    安全保障：信号 2-4 仅在有 HTML 标签时激活；
+    信号 5 覆盖纯文本短 chunk（如 "共3"、"64W" 等）。
+    """
+    tags = _HTML_TAG_RE.findall(text)
+    if not tags:
+        # 信号 5：纯文本（无 HTML 标签）且有效词 <3 个
+        plain = text.strip()
+        effective_words = _EFFECTIVE_WORD_RE.findall(plain)
+        if len(effective_words) < 3:
+            return True
+        return False
+
+    tag_len = sum(len(t) for t in tags)
+    html_ratio = tag_len / max(len(text), 1)
+    plain = _HTML_TAG_RE.sub("", text).strip()
+
+    # 信号 1：原信号保留 — HTML >50% 且纯文本 <20 字符
+    if html_ratio > 0.5 and len(plain) < 20:
+        return True
+
+    effective_words = _EFFECTIVE_WORD_RE.findall(plain)
+    word_count = len(effective_words)
+
+    # 信号 2：表格碎片签名（MinerU 残留）
+    if _TABLE_FRAG_RE.search(text):
+        return True
+
+    # 信号 3：重复 HTML 单元格 + 少量有效词
+    td_count = len(_TD_CLOSE_RE.findall(text))
+    if td_count >= 3 and word_count < 15:
+        return True
+
+    # 信号 4：低内容密度
+    if html_ratio > 0.15 and word_count < 15:
         return True
 
     return False
@@ -106,7 +136,7 @@ class TextCleaner:
     _URL_PATTERN = re.compile(r"https?://\S+")
 
     @classmethod
-    def clean(cls, text: str, remove_images: bool = True, dataset_id: str = "") -> str:
+    def clean(cls, text: str, remove_images: bool = True) -> str:
         """
         清洗文本（默认执行所有清洗规则）。
 
@@ -114,15 +144,14 @@ class TextCleaner:
         1. XML/模板符号清洗
         2. 控制字符清洗
         3. 多余空格/换行清洗
-        4. URL/邮箱移除（保护 Markdown 链接/图片）
+        4. URL/邮箱/Markdown图片移除（保护 Markdown 链接）
         5. Markdown 图片和 HTML img 标签移除（可选，同时移除紧跟的图例行）
-        6. 产品参数表格移除（仅当 dataset_id 命中产品数据集时生效）
+        6. 签字区/审批区等元信息 HTML 表格移除（所有数据集）
         7. 页眉页脚清洗（页码、原理图标记、日期、文档编号等）
 
         Args:
             text: 原始文本
             remove_images: 是否移除 Markdown 图片和 HTML img 标签，默认 True
-            dataset_id: 数据集 ID，用于判断是否属于产品参数类知识库
 
         Returns:
             清洗后的文本
@@ -139,15 +168,15 @@ class TextCleaner:
         # 3. 多余空格/换行清洗
         text = cls._clean_extra_spaces(text)
 
-        # 4. URL/邮箱移除
+        # 4. URL/邮箱/Markdown图片移除（保护 Markdown 链接）
         text = cls._remove_urls_and_emails(text)
 
         # 5. 图片移除（可选）
         if remove_images:
             text = cls._remove_images(text)
 
-        # 6. 产品参数表格移除（仅产品数据集）
-        # text = cls._remove_product_spec_tables(text, dataset_id)
+        # 6. 签字区/审批区等元信息 HTML 表格移除（所有数据集）
+        text = cls._remove_meta_html_tables(text)
 
         # 7. 页眉页脚清洗
         text = cls._clean_headers_footers(text)
@@ -180,37 +209,29 @@ class TextCleaner:
     @classmethod
     def _remove_urls_and_emails(cls, text: str) -> str:
         """
-        移除 URL 和邮箱，但保护 Markdown 链接和图片。
+        移除 URL、邮箱和 Markdown 图片，但保护 Markdown 链接。
 
         流程：
         1. 保护 Markdown 链接: [text](url) → __MD_LINK_0__
-        2. 保护 Markdown 图片: ![alt](url) → __MD_IMAGE_0__
+        2. 移除 Markdown 图片: ![alt](url) → 直接删除（不需要恢复）
         3. 移除邮箱
         4. 移除普通 URL
-        5. 恢复 Markdown 内容
+        5. 恢复 Markdown 链接
         """
-        # 保护 Markdown 链接和图片
-        links: list[tuple[str, str]] = []
+        # 保护 Markdown 链接
+        links: list[tuple[str, str, str]] = []
 
         def protect_link(match: re.Match) -> str:
             link_text = match.group(1)
             url = match.group(2)
             placeholder = f"__MD_LINK_{len(links)}__"
-            links.append(("link", link_text, url, placeholder))
+            links.append((link_text, url, placeholder))
             return placeholder
 
-        def protect_image(match: re.Match) -> str:
-            alt_text = match.group(0)
-            url_match = re.search(r"\((https?://[^)]+)\)", alt_text)
-            if url_match:
-                url = url_match.group(1)
-                placeholder = f"__MD_IMAGE_{len(links)}__"
-                links.append(("image", alt_text, url, placeholder))
-                return placeholder
-            return match.group(0)
-
         text = cls._MD_LINK_PATTERN.sub(protect_link, text)
-        text = cls._MD_IMAGE_PATTERN.sub(protect_image, text)
+
+        # Markdown 图片直接删除（不恢复）
+        text = cls._MD_IMAGE_PATTERN.sub("", text)
 
         # 移除邮箱
         text = cls._EMAIL_PATTERN.sub("", text)
@@ -218,12 +239,9 @@ class TextCleaner:
         # 移除普通 URL
         text = cls._URL_PATTERN.sub("", text)
 
-        # 恢复 Markdown 链接和图片
-        for link_type, content, url, placeholder in links:
-            if link_type == "link":
-                restored = f"[{content}]({url})"
-            else:
-                restored = f"![{content}]({url})"
+        # 恢复 Markdown 链接
+        for link_text, url, placeholder in links:
+            restored = f"[{link_text}]({url})"
             text = text.replace(placeholder, restored)
 
         return text
@@ -279,56 +297,83 @@ class TextCleaner:
         return "\n".join(result_lines)
 
     @classmethod
-    def _remove_product_spec_tables(cls, text: str, dataset_id: str = "") -> str:
+    def _remove_meta_html_tables(cls, text: str) -> str:
         """
-        移除产品参数表格（Markdown 和 HTML 格式）。
+        移除签字区/审批区/封面信息等元信息 HTML 表格（所有数据集通用）。
 
-        仅当 dataset_id 命中以下条件时生效：
-        - dataset_id 包含"产品"（products, 产品参数 等）
-        - 或 dataset_id 为已知产品类别名
-        否则直接返回原文本，不做任何处理。
+        这些表格通常包含：编制/审核/批准/会签、文件编号/研制单位/阶段标记等，
+        对检索毫无价值，且 HTML 格式碎片化严重。
+
+        支持 MinerU 把一个大表格拆成多个碎片 <table> 的情况：
+        对间隔 <50 字符的连续 <table> 分组，聚合判断是否为元信息表格。
         """
-        # 产品数据集标识（可按需扩展）
-        PRODUCT_DATASET_KEYWORDS = [
-            "产品",
-            "products",
-            "specs",
-            "星载智算机",
-            "星载路由器",
-            "星载激光通信机",
-            "智能计算机",
-            "激光通信",
-        ]
-        is_product_dataset = any(kw in dataset_id for kw in PRODUCT_DATASET_KEYWORDS)
-        if not is_product_dataset:
-            return text
-        # 1. 移除 Markdown 格式 table
-        md_table_pattern = re.compile(
-            r"(?:\|[^\n]+\|\n){2,}(?:\|[^\n]+\|)", re.MULTILINE
-        )
-
-        def replace_md_table(match: re.Match) -> str:
-            table_content = match.group(0)
-            if _is_product_spec_table(table_content):
-                return ""
-            return table_content
-
-        text = md_table_pattern.sub(replace_md_table, text)
-
-        # 2. 移除 HTML 格式 table
         html_table_pattern = re.compile(
             r"<table[^>]*>.*?</table>", re.DOTALL | re.IGNORECASE
         )
 
-        def replace_html_table(match: re.Match) -> str:
-            table_content = match.group(0)
-            if _is_product_spec_table(table_content):
-                return ""
-            return table_content
+        # 第一遍：收集所有表格及其位置
+        tables_info = []
+        for match in html_table_pattern.finditer(text):
+            tables_info.append(
+                {
+                    "start": match.start(),
+                    "end": match.end(),
+                    "content": match.group(0),
+                }
+            )
 
-        text = html_table_pattern.sub(replace_html_table, text)
+        if not tables_info:
+            return text
 
-        return text
+        # 第二遍：对连续的（间隔 <50 字符的）表格分组
+        _META_KEYWORDS = [
+            "编制",
+            "审核",
+            "批准",
+            "会签",
+            "签字",
+            "文件编号",
+            "研制单位",
+            "阶段标记",
+            "文档编号",
+            "版次",
+            "共",
+            "页",
+        ]
+
+        groups: list[list[dict]] = []
+        current_group = [tables_info[0]]
+        for i in range(1, len(tables_info)):
+            prev_end = tables_info[i - 1]["end"]
+            curr_start = tables_info[i]["start"]
+            gap_text = text[prev_end:curr_start].strip()
+            # 只有间隔为纯空白/换行时才视为同一组碎片
+            # 间隔含任何实质文本 → 不合并，属于不同组
+            if not gap_text:
+                current_group.append(tables_info[i])
+            else:
+                groups.append(current_group)
+                current_group = [tables_info[i]]
+        groups.append(current_group)
+
+        # 第三遍：对每组聚合判断是否为元信息表格
+        to_delete_ranges: list[tuple[int, int]] = []
+        for group in groups:
+            combined = " ".join(t["content"] for t in group)
+            combined_lower = combined.lower()
+            hit_count = sum(1 for kw in _META_KEYWORDS if kw in combined_lower)
+            if hit_count >= 2:
+                # 整组删除
+                start = group[0]["start"]
+                end = group[-1]["end"]
+                to_delete_ranges.append((start, end))
+
+        # 第四遍：从后往前删除，避免偏移
+        result = text
+        for start, end in reversed(to_delete_ranges):
+            result = result[:start] + result[end:]
+
+        return result
 
     # 页眉页脚正则（类方法，方便子类扩展）
     _HEADER_FOOTER_PATTERNS: list[re.Pattern] = [
@@ -375,7 +420,6 @@ class TextCleaner:
 def clean_text(
     text: str,
     remove_images: bool = True,
-    dataset_id: str = "",
 ) -> str:
     """
     便捷函数：清洗文本。
@@ -383,7 +427,6 @@ def clean_text(
     Args:
         text: 原始文本
         remove_images: 是否移除 Markdown 图片
-        dataset_id: 数据集 ID（仅产品类知识库触发产品参数表格删除）
 
     Returns:
         清洗后的文本
@@ -391,5 +434,4 @@ def clean_text(
     return TextCleaner.clean(
         text,
         remove_images=remove_images,
-        dataset_id=dataset_id,
     )

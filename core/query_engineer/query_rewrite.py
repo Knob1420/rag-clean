@@ -17,7 +17,6 @@ from typing import Any, Dict, List, Optional
 from loguru import logger
 from pydantic import BaseModel, Field
 
-from core.generation.llm import get_llm_client, parse_json_response
 from prompt import INTENT_ROUTING_PROMPT
 
 
@@ -107,7 +106,9 @@ Output JSON:
 }"""
 
     def __init__(self):
+        from core.generation.llm import get_llm_client, parse_json_response
         self.llm = get_llm_client()
+        self._parse_json = parse_json_response
 
     # ── 统一 transform（当前实际路径）────────────────────────────
 
@@ -144,7 +145,7 @@ Output JSON:
             ]
         )
 
-        result = parse_json_response(response)
+        result = self._parse_json(response)
         result["original_query"] = query
         result["intent"] = intent
 
@@ -290,7 +291,7 @@ Output JSON:
                 ]
             )
 
-            result = parse_json_response(response)
+            result = self._parse_json(response)
 
             return {
                 "target_models": result.get("target_models", []),
@@ -317,7 +318,7 @@ Output JSON:
             ]
         )
 
-        result = parse_json_response(response)
+        result = self._parse_json(response)
         result["original_query"] = query
         result["intent"] = "simple_lookup"
         result["transform_strategy"] = "clarify"
@@ -353,7 +354,7 @@ Output JSON:
             ]
         )
 
-        result = parse_json_response(response)
+        result = self._parse_json(response)
         result["original_query"] = query
         result["intent"] = "compare"
         result["transform_strategy"] = "decompose"
@@ -390,7 +391,7 @@ Output JSON:
             ]
         )
 
-        result = parse_json_response(response)
+        result = self._parse_json(response)
         result["original_query"] = query
         result["intent"] = "recommend"
         result["transform_strategy"] = "generalize"

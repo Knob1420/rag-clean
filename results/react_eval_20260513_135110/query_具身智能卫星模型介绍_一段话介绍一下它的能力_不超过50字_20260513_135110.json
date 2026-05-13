@@ -1,0 +1,240 @@
+{
+  "eval_id": "20260513_135110",
+  "timestamp": "2026-05-13T13:55:56.358013",
+  "query": "具身智能卫星模型介绍，一段话介绍一下它的能力，不超过50字",
+  "answer": "具身智能卫星模型是一种让卫星变\"聪明\"的AI技术，赋予卫星资源感知、任务规划、智能决策与自主执行能力。它通过卫星自治、卫星调控和在轨计算三大模块，实现单星自主任务处理与多星智能协同，大幅提升卫星响应速度和任务效率。[来源: 具身智能卫星模型介绍]",
+  "terminated_reason": "finish",
+  "total_iterations": 3,
+  "steps": [
+    {
+      "iteration": 0,
+      "thought": "",
+      "action": "bm25_search",
+      "action_input": {
+        "queries": [
+          {
+            "label": "具身智能卫星模型",
+            "queries": [
+              "具身智能卫星",
+              "具身智能卫星模型",
+              "embodied intelligence satellite"
+            ]
+          }
+        ],
+        "top_k": 10
+      },
+      "observation": "━━━━━━━━━━ 子问题: 具身智能卫星模型 [BM25] ━━━━━━━━━━\n  ═══ 查询 1: \"具身智能卫星\" ═══\n\n  找到 10 条匹配结果：\n  [1] 文档=具身智能卫星模型介绍 | 分数=4.2952\n    内容: # 旧版  \n当前在轨卫星智能化程度较低，主要依赖地⾯指令和预设程序运⾏，响应迟缓且运营成本⾼昂。随着航天任务复杂度与星载数据量的爆发式增⻓，传统控制模式已难以满⾜需求。  \n具⾝智能卫星模型是⼀种⾯向在轨卫星智能管理与辅助控制的新型智能解决⽅案，在保持传统卫星平台架构的基础上，深度融合⼈⼯智能技术，使每颗卫星升级为具有资源感知、任务规划、智能决策与⾃主执⾏能⼒的智能航天器。在单星层⾯，通过构建\"任务理解-资源感知-决策制定-执⾏控制\"的闭环智能体，让卫星具备⾃主任务处理能⼒；在星座层⾯，通过多星智能协作与动态调度，形成具备全局感知与协同优化能⼒的星座智能体。\n  [2] 文档=具身智能卫星模型介绍 | 分数=4.0090\n    内容: # 通俗化表达  \n具⾝智能卫星模型是⼀种让卫星变得更“聪明”的新技术。它在不改变卫星原有结构的前提下，",
+      "duration": 9.121
+    },
+    {
+      "iteration": 1,
+      "thought": "",
+      "action": "vector_search",
+      "action_input": {
+        "query": "具身智能卫星模型是什么，它有哪些核心能力",
+        "top_k": 10
+      },
+      "observation": "━━━━━━━━━━ Vector 检索 [HyDE] ━━━━━━━━━━\n  查询: \"具身智能卫星模型是什么，它有哪些核心能力\"\n\n  找到 10 条匹配结果：\n  [1] 文档=展品介绍260113 | 分数=7.7083\n    内容: # 具⾝智能卫星模型  \n具⾝智能卫星模型在传统卫星平台架构基础上深度融合⼈⼯智能技术，使卫星具备资源感知、任务规划、智能决策与⾃主执⾏能⼒，成为智能航天器。  \n该模型主要由卫星⾃治、卫星调控与在轨计算三⼤核⼼模块构成，⽀持⾃然语⾔、语⾳等多模态交互⽅式。  \n卫星⾃治模块：实时监测能源、热控、智算机、路由等分系统状态，实现卫星健康⾃检、异常预警、根因分析与排故建议；  \n卫星调控模块：结合卫星状态与外部环境信息，实现精密定轨与轨道预报、单星成像任务规 划、多星协同连续观测、特定区域快速捕捉等典型任务的精细化规划与动态调整；  \n在轨计算模块：实现遥感图像星上L-L级处理与天基遥感模型在轨推理。天基遥感模型具备80亿参数，融合RGB、SAR、红外、多光谱等多源数据，实现图像级、区域级、像素级等14类任务的统⼀处理，⽀持300多种⽬标识别、3",
+      "duration": 6.036
+    },
+    {
+      "iteration": 2,
+      "thought": "",
+      "action": "finish",
+      "action_input": {},
+      "observation": "提交最终回答（123 字）",
+      "duration": 7.505
+    }
+  ],
+  "accumulated_chunks": [
+    {
+      "chunk_id": "9f1d2b5fd22e73be_p0",
+      "doc_id": "9f1d2b5fd22e73be",
+      "doc_title": "具身智能卫星模型介绍",
+      "content": "# 具⾝智能卫星模型介绍\n\n# 模型简介\n\n# 最新版  \n具⾝智能卫星模型在传统卫星平台架构基础上深度融合⼈⼯智能技术，使卫星具备资源感知、任务规划、智能决策与⾃主执⾏能⼒，成为智能航天器。  \n该模型主要由卫星⾃治、卫星调控与在轨计算三⼤核⼼模块构成，⽀持⾃然语⾔、语⾳等多模态交互⽅式。  \n卫星⾃治模块：实时监测能源、热控、智算机、路由等分系统状态，实现卫星健康⾃检、异常预警，提供根因分析与排故建议；\n卫星调控模块：结合卫星状态与外部环境信息，实现精密定轨与轨道预报、单星成像任务规 划、多星协同连续观测、特定区域快速捕捉等典型任务的精细化规划与动态调整；\n在轨计算模块：实现遥感图像星上L-L级处理与天基遥感模型在轨推理。天基遥感模型具备80亿参数，融合RGB、SAR、红外、多光谱等多源数据，实现图像级、区域级、像素级等14类任务的统⼀处理，⽀持300多种⽬标识别、300多种图像分类及60多种场景分割能⼒，是当前遥感领域综合性能最强的视觉语⾔模型，可有效⽀撑智慧城市、灾害应急、环境监测等领域。\n\n# 旧版  \n当前在轨卫星智能化程度较低，主要依赖地⾯指令和预设程序运⾏，响应迟缓且运",
+      "content_length": 1132,
+      "score": 7.5155,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "9f1d2b5fd22e73be_p1",
+      "doc_id": "9f1d2b5fd22e73be",
+      "doc_title": "具身智能卫星模型介绍",
+      "content": "# 多星智能协同  \n星座资源感知监测：全星座能源、热控等⼦系统状态的实时感知与异常监测；智算机等分系统故障诊断准确率 $\\geqslant 8 5 \\%$ ，平均诊断时间 $\\leqslant 1 8 0$ 秒\n成像任务跨星协同：城市级成像覆盖率从传统 $1 0 \\%$ 提升⾄ $5 0 \\%$ ，成像效率提升4倍；固定地点最⼩观测间隔从24⼩时缩短⾄4分钟（时效性提升360倍）\n⽬标区域持续监测：可快速调度多星对突发事件区域实施持续监测，通过⾃主任务规划与快速指令执⾏，将任务规划⾄指令⽣成时间从⼩时级压缩⾄分钟级\n\n# 持续优化与天地协同  \n在轨模型持续优化：⽀持10B级参数多模态⼤模型的星载部署，实现周期性评估与在轨迭代优化\n天地协同流程闭环：基于\"三体计算星座\"天地⼀体化⽹络，构建\"意图解析-指令上注-星间同步-执⾏反馈-结果下传\"的全流程闭环系统\n\n# 系统组成  \n具⾝智能卫星系统采⽤模块化架构设计，主要由卫星⾃治、卫星调控和在轨计算三⼤核⼼模块构成，⽀持⾃然语⾔、语⾳等多模态交互⽅式。卫星调控模块对多模态任务需求进⾏解析，结合实时资源状态约束⽣成指令规划，调度各卫星分系",
+      "content_length": 1059,
+      "score": 6.1625,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "9f1d2b5fd22e73be_p2",
+      "doc_id": "9f1d2b5fd22e73be",
+      "doc_title": "具身智能卫星模型介绍",
+      "content": "# 相对辐射校正  \n相对辐射校正可以尽可能的消除探元响应不⼀致的⼲扰，处理后⾊彩更贴近真实情况。  \n在Orin平台实测耗时：全⾊+多光谱：0.763s/景  \n全⾊： 0.448s/景  \n处理前  \n处理后  \n注：展⽰影像为测试影像，⾊彩与实际影像不同\n\n# 波段配准  \n在Orin平台实测耗时：全⾊+多光谱：11.437s/景  \n配准前  \n配准后\n\n# 条带噪声去噪  \n条带噪声去除处理可以进⼀步消除部分影像中探元响应造成的噪声，同时保持地物细节完全不受影响。  \n在Orin平台实测耗时：全⾊ $^ +$ 多光谱：18.313s/景（CPU）  \n处理前  \n处理后\n\n# 系统⼏何校正  \n在Orin平台实测耗时：5.268s/景  \n校正前  \n校正后\n\n# 影像融合  \n在Orin平台实测耗时：36.682s/景（CPU）  \n原始多光谱图像  \n高分2遥感影像\n原始多光谱图像部分细节  \n融合后多光谱图像  \n融合后的多光谱图像中目 标的纹理更加清晰\n融合后多光谱图像部分细节\n\n# 影像云检测  \n| 原有指数方法 | 深度学习方法 |\n| --- | --- |\n",
+      "content_length": 911,
+      "score": -3.3377,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "9f1d2b5fd22e73be_p3",
+      "doc_id": "9f1d2b5fd22e73be",
+      "doc_title": "具身智能卫星模型介绍",
+      "content": "# ⽬标位置解算  \n在Orin平台实测耗时：0.651s/景  \n船舰检测  \n解算的2个⽬标的经纬度分别为：  \n(.,.)  \n[(.,.)  \n总耗时为：2.351593s\n\n# 图像分割  \n在Orin平台实测耗时：4.924s/景  \n原图\n分割结果  \n原图\n分割结果  \n原图\n分割结果  \nbuilt-up\nfarmland\nforest\nmeadow\nwater\nlignored  \n数据集：GID MIOU: . ACC: .\n\n# 图像压缩  \n在Orin平台实测耗时：0.266s/景  \n压缩前  \n压缩后  \n| 压缩比 | PSNR | 分辨率 |\n| --- | --- | --- |\n| 26.6 | 40.1 | 7300*6920 |  \n压缩前  \n压缩后  \n| 压缩比 | PSNR | 分辨率 |\n| --- | --- | --- |\n| 28.7 | 40.7 | 1024*1024 |\n\n# 图像增强\n\n# 图像去运动模糊  \n通过深度卷积神经⽹络，去除相机抖动、物体运动等带来的图1像模糊，有效提⾼检测准确率。  \n在Orin平台实测耗时",
+      "content_length": 909,
+      "score": -4.7916,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "c837a7fb5ae3865e_p0",
+      "doc_id": "c837a7fb5ae3865e",
+      "doc_title": "具身智能模型宣传单页251030",
+      "content": "# EMBodied INTELLIGENT SATELLITE MODEL  \n具身智能卫星模型\n\n# C  \n目录  \n一、模型简介 01\n二、卫星自治 03\n三、卫星调控 04\n四、在轨计算 05\n\n# 模型简介  \n具身智能卫星模型是一种面向在轨卫星智能管理与辅助控制的新型智能解决方案，在保持传统卫星平台架构的基础上，深度融合人工智能技术，使每颗卫星升级为具有资源感知、任务规划、智能决策与自主执行能力的智能航天器。在单星层面，通过构建\"任务理解-资源感知-决策制定-执行控制\"的闭环智能体，让卫星具备自主任务处理能力；在星座层面，通过多星智能协作与动态调度，形成具备全局感知与协同优化能力的星座智能体。\n\n# 模型能力\n\n# 应用场景\n\n# 杭州拥堵状况制图  \n调度10颗卫星对杭州主城区30公里范围实现日级覆盖，通过实时调控成像参数精准捕捉车流数据，生成主干道拥堵热力图辅助交通管理。\n\n# 火灾区域持续观测  \n卫星调控模块解析并调度，在轨计算模块实时监测分析，必要时协同多星观测，最终生成火点定位、趋势预测及预警报告，助力灾情防控。\n\n# 海上非法活动智能监管  \n具身智能卫星星",
+      "content_length": 1016,
+      "score": 6.6579,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "67f8cd08656c0a09_p10",
+      "doc_id": "67f8cd08656c0a09",
+      "doc_title": "（中文）三体计算星座画册 - 20260318-压缩",
+      "content": "# 安全可靠  \n基于角色的用户权限访问控制，可靠的星地认证机制，实现安全可靠的星载算力、存储资源共享。\n\n# 星群自治  \n针对星地常态化断连-非对称网络、星间弱网的问题，实现天基虚拟星群自治功能，确保任务执行的可靠性和不中断。\n\n# FEATURES 产品特点  \n应用程序 APPLICATION PROGRAM  \n| 应用名称 | 状态 | 版本号 |\n| --- | --- | --- |\n| 之江天枪 | 运行中 | adotg.L1 |\n| amamam | 更新中 | adotg.L1 |\n| L0-L1 | 运行中 | adotg.L1 |\n| L1-L2 | 已停止 | adotg.L1 |\n| L2-L3 | 运行中 | adotg.L1 |  \n3..2  \n星地同步 SATELLITE-GROUNO SYNCHRONIZATION  \n星间同步 INTERSTELLAR SYNCHRONIZATION\n\n# EMBODIED INTELLIGENTSATELLITE MODEL具身智能卫星模型  \n具身智能卫星模型在传统卫星平台架构基础上深度融合人工智能技术，",
+      "content_length": 893,
+      "score": 6.036,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "c7448408d613b22f_p0",
+      "doc_id": "c7448408d613b22f",
+      "doc_title": "术语翻译",
+      "content": "# 术语翻译\n\n# 之江实验室相关术语  \n共商共建共享共发展 openness, collaboration, sharing, and discovery  \n之江实验室 Zhejiang Lab  \n天基计算系统研究中⼼ Research Center for Space Computing System\n\n# 三体计算星座产品术语  \n三体计算星座 3-body computing constellation 或 three-body computing constellation  \n三体计算星座⾸次发射 the first launch of the -body Computing Constellation  \n星载智能计算机 spaceborne intelligent computer  \n星载智能计算单元 spaceborne intelligent computing unit  \n激光通信机 laser communication terminal  \n星间激光通信机 inter-satellite laser communication terminal  \n",
+      "content_length": 2412,
+      "score": 0.3228,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "25ce685b5f7971b3_p10",
+      "doc_id": "25ce685b5f7971b3",
+      "doc_title": "王坚-2025-8-18 AI and 3-Body Computing Constelationn  Chengdu  V3",
+      "content": "# AI不能因为算力的缺失而缺席太空\n\n# AI in space needs space computing\n\n# 3-Body Computing Constellation\n\n# 三体计算星座  \nThe first launch in May 14, 2025  \n首发\n\n# 第一个80B的AI模型与12颗卫星同时上天\n\n# 开放、 开放、 再开放  \nMike Stephenson  \n英国地调局前首席科学家扩展物种分类助手  \n成秋明  \n中国科学院院士矿产勘探超级智能体  \n侯增谦  \n中国科学院院士新一代火星地质编图  \nHans Thybo欧洲科学院院士岩石数据抽取  \n沈树忠  \n中国科学院院士基于古地层数据的高分辨率时间线重建  \n地球观测组织  \nData Hub  \n世界自然保护联盟  \nNbS-GPT智能体\n\n# 橄榄叶计划每年面向全球开放1~2颗试验卫星搭载\n\n# ARTIFICIAL INTELLIGENCE\n\n# Scientist calls for collaborative use of technology in space  \nZhejian",
+      "content_length": 1379,
+      "score": -2.4553,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "f4d7d407bae1cbfb_p16",
+      "doc_id": "f4d7d407bae1cbfb",
+      "doc_title": "Q NI XYK2122-2024 信息层自主管理软件要求V1.6（普通商密）",
+      "content": "```  \n图 15 星历格式（3GPP V17.6）  \n| EphemerisInfo field descriptions |\n| --- |\n| eccentricity |\n| Satellite orbital parameter: eccentricity e, see NIMA TR 8350.2 [71]. Unit is radian.Step of 1.431* 10-8.Actual value = field value * (1.431* 10-8). |\n| inclination |\n| Satellite orbital parameter: inclination i, see NIMA TR 8350.2 [71]. Unit is radian.Step of 2.341* 10-8rad. Actual value = field value * (2.341* 10-8). |\n| longitude |\n| Satellite orbital parameter: longitude of ascending node Ω, see NIM",
+      "content_length": 2209,
+      "score": -4.646,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "7013d4982497eb42_p7",
+      "doc_id": "7013d4982497eb42",
+      "doc_title": "三体计算星座：把人工智能送入太空（王坚 雄安 2025年11...",
+      "content": "# 进展审查  \n和平利⽤外层空间委员会应在其每届会议议程中列⼊⼀个项⽬，允许委员会成员国和其常设观.察员交流他们在实施“Space”议程⽅⾯的经验。2025年，委员会应对“Space”议程实施进展情况进⾏中期审查。2030年，委员会应对“Space”议程实施情况进⾏最终审查，并向⼤会报告结果。\n\n# 联合国\n\n# 外层空间事务厅（UNOOSA）  \n外层空间事务厅（UNOOSA）负责推进和平利⽤外层空间的国际合作，并帮助所有国家利⽤空间科学和技术实现可持续发展。\n\n# 将空间的好处带给⼈类\n\n# 附录  \n（附录部分如有，将包括相关技术术语解释、缩略语列表、参考⽂献、相关联合国⼤会决议编号等内容。）\n\n# 说明  \n本⽂件由联合国出版，。⽂件中所使⽤的名称和材料的呈现⽅式，并不意味着联合国秘书处对任何国家、领⼟、城市或地区及其当局的法律地位，或对其边界或界限的划分，表达任何意⻅。  \n本出版物未经正式编辑。出版制作：英⽂、出版和图书馆科，联合国维也纳办事处。  \n电⼦书号：97821007  \n如你所⻅，整个《Space》议程的核⼼是将空间技术、空间科学和空间数据作为推动全球可持续发",
+      "content_length": 1138,
+      "score": -5.8641,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "25ce685b5f7971b3_p4",
+      "doc_id": "25ce685b5f7971b3",
+      "doc_title": "王坚-2025-8-18 AI and 3-Body Computing Constelationn  Chengdu  V3",
+      "content": "# Lesson from Galactica: Two weeks before ChatGPT launched  \nARTIFICIAL INTELLIGENCE\n\n# Why Meta's latest large language model survived only three days online  \nGalactica was supposed to help scientists. Instead, it mindlessly spat out biased and incorrect nonsense.  \nBy Will Douglas Heaven  \nThe Technology Review article continues:  \nAnd it wasn't just the fault of Meta's marketing team. Yann LeCun, a Turing Award winner and Meta's chief scientist, defended Galactica to the end. On the day the ",
+      "content_length": 1292,
+      "score": -5.9859,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "3ac24a19f3d22098_p0",
+      "doc_id": "3ac24a19f3d22098",
+      "doc_title": "星载路由器介绍",
+      "content": "# 星载路由器介绍\n\n# 总体介绍\n\n# 简化版  \n“之江智桥”系列星载路由器是星间（激光/微波）、星地（测控）及星内（算⼒设备）通信的统⼀互联枢纽，具备Tbit级⾼速率、低延迟的传输能⼒，采⽤主备双机与冷备份⾼可靠架构，⽀持从千兆⾄100G的多通道⼆层/三层以太⽹交换。  \n“之江智桥”系列星载路由器是之江实验室专为满⾜星间、星内⾼速数据通信需求⽽设计的⾼可靠路由载荷，成功实现了星内、星间百G⽐特级别⾼速率、低延迟⽹络传输技术的突破，是星间（激光/微波）、星地（测控）及星内（算⼒设备）通信的统⼀互联枢纽。\n\n# 详细版  \n“之江智桥”系列星载路由器是之江实验室专为满⾜星间、星内⾼速数据通信需求⽽设计的⾼可靠路由载荷。作为星间（激光/微波）、星地（测控）及星内（算⼒设备）通信的统⼀互联枢纽，具备单端⼝10G/G⾼速率、 $1 0 0 \\mathsf { G } { \\sim } 2 \\mathsf { T }$ 交换容量、660ns低时延、主备双机冷备⾼可靠设计等特点。  \n2025年5⽉14⽇12时12分，智桥R（单端⼝10G，总容量440G）随三体计算星座⾸发12星成功发射，⼊",
+      "content_length": 1745,
+      "score": -5.9867,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "70c96ca01f03e569_p14",
+      "doc_id": "70c96ca01f03e569",
+      "doc_title": "MAX4892",
+      "content": "# NOTES:  \n1.DIMENSIONING & TOLERANCING CONFORM TO ASMEY14,5M-19942.ALL DIMENSIONS ARE IN MILLIMETERS,ANGLES ARE IN DEGREES.3.NIS THE TOTAL NUMBER OF TERMINALS.\n4THETERMINAL#1IDENTIFIERANDTERMINALNUMBERINGCONVENTIONSHALLCONFORMTO JESD 95-1 SPP-012.DETAILSOFTERMINAL#1IDENTIFIERAREOPTIONAL,BUTMUSTBELOCATEDWITHINTHE ZONE INDICATED.THETERMINAL#1IDENTIFIER MAYBE EITHERAMOLD OR MARKEDFEATURE.  \n6. ND AND NE REFER TO THE NUMBER OF TERMINALS ON EACH D AND E SIDE RESPECTIVELY. 7.DEPOPULATIONISPOSSIBLEINA",
+      "content_length": 1178,
+      "score": -6.033,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "25ce685b5f7971b3_p6",
+      "doc_id": "25ce685b5f7971b3",
+      "doc_title": "王坚-2025-8-18 AI and 3-Body Computing Constelationn  Chengdu  V3",
+      "content": "# WAN JOIN DEBA  \nEmail geo @geolso  \nARTIFICIAL INTELLIGENCE\n\n# China's GeoGPT led to firing of top European geoscientist  \nFears of AI and foreign influence prompt panic among publishers\n\n# By Paul Voosen  \new things prompt as much anxiety in science and the wider world as the growing use of artificial intelligence (AI) and the rising influence of China. This spring, these two factors created a rift at the European Geosciences Union (EGU),one of the world's largest geoscience societies,that le",
+      "content_length": 1336,
+      "score": -6.401,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "12ed628c566e2bab_p0",
+      "doc_id": "12ed628c566e2bab",
+      "doc_title": "展品介绍260113",
+      "content": "# 展品介绍260113\n\n# 星载智能计算机  \n“之江智加”系列星载智能计算机，结合低成本的⼯业级器件和商业级操作系统，⾃研⾼通量推理优化、故障⾃感知以及软硬件⾃恢复、基于分区热流控制的⼤功率热控等创新技术，能够在复杂和恶劣的太空环境中，为“通信、导航、遥感、科学”卫星等各类航天器提供⾼可靠、⾼效能的在轨计算服务。  \n智加系列星载计算机有三个系列：采⽤寒武纪芯⽚的智加X、智加X、智加X等，采⽤天数智芯芯⽚的智加X，以及采⽤英伟达芯⽚的智加NX、智加G等。  \n截⽌⽬前，共进⾏了三次搭载验证：  \n（1）2024年2⽉3⽇，智加X搭载东⽅慧眼01号微信发射，⽀持在轨⽬标检测、云判与ROI压缩功能；\n（2）2024年9⽉24⽇，智加X随国星宇航“星时代-21”卫星发射，⽀持在轨⽬标检测、抗单粒⼦翻转可靠性实验与软件在轨重构功能；\n（3）2025年5⽉14⽇12时12分，智加NX与G搭载三体计算星座⾸次发射任务成功发射，实现单星最⾼算⼒744TOPS，整体算⼒5POPS，⽀持L-L级遥感图像在轨实时处理、天基遥感模型在轨推理、深空探测数据星间协同预处理等关键功能。  \n2026年1⽉，",
+      "content_length": 1475,
+      "score": 7.7083,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "621069f2db2eb376_p1",
+      "doc_id": "621069f2db2eb376",
+      "doc_title": "三体计算星座介绍",
+      "content": "# 什么是三体计算星座？（⼀段话描述）  \n三体计算星座是之江实验室落实“共商共建共享共发展”的⾏动，联合全球合作伙伴共同建设的千星规模计算星座。三体计算星座将通过星间激光⾼速互联、星座稳定组⽹、算⼒分布式调度，打造开放共享的太空计算系统，构建天基智能计算基础设施，为通信、导航、遥感和空间科学等卫星提供天基计算服务。\n\n# 最新介绍：  \n“三体计算星座”是之江实验室协同全球合作伙伴共同构建的千星规模的太空计算基础设施，实现“计算上天、卫星互联、模型上天”，为通导遥科卫星和各类航天器提供太空计算服务，⽀撑“⼈⼯智能+”科学、“⼈⼯智能+”全球合作。\n\n# “三体”计算星座的⽬标？  \n1000颗计算卫星/1EOPS算⼒  \n依托太空计算技术突破，通过将太空计算组件部署到卫星、完成基于分布式计算架构和星间组⽹技术的卫星互联以及⼈⼯智能模型在轨部署运⾏，“三体计算星座”核⼼⽬标是定义新⼀类“计算卫星”并构建互联组⽹的计算星座，建设1EOPS算⼒的太空计算基础设施，突破在轨计算瓶颈，打破太空中的算⼒和数据孤岛，赋予卫星星座⾃主智能。\n\n# “三体”计算星座建设模式  \n我们希望采⽤“共商共建",
+      "content_length": 1331,
+      "score": 6.5676,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "90ee4371d4bd109e_p2",
+      "doc_id": "90ee4371d4bd109e",
+      "doc_title": "智加G2智算机_硬件方案设计报告_20260330",
+      "content": "在轨日志下传\n在轨日志下传，是由智算载荷发起，通过UDP和FTP协议把日志发送给自主管理单元，自主管理单元在合适的时刻，把日志文件通过馈电链路下传给地面的OSS服务器。\n天基分布式操作系统\n天基分布式操作系统作为通信星座具身智能业务系统的基础支撑平台，主要承担通信星座计算节点在轨任务管理、集群状态监控和通信资源调度等关键功能。该系统采用优化的镜像管理机制和数据协同架构，通过差分镜像复用技术和最小差异传输策略显著提升系统更新效率。同时基于多副本一致性协议和异常快速恢复机制确保分布式系统的高可靠性，实现星间/星地异构节点间的高效数据传输。此外，利用集群监控与通信调度提供多层级可视化与告警功能，支持链路优先级管理、自适应流量控制和数据持久化，确保高优先级业务可靠传输。\n通信卫星的具身智能业务系统\n具身智能系统，旨在赋予星座从感知、认知到决策、执行的全流程闭环能力。通过将大模型智能体技术与卫星系统深度融合，基于卫星平台提供的数据或由地面自带的数据，承担卫星智能管理与在轨任务处理，能够实现任务理解、健康评估、决策计算等功能。其中，卫星自治对能源分系统进行健康评估，对智算机进行故障诊断；星座调控进",
+      "content_length": 1987,
+      "score": 6.1712,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "720976261b3d41a1_p3",
+      "doc_id": "720976261b3d41a1",
+      "doc_title": "星云卫星智算载荷单元技术要求-会签版",
+      "content": "# 4.4 智算载荷单元性能要求  \n支持管理维护CAN接口；速率500kbps，支持CAN2.0B协议；\n支持业务CAN接口；速率500kbps，支持CAN2.0B协议；\n支持 CANA 接口板内总线互联；CANB 接口内部总线互联；\n支持10G-SR万兆以太网光纤通信接口；\n$\\succ$ CPU处理最大主频 $\\geqslant 2\\mathrm{GHz}$ ，处理器核心数 $\\geqslant 12$\n$\\succ$ 不低于2TB存储；\n> 标称算力248TOPS;\n系统辅助软件、应用软件与容错：实现至少3种容错机制，保证系统的可用性 $98\\%$\n> 高通量计算引擎：实现不少于3种领域高效算子。完成不少于4种模型、算法的移植适配，并形成SDK软件库，包括但不限于压缩、检测等场景。高通量推理引擎优化后，不少于3种算法执行速度提升 $15\\%$ 以上。\n\n# 4.5 业务要求\n\n# 4.5.1 在轨重构升级  \n基于馈电链路的在轨升级，由运控中心通过馈电链路和星载路由器，通过HTTP协议实现对在轨卫星的自主管理单元管理，查询版本信息和上传文件，由自主管理单元通过FTP和UDP协议",
+      "content_length": 1077,
+      "score": 5.8311,
+      "chunk_type": "parent",
+      "parent_id": null
+    }
+  ],
+  "token_usage": {
+    "prompt_tokens": 20487,
+    "completion_tokens": 330,
+    "total_tokens": 20817
+  },
+  "timing": {
+    "total": 22.662
+  },
+  "error": null
+}

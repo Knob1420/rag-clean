@@ -129,8 +129,9 @@ class SearchRequest(BaseModel):
 
     query: str = Field(..., min_length=1, description="检索查询")
     top_k: int = Field(25, ge=1, le=50, description="召回数量")
-    use_understand: bool = Field(False, description="是否使用 Query Understand")
-    use_rewrite: bool = Field(False, description="是否使用 Query Rewrite")
+    use_hyde: bool = Field(False, description="是否使用 HyDE")
+    use_understand: bool = Field(False, description="(已弃用) 是否使用 Query Understand")
+    use_rewrite: bool = Field(False, description="(已弃用) 是否使用 Query Rewrite")
     use_rerank: bool = Field(True, description="是否使用 Rerank")
     rerank_top_k: Optional[int] = Field(
         None, ge=1, le=50, description="Rerank后保留数量"

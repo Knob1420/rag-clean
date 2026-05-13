@@ -196,7 +196,7 @@ def build_specs_context(query: str, max_models: int = 10) -> str:
     context_parts = ["【产品参数参考】"]
     for prod_type in matched_products:
         models = specs.get(prod_type, {})
-        if not models:
+        if not isinstance(models, dict) or not models:
             continue
         context_parts.append(f"\n## {prod_type}")
         for i, (model_name, params) in enumerate(models.items()):

@@ -2,7 +2,7 @@
 结构化产品参数查询服务
 
 支持三层结构：产品大类 → 产品系列 → 具体型号
-JSON 结构（products_specs_v3.json）：
+JSON 结构（products_specs.json）：
   {
     "星载智能计算机": [
       {
@@ -24,179 +24,50 @@ from loguru import logger
 
 
 # ============================================================
-# 别名映射
+# 别名映射（从 data/alias_table.json 加载）
 # ============================================================
 
-# 大类别名映射：用户可能输入的类别名 → JSON 标准大类名
-CATEGORY_ALIASES: Dict[str, str] = {
-    "星载智能计算机": "星载智能计算机",
-    "智加全系列": "星载智能计算机",
-    "智加全系列产品": "星载智能计算机",
-    "星载智算机": "星载智能计算机",
-    "智算机": "星载智能计算机",
-    "智能计算机": "星载智能计算机",
-    "星载路由器": "星载路由器",
-    "路由器": "星载路由器",
-    "星载激光通信机": "星载激光通信机",
-    "激光通信机": "星载激光通信机",
-    "智光通信机": "星载激光通信机",
-    "合作单位": "合作单位",
-    "卫星类型": "卫星类型",
-}
-
-# 字段名别名：用户可能使用的字段名 → JSON 标准字段名
-FIELD_ALIASES: Dict[str, str] = {
-    # 重量
-    "重量": "重量",
-    "weight": "重量",
-    "质量": "重量",
-    # 功耗
-    "功耗": "功耗",
-    "power": "功耗",
-    "用电量": "功耗",
-    "power_consumption": "功耗",
-    # 算力
-    "算力": "算力",
-    "compute": "算力",
-    "tops": "算力",
-    "计算能力": "算力",
-    "性能": "算力",
-    # 尺寸
-    "尺寸": "尺寸",
-    "size": "尺寸",
-    "大小": "尺寸",
-    "dimension": "尺寸",
-    # 内存
-    "内存": "内存",
-    "memory": "内存",
-    "ram": "内存",
-    # 存储
-    "存储": "存储",
-    "storage": "存储",
-    "硬盘": "存储",
-    "disk": "存储",
-    # 接口
-    "接口": "对外接口",
-    "interface": "对外接口",
-    "interfaces": "对外接口",
-    "对外接口": "对外接口",
-    "接口类型": "对外接口",
-    # 合作单位
-    "合作单位": "合作单位",
-    "partner": "合作单位",
-    "厂商": "合作单位",
-    "生产商": "合作单位",
-    # 架构
-    "架构": "架构",
-    "architecture": "架构",
-    # 芯片
-    "芯片": "核心芯片",
-    "核心芯片": "核心芯片",
-    "chip": "核心芯片",
-    # 操作系统
-    "操作系统": "操作系统",
-    "os": "操作系统",
-    "系统": "操作系统",
-    # 设计寿命
-    "寿命": "设计寿命",
-    "设计寿命": "设计寿命",
-    "lifespan": "设计寿命",
-    # 功能
-    "功能": "功能",
-    "function": "功能",
-    "functions": "功能",
-    "能力": "功能",
-    # 在轨情况
-    "在轨情况": "在轨情况",
-    "在轨": "在轨情况",
-    "发射": "在轨情况",
-    "launch": "在轨情况",
-    "orbit": "在轨情况",
-    # 输入电压
-    "电压": "输入电压",
-    "input_voltage": "输入电压",
-    "voltage": "输入电压",
-    # 工作温度
-    "工作温度": "工作温度",
-    "temperature": "工作温度",
-    # 重量约束
-    "轻": "重量",
-    "轻量": "重量",
-    "轻量级": "重量",
-}
+_ALIASES: Optional[Dict[str, Dict[str, str]]] = None
 
 
-# 系列别名映射：用户可能输入的系列名 → JSON 标准系列名
-SERIES_ALIASES: Dict[str, str] = {
-    # 智加G系列
-    "智加G系列": "智加G系列",
-    "G系列": "智加G系列",
-    "智加G全系": "智加G系列",
-    "智加G款": "智加G系列",
-    "G全系": "智加G系列",
-    "G款": "智加G系列",
-    # 智加X系列
-    "智加X系列": "智加X系列",
-    "X系列": "智加X系列",
-    "智加X全系": "智加X系列",
-    "X全系": "智加X系列",
-    # 智加NX系列
-    "智加NX系列": "智加NX系列",
-    "NX系列": "智加NX系列",
-    "智加NX全系": "智加NX系列",
-    # 智桥R系列
-    "智桥R系列": "智桥R系列",
-    "R系列": "智桥R系列",
-    "智桥全系": "智桥R系列",
-    # 智光系列
-    "智光系列": "智光系列",
-    "激光通信系列": "智光系列",
-}
+def _load_aliases() -> Dict[str, Dict[str, str]]:
+    """从 alias_table.json 加载别名归一化表"""
+    path = Path(__file__).parent.parent.parent / "data" / "alias_table.json"
+    if not path.exists():
+        logger.warning(f"[SpecMatcher] 别名表不存在: {path}")
+        return {"category": {}, "series": {}, "model": {}, "field": {}}
+    with open(path, "r", encoding="utf-8") as f:
+        return json.load(f)
 
 
-# 型号别名映射（不带系列前缀的简称 → 标准型号名）
-# 注意：仅处理"智加G1"类简称，G1→智加G1
-# 已包含完整型号名的不需要列
-MODEL_ALIASES: Dict[str, str] = {
-    "智加G1": "智加G1",
-    "G1": "智加G1",
-    "智加G1A": "智加G1A",
-    "G1A": "智加G1A",
-    "智加G1B": "智加G1B",
-    "G1B": "智加G1B",
-    "智加G2": "智加G2",
-    "G2": "智加G2",
-    "智加G3": "智加G3",
-    "G3": "智加G3",
-    "智加NX1": "智加NX1",
-    "NX1": "智加NX1",
-    "智加NX2": "智加NX2",
-    "NX2": "智加NX2",
-    "智加NX3": "智加NX3",
-    "NX3": "智加NX3",
-    "智加NX4": "智加NX4",
-    "NX4": "智加NX4",
-    "智加X1": "智加X1",
-    "X1": "智加X1",
-    "智加X2": "智加X2",
-    "X2": "智加X2",
-    "智加X3": "智加X3",
-    "X3": "智加X3",
-    "智加X4": "智加X4",
-    "X4": "智加X4",
-    "智加X100": "智加X100",
-    "X100": "智加X100",
-    "智加X100-GPU": "智加X100-GPU",
-    "X100-GPU": "智加X100-GPU",
-    "智桥R1": "智桥R1",
-    "R1": "智桥R1",
-    "智桥RH1": "智桥RH1",
-    "RH1": "智桥RH1",
-    "智光-100-T2-100G-Z": "智光-100-T2-100G-Z",
-    "智光-80-T2-10G-Z": "智光-80-T2-10G-Z",
-    "智光-60-T2-10G-X": "智光-60-T2-10G-X",
-    "智光-60-P1-10G-X": "智光-60-P1-10G-X",
-}
+def _get_aliases() -> Dict[str, Dict[str, str]]:
+    global _ALIASES
+    if _ALIASES is None:
+        _ALIASES = _load_aliases()
+    return _ALIASES
+
+
+def reload_aliases():
+    """重新加载别名表（用于热更新）"""
+    global _ALIASES
+    _ALIASES = _load_aliases()
+
+
+# 便捷属性：保持与原代码兼容的访问方式
+def _get_category_aliases() -> Dict[str, str]:
+    return _get_aliases().get("category", {})
+
+
+def _get_series_aliases() -> Dict[str, str]:
+    return _get_aliases().get("series", {})
+
+
+def _get_model_aliases() -> Dict[str, str]:
+    return _get_aliases().get("model", {})
+
+
+def _get_field_aliases() -> Dict[str, str]:
+    return _get_aliases().get("field", {})
 
 
 # ============================================================
@@ -205,22 +76,46 @@ MODEL_ALIASES: Dict[str, str] = {
 
 
 def _normalize_field(field: str) -> str:
-    return FIELD_ALIASES.get(field, field)
+    return _get_field_aliases().get(field, field)
+
+
+def _get_category_groups() -> Dict[str, List[str]]:
+    """返回 {组合大类名: [子类别列表]}（如 '太空计算组件' → ['星载智能计算机', ...]）"""
+    return _get_aliases().get("category_groups", {})
 
 
 def _normalize_category_name(name: str) -> str:
-    """将大类别名映射为标准大类名"""
-    return CATEGORY_ALIASES.get(name, name)
+    """将大类别名映射为标准大类名（仅处理单一类别）"""
+    return _get_category_aliases().get(name, name)
+
+
+def _resolve_category(name: str) -> List[str]:
+    """
+    解析类别名，返回实际存在的子类别列表。
+
+    - 单一类别（如 '星载智能计算机'）→ ['星载智能计算机']
+    - 组合类别（如 '太空计算组件'）→ ['星载智能计算机', '星载路由器', '星载激光通信机']
+    - 别名先标准化再判断
+    """
+    normalized = _normalize_category_name(name)
+    groups = _get_category_groups()
+
+    # 先检查是否是组合类别
+    if normalized in groups:
+        return groups[normalized]
+
+    # 不是组合类别，返回单一类别
+    return [normalized]
 
 
 def _normalize_series_name(name: str) -> Optional[str]:
     """将系列别名映射为标准系列名"""
-    return SERIES_ALIASES.get(name)
+    return _get_series_aliases().get(name)
 
 
 def _normalize_model_name(name: str) -> str:
     """将型号别名映射为标准型号名"""
-    return MODEL_ALIASES.get(name, name)
+    return _get_model_aliases().get(name, name)
 
 
 def _build_series_alias_map() -> Dict[str, str]:
@@ -235,7 +130,7 @@ def _build_series_alias_map() -> Dict[str, str]:
 def _get_series_groups() -> Dict[str, List[str]]:
     """返回 {标准系列名: [别名列表（含标准名）]}"""
     out = {}
-    for alias, std in SERIES_ALIASES.items():
+    for alias, std in _get_series_aliases().items():
         if std not in out:
             out[std] = []
         out[std].append(alias)
@@ -291,7 +186,7 @@ def _build_series_lookup(specs: Dict[str, Any]) -> Dict[str, Dict[str, Any]]:
                 "model_list": series_item.get("model_list", []),
             }
             # 将别名也索引到同一项
-            for alias, std in SERIES_ALIASES.items():
+            for alias, std in _get_series_aliases().items():
                 if std == series_name:
                     lookup[alias] = lookup[series_name]
     return lookup
@@ -388,10 +283,13 @@ def query_products(
     raw_inputs = [_normalize_model_name(m) for m in target_models]
 
     for raw in raw_inputs:
-        # 1. 检查是否是大类名（顶层 key），先用别名标准化
+        # 1. 检查是否是大类名（顶层 key）或组合大类，先用别名标准化
         raw_normalized = _normalize_category_name(raw)
-        if raw_normalized in specs:
-            categories_hit.add(raw_normalized)
+        resolved_cats = _resolve_category(raw)
+        # 过滤出 specs 中实际存在的类别
+        actual_cats = [c for c in resolved_cats if c in specs]
+        if actual_cats:
+            categories_hit.update(actual_cats)
             continue
 
         # 2. 检查是否是系列名（通过 SERIES_ALIASES）

@@ -1,21 +1,15 @@
-# Please install OpenAI SDK first: `pip3 install openai`
-import os
-from openai import OpenAI
+import sys
+from pathlib import Path
 
-client = OpenAI(
-    api_key="Qwen3-30B-A3B",
-    base_url="http://10.107.207.88:8081/v1",
-)
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
-response = client.chat.completions.create(
-    model="Qwen3-30B-A3B",
-    messages=[
-        {"role": "system", "content": "You are a helpful assistant"},
-        {"role": "user", "content": "你是谁"},
-    ],
-    stream=False,
-    reasoning_effort="high",
-    extra_body={"thinking": {"type": "enabled"}},
-)
+from core.query_engineer.keyword_extractor import ChineseKeywordExtractor
 
-print(response.choices[0].message.content)
+KE = ChineseKeywordExtractor()
+
+# with open("queries.txt", "r", encoding="utf-8") as f:
+#     queries = f.readlines()
+queries = ["之江实验室发射了多少颗卫星"]
+for query in queries:
+    key = KE.extract(query)
+    print(key)

@@ -27,7 +27,6 @@ from core.ingestion.cleaner import clean_text
 from store import DocumentStore, get_store
 from core.client.embedder import encode, encode_batch
 from core.ingestion.extractor import detect_format, convert_to_markdown
-from core.generation.llm import get_llm_client
 
 # ── 目录配置 ──────────────────────────────────────────
 PROCESSED_DIR = Path(__file__).parent.parent.parent / "data" / "processed"
@@ -105,7 +104,7 @@ def process_markdown(
     save_intermediate: bool = True,
     load_intermediate: bool = False,
     processed_dir: Optional[Path] = None,
-    use_summary: bool = False,
+    use_summary: bool = True,
     chunk_mode: str = "recursive",
 ) -> List[Document]:
     """
@@ -136,11 +135,11 @@ def process_markdown(
         List[Document]: 处理后的 Document 列表
     """
     store = store or get_store()
-    chunker = chunker or SmartChunker(dataset_id=dataset_id or "")
+    chunker = chunker or SmartChunker()
     processed_dir = processed_dir or PROCESSED_DIR
 
     if doc_id is None:
-        doc_id = hashlib.md5(content.encode()).hexdigest()[:16]
+        doc_id = hashlib.sha256(content.encode()).hexdigest()[:16]
 
     logger.info(
         f"[Pipeline] 开始处理文本: {title} (doc_id={doc_id}, dataset_id={dataset_id})"
@@ -242,6 +241,9 @@ def _add_dataset_id(documents: List[Document], dataset_id: str):
         if doc.children:
             for child in doc.children:
                 child.metadata["dataset_id"] = dataset_id
+        if doc.summaries:
+            for summary in doc.summaries:
+                summary.metadata["dataset_id"] = dataset_id
 
 
 def _index_documents(store: DocumentStore, doc_id: str, documents: List[Document]):
@@ -264,6 +266,7 @@ def _generate_summaries(documents: List[Document], doc_id: str):
     if not documents:
         return
 
+    from core.generation.llm import get_llm_client
     llm = get_llm_client()
 
     # 批量并发生成 summaries
@@ -284,16 +287,21 @@ def _generate_summaries(documents: List[Document], doc_id: str):
 
         # 创建 summary chunk
         summary_id = f"{doc_id}_s{summary_idx}"
+        summary_meta = {
+            "doc_id": doc_id,
+            "doc_title": doc.metadata.get("doc_title", ""),
+            "chunk_id": summary_id,
+            "parent_id": parent_id,
+            "doc_hash": doc.metadata.get("doc_hash", ""),
+        }
+        # 透传 dataset_id（如果 parent 有）
+        if "dataset_id" in doc.metadata:
+            summary_meta["dataset_id"] = doc.metadata["dataset_id"]
+
         summary_doc = SummaryDocument(
             content=summary_content,
             primary_entity=primary_entity,
-            metadata={
-                "doc_id": doc_id,
-                "doc_title": doc.metadata.get("doc_title", ""),
-                "chunk_id": summary_id,
-                "parent_id": parent_id,
-                "doc_hash": doc.metadata.get("doc_hash", ""),
-            },
+            metadata=summary_meta,
         )
         summary_idx += 1
 
@@ -336,4 +344,5 @@ def _embed_documents(documents: List[Document]):
     # 3. 回填结果
     for (obj, field), embedding in zip(refs, embeddings):
         if embedding is not None:
-            setattr(obj, field, embedding.tolist())
+            value = embedding.tolist() if hasattr(embedding, "tolist") else embedding
+            setattr(obj, field, value)

@@ -1,13 +1,23 @@
 """
 混合检索服务 — BM25 + 向量检索 + RRF 融合
 
-基于 rag-knowledge-base 的 retrieval.py，适配 rag-clean 扁平字段：
-- get_es() → get_store().es
-- encode_via_client() → encode()
-- 移除所有 user_roles / access_roles 过滤
-- _parse_results 适配 doc_type/domain/filter_terms 等扁平字段
+适配 rag-clean 实际 ES 字段：
+- chunk_id, doc_id, doc_hash, doc_title, dataset_id, chunk_type
+- content, parent_id, embedding_vector, is_latest, created_at
+
+两次 ES 请求（BM25 + vector）→ Python 端 RRF 融合：
+- BM25 和 vector 各自返回 top_k*2 个候选，避免截断
+- RRF 融合保留双方排名信息，分数可解释
+
+高层方法（_bm25_search, _vector_search, _hybrid_search, search）：
+- 接受原始 query，内部负责 keyword extraction + synonym + DSL 构建 + encode + HyDE
+底层方法（_execute_bm25, _execute_vector_search）：
+- 接受预处理后的 query_string / query_vector，纯执行 ES 查询
+Rerank：
+- _rerank 接受原始 query，内部构建增强 rerank_query（keyword extraction + 权重重复）
 """
 
+import re
 import time
 from collections import defaultdict
 from typing import Any, Dict, List, Optional, Tuple
@@ -16,16 +26,15 @@ import numpy as np
 from loguru import logger
 
 from config import settings
-from core.client.embedder import encode
-from core.client.rerank_client import rerank_documents
+from core.ingestion.cleaner import is_low_quality_content
+from core.query_engineer.keyword_extractor import get_keyword_extractor
+from core.query_engineer.synonym import get_synonym_lookup
 from core.retrieve.retrieval_models import (
-    HighlightOptions,
     RetrievedChunk,
     RetrievalOptions,
     RetrievalResult,
 )
 from store import DocumentStore, get_store
-
 
 # ============================================================
 # RRF 融合
@@ -42,8 +51,8 @@ class RRFFusion:
         self,
         bm25_results: List[Tuple[RetrievedChunk, int]],
         vector_results: List[Tuple[RetrievedChunk, int]],
-        bm25_weight: float = 0.5,
-        vector_weight: float = 0.5,
+        bm25_weight: float = 0.05,
+        vector_weight: float = 0.95,
     ) -> List[Tuple[RetrievedChunk, float]]:
         """融合两个检索结果，按融合得分降序排列"""
         scores: Dict[str, float] = defaultdict(float)
@@ -61,6 +70,19 @@ class RRFFusion:
         ranked = [(chunks[cid], score) for cid, score in scores.items()]
         ranked.sort(key=lambda x: x[1], reverse=True)
         return ranked
+
+
+# ============================================================
+# Lucene query_string 特殊字符转义
+# ============================================================
+
+# Lucene query_string 语法中的特殊字符
+_LUCENE_SPECIAL_CHARS = re.compile(r'([+\-&|!(){}\[\]^"~*?:\\\/])')
+
+
+def _sub_special_char(text: str) -> str:
+    """转义 Lucene query_string 中的特殊字符（参照 RAGFlow QueryBase.sub_special_char）"""
+    return _LUCENE_SPECIAL_CHARS.sub(r"\\\1", text)
 
 
 # ============================================================
@@ -89,32 +111,48 @@ class RetrievalService:
         self,
         query: str,
         options: Optional[RetrievalOptions] = None,
-        highlight: Optional[HighlightOptions] = None,
         use_hybrid: bool = True,
     ) -> RetrievalResult:
-        """执行混合检索（BM25 + 向量检索 + RRF 融合）"""
+        """执行混合检索（BM25 + 向量检索 + RRF 融合）
+
+        Args:
+            query: 用户原始查询（内部负责 keyword extraction + synonym + encode + HyDE）
+            options: 检索选项
+            use_hybrid: 是否使用混合检索（否则仅 BM25）
+        """
         timing = {}
 
         if options is None:
             options = RetrievalOptions()
-        if highlight is None:
-            highlight = HighlightOptions()
+
+        # 预处理：构建 query_string
+        t0 = time.time()
+        query_string = self._build_bm25_query(query, options)
+        timing["bm25_dsl"] = time.time() - t0
+
+        # 预处理：构建 query_vector（含 HyDE）
+        t0 = time.time()
+        query_vector = self._build_query_vector(query, options)
+        timing["embedding"] = time.time() - t0
 
         # 检索
         if use_hybrid:
             t0 = time.time()
-            chunks = self._hybrid_search(query, options, highlight)
+            chunks = self._hybrid_search(query_string, query_vector, options)
             timing["retrieve"] = time.time() - t0
         else:
             t0 = time.time()
-            chunks = self._bm25_search(query, options, highlight)
+            chunks = self._execute_bm25(query_string, options, options.top_k)
             timing["retrieve"] = time.time() - t0
 
-        # Rerank
-        if options.use_rerank and chunks:
-            t0 = time.time()
-            chunks = self._rerank(query, chunks, options)
-            timing["rerank"] = time.time() - t0
+        # 过滤低质量 chunk（HTML 碎片等）
+        before_filter = len(chunks)
+        chunks = [c for c in chunks if not is_low_quality_content(c.content)]
+        if len(chunks) < before_filter:
+            logger.info(
+                f"质量过滤: 移除 {before_filter - len(chunks)} 个低质量 chunk "
+                f"({before_filter} → {len(chunks)})"
+            )
 
         # 过滤低分
         if options.min_score > 0:
@@ -125,15 +163,14 @@ class RetrievalService:
 
         timing_str = ", ".join([f"{k}={v:.0f}s" for k, v in timing.items()])
         logger.info(
-            f"检索完成: query='{query}', "
+            f"检索完成: query_string='{query_string[:50]}...', "
             f"results={len(chunks)}, "
             f"hybrid={use_hybrid}, "
-            f"rerank={options.use_rerank}, "
             f"({timing_str})"
         )
 
         return RetrievalResult(
-            query=query,
+            query=query_string,
             total=len(chunks),
             chunks=chunks,
             timing=timing,
@@ -147,68 +184,141 @@ class RetrievalService:
         self,
         query: str,
         options: RetrievalOptions,
-        highlight: HighlightOptions,
-    ) -> List[RetrievedChunk]:
-        """混合检索（BM25 + 向量 + RRF 融合）"""
-        query_vector = encode(query)
+        return_intermediates: bool = False,
+    ):
+        """混合检索（BM25 + 向量 + RRF 融合）
+
+        Args:
+            query: 用户原始查询（内部负责 keyword extraction + synonym + encode + HyDE）
+            return_intermediates: 若 True，返回 (hybrid_chunks, bm25_chunks, vector_chunks, hybrid_timing) 四元组；
+                                  若 False（默认），仅返回 hybrid_chunks（向后兼容）
+        """
+        # 预处理
+        query_string = self._build_bm25_query(query, options)
+        query_vector = self._build_query_vector(query, options)
+
+        # 候选扩大到 top_k*2，避免截断
         candidate_k = options.top_k * 2
 
         # 1. BM25
-        bm25_results = self._execute_bm25(query, options, highlight, candidate_k)
+        t_bm25 = time.time()
+        bm25_results = self._execute_bm25(query_string, options, candidate_k)
+        t_bm25_total = time.time() - t_bm25
 
         # 2. 向量
+        t_vec = time.time()
         vector_results = []
         if query_vector is not None:
             vector_options = options.model_copy(update={"top_k": candidate_k})
             vector_results = self._execute_vector_search(
                 query_vector, vector_options, candidate_k
             )
+        t_vec_total = time.time() - t_vec
 
         # 3. RRF 融合
+        t_rrf = time.time()
+        vector_w = options.vector_weight if options.vector_weight is not None else 0.95
+        bm25_w = 1.0 - vector_w
+
         rrf_results = self.rrf.fuse(
             bm25_results=[(c, i) for i, c in enumerate(bm25_results)],
             vector_results=[(c, i) for i, c in enumerate(vector_results)],
+            bm25_weight=bm25_w,
+            vector_weight=vector_w,
         )
+        t_rrf_total = time.time() - t_rrf
 
         final_chunks = []
         for chunk, fused_score in rrf_results:
             chunk.score = fused_score
             final_chunks.append(chunk)
 
+        # 细粒度 timing
+        hybrid_timing = {
+            "bm25": round(t_bm25_total, 3),
+            "vector": round(t_vec_total, 3),
+            "rrf": round(t_rrf_total, 3),
+        }
+
+        if return_intermediates:
+            return final_chunks, bm25_results, vector_results, hybrid_timing
         return final_chunks
 
     def _bm25_search(
         self,
         query: str,
         options: RetrievalOptions,
-        highlight: HighlightOptions,
     ) -> List[RetrievedChunk]:
-        """仅 BM25 检索"""
-        return self._execute_bm25(query, options, highlight, options.top_k)
+        """仅 BM25 检索
+
+        Args:
+            query: 用户原始查询（内部负责 keyword extraction + synonym + DSL 构建）
+        """
+        query_string = self._build_bm25_query(query, options)
+        return self._execute_bm25(query_string, options, options.top_k)
+
+    def _vector_search(
+        self,
+        query: str,
+        options: RetrievalOptions,
+    ) -> List[RetrievedChunk]:
+        """仅向量检索
+
+        Args:
+            query: 用户原始查询（内部负责 encode + HyDE）
+        """
+        query_vector = self._build_query_vector(query, options)
+        if query_vector is None:
+            return []
+        return self._execute_vector_search(query_vector, options, options.top_k)
 
     # ============================================================
     # ES 查询执行
     # ============================================================
 
+    def _build_filter_conditions(self, options: RetrievalOptions) -> list:
+        """构建 filter 条件（BM25 和 kNN 共用）"""
+        filters = [
+            {"term": {"is_latest": True}},
+            {"terms": {"chunk_type": ["child", "summary"]}},
+        ]
+        if options.doc_ids:
+            filters.append({"terms": {"doc_id": options.doc_ids}})
+        if options.dataset_ids:
+            filters.append({"terms": {"dataset_id": options.dataset_ids}})
+        return filters
+
     def _execute_bm25(
         self,
-        query: str,
+        query_string: str,
         options: RetrievalOptions,
-        highlight: HighlightOptions,
         top_k: int,
     ) -> List[RetrievedChunk]:
-        """执行 BM25 检索"""
-        bool_query = self._build_bm25_query(query, options)
-        highlight_config = self._build_highlight(highlight)
+        """执行 BM25 检索（query_string 格式）
+
+        Args:
+            query_string: 最终的 Lucene query_string（由调用方通过 _build_bm25_query 构建）
+        """
+        filter_conditions = self._build_filter_conditions(options)
 
         dsl: Dict[str, Any] = {
-            "query": bool_query,
+            "query": {
+                "bool": {
+                    "filter": filter_conditions,
+                    "must": [
+                        {
+                            "query_string": {
+                                "query": query_string,
+                                "fields": ["doc_title^2", "content"],
+                                "type": "best_fields",
+                                "minimum_should_match": 1,
+                            }
+                        }
+                    ],
+                }
+            },
             "size": top_k,
-            "_source": True,
         }
-
-        if highlight and highlight.pre_tags:
-            dsl["highlight"] = highlight_config
 
         try:
             response = self.es.search(index=self.chunks_index, body=dsl)
@@ -230,9 +340,8 @@ class RetrievalService:
         dsl = {**vector_query, "size": top_k}
 
         try:
-            response = self.es.search(index=self.chunks_index, body=dsl, _source=True)
+            response = self.es.search(index=self.chunks_index, body=dsl)
         except Exception as e:
-            # 维度不匹配时优雅降级
             if "different number of dimensions" in str(e):
                 logger.warning(f"向量维度不匹配，向量检索降级: {e}")
             else:
@@ -242,116 +351,107 @@ class RetrievalService:
         return self._parse_results_with_score(response)
 
     # ============================================================
-    # BM25 查询构建（简化版）
+    # BM25 查询构建
     # ============================================================
 
     def _build_bm25_query(
         self,
         query: str,
-        options: RetrievalOptions,
-    ) -> Dict[str, Any]:
+        _options: RetrievalOptions,
+    ) -> str:
         """
-        构建 BM25 查询
+        构建 BM25 query_string（参照 RAGFlow FulltextQueryer.question 中文分支）
 
-        核心字段参与检索增强：
-        1. query: 主查询文本
-        2. chunk_type(s): 加权 boost（偏好提示）
-        3. keywords: 加权 boost
-        4. target_models: should 加权偏好（非硬过滤）
+        返回 Lucene query_string 语法字符串，用于 ES query_string 查询。
 
-        filter: is_latest=True, doc_ids
+        结构（5 层）：
+        1. 每个原词 + 同义词 OR：(原词 OR (syn1 syn2 ...)^0.2)^w
+        2. 相邻原词 bigram 近邻匹配："left right"~2^max(w1,w2)*2
+        3. 整句加权：(所有原词拼接)^5
+        4. 整句同义词 OR：("syn1" OR "syn2" OR ...)^0.7
+        5. 原始 query 兜底
+
+        权重归一化为 sum=1.0（参照 RAGFlow term_weight.weights 归一化逻辑）
         """
-        # ========== 可调整参数 ==========
-        QUERY_BOOST = 1.0  # 主查询权重
-        KEYWORDS_BOOST = 2.0  # 关键词权重
-        CHUNK_TYPE_BOOST = 2.0  # chunk_type 加权（偏好提示，非硬过滤）
-        ENTITY_BOOST = 3.0  # 实体加权（偏好提示，非硬过滤）
-        # =================================
+        # 提取关键词（带权重）
+        raw_keywords = get_keyword_extractor().extract(query)  # list[tuple[str, float]]
 
-        # filter 条件（仅保留硬过滤）
-        filter_conditions = [
-            {"term": {"is_latest": True}},
-        ]
-        if options.doc_ids:
-            filter_conditions.append({"terms": {"doc_id": options.doc_ids}})
+        # 同义词扩展：别名替换为标准名 + 同义词降权扩展
+        synonym_lookup = get_synonym_lookup()
 
-        # should 条件
-        should_conditions = []
+        # 对每个原词：标准化 + 查同义词
+        norm_keywords = []
+        word_synonyms: Dict[str, list[str]] = {}
+        existing_norm = set()
 
-        # target_models → should 加权偏好（keywords + context_summary + content）
-        if options.target_models:
-            for entity in options.target_models:
-                should_conditions.append(
-                    {"multi_match": {
-                        "query": entity,
-                        "fields": ["keywords", "context_summary", "content"],
-                        "type": "best_fields",
-                        "boost": ENTITY_BOOST,
-                    }}
-                )
-            logger.info(f"  [target_models] should boost: {options.target_models}, boost={ENTITY_BOOST}")
+        for kw, weight in raw_keywords:
+            std = synonym_lookup.normalize(kw)
+            if std not in existing_norm:
+                norm_keywords.append((std, weight))
+                existing_norm.add(std)
+                syns = synonym_lookup.get_synonyms(std)
+                word_synonyms[std] = syns
 
-        # 1. 主查询
-        should_conditions.append(
-            {
-                "multi_match": {
-                    "query": query,
-                    "fields": ["content", "entities_text", "context_summary"],
-                    "type": "best_fields",
-                    "boost": QUERY_BOOST,
-                }
-            }
-        )
+        # ── 权重归一化（sum=1.0） ──
+        total_weight = sum(w for _, w in norm_keywords)
+        if total_weight > 0:
+            norm_keywords = [(kw, w / total_weight) for kw, w in norm_keywords]
 
-        # 2. chunk_type 加权
-        if options.chunk_types:
-            valid_types = [t for t in options.chunk_types if t and t != "other"]
-            if valid_types:
-                if len(valid_types) == 1:
-                    should_conditions.append(
-                        {
-                            "term": {
-                                "chunk_type": {
-                                    "value": valid_types[0],
-                                    "boost": CHUNK_TYPE_BOOST,
-                                }
-                            }
-                        }
-                    )
-                else:
-                    should_conditions.append(
-                        {
-                            "terms": {
-                                "chunk_type": valid_types,
-                                "boost": CHUNK_TYPE_BOOST,
-                            }
-                        }
-                    )
-                logger.info(f"  [chunk_type] {valid_types}, boost={CHUNK_TYPE_BOOST}")
+        tms_parts = []
 
-        # 3. keywords 加权
-        if options.keywords:
-            keywords_query = " ".join(options.keywords)
-            should_conditions.append(
-                {
-                    "multi_match": {
-                        "query": keywords_query,
-                        "fields": ["content", "entities_text"],
-                        "type": "cross_fields",
-                        "operator": "or",
-                        "boost": KEYWORDS_BOOST,
-                    }
-                }
-            )
-            logger.info(f"  [keywords] {options.keywords}, boost={KEYWORDS_BOOST}")
+        # ── 1. 每个原词 + 同义词 OR ──
+        for kw, w in norm_keywords:
+            tk = _sub_special_char(kw)
+            # 含空格的词加引号
+            if tk.find(" ") > 0:
+                tk = f'"{tk}"'
 
-        return {
-            "bool": {
-                "filter": filter_conditions,
-                "should": should_conditions,
-                "minimum_should_match": 2,
-            }
-        }
+            syns = word_synonyms.get(kw, [])
+            if syns:
+                # 同义词转义 + 含空格加引号
+                syn_escaped = []
+                for s in syns:
+                    s = _sub_special_char(s)
+                    if s.find(" ") > 0:
+                        s = f'"{s}"'
+                    syn_escaped.append(s)
+                tk = f"({tk} OR ({' '.join(syn_escaped)})^0.2)"
+
+            if tk.strip():
+                tms_parts.append(f"({tk})^{w:.4f}")
+
+        # ── 2. bigram 近邻匹配（~2 允许中间插入 2 个词） ──
+        for i in range(1, len(norm_keywords)):
+            left, left_w = norm_keywords[i - 1]
+            right, right_w = norm_keywords[i]
+            if not left.strip() or not right.strip():
+                continue
+            bigram = f'"{_sub_special_char(left)} {_sub_special_char(right)}"~2'
+            tms_parts.append(f"{bigram}^{max(left_w, right_w) * 2:.4f}")
+
+        # ── 3. 整句加权 + 4. 整句同义词 OR ──
+        if len(norm_keywords) > 1:
+            tms_core = f"({' '.join(tms_parts)})^5"
+
+            # ── 4. 整句同义词 OR ──
+            all_syns = []
+            for kw, _ in norm_keywords:
+                syns = word_synonyms.get(kw, [])
+                all_syns.extend(syns)
+
+            if all_syns:
+                syns_str = " OR ".join([f'"{_sub_special_char(s)}"' for s in all_syns])
+                tms_core = f"{tms_core} OR ({syns_str})^0.7"
+
+            query_string = tms_core
+        else:
+            query_string = " ".join(tms_parts)
+
+        # ── 5. 原始 query 兜底 ──
+        escaped_query = _sub_special_char(query)
+        query_string = f"{query_string} OR {escaped_query}"
+
+        return query_string
 
     # ============================================================
     # 向量查询构建
@@ -364,110 +464,27 @@ class RetrievalService:
         top_k: int,
     ) -> Dict[str, Any]:
         """
-        构建向量 kNN 查询 + rescore
+        构建向量 kNN 查询
 
-        向量搜索做语义召回，rescore 用文本条件（实体/关键词/chunk_type）
-        对 top 候选重排序，解决"结构相同、产品不同"的区分问题。
+        filter: is_latest=True, chunk_type=child, doc_ids, dataset_ids
         """
-        filter_conditions = [
-            {"term": {"is_latest": True}},
-        ]
-        if options.doc_ids:
-            filter_conditions.append({"terms": {"doc_id": options.doc_ids}})
+        filter_conditions = self._build_filter_conditions(options)
 
-        # rescore 条件（文本加权，在语义召回后对 top 候选重评分）
-        rescore_should = []
+        num_candidates = max(top_k * 8, 200)
 
-        # target_models → rescore 加权
-        ENTITY_BOOST_VEC = 3.0
-        if options.target_models:
-            for entity in options.target_models:
-                rescore_should.append(
-                    {"multi_match": {
-                        "query": entity,
-                        "fields": ["keywords", "context_summary", "content"],
-                        "type": "best_fields",
-                        "boost": ENTITY_BOOST_VEC,
-                    }}
-                )
-            logger.info(f"  [vec target_models] rescore boost: {options.target_models}, boost={ENTITY_BOOST_VEC}")
-
-        num_candidates = max(top_k * 4, 50)
-
-        # chunk_type → rescore 加权
-        if options.chunk_types:
-            valid_types = [t for t in options.chunk_types if t and t != "other"]
-            for vt in valid_types:
-                rescore_should.append({"term": {"chunk_type": {"value": vt, "boost": 2.0}}})
-            if valid_types:
-                logger.info(f"  [vec chunk_type] rescore {valid_types}, boost=2.0")
-
-        # keywords → rescore 加权
-        if options.keywords:
-            keywords_text = " ".join(options.keywords)
-            rescore_should.append({
-                "multi_match": {
-                    "query": keywords_text,
-                    "fields": ["content", "entities_text"],
-                    "type": "best_fields",
-                    "boost": 1.5,
-                }
-            })
-            logger.info(f"  [vec keywords] rescore {options.keywords}, boost=1.5")
-
-        # 基础 knn 查询（纯语义召回）
-        knn_query = {
+        return {
             "knn": {
                 "field": "embedding_vector",
                 "query_vector": query_vector.tolist(),
                 "k": top_k,
                 "num_candidates": num_candidates,
                 "filter": {"bool": {"filter": filter_conditions}},
+                "similarity": 0.0,
             }
         }
 
-        # 如果有文本加权条件，添加 rescore
-        if rescore_should:
-            knn_query["rescore"] = {
-                "window_size": min(top_k * 2, num_candidates),
-                "query": {
-                    "rescore_query": {
-                        "bool": {"should": rescore_should}
-                    },
-                    "query_weight": 0.6,
-                    "rescore_query_weight": 0.4,
-                }
-            }
-
-        return knn_query
-
     # ============================================================
-    # 通用筛选
-    # ============================================================
-    # 高亮
-    # ============================================================
-
-    def _build_highlight(self, highlight: HighlightOptions) -> Dict[str, Any]:
-        return {
-            "fields": {
-                "content": {
-                    "pre_tags": highlight.pre_tags,
-                    "post_tags": highlight.post_tags,
-                    "fragment_size": highlight.fragment_size,
-                    "number_of_fragments": highlight.number_of_fragments,
-                },
-                "context_summary": {
-                    "pre_tags": highlight.pre_tags,
-                    "post_tags": highlight.post_tags,
-                    "fragment_size": highlight.fragment_size,
-                    "number_of_fragments": 1,
-                },
-            },
-            "require_field_match": False,
-        }
-
-    # ============================================================
-    # 结果解析 — 适配 rag-clean 扁平字段
+    # 结果解析
     # ============================================================
 
     def _parse_results_with_score(
@@ -479,148 +496,24 @@ class RetrievalService:
         chunks = []
         for hit in hits:
             source = hit.get("_source", {})
-            highlights = hit.get("highlight", {})
 
             chunk = RetrievedChunk(
                 chunk_id=source.get("chunk_id", ""),
                 doc_id=source.get("doc_id", ""),
                 content=source.get("content", ""),
-                section_title=source.get("section_title"),
                 score=hit.get("_score", 0.0),
-                # 文档级扁平字段
-                doc_type=source.get("doc_type"),
-                domain=source.get("domain"),
-                filter_terms=source.get("filter_terms") or [],
+                # 文档级字段
+                doc_title=source.get("doc_title"),
+                dataset_id=source.get("dataset_id"),
                 # chunk 级字段
                 chunk_type=source.get("chunk_type"),
-                spec_table=source.get("spec_table"),
-                spec_rows=source.get("spec_rows"),
-                # Enrichment
-                entities_text=source.get("entities_text"),
-                keywords=source.get("keywords") or [],
-                context_summary=source.get("context_summary"),
+                doc_hash=source.get("doc_hash"),
                 # 父子导航
                 parent_id=source.get("parent_id"),
-                # 高亮
-                highlight=highlights if highlights else {},
             )
             chunks.append(chunk)
 
         return chunks
-
-    # ============================================================
-    # Rerank
-    # ============================================================
-
-    def _rerank(
-        self,
-        query: str,
-        chunks: List[RetrievedChunk],
-        options: RetrievalOptions,
-    ) -> List[RetrievedChunk]:
-        """使用 Rerank 对检索结果重排序"""
-        logger.info(f"Rerank 重排序: {len(chunks)} 个候选结果")
-
-        # 构建文档文本 + 反向索引
-        documents = []
-        doc_to_chunk_idx: Dict[str, int] = {}
-        for i, chunk in enumerate(chunks):
-            text = chunk.content
-            documents.append(text)
-            doc_to_chunk_idx[text] = i
-
-        rerank_results = rerank_documents(
-            query=query,
-            documents=documents,
-            top_k=options.rerank_top_k,
-        )
-
-        # 通过文本匹配回原始 chunk
-        reranked_chunks = []
-        seen_indices = set()
-        for doc_text, score in rerank_results:
-            idx = doc_to_chunk_idx.get(doc_text)
-            if idx is not None and idx not in seen_indices:
-                chunk = chunks[idx]
-                chunk.score = score
-                reranked_chunks.append(chunk)
-                seen_indices.add(idx)
-
-        logger.info(f"  Rerank 完成: 返回 {len(reranked_chunks)} 个结果")
-        return reranked_chunks
-
-    # ============================================================
-    # Complex 路由检索
-    # ============================================================
-
-    def search_routed(
-        self,
-        rewritten_query: str,
-        sub_queries: List[dict],
-        options: Optional[RetrievalOptions] = None,
-        highlight: Optional[HighlightOptions] = None,
-    ) -> RetrievalResult:
-        """Complex 查询路由：对每个 sub_query 分别检索，合并去重后统一 rerank"""
-        timing = {}
-
-        if options is None:
-            options = RetrievalOptions()
-        if highlight is None:
-            highlight = HighlightOptions()
-
-        sub_top_k = max(options.top_k // len(sub_queries), 8)
-
-        all_chunks: List[RetrievedChunk] = []
-        seen_ids: set = set()
-        t0 = time.time()
-        for sub in sub_queries:
-            sub_query = sub.get("query", rewritten_query)
-            sub_entity = sub.get("entity")
-            sub_intent = sub.get("intent")
-
-            sub_options = options.model_copy(
-                update={
-                    "top_k": sub_top_k,
-                    "target_models": [sub_entity] if sub_entity else None,
-                    "chunk_types": (
-                        [sub_intent] if sub_intent and sub_intent != "other" else None
-                    ),
-                    "use_rerank": False,
-                }
-            )
-
-            logger.info(
-                f"  [sub_query] query={sub_query}, entity={sub_entity}, intent={sub_intent}"
-            )
-
-            chunks = self._hybrid_search(sub_query, sub_options, highlight)
-
-            for c in chunks:
-                if c.chunk_id not in seen_ids:
-                    all_chunks.append(c)
-                    seen_ids.add(c.chunk_id)
-
-        logger.info(f"  [complex] 合并 {len(all_chunks)} 个去重结果")
-        timing["retrieve"] = time.time() - t0
-
-        # 统一 rerank
-        t0 = time.time()
-        if options.use_rerank and all_chunks:
-            all_chunks = self._rerank(rewritten_query, all_chunks, options)
-            timing["rerank"] = time.time() - t0
-
-        all_chunks = all_chunks[: options.top_k]
-
-        logger.info(
-            f"  [complex] 完成: {len(all_chunks)} 结果, sub_queries={len(sub_queries)}"
-        )
-
-        return RetrievalResult(
-            query=rewritten_query,
-            total=len(all_chunks),
-            chunks=all_chunks,
-            timing=timing,
-        )
 
 
 # ── 全局实例 ──────────────────────────────────────────

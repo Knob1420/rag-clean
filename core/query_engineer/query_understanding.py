@@ -13,7 +13,6 @@ from typing import List
 
 from loguru import logger
 
-from core.generation.llm import get_llm_client, parse_json_response
 from prompt import QUERY_UNDERSTANDING_SYSTEM_PROMPT, QUERY_UNDERSTANDING_USER_PROMPT
 
 
@@ -109,6 +108,8 @@ class QueryUnderstandingService:
         ]
 
         try:
+            from core.generation.llm import get_llm_client, parse_json_response
+
             llm = get_llm_client()
             response = llm.call(messages, temperature=0.3)
             data = parse_json_response(response)

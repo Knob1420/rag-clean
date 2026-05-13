@@ -1,0 +1,1219 @@
+{
+  "eval_id": "20260512_233604",
+  "timestamp": "2026-05-13T00:27:57.990978",
+  "query": "智算机采用的GPU是进口的还是国产的？国产的主要是哪几家的，什么架构的？",
+  "answer": "# 智算机GPU国产化情况分析\n\n根据检索到的文档资料，我可以为您详细解答智算机采用的GPU情况：\n\n## 一、智算机GPU采用情况\n\n智算机（星载智能计算机）根据不同的产品系列，采用了**进口和国产GPU/NPU混合**的方案：\n\n### 1. **进口GPU系列**（主要采用英伟达产品）\n- **智加NX系列**（如NX1、NX4）：采用**Nvidia Jetson AGX Orin系列GPU模组**\n  - 型号：Jetson AGX Orin Industrial (P3701-0008)\n  - 架构：NVIDIA Ampere架构\n  - 核心配置：64个Tensor Core + 2048个CUDA核心\n  - 算力：248 TOPS @ INT8\n  - 内存：64GB LPDDR5 + ECC\n  - 工作温度：-40℃~85℃（工业级）[来源：智加NX1智算机技术说明书、星载智算机（NX4）方案设计报告]\n\n- **智加G系列**（如G1、G2）：同样采用**Nvidia Jetson AGX Orin系列GPU模组**\n  - 在元器件清单中明确标注\"国产化：否\" [来源：25_智加NX1和G1智算机正样件研制与质量总结报告]\n\n### 2. **国产GPU/NPU系列**\n\n#### （1）**寒武纪系列**（智加X系列）\n- **智加X1/X2/X3/X4**：采用**寒武纪NPU芯片**\n  - 架构：寒武纪NPU-SOC架构\n  - 算力：\n    - 智加X1/X2：16TOPS @ INT8\n    - 智加X3：32TOPS @ INT8\n    - 智加X4：18TFLOPS@FP32、72TFLOPS@FP16、72TFLOPS@BF16、192TOPS@INT8\n  - 具体型号：寒武纪370（在部分文档中提到）\n  - 特点：基于COTS器件的低成本、高可靠、高能效比星载智能计算机 [来源：星载计算机介绍、三体计算星座画册]\n\n#### （2）**天数智芯系列**（智加X100系列）\n- **智加X100**：采用**天数智芯GPU芯片**\n  - 具体型号：**智铠50**\n  - 架构：飞腾CPU + 天数智芯GPU + 复旦微FPGA（整机架构）\n  - 制程：7nm\n  - 算力：192TOPS @ INT8（单卡）\n  - 整机算力：768TOPS @ INT8、256TFlops@FP16、64TFlops@FP32\n  - 能耗比：1P@INT/W [来源：三体计算星座介绍、星载计算机介绍]\n\n## 二、国产GPU/NPU主要厂商及架构\n\n### 1. **寒武纪（Cambricon）**\n- **产品类型**：NPU（神经网络处理器）\n- **架构特点**：\n  - 寒武纪NPU-SOC架构\n  - 支持星上轻量化模型部署\n  - 支持NDWI、NDVI等遥感算法\n  - 支持算法、模型、软件上注功能\n- **应用产品**：智加X1、X2、X3、X4系列\n\n### 2. **天数智芯（Iluvatar）**\n- **产品类型**：GPU（图形处理器）\n- **具体型号**：智铠50\n- **架构特点**：\n  - 7nm制程工艺\n  - 支持INT8、FP16、FP32等多种精度计算\n  - 与飞腾CPU、复旦微FPGA组成异构计算架构\n- **应用产品**：智加X100系列\n\n## 三、技术对比与国产化进展\n\n### 进口GPU优势：\n- **技术成熟度**：英伟达Jetson AGX Orin系列技术成熟，生态完善\n- **算力性能**：单星最高算力744TOPS（智加NX系列）\n- **可靠性**：工业级工作温度范围（-40℃~85℃）\n\n### 国产GPU/NPU特点：\n- **自主可控**：完全国产化设计，供应链安全\n- **定制化程度高**：针对星载环境特殊优化\n- **成本优势**：基于COTS器件，成本相对较低\n- **应用验证**：已在多次卫星发射任务中验证（如东方慧眼01号、星时代-21等）\n\n### 国产化进展：\n根据文档显示，之江实验室的智算机产品已经形成了**三条技术路线并行**的格局：\n1. **寒武纪NPU路线**：智加X系列，已实现多次在轨验证\n2. **天数智芯GPU路线**：智加X100系列，2025年10月计划搭载3D打印卫星验证\n3. **英伟达GPU路线**：智加NX/G系列，技术成熟，性能领先\n\n## 四、总结\n\n**智算机采用的GPU既有进口也有国产：**\n\n1. **进口GPU**：主要是**英伟达（Nvidia）的Jetson AGX Orin系列**，采用NVIDIA Ampere架构，用于智加NX和G系列。\n\n2. **国产GPU/NPU**：主要有两家厂商：\n   - **寒武纪（Cambricon）**：提供NPU芯片，采用寒武纪NPU-SOC架构，用于智加X系列\n   - **天数智芯（Iluvatar）**：提供GPU芯片，具体型号为**智铠50**，采用7nm制程，用于智加X100系列\n\n3. **技术路线**：形成了\"进口成熟方案+国产自主方案\"并行的技术路线，既保证了当前任务的可靠性，又推进了国产芯片的自主可控进程。\n\n4. **应用场景**：国产GPU/NPU已在多个卫星任务中得到验证，能够满足星上遥感数据实时智能处理、目标检测、图像AI压缩等应用需求。",
+  "terminated_reason": "finish",
+  "total_iterations": 8,
+  "steps": [
+    {
+      "iteration": 0,
+      "thought": "",
+      "action": "bm25_search",
+      "action_input": {
+        "queries": [
+          {
+            "label": "智算机定义和GPU信息",
+            "queries": [
+              "智算机",
+              "GPU",
+              "国产GPU",
+              "进口GPU"
+            ]
+          }
+        ],
+        "top_k": 10
+      },
+      "observation": "━━━━━━━━━━ 子问题: 智算机定义和GPU信息 [BM25] ━━━━━━━━━━\n  ═══ 查询 1: \"智算机\" ═══\n\n  找到 10 条匹配结果：\n  [1] 文档=Z_之江星座首发星座系统方案设计报告_0519_1940 | 分数=0.6758\n    内容: 智算机-GPU1\n192.168.7.  \n智算机-GPU2\n192.168.8.  \n智算机-GPU3\n192.168.9.  \n智算机-GPU4\n192.168.10.\n从计算星-3\n智算机-FPGA\n192.168.11.  \n智算机-GPU\n192.168.12.\n从计算星-4\n智算机-FPGA\n192.168.16.  \n智算机-GPU\n192.168.17.\n从计算星-5\n智算机-FPGA\n192.168.21.  \n智算机-GPU\n192.168.22.\n从计算星-6\n智算机-FPGA\n192.168.26.  \n智算机-GPU\n192.168.27.\n从计算星-7\n智算机-FPGA\n192.168.31.  \n智算机-GPU\n192.168.32.\n从计算星-8\n智算机-FPGA\n192.1",
+      "duration": 7.036
+    },
+    {
+      "iteration": 1,
+      "thought": "",
+      "action": "bm25_search",
+      "action_input": {
+        "queries": [
+          {
+            "label": "国产GPU和架构信息",
+            "queries": [
+              "国产GPU",
+              "国产芯片",
+              "国产处理器",
+              "国产AI芯片",
+              "国产计算芯片"
+            ]
+          },
+          {
+            "label": "智算机具体型号和配置",
+            "queries": [
+              "智算机型号",
+              "G1|G2|NX1|NX4",
+              "智算机配置",
+              "智算机规格"
+            ]
+          }
+        ],
+        "top_k": 10
+      },
+      "observation": "━━━━━━━━━━ 子问题: 国产GPU和架构信息 [BM25] ━━━━━━━━━━\n  ═══ 查询 1: \"国产GPU\" ═══\n\n  找到 10 条匹配结果：\n  [1] 文档=pcbm-gpu-0729 | 分数=-0.9753\n    内容: PCBM-GPU  \nTOP：全局限高9.5mm  \nBOTTOM：全局限高1.5mm\n\n# 技术要求：  \n1. 所有连接器和器件另一侧焊接针脚高度不大于1.0mm\n  [2] 文档=GPU载板调试说明 | 分数=-2.9090\n    内容: 图 1 GPU核心板、CPLD板、NVME卡的装配方法\n3.1调试项目\n表1 调试项目  \n3.2 调试流程\n调试流程如下：  \n图 2 调试流程图\n4 调试仪器设备\n调试仪器设备和软件如表2和表3所示。\n表2 调试仪器设备和辅助测试软件  \n5 调试程序、方法、要求和注意事项\n5.1 外观检测\n板卡表面不应有腐蚀及影响质量的伤痕、毛刺、变形和污染，涂覆层应均匀、无凝结、无脱落及磨损现象，文字、符号应清晰、端正；\n上电前首先检测外观，外观检查应覆盖整板，观察元器件是否存在漏焊、多焊、焊锡残",
+      "duration": 13.463
+    },
+    {
+      "iteration": 2,
+      "thought": "",
+      "action": "vector_search",
+      "action_input": {
+        "query": "智算机采用的GPU是进口的还是国产的？国产的主要是哪几家的，什么架构的？",
+        "top_k": 10
+      },
+      "observation": "━━━━━━━━━━ Vector 检索 [HyDE] ━━━━━━━━━━\n  查询: \"智算机采用的GPU是进口的还是国产的？国产的主要是哪几家的，什么架构的？\"\n\n  找到 10 条匹配结果：\n  [1] 文档=25_智加NX1和G1智算机正样件研制与质量总结报告_SCS-01-ZS-ZB-01 | 分数=6.1663\n    内容: 优先选择具有良好质量保证能力、供货及时、价格合理、信守合同、有良好合作关系的元器件供货单位；\n选用的元器件所采用的标准或者技术规范都是现行有效的；\n进口元器件风险控制。\n进口元器件的采购主要是通过第三方代理的方式获取。所选择的进口代理商都是经过我司认定的合格供应商，产品质量稳定、供货渠道畅通；我司与这些代理商具有长期合作关系和互相信誉度，供应能力、应急能力、技术支持能力完全可以保证，能够保障正常的生产和维修。\n在进口元器件的选择和使用上，遵循以下规则和要求：\n选用通用元器件；\n选用国外主流公司的主流芯片；\n选用功能、性能、使用寿命、环境适应性、安全性符合要求的元器件；\n选用元器件降额使用；\n制定元器件采购、验收、贮存、流通、使用方案；\n跟踪元器件生",
+      "duration": 8.625
+    },
+    {
+      "iteration": 3,
+      "thought": "",
+      "action": "bm25_search",
+      "action_input": {
+        "queries": [
+          {
+            "label": "智算机GPU具体型号和厂商",
+            "queries": [
+              "Jetson AGX Orin",
+              "Nvidia",
+              "GPU SOC模组",
+              "GPU模组",
+              "寒武纪NPU",
+              "MLU"
+            ]
+          }
+        ],
+        "top_k": 10
+      },
+      "observation": "━━━━━━━━━━ 子问题: 智算机GPU具体型号和厂商 [BM25] ━━━━━━━━━━\n  ═══ 查询 1: \"Jetson AGX Orin\" ═══\n\n  找到 10 条匹配结果：\n  [1] 文档=Jetson_AGX_Orin_Series_Data_Sheet_DS-数据手册_v1.5 | 分数=3.0562\n    内容: References to JAO and Jetson AGX Orin include and can be read as Jetson AGX Orin 64GB, Jetson AGX Orin 32GB, and Jetson AGX Orin Industrial except where explicitly noted.\n  [2] 文档=Jetson_AGX_Orin_Series_Design_Guide_DG-10653-001_v1.6 | 分数=1.7682\n    内容: This design guide provides detailed information on the capabilities of t",
+      "duration": 11.361
+    },
+    {
+      "iteration": 4,
+      "thought": "",
+      "action": "vector_search",
+      "action_input": {
+        "query": "智算机中使用的国产GPU和NPU芯片有哪些，分别是什么架构的",
+        "top_k": 10
+      },
+      "observation": "━━━━━━━━━━ Vector 检索 [HyDE] ━━━━━━━━━━\n  查询: \"智算机中使用的国产GPU和NPU芯片有哪些，分别是什么架构的\"\n\n  找到 10 条匹配结果：\n  [1] 文档=6_SSD总剂量实验测试平台和方法_20241210 | 分数=4.2175\n    内容: 自封\nTLC\n镁光\n4.0X4\n7\n-40~85\n24\n200\n3000\n3500\n2\nPE46-004TWF00T80\n睿达\n4\n联芸科技MAP1602\n长江存储\nTLC\n无\n4.0X4\n2.43\n-40~85\n120\n200\n4600\n7100\n3\nS1200ITT4-T2M24T-C1\n忆芯\n4\n忆芯STAR1000P\n东芝\n64层TLC\n镁光\n3.0X4\n9.8\n-40~70\n32\n200\n2400\n3200\n4\nG-PEM2-040E4H002TB\n天硕\n2\n天硕P5500\n长江存储\n128层TLC\n长鑫DDR4\n3.0X4\n7.6\n-55~85\n32\n300\n2600\n3500\n5\nCMJMWT32800EN02T\n科美\n2\n慧荣\n镁光\nTLC\n镁光\n3.0X4\n7.8\n-40~",
+      "duration": 10.502
+    },
+    {
+      "iteration": 5,
+      "thought": "",
+      "action": "bm25_search",
+      "action_input": {
+        "queries": [
+          {
+            "label": "国产GPU和NPU详细信息",
+            "queries": [
+              "天数智芯",
+              "智铠50",
+              "寒武纪",
+              "国产GPU芯片",
+              "国产NPU芯片"
+            ]
+          }
+        ],
+        "top_k": 10
+      },
+      "observation": "━━━━━━━━━━ 子问题: 国产GPU和NPU详细信息 [BM25] ━━━━━━━━━━\n  ═══ 查询 1: \"天数智芯\" ═══\n\n  找到 10 条匹配结果：\n  [1] 文档=（中文）三体计算星座画册 - 20260318-压缩 | 分数=1.9500\n    内容: # 应用场景  \n空间科学卫星  \n对地遥感卫星  \n太阳探测卫星  \n通信卫星\n\n# 产品特点\n\n# 超异构  \n以CPU、NPU/GPU、FPGA为基本组成单元，采用超异构架构设计，具备灵活高效的处理能力。\n\n# 高可靠  \n自研多级容错系统，在恶劣太空环境下保证系统可用性98%以上。\n\n# 轻量化  \n突破星载操作系统“轻量化”，系统大小100MB以内，典型应用2MB以内。\n\n# 强实时  \n自研高通量计算引擎，提升星上算法库、大模型的处理实时性。\n\n# 智能化  \n预置遥感领域专用模型，实现遥感影像数据的在轨智能处理。\n\n# 定制化  \n弹性可伸缩的硬件架构，可根据用户需求提供软硬件一体的定制化服务。\n\n# 产品地图\n\n#\n\n# 寒武纪系列  \n智加X1  \n智加X2  \n智加X3  \n智加X4\n",
+      "duration": 13.322
+    },
+    {
+      "iteration": 6,
+      "thought": "",
+      "action": "vector_search",
+      "action_input": {
+        "query": "寒武纪NPU和天数智芯GPU的架构和性能参数",
+        "top_k": 10
+      },
+      "observation": "━━━━━━━━━━ Vector 检索 [HyDE] ━━━━━━━━━━\n  查询: \"寒武纪NPU和天数智芯GPU的架构和性能参数\"\n\n  找到 10 条匹配结果：\n  [1] 文档=星载智算机（NX4）方案设计报告_20250228 | 分数=6.1794\n    内容: AI 性能\n1.33 TFLOPS\n21 TOPS\n32 TOPS\n40 TOPS\n100 TOPS\n200 TOPS\n275 TOPS\nGPU\n256 核 NVIDIA Pascal\n48 个 Tensor Core+\n384 核 NVIDIA Volta\n64 个 Tensor Core + 512 核 NVIDIA Volta\n32 个 Tensor Core+\n1024 核 NVIDIA Ampere\n32 个 Tensor Core+\n1024 核 NVIDIA Ampere\n56 个 Tensor Core+\n1792 核 NVIDIA Ampere\n64 个 Tensor Core+2048 核 NVIDIA Ampere\nGPU 最大频率\n1.3 GHz\n1100 MHz\n1377 MHz\n6",
+      "duration": 13.471
+    },
+    {
+      "iteration": 7,
+      "thought": "",
+      "action": "finish",
+      "action_input": {},
+      "observation": "提交最终回答（2284 字）",
+      "duration": 62.89
+    }
+  ],
+  "accumulated_chunks": [
+    {
+      "chunk_id": "3c044dc9d7f641d0_p11",
+      "doc_id": "3c044dc9d7f641d0",
+      "doc_title": "Z_之江星座首发星座系统方案设计报告_0519_1940",
+      "content": "智算机-GPU1\n192.168.7.  \n智算机-GPU2\n192.168.8.  \n智算机-GPU3\n192.168.9.  \n智算机-GPU4\n192.168.10.\n从计算星-3\n智算机-FPGA\n192.168.11.  \n智算机-GPU\n192.168.12.\n从计算星-4\n智算机-FPGA\n192.168.16.  \n智算机-GPU\n192.168.17.\n从计算星-5\n智算机-FPGA\n192.168.21.  \n智算机-GPU\n192.168.22.\n从计算星-6\n智算机-FPGA\n192.168.26.  \n智算机-GPU\n192.168.27.\n从计算星-7\n智算机-FPGA\n192.168.31.  \n智算机-GPU\n192.168.32.\n从计算星-8\n智算机-FPGA\n192.168.36.  \n智算机-GPU\n192.168.37.\n从计算星-9\n智算机-FPGA\n192.168.41.  \n智算机-GPU\n192.168.42.\n从计算星-10\n智算机-FPGA\n192.168.46.  \n智算机-GPU\n192.168.47.\n从计算星-11\n智算机-",
+      "content_length": 1994,
+      "score": 5.777,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "9d7bd049e65f5ea6_p0",
+      "doc_id": "9d7bd049e65f5ea6",
+      "doc_title": "智算机评审结论",
+      "content": "# 智算机评审结论  \n之江实验室科研任务专家组评审意见  \n报告名称\n智算机电性件研制与质量总结报告  \n评审意见：  \n，之江实验室在杭州组织召开了智算机转阶段评审会。参加会议的有成都国星宇航科技股份有限公司专家与代表，会议成立了评审组（名单附后）。会议听取了之江实验室汇报的《智算机电性件研制与质量总结报告》，经过讨论、质询，形成评审意见如下：\n智算机电性件产品按照研制技术流程完成了初样阶段各项研制任务，各项任务符合相关大纲及细则要求；\n智算机电性件产品各项功能指标满足设计要求；\n智算机电性件产品初样阶段质量问题及异常现象均已完成问题分析和闭环管理，产品质量受控；\n电性件阶段文件齐套。\n评审组同意通过评审，可以转入正样研制工作。  \n评审组组长签名：",
+      "content_length": 331,
+      "score": 0.0494,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "193c79c204b88d15_p17",
+      "doc_id": "193c79c204b88d15",
+      "doc_title": "NX1和G1智算机鉴定级电磁兼容试验报告20240830(公开)",
+      "content": "Frequency Scanning parameter</td></tr><tr><td>频率范围\nFrequency Range</td><td colspan=\"2\">扫描步长\nStep Size</td><td>驻留时间\nDwell Time</td></tr><tr><td>10kHz~1MHz</td><td colspan=\"2\">0.05f0</td><td>3s</td></tr><tr><td>1MHz~30MHz</td><td colspan=\"2\">0.01f0</td><td>3s</td></tr><tr><td>30MHz~1GHz</td><td colspan=\"2\">0.005f0</td><td>3s</td></tr><tr><td>1GHz~18GHz</td><td colspan=\"2\">0.0025f0</td><td>3s</td></tr><tr><td colspan=\"4\">注：f0为信号源调谐频率</td></tr><tr><td colspan=\"4\">GJB151B-2013 RS103 干扰信号\nGJB151B-2013",
+      "content_length": 1986,
+      "score": -0.041,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "566af09a1e7b6517_p16",
+      "doc_id": "566af09a1e7b6517",
+      "doc_title": "Z4_电磁兼容试验报告",
+      "content": "Frequency Scanning parameter</td></tr><tr><td>频率范围\nFrequency Range</td><td colspan=\"2\">扫描步长\nStep Size</td><td>驻留时间\nDwell Time</td></tr><tr><td>10kHz~1MHz</td><td colspan=\"2\">0.05f0</td><td>3s</td></tr><tr><td>1MHz~30MHz</td><td colspan=\"2\">0.01f0</td><td>3s</td></tr><tr><td>30MHz~1GHz</td><td colspan=\"2\">0.005f0</td><td>3s</td></tr><tr><td>1GHz~18GHz</td><td colspan=\"2\">0.0025f0</td><td>3s</td></tr><tr><td colspan=\"4\">注：f0为信号源调谐频率</td></tr><tr><td colspan=\"4\">GJB151B-2013 RS103 干扰信号\nGJB151B-2013",
+      "content_length": 1987,
+      "score": -0.041,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "494a22605c20d15e_p0",
+      "doc_id": "494a22605c20d15e",
+      "doc_title": "AI智算机IDS20260304",
+      "content": "# 之江首发星座\n\n# 主星智算机-智加 NX4A IDS 表  \n| 签署科目 | 签 名 | 日 期 |\n| --- | --- | --- |\n| 编 写 | 张良 | 2026.0122 |\n| 校 对 | 高少波 | 2026.0122 |\n| 审 核 | 陈启亮 | 2026.0122 |\n| 标 审 |  |  |\n| 批 准 | 颜迪颖 | 2026.0122 |  \n之江实验室  \n天基计算系统研究中心\n\n# 主星智算机-智加NX4A IDS表  \n会签页  \n|  | 姓名 | 单位(部门) | 日期 |\n| --- | --- | --- | --- |\n| 会签 | 任静和 | 之江实验室 | 2026.1.22 |\n| 会签 | 宫禄齐 | 之江实验室 | 2026.1.22 |\n| 会签 | 乔良 | 二院空间总体部 | 2026.3.3 |\n| 会签 |  |  |  |\n| 会签 |  |  |  |\n| 会签 |  |  |  |\n| 会签 |  |  |  |\n| 会签 |  |  |  |\n| 会签 |  |  |  |\n| 会签 |  |  | ",
+      "content_length": 573,
+      "score": -0.3144,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "ffed9a7c0b960445_p0",
+      "doc_id": "ffed9a7c0b960445",
+      "doc_title": "星载智算机投产通知",
+      "content": "# 关于启动星载智算机产品投产的通知\n\n# 之江实验室：  \n根据贵司提供的产品规范，结合我司对产品的评估结果，经我司综合评估，现决定委托贵司承担我司星载智算机产品的研制工作，请贵司按照下表投产数量和交付计划要求启动产品生产工作，确保产品按期交付。  \n| 序号 | 产品名称 | 规格型号 | 数量 | 交付时间 | 备注 |\n| --- | --- | --- | --- | --- | --- |\n| 1 | 星载智算机（电性件） | G2A | 1 | 2026.04.30\n(正样交付后归还) | 不涉及研制费用，免费搭载 |\n| 2 | 星载智算机（正样件） | G2A | 2 | 2026.05.31 |\n| 3 | 星载智算机（正样件） | G2A | 2 | 2026.07.31 |",
+      "content_length": 353,
+      "score": 1.5531,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "eb733935110cdd1c_p9",
+      "doc_id": "eb733935110cdd1c",
+      "doc_title": "F300S卫星平台与超算联试大纲&细则-20260305（发之江）(1)",
+      "content": "电缆5 星务计算机-超算 CAN通信线缆连接正确  \n电缆6 星务计算机-超算-X测控 422通信线缆连接正确  \n3加电状态检查\n加电后电流是否正常  \n测试人签字：  \n复核人签字：  \n附表1-3：供电接口测试记录表\n测试时间  \n测试地点  \n测试条件  \n产品名称  \n产品编号  \n序号\n测试项目  \n供电接口名称\n供电线缆\n信号名称\n接点号\n导通\n正负极阻抗（Ω）\n实测结果\n执行人\n复核人  \n浪涌电流测试\n测试浪涌电流值（A）\n浪涌测试波形\n浪涌电流持续时间波形\n浪涌电流上升斜率波形  \n反射纹波测试\n反射纹波电压（mV）\n关机纹波波形\n开机纹波波形  \n电压拉偏测试\n正向拉偏\n反向拉偏  \n拉偏后电压\n拉偏后电流\n拉偏后功耗\n测试结果\n拉偏后电压\n拉偏后电流\n拉偏后功耗\n测试结果  \n功耗测试\n+28V供电\n+29V供电（正向拉偏）\n+21V供电（反向拉偏）  \n电压\n电流\n功耗\n电压\n电流\n功耗\n电压\n电流\n功耗  \n附表2-1：遥控指令（GPU-SOC）测试表\n测试时间  \n测试地点  \n测试条件  \n协议\n产品名称  \n产品编号  \n序号\n测试项目\n实操步骤\n预期",
+      "content_length": 1683,
+      "score": -0.923,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "494a22605c20d15e_p1",
+      "doc_id": "494a22605c20d15e",
+      "doc_title": "AI智算机IDS20260304",
+      "content": "修订记录  \n| 序号 | 章节名称 | 修订内容简述 | 修订日期 | 修订前版本号 | 修订后版本号 | 修订人 | 复核人 |\n| --- | --- | --- | --- | --- | --- | --- | --- |\n| 1 | 接口数据单13、14、19、20 | 修改CAN信号接点负荷栏电压描述; | 2026.2.5 | V1.1 | V1.2 | 张良 | 薛宏亮 |\n| 2 | 接口数据单27 | 修改说明栏第3点CAN芯片型号描述; | 2026.2.5 | V1.1 | V1.2 | 张良 | 薛宏亮 |\n| 3 | 接口数据单21 | 修改同步422差分信号接点号; | 2026.2.5 | V1.1 | V1.2 | 张良 | 薛宏亮 |\n| 4 | 接口数据单28 | 更新同步422差分信号接点号修改后的图片; | 2026.2.5 | V1.1 | V1.2 | 张良 | 薛宏亮 |\n| 5 | 接口数据单3 | 变更工作温度范围和启动温度范围 | 2026.2.5 | V1.1 | V1.2 | 任静和 | 祁振飞 |\n| 6 |  |  |  ",
+      "content_length": 1750,
+      "score": -1.66,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "44b11c96008ea1e5_p0",
+      "doc_id": "44b11c96008ea1e5",
+      "doc_title": "GPU载板调试说明",
+      "content": "# GPU载板调试说明  \n高性能计算模块GPU载板\n调试说明  \n之江实验室  \n二零二四年六月  \n高性能计算模块GPU载板\n调试说明  \n会签：\n标准化：  \n2024年6月  \n目 次\n1 概述1\n2 调试环境1\n3 调试内容1\n3.1调试项目1\n3.2 调试流程1\n4 调试仪器设备2\n5 调试程序、方法、要求和注意事项3\n5.1 外观检测3\n5.2 阻抗测试3\n5.3 电压测试3\n5.4 功能接口测试3\n5.5 常见问题排故8\n附录A 调试记录表9  \n1 概述\n本说明规定了高性能计算模块GPU载板的调试方法、调试步骤和记录要求。\n本说明适用于高性能计算模块GPU载板的调试。\n2 调试环境\n温度：15℃～35℃；\n相对湿度：20%～80%；\n大气压力：86kPa～106kPa；\n供电电压：DC 28V。\n3 调试内容\n调试的项目按三防前、三防后进行。调试前需要将GPU核心板和CPLD板插在GPU载板上，调试时应先进行上电前测试，再进行上电后测试，调试流程见图 2。  \n图 1 GPU核心板、CPLD板、NVME卡的装配方法\n3.1调试项目\n表1 调试项目  \n3.2 调试流程",
+      "content_length": 1998,
+      "score": -2.1266,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "5e1d693f52b933bd_p0",
+      "doc_id": "5e1d693f52b933bd",
+      "doc_title": "pcbm-gpu-0729",
+      "content": "PCBM-GPU  \nTOP：全局限高9.5mm  \nBOTTOM：全局限高1.5mm\n\n# 技术要求：  \n1. 所有连接器和器件另一侧焊接针脚高度不大于1.0mm",
+      "content_length": 83,
+      "score": -0.965,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "44b11c96008ea1e5_p1",
+      "doc_id": "44b11c96008ea1e5",
+      "doc_title": "GPU载板调试说明",
+      "content": "5.4.2 CPLD目标代码下载\n烧录CPLD目标代码的步骤如下。\n将目标板组合调试电缆上标有CPLD下载的连接器连接至CPLD下载器及PC机。连接好上述电源线和调试电缆后，打开电源进行上电。\n烧录CPLD目标代码\n烧录完成后断电重启生效。\n5.4.3 GPU进系统方法\n连接UART调试串口调试模块如图 8，调试线缆带RX标签的线接串口调试模块的TX引脚；调试线缆带TX标签的线接串口调试模块的RX引脚, 调试线缆带GND标签的线接串口调试模块的GND引脚，串口调试模块连接至调试计算机，打开MobaXterm软件如图 9，点击session-serial-选择serial port(实际连哪个com就选哪个com)-选择speed 11520-点击ok，进入调试串口界面。\n进入串口界面后上电，看到串口打印则进入系统成功如图 10。打印完成后输入用户名root和密码123123。  \n图 10 调试接口连接  \n图 11 MobaXterm串口设置界面  \n图 12 串口打印与用户名密码输入界面\n5.4.3 M.2接口测试\n1）通过XS3安装M.2电子盘。通过lsblk查看是否有Nvme外",
+      "content_length": 2537,
+      "score": -4.8085,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "f5bc04232ad3a2ba_p0",
+      "doc_id": "f5bc04232ad3a2ba",
+      "doc_title": "万兆芯片pcb 布线要求 V1.00",
+      "content": "# PART 1：联系方式  \n联系人：章工  \nEmail：  \n公司：北京网迅科技有限公司杭州分公司  \n地址：杭州西湖区文三路 478 号华星时代广场 A 座 507\n\n# PART 2：PCB Layout 说明\n\n# 2.1 PCB 叠层及阻抗要求\n\n# 2.1.1 PCB 叠层要求  \n板厚：1.6mm 公差±10%  \n板层：8 层  \n堆叠： S1-GND-S3/PWR-S2-GND-S3  \n铜厚：表层 $\\mathbf { 0 . 5 0 Z \\ : + \\ : 0 . 5 0 Z }$ （镀铜）  \n内层 1OZ  \n板材：高 TG：TU872 SLK SP\n\n# 2.1.2 阻抗要求  \n目标线宽范围：5mil – 6mil （初定）  \n阻抗目标：（公差±10%）  \n| 序号 | 线型 | 阻抗 | 应用范围 |\n| --- | --- | --- | --- |\n| 1 | 差分 | 85 | PCI_E (TX\\RX 要求 85 ohm ±10%, CLK 阻抗 100ohm± 10%) |\n| 2 | 差分 | 100 | SFP+、KR 和 XAUI",
+      "content_length": 974,
+      "score": 1.1535,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "f5bc04232ad3a2ba_p2",
+      "doc_id": "f5bc04232ad3a2ba",
+      "doc_title": "万兆芯片pcb 布线要求 V1.00",
+      "content": "# 2.2.2 PCIE 走线要求  \nl PCIE 信号带宽最高 8Gbps\nl 串接0.22uF电容尽量靠近金手指放置；\nl 差分线对内等长 3mil；\n差分线对间间距3W；\nl 过孔尽量不超过 2 个，TX 和 RX 分别走不同层，长度控制<4000mil。\n\n# 2.2.3 万兆芯片部分走线要求  \nl 去耦电容容量 10uF 放 BGA 外围，滤波小电容放在 BGA 的 bottom 层。  \n| Component | Valuea |\n| --- | --- |\n| Power Supply Bypass Capacitors | 0.01 μF, 0.1 μF, 4.7 μF, 10.0 μF |  \na.Smaler-value capacitorsmustbe placedbetween the ferite bead and the package.  \nThe supply bypass capacitors should be connected as close as possible to the package pins to ensure a tigh",
+      "content_length": 1258,
+      "score": 1.8861,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "f5bc04232ad3a2ba_p1",
+      "doc_id": "f5bc04232ad3a2ba",
+      "doc_title": "万兆芯片pcb 布线要求 V1.00",
+      "content": "# 1.3 SFI TYPICAL PCB REACH (INFORMATIVE)  \nThe SFl channel may be implemented with either microstrip or stripline structures.Example host board designs with typical PCB trace reaches are shown in Table 2. Detailed channel properties and recommetions are documented in Appendix A.  \nTable 2 Host Board Achievable Trace Length  \n| Type | Material | Trace Width (mm) | Loss Tangent | Copper Thickness (oz) see 1 | Copper Thickness (μm) | Trace Length (mm) |\n| --- | --- | --- | --- | --- | --- | --- |\n",
+      "content_length": 789,
+      "score": -0.0701,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "b8996ddd3836ccf7_p0",
+      "doc_id": "b8996ddd3836ccf7",
+      "doc_title": "智桥RH1单页1124",
+      "content": "# HIGH-SPEED SATELLITE ROUTER智桥RH1 星载高速路由器 HIGH-SPEED SATELLITE ROUTER\n\n# 产品简介  \n智桥RH1是一款专为满足星内、星间高速数据通信需求而设计的高可靠主备双路路由设备，成功实现了星内、星间TBIT级别高速率、低延迟网络传输技术的突破。  \n智桥RH1支持星间/星地激光通信、星间/星地微波通信、星地测控传输一体化设备以及星内算力设备等多种载荷间的通信传输。  \n智桥RH1依托国产自主研发并经过高可靠筛选的HJ817交换芯片 $^ +$ 工业级8核锐腾D2000处理器，集成两套独立但功能相同的交换系统，形成主备双交换系统架构，并采用了冷备份方案，能够实现多通道的千兆、万兆、100G网络的二层和三层以太网交换功能。  \n每台设备可提供18个1000BASE-T电接口、8个10G光纤接口、10个100G光口和2个100G电口，总交换容量超1.2T，最大可扩展为2T。  \n智桥RH1部署于卫星平台之上，作为卫星网络中的关键数据包转发节点，不仅能在卫星之间构建通信链接，还支持与地面站的通信，同时具备对星内各类载荷（例如智能",
+      "content_length": 1270,
+      "score": 2.2125,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "7f1638b742382331_p6",
+      "doc_id": "7f1638b742382331",
+      "doc_title": "星载计算机介绍",
+      "content": "# 智加X  \n智加X天基智算载荷⽀持对可⻅光、雷达成像等类型遥感数据进⾏在轨⽬标监测与识别。在与低轨卫星、地⾯服务器等联⽹运⾏的情况下，⽀持分布式计算。主要的功能如下：  \n1)⽀持基于PyTorch、TensorFlow等⼈⼯智能编程框架进⾏模型推理；\n2) 适配 openEuler 或 Kylin 等国产化操作系统；\n3)具备防护单粒⼦翻转、单粒⼦闩锁的措施；\n4) ⽀持秒级故障感知与定位能⼒；\n5) ⽀持分钟级故障在轨⾃恢复能⼒；\n6) ⽀持 FPGA 程序在轨升级、修复；\n7)⽀持CPU多分区启动，操作系统、应⽤软件在轨升级、修复；\n8)⽀持智能处理器的固件在轨升级、修复\n\n# 智加X产品图  \n智加X硬件架构  \n智加X技术参数  \n| 指标 | 智加X4 |\n| --- | --- |\n| 架构 | 飞腾CPU+寒武纪NPU+复旦微FPGA |\n| 算力 | 18TFlops@FP32、72TFlops@FP16、72TFlops@BF16、192Tops@INT8 |\n| 体积 | 350mm×270mm×58mm |\n| 重量 | ≤4.2kg |\n| 功耗 | 待机",
+      "content_length": 1731,
+      "score": 0.6665,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "621069f2db2eb376_p10",
+      "doc_id": "621069f2db2eb376",
+      "doc_title": "三体计算星座介绍",
+      "content": "# 四、太空计算技术分析\n\n# . 卫星能源供给可⾏性分析  \n对于⼀颗总重500公⽄的卫星，若将其太阳能帆板重量占⽐设定为 $2 0 \\%$ ，即100公⽄，并采⽤当前主流的太阳能帆板技术（其⾯密度约为4千克/平⽅⽶），则可⽀持的帆板总⾯积约为25平⽅⽶。在近地轨道环境下，太阳能帆板每平⽅⽶的理论最⼤发电能⼒约为 $4 0 0 W _ { \\odot }$ 。然⽽，在实际运⾏中需综合考虑⽇照⻆变化、辐射衰减、温度效应及寿命末期性能下降等因素，因此，每平⽅⽶帆板实际可输出的持续平均功率通常约为250W。据此计算，25平⽅⽶的太阳能帆板在轨可提供的实际总功率约为： $2 5 \\times 2 5 0 \\mathsf { W } = 6 2 5 0 \\mathsf { W } \\mathrm { c }$ 。该功率⽔平完全能够满⾜约1300W的20POPS的星载计算机、约200W的100Gbps激光通信机、约200W的单端⼝100G星载路由器，以及约500W的卫星平台及其他设备（包括姿控、热控、推进及测控等）的能源需求。从能源供给⻆度分析，该太阳能帆板配置⽅案是可⾏且充裕的。\n\n# . 基",
+      "content_length": 1085,
+      "score": 4.1393,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "10ee9b86a8548cfb_p0",
+      "doc_id": "10ee9b86a8548cfb",
+      "doc_title": "成像处理程序说明_智星发",
+      "content": "# 成像处理程序说明_智星发  \n成像处理程序说明\n程序调用说明\n成像处理程序采用【插件+订单】的方式调用。\n插件部署\n成像处理插件部署到指定位置，需要独占整个文件夹，该文件夹下包含必要的运行环境、配置文件、基础数据与可执行程序。成像处理时，会在该路径下开辟临时文件夹，作为成像处理结果存放与压缩处理的临时路径，因此要求部署位置具有足够硬盘空间。\n成像处理结束后，会将成像处理结果拷贝至指定路径，并将临时目录下的内容清空。\n订单文件\n订单文件用于指示输入回波数据、输出路径、压缩方式（可选择压缩或仅打包不压缩）、产品级别（如L1A\\L2\\L1B)，以及可选的成像自定义配置（如是否进行辐射校正、窗系数、是否进行自聚焦、是否进行ROI生产、斜距补偿值等）。\n订单文件为utf-8编码格式。  \n订单说明如下：\n字段\n含义\n说明\n值域\ninput\n回波数据\n回波数据路径\n要求路径存在\noutput\n处理结果输出路径\n处理结果输出路径\n要求路径存在\nconf\n处理过程自定义配置\n属性default字段为【yes】时完全按照默认方式生产；为【no】时按照各字段设置生产\n【default】属性取值为【ye",
+      "content_length": 1532,
+      "score": -0.8055,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "88b92f45243efb22_p0",
+      "doc_id": "88b92f45243efb22",
+      "doc_title": "三防处理生产工艺规程(1)更新后",
+      "content": "# 三防处理生产工艺规程(1)更新后  \n文件编号：  \n页 码：  \n分 发 号：  \n三防处理生产工艺规程  \n拟制：  \n工艺、质量：\n标准化：  \n成都形水科技有限公司\n修订页\n版本\n修订原因\n修订主要内容\n修订方式\n修改人\n修改日期\n2020\n----\n----\n第一版\n陈金秀\n2020.6.8  \n一、适用范围\n本文件适用于我司各种类型三防漆涂料的印制板组件、金属件的三防涂覆。\n引用标准\nQJ/3259-2005 航天电子产品防护涂覆技术要求\nSJ20671-1998 印制板组装件涂覆用电绝缘化合物\nGB6514～6515 涂装作业安全规程\n材料\n油漆 、 乙酸乙酯、洗板水、稀释剂、高温胶带等。\n设备及工具\n恒温干燥箱、抽风柜、除湿机、冷干机、天平、羊毛刷、烧杯、镊子、干湿温度计、喷枪、覆层测试仪、附着力测试仪等。\n五、工艺流程图\n保护保护晾置晾置清洗清洗接件检验接件检验\n保护\n保护\n晾置\n晾置\n清洗\n清洗\n接件检验\n接件检验\n固化固化流平/表干流平/表干喷涂喷涂除湿除湿\n固化\n固化\n流平/表干\n流平/表干\n喷涂\n喷涂\n除湿\n除湿  \n加固加固包装包装检验检验\n加固\n加固\n",
+      "content_length": 1244,
+      "score": -2.8135,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "e9419befc15db0df_p0",
+      "doc_id": "e9419befc15db0df",
+      "doc_title": "航天型号质量问题归零报告 - G1 智算机浪涌电流超标",
+      "content": "# 归零报告\n\n# 一、问题概述\n\n# 1. 问题现象  \n智加G1智算机（选用隔离电源模块DCM3623T36G13C2T00）进行出所验收测试时，实测浪涌电流为5.565A/228.8us，该数值超出卫星平台对浪涌电流的要求：卫星平台要求启动浪涌电流不大于5A，持续时间不大于1ms，G1 单机浪涌电流指标无法满足该要求。\n\n# 2. 问题危害与影响  \n若浪涌电流超标问题未解决，G1 智算机无法适配对浪涌电流有严苛要求的卫星平台，将限制产品的平台适配范围；同时浪涌电流过大可能对卫星平台供电系统造成冲击，存在影响供电稳定性、损坏平台其他电子元器件的潜在风险，进而影响整星在轨工作的可靠性和安全性。\n\n# 3. 问题涉及范围  \n本次问题涉及研发测试阶段的智加 G1 智算机单机，涉事电源模块型号为DCM3623T36G13C2T00，有库存产品。\n\n# 二、技术归零（五条标准）\n\n# 1. 定位准确  \n- 问题发生部位/失效点：智加 G1 智算机 DCM3623T36G13C2T00 电源模块 12V启动阶段，具体为0-6V 电压上升过程中产生超标浪涌电流，后级负载电容约350uF。\n",
+      "content_length": 1242,
+      "score": 3.0232,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "e9419befc15db0df_p2",
+      "doc_id": "e9419befc15db0df",
+      "doc_title": "航天型号质量问题归零报告 - G1 智算机浪涌电流超标",
+      "content": "# （2）纵向排查  \n对电源模块选型、采购、测试全流程进行复盘排查： $\\textcircled{1}$ 选型阶段：核查是否将卫星平台浪涌电流严苛要求纳入电源模块选型指标体系； $\\textcircled{2}$ 测试阶段：核查是否针对不同卫星平台的差异化指标制定专项测试方案，是否存在测试覆盖不全的问题。\n\n# （3）排查结果及同步整改措施  \n1. 选型阶段：补充卫星平台严苛供电指标（含浪涌电流、输出电压斜率、持续时间）至《电源模块选型规范》，明确选型时需对该类指标进行前置验证；\n2. 测试阶段：在单板调试和测试阶段，要求对适配不同卫星平台的产品，按平台指标开展浪涌电流测试，留存测试数据及波形；  \n3. 产品设计：对所有在研单机产品，对其开展电源模块浪涌电流复核，对存在超标风险的产品，提前采用“更换模块”的方式进行整改。\n\n# 三、纠正与预防措施汇总表  \n表 3 纠正与预防措施\n\n# 四、力学环境试验复测  \n复测随机振动测试条件加载如表3所示  \n表 4 随机振动试验量级  \n| 随机振动试验 | 功率谱密度 |\n| --- | --- |\n| 频率范围（Hz） | 验收级 ",
+      "content_length": 1241,
+      "score": 2.9575,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "e9419befc15db0df_p1",
+      "doc_id": "e9419befc15db0df",
+      "doc_title": "航天型号质量问题归零报告 - G1 智算机浪涌电流超标",
+      "content": "# 4. 措施有效\n\n# （1）临时措施  \n拆机更换电源模块；并对正样需要交付的产品补做相应的环境试验。 将原电源模块 DCM3623T36G13C2T00 更换为 DCM3623T50T13A6T0，利用新模块 0-6V 启动时间延长的特性减小浪涌电流。  \n验证结果：实测浪涌电流 2.1A/400us，满足卫星平台要求。\n\n# （2）纠正措施  \n对 G1 智算机和 BOM 进行更改，将原电源模块 DCM3623T36G13C2T00 更换为DCM3623T50T13A6T0。\n\n# 5. 举一反三\n\n# （1）横向排查  \n对之江首发星座项目下其他智算机、单机产品开展浪涌电流专项排查，统计DCM3623T36G13C2T00电源模块其他产品和项目使用情况，并备注处理建议。  \n表 1 DCM3623T36G13C2T00 电源模块其他产品使用情况  \n| 设备数量 | 设备编号 | 设备状态 | 处理建议 |\n| --- | --- | --- | --- |\n| 1 | XHZH004-02 | 正样，已装机 | 拆机更换电源模块，补做相应环境试验 |\n| 2 | MEZZ0",
+      "content_length": 1035,
+      "score": 2.1667,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "2a7b3b8e31e23e2e_p1",
+      "doc_id": "2a7b3b8e31e23e2e",
+      "doc_title": "NX1和G1智算机_鉴定级环境试验大纲_20240905",
+      "content": "智加NX1智算机（有上盖）产品外观如下图所示。  \n图 4 智加NX1智算机（有上盖）产品外观示意图\n智加G1产品外观如下图所示。  \n图 5智加G1产品外观示意图\n功能\n智加NX1智算机和智加G1智算机，为星载计算机设备，为在轨计算任务提供大算力支撑，支持分布式操作系统和分布式软件。主要功能包括遥感图像的接收和L0-L4遥感图像数据处理，在轨目标识别等AI任务执行，支持分布式操作系统提供通用算力等。\n技术状态\n提交鉴定级环境试验的产品，技术状态应已固化，产品已通过功能和性能测试。\n陪试品\n冷板\n高低温环境试验过程中，为模拟卫星环境，采用冷板模拟卫星提供的安装面。在做温度循环试验前，先把产品安装在卫星模拟冷板上，再一起放进温箱。\n单机产品的工作温度范围是：-20℃～50℃，鉴定级环境试验冷板温度设置最高65℃，最低-35℃。\n模拟冷板的相关参数见下表。\n表 3模拟冷板参数表\n被试品\n模拟冷板长*宽*高（mm）\n材质\n表处\nNX1\n500*492*25\nAl6061\n无\nG1\n500*480*25\nAl6061\n无\nNX1模拟冷板外形如下图所示。  \n图 6 NX1模拟冷板流道与设备安装",
+      "content_length": 1976,
+      "score": 0.5827,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "867cd5e09164a41d_p0",
+      "doc_id": "867cd5e09164a41d",
+      "doc_title": "G2",
+      "content": "# 产品简介  \n之江智加G2是之江实验室为满足卫星在轨高效数据处理需求，基于异构计算体系（CPU+GPU）和软硬件协同加速技术的一款高性能星载计算载荷，支持SAR图像存储和管理、天基遥感模型在轨推理，实现目标检测和位置解算、图像分类等功能。\n\n# 产品特色\n\n# 超异构  \n“之江智加”系列星载计算机，以CPU、NPU/GPU、FPGA为基本组成单元，采用超异构架构设计，具备灵活高效的处理能力。\n\n# 高可靠  \n自研多级容错系统，在恶劣太空环境下保证系统可用性 $98\\%$ 以上。\n\n# 轻量化  \n实现星载操作系统“轻量化”，基础系统100MB以内，典型应用2MB以内。\n\n# 强实时  \n自研高通量计算引擎，提升星载算法库和模型的处理的实时性。\n\n# 智能化  \n预置遥感领域专用模型，实现遥感影像数据的在轨智能处理。\n\n# 定制化  \n弹性可伸缩硬件架构，可根据用户需求提供软硬件一体的定制化服务。\n\n# 技术参数  \n| 指标 | 参数 |\n| --- | --- |\n| 架构 | GPU-SOC |\n| 算力 | 248TOPS@INT8 |\n| 体积 | 210mm×157.",
+      "content_length": 803,
+      "score": 0.1663,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "2a7b3b8e31e23e2e_p0",
+      "doc_id": "2a7b3b8e31e23e2e",
+      "doc_title": "NX1和G1智算机_鉴定级环境试验大纲_20240905",
+      "content": "# NX1和G1智算机_鉴定级环境试验大纲_20240905  \n之江首发星座\n主星和从星智算机\n鉴定级环境试验大纲  \n签署科目\n签 名\n日 期\n编写  \n校对  \n审核  \n标审  \n批准  \n之江首发星座\n智算机分系统  \n目录\n1主要内容和适用范围3\n2引用文件3\n3试验性质及目的3\n4试验对象：初样产品（鉴定件或电性件）。3\n5被试品、陪试品及技术状态3\n5.1被试品3\n5.1.1单板被试品3\n5.1.2单机被试品4\n5.1.3功能6\n5.1.4技术状态6\n5.2陪试品6\n5.2.1冷板6\n5.2.2振动夹具7\n6试验基本要求9\n6.1试验一般要求9\n6.2试验加载方向9\n6.3正常试验环境9\n6.4试验条件允许偏差10\n6.5试验项目和一般顺序10\n6.6试验成功判据11\n6.7再试验11\n6.7.1鉴定或验收过程中的再试验11\n6.7.2鉴定后再试验12\n7鉴定级环境试验项目和顺序12\n8应力筛选试验13\n8.1ESS随机振动试验13\n8.1.1试验条件13\n8.1.2试验要求13\n8.2单板ESS温度循环试验14\n8.2.1试验条件14\n8.2.2试验要求14\n9力学环",
+      "content_length": 1887,
+      "score": -0.1635,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "71faa556a9ef17c9_p2",
+      "doc_id": "71faa556a9ef17c9",
+      "doc_title": "1_SCS-01-ZS-JY-01之江首发星座星载智算机技术要求V1.0",
+      "content": "从星智算机峰值功耗：≤153W。\n机械接口要求\n机械接口应符合《SCSGF-05之江首发星座卫星设计与建造规范》的要求和接口数据单中有关结构设计和连接设计的要求。\n主星智算机，重量要求≤5.8kg。\n从星智算机，重量要求≤2.8kg。\n热控接口要求\n（1）每台设备含2个单板测温点；\n（2）整机热量通过壳体6系铝VC材料传导至卫星舱内安装面；\n（3）卫星安装面热流密度：平均0.5w/cm2，最大1.5w/cm2；\n（4）卫星安装面温度-20℃~ +50℃；\n（5）每台设备均需要采集机壳指定位置温度，要求2个整机壳温采温点。\n电学接口要求\n表 1 主星智算机对外接口\n单机名称\n接口类型\n接口关系\n接口特性\n功能\n数量\n主星星载智算机\n电源接口\n平台配电单元→智算机\n支持28V±10%\n母线直流输入\n供电\n5  \nCAN接口\n平台综电←→智算机\n通信参数可配置（速率500kbps），支持CAN2.0A和CAN2.0B协议\n遥控遥测总线\n10  \nPPS输入\n平台综电→智算机\n1HZ\n秒脉冲可中断\n1  \n电压模拟量输出\n智算机→平台综电\n0~5V\n12V电压采样\n5  \n温度模拟量输出\n智算",
+      "content_length": 1979,
+      "score": 4.9237,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "99b5cb5818e1f201_p8",
+      "doc_id": "99b5cb5818e1f201",
+      "doc_title": "No.02 分布式计算系统集成与测试方案-2024-0715A",
+      "content": "测试验证经过路由器1G业务网口的智算机发送给地检台的CFDP文件传输；\n路由器数据发送\n测试验证经过10G业务网口路由器发送给智算机的SCP文件传输协议；\n测试验证经过10G业务网口路由器发送给智算机（分布式）的SCP文件传输协议；\n断链重连\n支持断网条件下重连功能，断网重连时间：≤5s  \n路由主备切换\n支持冷备条件下的路由主备切换，智算机配合实现端口切换。  \n性能测试\n智算机与路由器10G以太网链路测试\nIP地址配置测试；\n确认智算机和路由器的IP可以通过指令正常配置；\n测试方法：\n通过遥控发送配置IP指令，通过遥测查询当前系统IP，并将网络上位机配置成同一网段IP，进行维持2min的长ping操作。\n合格判据：\nIP配置成功，长ping不间断。\nVLAN\n支持802.1q VLAN，支持动态组网，组10个局域网\n测试方法：\n将交换板按照配置中的方法，配置成10的VLAN，每个VLAN中含有4个端口\n将智算机和网络上位机配置同网段的IP地址，\n将智算机和网络上位机分别接入不同的VLAN中，通过ping的方式，两台计算机之间的连通性。\n将智算机和网络上位机分别接入相同的VLAN中，",
+      "content_length": 1968,
+      "score": 3.8614,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "0bc2ccba907533d0_p9",
+      "doc_id": "0bc2ccba907533d0",
+      "doc_title": "智加NX1和G1智算机_方案设计报告（硬件）_SCS-01-ZS-FB-01",
+      "content": "（3）实测与分析\n选型前重点对上述厂商的工业级SSD盘进行实测分析，陪测平台采用实际选型的GPU模块,SSD不采用散热组件，采用连续读写测试。测试结果总结如下：\n表 11 各厂商SSD产品测试汇总\n从上表测试结果看，各厂商工业级SSD均可在高低温环境下启动和工作，但多个厂商SSD产品在NVIDIA ORIN GPU模组环境条件下报“timeout”类错误，初步判断原因为数据队列深度、读取速率、国产化驱动等不匹配问题。高低温测试可用的SSD厂商有艾可萨和至誉科技，其中至誉科技的SSD峰值性能较高，高低温性能相对更稳定，且价格约是艾可萨的一半。\n（4）最终选型结果\n最终SSD盘拟选用至誉科技的产品，具体型号为P4M9A004TZAN8I00-034，单价约1.1万，交期约3周，其主要点如下。\n高速PCIe Gen4 x4接口；\n2280结构标准；\n支持TCG Opal2.0，数据自加密(SED),以及全盘数据加密(FDE)；\n支持RAID ECC 硬件；\n支持自我监测，分析及报告技术；\n独有自主研发温控算法保证高温工作环境下性能的稳定性；\n硬件及固件断电保护，避免因电容失效而造成设备失效；",
+      "content_length": 1994,
+      "score": 3.8243,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "7e4c3c34f8c23c96_p13",
+      "doc_id": "7e4c3c34f8c23c96",
+      "doc_title": "25_智加NX1和G1智算机正样件研制与质量总结报告_SCS-01-ZS-ZB-01",
+      "content": "否  \n20345600003\nMolex\n工业级\n-40℃~-85℃\n1\n否  \n1054500101\nMolex\n工业级\n-40℃~-85℃\n1\n否  \n91302067RDM\n中航光电\n普军级\n-40℃~-85℃\n1\n是  \nJ30JA2-9ZKWV2A-J\n中航光电\n普军级\n-40℃~-85℃\n3\n是  \nHJ30J-24ZKWP14\n中航光电\n普军级\n-40℃~-85℃\n1\n是  \nJ30J-21ZKWP7-J\n中航光电\n普军级\n-40℃~-85℃\n3\n是  \nJ30JA2-31ZKWV2A-J\n中航光电\n普军级\n-40℃~-85℃\n2\n是  \nJ30J-15ZKWP7-J\n中航光电\n普军级\n-40℃~-85℃\n2\n是  \nSS4350-L-D-K-TR\nsamtec\n工业级\n-40℃~-85℃\n1\n否\n电平转换电路\n电平转换芯片\nTXB0108PW\nTI\n工业级\n-40℃~-85℃\n2\n否  \nSN74LVC1T45DBVR\nTI\n工业级\n-40℃~-85℃\n2\n否  \n原材料选用和控制情况\n原材料采购按之江实验室内部标准《Q/ZJLab-CX-84采购与外包控制程序》进行",
+      "content_length": 1994,
+      "score": 2.8928,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "99b5cb5818e1f201_p9",
+      "doc_id": "99b5cb5818e1f201",
+      "doc_title": "No.02 分布式计算系统集成与测试方案-2024-0715A",
+      "content": "测试方法：\n智算机和网络上位机分别运行NetPerf客户端和服务端程序，\nNetPerf命令：\n服务端：netserver\n客户端：\n长连接请求应答模式：netperf –H server_ip –l 60 –t TCP_RR\n短连接请求应答模式：netperf –H server_ip –l 60 –t TCP_CRR\n备注:\n这里的server_ip表示运行netserver软件的机器的IP地址\n-l 表示测试时间，单位为：秒\n更加详细的参数请参考附录2或者直接通过-h参数查询\n合格判据：\n截图保存测试结果，读出交易速率，并记录。  \nUDP交易率测试\n支持TCP/IP、UDP等多种网络协议的传输、支持命令型数据、流式数据和突发型数据的传输\n测试方法：\n智算机和网络上位机分别运行NetPerf客户端和服务端程序，\nNetPerf命令：\n服务端：netserver\n客户端：\n长连接请求应答模式：netperf –H server_ip –l 60 –t UDP_RR\n备注:\n这里的server_ip表示运行netserver软件的机器的IP地址\n-l 表示测试时间，单位为：秒\n更加详",
+      "content_length": 1982,
+      "score": 2.7508,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "99b5cb5818e1f201_p16",
+      "doc_id": "99b5cb5818e1f201",
+      "doc_title": "No.02 分布式计算系统集成与测试方案-2024-0715A",
+      "content": "测试方法：\n智算机和网络上位机分别运行NetPerf客户端和服务端程序，\nNetPerf命令：\n服务端：netserver\n客户端：\n长连接请求应答模式：netperf –H server_ip –l 60 –t UDP_RR\n备注:\n这里的server_ip表示运行netserver软件的机器的IP地址\n-l 表示测试时间，单位为：秒\n更加详细的参数请参考附录2或者直接通过-h参数查询\n合格判据：\n截图保存测试结果，读出交易速率，并记录。\n智算机—路由器—激光通信机100M链路测试\nIP地址配置测试；\n确认智算机和路由器的IP可以通过指令正常配置；\n测试方法：\n通过遥控发送配置IP指令，通过遥测查询当前系统IP，并将网络上位机配置成同一网段IP，进行维持2min的长ping操作。\n合格判据：\nIP配置成功，长ping不间断。\nVLAN\n支持802.1q VLAN，支持动态组网，组10个局域网\n测试方法：\n将交换板按照配置中的方法，配置成10的VLAN，每个VLAN中含有4个端口\n将智算机和网络上位机配置同网段的IP地址，\n将智算机和网络上位机分别接入不同的VLAN中，通过ping的方",
+      "content_length": 1972,
+      "score": 2.5728,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "99b5cb5818e1f201_p19",
+      "doc_id": "99b5cb5818e1f201",
+      "doc_title": "No.02 分布式计算系统集成与测试方案-2024-0715A",
+      "content": "测试验证经过路由器10G业务网口和激光通信机的智算机Quic协议传输；\n测试验证经过路由器1G业务网口和微波通信机的智算机Quic协议传输；\n路由器数据发送\n测试验证经过10G业务网口路由器发送给智算机的SCP文件传输协议；\n测试验证经过10G业务网口路由器发送给智算机（分布式）的SCP文件传输协议；\n断链重连\n支持激光通信机之间断链条件下网络重连功能，星间断网重连时间：≤10s\n支持路由与激光通信机间断链条件下网络重连功能，星间断网重连时间：≤10s\n支持路由与智算机间断链条件下网络重连功能，星间断网重连时间：≤5s\n支持微波通信机间断链条件下网络重连功能，星间断网重连时间：≤10s\n支持路由与微波通信机间断链条件下网络重连功能，星间断网重连时间：≤10s\n路由主备切换\n支持冷备条件下的路由主备切换，激光通信机和智算机配合实现端口切换。\n支持冷备条件下的路由主备切换，微波通信机和智算机配合实现端口切换。\n微波与激光切换\n支持微波与激光的链路切换，切换后，智算机的星间传输可重新正常传输。  \n性能测试\n智算机—路由器—激光通信机10G链路测试\nIP地址配置测试；\n确认智算机和路由器的I",
+      "content_length": 1981,
+      "score": 2.3727,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "99b5cb5818e1f201_p14",
+      "doc_id": "99b5cb5818e1f201",
+      "doc_title": "No.02 分布式计算系统集成与测试方案-2024-0715A",
+      "content": "b)可ping通。\n万兆以太网接口测试\n检验方法\n智算机与路由器的万兆网口采用光纤互联；\n路由器与激光通信机的万兆网口采用光纤互联；\n查看智算机和路由器的网络端口状态；\n查看路由器与激光通信机的网络端口状态；\n采用ping指令测试智算机与路由器、路由器与激光通信机的链路联通性。\n合格判据\na)智算机和路由器、路由器与激光通信机的网络端口状态，建链速率10Gbps；\nb)可ping通。\n功能及性能测试\n测试系统组成  \n图2 测试连接关系\n测试系统分为三块：待测设备、地检平台、激光通信机地检平台。\n地检平台包含模拟综电的地检设备、网络上位机，以及地检设备控制系统。地检设备模拟卫星其他单机与分布式计算系统的连接口，包括遥测遥控接口（CAN）、秒脉冲（RS422）、OC指令、重构接口（RS422）、加电遥测模拟量获取等。地检设备的电信号特性、硬件接口&管脚定义、以及通信协议均与在轨一致。地检控制系统用于控制地检相应的硬件有序工作，支撑所有系统测试用例的环境构造和信息交互、处理。网络上位机模拟卫星其他单机与分布式计算系统的网络连接口，包括维护升级千兆网口、数据下传千兆网口。\n地检平台的软件拓扑",
+      "content_length": 1972,
+      "score": 2.2529,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "29e101f187187803_p5",
+      "doc_id": "29e101f187187803",
+      "doc_title": "2_SCS-01-ZS-JY-01之江首发星座星载智算机技术要求V1.0",
+      "content": "# 7 软件配置项  \n星载智算机相关软件配置项描述如下表3。  \n表 3 星载智算机相关软件配置项  \n| 配置项名称 | 所属分系统 | 功能描述 |\n| --- | --- | --- |\n| 高通量星载计算引擎 | 星载智算机 | 实现星载智算适配优化和调度功能 |\n| 轻量化星载操作系统 | 星载智算机 | 轻量化可裁剪的嵌入式操作系统及配套软件 |\n\n# 8 环境试验要求  \n启动温度范围（ $^{\\circ}\\mathrm{C}$ ）： $-20^{\\circ}\\mathrm{C} \\sim 50^{\\circ}\\mathrm{C}$  \n工作温度范围（℃）：-20℃～50℃  \n储存温度范围（℃）：-25℃～55℃  \n分系统经受的环境试验应按照《SCSGF-08之江首发星座卫星星上产品环境试验条件》中的规定，在经受了设备级环境试验后，对于组装、总装和试验、运输和装卸、发射前、发射和在轨阶段，其性能仍应满足规范要求。\n\n# 9 电磁兼容性（EMC）要求  \n分系统电磁兼容性应满足《SCSGF-07之江首发星座卫星电磁兼容设计要求》的要求。\n\n# 10 寿命要求  \n卫星",
+      "content_length": 804,
+      "score": 2.2156,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "99b5cb5818e1f201_p20",
+      "doc_id": "99b5cb5818e1f201",
+      "doc_title": "No.02 分布式计算系统集成与测试方案-2024-0715A",
+      "content": "测试方法：\n按照64bytes、最大包长bytes不同传输包大小分别配置\n智算机和网络上位机分别运行NetPerf客户端和服务端程序，\nNetPerf命令：\n服务端：netserver\n客户端：\nnetperf –H server_ip –l 60 –t UDP_STREAM\nnetperf –H server_ip ？？（增加并发）\nnetperf –H server_ip ？？（增加包长）\n备注:\n这里的server_ip表示运行netserver软件的机器的IP地址\n-l 表示测试时间，单位为：秒\n3更加详细的参数请参考附录2或者直接通过-h参数查询\n合格判据：\n截图保存测试结果，读出网络吞吐量和丢包率，并记录。\nTCP/IP交易率测试\n支持TCP/IP、UDP等多种网络协议的传输、支持命令型数据、流式数据和突发型数据的传输\n测试方法：\n智算机和网络上位机分别运行NetPerf客户端和服务端程序，\nNetPerf命令：\n服务端：netserver\n客户端：\n长连接请求应答模式：netperf –H server_ip –l 60 –t TCP_RR\n短连接请求应答模式：netpe",
+      "content_length": 1994,
+      "score": 2.1894,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "57ec6e77e0e9a6e8_p0",
+      "doc_id": "57ec6e77e0e9a6e8",
+      "doc_title": "总剂量试验_盖章报告",
+      "content": "# 试验报告  \n地址：上海市嘉定区嘉罗公路2019号  \n电话：（021）39194888  \n邮编：201800  \nE-mail:\n\n# 一、委托单位  \n之江实验室\n\n# 二、试样说明  \n名称：智加NX1智算机、智加G1智算机、智链R1路由器  \n制造厂：之江实验室  \n委托日期：  \n取样方式：送样\n\n# 三、试验标准  \n剂量计JJF1028-91；剂量仪JJG178-2007\n\n# 四、试验类别  \n委托辐照试验\n\n# 五、试验日期  \n检测：  \n校 核：何伟荣  \n日期： ${2024} - {11} - {27}$\n\n# I. 目的  \n本试验系受之江实验室委托，对其送样的智加NX1智算机、智加G1智算机、智链R1路由器，用 $^{60}\\mathrm{Co}\\gamma$ 射线进行耐辐射总剂量试验，模拟该产品在辐射环境中的老化过程，以确定该产品鉴定所需的预期合格寿命。此项试验的要求为： $^{60}\\mathrm{Co}\\gamma$ 射线辐照，常温常压环境，试样的累计辐照剂量详见表1。\n\n# Ⅱ. 试样描述（表1）  \n表 1 试验样品信息  \n| 序号 | ",
+      "content_length": 1168,
+      "score": 4.3782,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "193c79c204b88d15_p4",
+      "doc_id": "193c79c204b88d15",
+      "doc_title": "NX1和G1智算机鉴定级电磁兼容试验报告20240830(公开)",
+      "content": "Test Result</td></tr><tr><td>技术状态/\n工作状态\nTechnique\nState/Operation\nState of EUT</td><td colspan=\"2\">检测位置\nTest Position</td><td colspan=\"2\">检测曲线\nTest Curve</td><td>对检测要求\n的符合性\nCorrespond with\nTest Requirement</td><td colspan=\"2\">最大超标幅度\nMax. Amplitude of\nExceeding Limit</td><td>开关操作状态\nSwitch\nOperation State</td></tr><tr><td>技术状态①\n工作状态②</td><td colspan=\"2\">28V正线</td><td colspan=\"2\">图3.2-1</td><td>符合</td><td colspan=\"2\">/</td><td>关→开</td></tr><tr><td>技术状态①\n工作状态②</td><td colspan=\"2\">28V正线</td><td colsp",
+      "content_length": 1849,
+      "score": 1.4793,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "566af09a1e7b6517_p4",
+      "doc_id": "566af09a1e7b6517",
+      "doc_title": "Z4_电磁兼容试验报告",
+      "content": "Input Voltage(V)</td><td colspan=\"3\">极限值\nLimit(V)</td><td>备注\nRemark</td></tr><tr><td colspan=\"2\">28VDC</td><td colspan=\"3\">28</td><td colspan=\"3\">尖峰信号的幅值: -42 ~ +14</td><td>/</td></tr><tr><td colspan=\"9\">检测结果\nTest Result</td></tr><tr><td>技术状态/\n工作状态\nTechnique\nState/Operation\nState of EUT</td><td colspan=\"2\">检测位置\nTest Position</td><td colspan=\"2\">检测曲线\nTest Curve</td><td>对检测要求\n的符合性\nCorrespond with\nTest Requirement</td><td colspan=\"2\">最大超标幅度\nMax. Amplitude of\nExceeding Limit</td><td>开关操作状态\nSwitch\nOp",
+      "content_length": 1844,
+      "score": 1.4793,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "28fd199401cdefe2_p0",
+      "doc_id": "28fd199401cdefe2",
+      "doc_title": "智加NX1智算机技术说明书_SCS-01-ZS-ZJG1-JS-01",
+      "content": "# 智加NX1智算机技术说明书_SCSZS-ZJG1-JS-01  \n智加NX1智算机\n技术说明书  \n之江实验室\n天基计算系统研究中心  \n二零二五年二月  \n智加NX1智算机\n技术说明书  \n会签：\n标准化：  \n2025年02月\n目录\n1 前言2\n2 安全说明2\n2.1 警告声明2\n2.2 注意事项2\n3 产品规格介绍3\n3.1 概述3\n3.2 关键功能和特性3\n3.3 产品外形4\n3.3.1 包络尺寸5\n3.3.2 产品安装孔位置及尺寸6\n3.3.3 产品对外连接器位置7\n3.4 特性和规格8\n4 设备运行条件环境要求8\n4.1 环境温度和湿度8\n4.2 海拔、气压8\n4.3 散热限制说明8\n4.4 设备供电要求9\n5 外部接口9\n5.1 接口分布9\n5.2 接口规格9\n5.3 接口定义10\n6 安装及调试14\n6.1 安装条件14\n6.2 安装步骤及注意事项14\n6.3 调试步骤及注意事项15\n7 故障分析及排除15\n8 保养和维护16\n9 运输和贮存16\n9.1 运输16\n9.2 贮存16\n10 包装与齐套性16\n10.1 包装形式16\n10.2 包装尺寸17\n10.3 齐",
+      "content_length": 2000,
+      "score": 0.6859,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "e77b612e08b549c6_p6",
+      "doc_id": "e77b612e08b549c6",
+      "doc_title": "19_G1-Z0105 正样EMC试验报告",
+      "content": "Frequency Range</td><td colspan=\"3\">极限值(dBμV/m)\nLimit (dBμV/m)</td><td colspan=\"2\">备注\nRemark</td></tr><tr><td rowspan=\"3\">28VDC</td><td colspan=\"2\">10kHz-2MHz</td><td colspan=\"3\">80~44</td><td colspan=\"2\" rowspan=\"3\">《GJB151B-2013》图57适用于固定翼内部,首尾间距不小于25m的RE102限值</td></tr><tr><td colspan=\"2\">2MHz-100MHz</td><td colspan=\"3\">44</td></tr><tr><td colspan=\"2\">100MHz-18GHz</td><td colspan=\"3\">44~89</td></tr><tr><td colspan=\"3\">检测(签字):\nTested by:</td><td colspan=\"5\">校对(签字):\nCorrected by:</td></tr><tr><td",
+      "content_length": 1706,
+      "score": 0.5865,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "cffc3b2f6e4a4fb5_p6",
+      "doc_id": "cffc3b2f6e4a4fb5",
+      "doc_title": "19_NX1-Z0109 正样EMC试验报告",
+      "content": "Frequency Range</td><td colspan=\"3\">极限值(dBμV/m)\nLimit (dBμV/m)</td><td colspan=\"2\">备注\nRemark</td></tr><tr><td rowspan=\"3\" colspan=\"2\">28VDC</td><td colspan=\"2\">10kHz -2MHz</td><td colspan=\"3\">80~44</td><td rowspan=\"3\" colspan=\"2\">《GJB151B-2013》图57适用于固定翼内部,首尾间距不小于25m的RE102限值</td></tr><tr><td colspan=\"2\">2MHz -100MHz</td><td colspan=\"3\">44</td></tr><tr><td colspan=\"2\">100MHz -18GHz</td><td colspan=\"3\">44~89</td></tr><tr><td colspan=\"4\">检测(签字):\nTested by:</td><td colspan=\"5\">校对(签字):\nCorrected by:</",
+      "content_length": 1472,
+      "score": 0.5307,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "193c79c204b88d15_p16",
+      "doc_id": "193c79c204b88d15",
+      "doc_title": "NX1和G1智算机鉴定级电磁兼容试验报告20240830(公开)",
+      "content": "Test software information</td></tr><tr><td colspan=\"2\">制造商\nManufacture</td><td colspan=\"3\">型号\nModel</td><td colspan=\"3\">版本\nVersion</td></tr><tr><td colspan=\"2\">R&amp;S</td><td colspan=\"3\">EMC32</td><td colspan=\"3\">10.50.10</td></tr></table>  \n| 检测布置示意图\nSchematic Diagram of Test |\n| --- |\n| 辅助设备 EUT 场强探头 LISN 28VDC\n发射天线 场强仪\n信号发生器 功率放大器\n功率计 功率放大器 |\n| 检测要求\nTest Requirement |\n| 供电电源\nPower Supply | 频率范围\nFrequency Range | 极限值（V/m）\nLimit（V/m） | 调制\nModulation | 备注\nRemark |\n| 28VDC | 10kHz-18GHz | 20V/m ",
+      "content_length": 1407,
+      "score": 0.4917,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "566af09a1e7b6517_p15",
+      "doc_id": "566af09a1e7b6517",
+      "doc_title": "Z4_电磁兼容试验报告",
+      "content": "Test software information</td></tr><tr><td colspan=\"2\">制造商\nManufacture</td><td colspan=\"3\">型号\nModel</td><td colspan=\"3\">版本\nVersion</td></tr><tr><td colspan=\"2\">R&amp;S</td><td colspan=\"3\">EMC32</td><td colspan=\"3\">10.50.10</td></tr></table>  \n| 检测布置示意图\nSchematic Diagram of Test |\n| --- |\n| 辅助设备 EUT 场强探头 LISN 28VDC\n发射天线 场强仪\n信号发生器 功率放大器\n功率计 功率放大器 |\n| 检测要求\nTest Requirement |\n| 供电电源\nPower Supply | 频率范围\nFrequency Range | 极限值（V/m）\nLimit（V/m） | 调制\nModulation | 备注\nRemark |\n| 28VDC | 10kHz-18GHz | 20V/m ",
+      "content_length": 1407,
+      "score": 0.4917,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "566af09a1e7b6517_p12",
+      "doc_id": "566af09a1e7b6517",
+      "doc_title": "Z4_电磁兼容试验报告",
+      "content": "Schematic Diagram of Test</td></tr><tr><td rowspan=\"2\">辅助设备</td><td>EUT</td><td>LISN</td><td colspan=\"5\">28VDC</td></tr><tr><td>接收天线</td><td>前置放大器</td><td colspan=\"5\">测量接收机</td></tr><tr><td colspan=\"8\">检测要求\nTest Requirement</td></tr><tr><td>供电电源\nPower Supply</td><td colspan=\"2\">频率范围\nFrequency Range</td><td colspan=\"3\">极限值(dBμV/m)\nLimit (dBμV/m)</td><td colspan=\"2\">备注\nRemark</td></tr><tr><td rowspan=\"3\">28VDC</td><td colspan=\"2\">10kHz -2MHz</td><td colspan=\"3\">80~44</td><td colspan=\"2\" rowspan=\"3",
+      "content_length": 1986,
+      "score": 0.415,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "7e4c3c34f8c23c96_p11",
+      "doc_id": "7e4c3c34f8c23c96",
+      "doc_title": "25_智加NX1和G1智算机正样件研制与质量总结报告_SCS-01-ZS-ZB-01",
+      "content": "/\n对于电源等关键电路具有短路保护功能，不会产生模块爆炸等危害  \n安全防护隔离设计\n/\n单机支持三地隔离  \n/\n信号地与机壳地间采用高耐压电容连接  \n维修性\n简化维修设计\n/\n结构总体考虑简化设计，结构件只有上下盖板和侧面板，均分别是统一整体，拆装结构件比较简单；\n设计文件备查，已验证通过  \n固定耳片考虑简化设计，采用常规螺钉和螺孔，可使用常用标准工具  \n模块化设计，在进行CPLD模组、核心板模组维修时，可不拆装其他部分  \n可达性性设计\n/\n拆装模块板卡进出路线为直线，拆装便捷\n设计文件备查，已验证通过  \n将关键调试接口对外引出，可以方便定位和维修后状态确认；  \n检查点，调试接口布局于机壳外部，方面维修  \n互换性设计\n/\n统一电源种类、标准接口\n设计文件备查，已验证通过  \n/\n多个电路模块采用模组形式设计，可快速拆卸和更换  \n/\n硬件设计进行了阻容感等器件的统型，减少其种类和数量  \n防差错设计\n/\n接线端、电缆都应有标识，标识信息应尽可能完整\n设计文件备查，已验证通过  \n/\n对可能出现误操作的部件、组件设计有明显的防止差错的标识  \n测试性\n测试点设计\n/\n外",
+      "content_length": 1991,
+      "score": 6.1663,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "b10c36668b797d24_p7",
+      "doc_id": "b10c36668b797d24",
+      "doc_title": "25_智加G2智算机正样件研制与质量总结报告",
+      "content": "优先选择具有良好质量保证能力、供货及时、价格合理、信守合同、有良好合作关系的元器件供货单位；\n选用的元器件所采用的标准或者技术规范都是现行有效的；\n进口元器件风险控制。\n进口元器件的采购主要是通过第三方代理的方式获取。所选择的进口代理商都是经过我司认定的合格供应商，产品质量稳定、供货渠道畅通；我司与这些代理商具有长期合作关系和互相信誉度，供应能力、应急能力、技术支持能力完全可以保证，能够保障正常的生产和维修。\n在进口元器件的选择和使用上，遵循以下规则和要求：\n选用通用元器件；\n选用国外主流公司的主流芯片；\n选用功能、性能、使用寿命、环境适应性、安全性符合要求的元器件；\n选用元器件降额使用；\n制定元器件采购、验收、贮存、流通、使用方案；\n跟踪元器件生命周期信息，建立元器件停产替代方案；\n提前采购，做好质量监控和采购保障工作。\n智加G2智算机主要元器件清单，按GPU模块分类，如下表所示。详细元器件清单见附件。\n表 12 智算机主要元器件清单\n种类\n类型\n型号\n厂商\n级别\n工作温度\n数量\n国产化\n电源管理电路\nDCDC\nLTM4644IY#PBF\nLINEAR\n工业级\n-40℃~125℃\n2",
+      "content_length": 1991,
+      "score": 6.0297,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "7f1638b742382331_p4",
+      "doc_id": "7f1638b742382331",
+      "doc_title": "星载计算机介绍",
+      "content": "# 智加X  \n以国产寒武纪NPU芯⽚为核⼼的基于COTS器件的低成本、⾼可靠、⾼能效⽐星载智能计算机，⽀持星上轻量化模型部署，⽀持NDWI、NDVI等算法，⽀持算法、模型、软件上注功能，满⾜星上遥感数据实时智能处理需求，可⼴泛应⽤于资源监测、防灾减灾、城市可持续发展建设等应⽤领域。\n\n# 智加X产品图  \n智加X技术架构图  \n组成：两颗边缘智能计算NPU单元MLU  \n智加X技术参数  \n| 指标 | 参数 |\n| --- | --- |\n| 架构 | 寒武纪NPU-SOC |\n| 算力 | 16TOPS@INT8 |\n| 体积 | 126.5mm×126.5mm×26.8mm |\n| 重量 | 0.48kg |\n| 功耗 | 17W,峰值31.8W |\n| 输入电压 | 11.4V-13V(二次电源) |\n| 工作温度 | -20°C~55°C |\n| 储存温度 | -40°C~80°C |\n| 内存 | 8G显存,8G内存 |\n| 存储 | 64GB |\n| 高速通道数据速率 | 1Gbps*2 |\n| 对外接口 | RS422*1、千兆网口*2 |\n| 操作系统 | Ubun",
+      "content_length": 799,
+      "score": 5.985,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "7f1638b742382331_p2",
+      "doc_id": "7f1638b742382331",
+      "doc_title": "星载计算机介绍",
+      "content": "# ⼆、产品⽬录\n\n# 产品信息登记表汇总  \n《星载\n\n# 智加X  \n采⽤国产化异构平台设计，通过卡群架构实现并⾏计算和系统级容错，能够完成⾼分辨遥感卫星图像的在轨⽬标检测和识别、云判和ROI压缩功能。  \n⾼可靠：系统监控、版本回退、系统冗余与恢复、主从备份\n⾼效能：⽬标识别算法10319万像元/s；压缩算法7934万像元/s；云判算法8571万像元/s\n低功耗：35W\n\n# 智加X产品图  \n智加X技术参数  \n| 指标 | 参数 |\n| --- | --- |\n| 架构 | 飞腾CPU+寒武纪NPU+复旦微FPGA |\n| 算力 | 32TOPS @int8 |\n| 体积 | 220m×150mm×30.5mm |\n| 重量 | 1.40kg |\n| 功耗 | 35W,峰值60W |\n| 输入电压 | 12V-48V (二次电源) |\n| 工作温度 | -20°C~55°C |\n| 贮存温度 | -40°C~80°C |\n| 内存 | 16GB DDR |\n| 存储 | 1TB |\n| 高速通道数据速率 | 2Gbps |\n| 对外接口 | CAN*2、RS485*1、GTX",
+      "content_length": 1006,
+      "score": 4.5749,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "901a659a65fb7193_p29",
+      "doc_id": "901a659a65fb7193",
+      "doc_title": "星载智算机（NX4）方案设计报告_20250228",
+      "content": "b)静电直接作用的信号防护\n在静电直接作用的信号端口处采用防静电管以电平钳位的方式进行防护，使得静电以最短的路径进行释放，从而不会影响机箱内部信号。\nc)静电产生的电场防护\n静电产生的电场主要采用电磁屏蔽方式进行防护，以保证屏蔽连续为设计目的，详细设计与电磁兼容设计中的屏蔽连续性设计相同。  \n元器件及原材料选用情况\n元器件选用和控制\n元器件质量等级\n星载智算系统的元器件选择需满足《TY12LX630星座II型星元器件保证大纲》的要求。\n单机元器件选择参照国内卫星在轨应用的元器件目录，优先选用具有飞行经历的工业级器件或更高等级器件；对没有飞行经历的器件优先选择在汽车电子、工业生产具有广泛使用的工业级或更高等级器件。\n在选择元器件时应该充分考虑其自身的工作性能、电磁特性等，模拟或逻辑有源器件电磁特性由其电平转换速率决定。另外，元器件选择时，还需要将电磁兼容性参数加以考虑，电容及电阻在设计时应考虑其寄生参数对EMC的影响，电路设计时尽量减小电容引线的长度，减小寄生电感的存在，避免器件产生的谐振影响有源电路的正常工作。\n1)元器件优选具有同等寿命飞行经历元器件；\n2)国产元器件等级不得低于工",
+      "content_length": 1987,
+      "score": 4.4714,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "7e4c3c34f8c23c96_p12",
+      "doc_id": "7e4c3c34f8c23c96",
+      "doc_title": "25_智加NX1和G1智算机正样件研制与质量总结报告_SCS-01-ZS-ZB-01",
+      "content": "表 17 智算机主要元器件清单\n种类\n类型\n型号\n厂商\n级别\n工作温度\n数量\n国产化\n电源管理电路\nDCDC\nLTM4644IY#PBF\nLINEAR\n工业级\n-40℃~125℃\n2\n否  \nDCDC\nDCM3623T36G13C2T00\nVicor\n工业级\n-40℃~125℃\n1\n否  \nDCDC\nDCM2322T72S13A0M60\nVicor\n工业级\n-40℃~125℃\n1\n否  \nDCDC\nTPS548A29RWWR\n长工微\n工业级\n-40℃~125℃\n2\n是\n主控芯片\nGPU\nNvidia AGX Orin模组自带\nNvidia\n工业级\n-40℃~-85℃\n1\n否  \nCPLD\nA3P1000-FG256I\nMicrosemi\n工业级\n-40℃~-100℃\n1\n否  \nFPGA\nxczu19eg-ffvc1760\nxilinx\n工业级\n-40℃~125℃\n1\n否\n监测电路\n电流监测\nINA3221AIRGVR\nTI\n工业级\n-40℃-85℃  \n电压监测\nLTC2990IMS#PBF\nADI\n工业级\n-40℃~-85℃  \n存储电路\nEMMC\nNvidia AGX Orin模",
+      "content_length": 1993,
+      "score": 4.4631,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "90ee4371d4bd109e_p23",
+      "doc_id": "90ee4371d4bd109e",
+      "doc_title": "智加G2智算机_硬件方案设计报告_20260330",
+      "content": "充分考虑器件接地设计，如对晶体的壳体进行接地，并且晶体和晶振下面禁止走信号线；每一个对外接插件都有一个触针接壳地。\n三地隔离设计  \n图 45单板接地示意图\n单板接地示意图如上图所示，采用三地隔离设计。三地即输入电源地、板卡信号地和板卡机壳地。采用隔离型DC-DC电源模块，实现输入电源地和信号地（二次电源地）隔离，可以预防电源与负载之间的干扰；采用10M电阻和2200PF/2KV电容并联，实现信号地和机壳地隔离，电容有利于防止高频干扰，电阻有利于静电释放，保护电路安全。\n板间EMC设计\n板间电磁兼容设计通过机箱的布置、电源滤波设计以及接地设计实现电磁兼容设计。共模电流的流向和路径主要取决于电缆与接插件在产品中的位置，因此在产品设计时，就可以考虑共模电流的路径、敏感电路、骚扰源以及电缆四者之间的关系，通过合理布置板卡位置以及板卡接插件，使得外界注入电缆的共模电流不能流过敏感板卡和敏感电路，也使得内部电路的骚扰源不会流向外界电缆。\n采用单点接地方式，将数字电路电源模块输出地与模拟电路电源模块输出地一起连接至机箱外壳接地点上，数字电路参考地与模拟电路参考地一致，且电流环路面积最小。\n接口EM",
+      "content_length": 1897,
+      "score": 4.4311,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "96b9e551dfd80bb1_p51",
+      "doc_id": "96b9e551dfd80bb1",
+      "doc_title": "20250819-智星空间_AI超算模块_方案设计报告",
+      "content": "# 14 结束语  \n本项目的方案遵循硬件通用化、成熟化、模块化的设计思路，硬件具有良好的可靠性、通用性、扩展性，软件具备高可靠性、可维护性。本方案满足智算机的技术要求，可作为下一阶段研制工作的依据。  \n本项目分阶段、分节点进行管理、控制，内容包括设计输入评审、方案评审、设计评审、技术状态控制等。管理组通过检查研究工作完成情况及完成质量，及时掌握项目进展，督促项目组成员按预定的要求开展工作，保障项目的顺利进行。  \n附件：主要元器件清单\n\n# （1）GPU模块主要器件清单  \n表 29 GPU 模块主要器件清单  \n| 种类 | 类型 | 型号 | 厂商 | 级别 | 工作温度 |\n| --- | --- | --- | --- | --- | --- |\n| 电源管理电路 | DCDC | LTM4644IY#PBF | LINEAR | 工业级 | -40℃~125℃ |\n| DCDC | TPS548A29RWWR | 长工微 | 工业级 | -40℃~125℃ |\n| 主控SOC | NvidiaAGX OrinIndustrial模组 | Nvidia AGX OrinIn",
+      "content_length": 1025,
+      "score": 3.654,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "f23cee2fc08d6828_p2",
+      "doc_id": "f23cee2fc08d6828",
+      "doc_title": "Jetson_AGX_Orin_Series_Data_Sheet_DS-数据手册_v1.5",
+      "content": "# List of Tables  \nTable 1-1. Jetson AGX Orin SOM Product Summary...\nTable 1-2. NVIDIA Orin SoC Features on Jetson AGX Orin SOM . .10\nTable 3-1. OFF Events.. .16\nTable 4-1. Supported Video Decode Streams JAOi. .22\nTable 4-2. Supported Video Decode Streams JAO 64GB . .22\nTable 4-3. Supported Video Decode Streams JAO 32GB ... ..23\nTable 4-4. Supported Video Encode Streams JAOi . .23\nTable 4-5. Supported Video Encode Streams JAO 64GB.... ..24\nTable 4-6. Supported Video Encode Streams JAO 32GB.. ..2",
+      "content_length": 1805,
+      "score": 3.0562,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "6c930f6769787550_p11",
+      "doc_id": "6c930f6769787550",
+      "doc_title": "Jetson_AGX_Orin_Series_Design_Guide_DG-10653-001_v1.6",
+      "content": "# Introduction  \nThis design guide contains recommetions and guidelines for engineers to follow and create a product that is optimized to achieve the best performance from the interfaces supported by the NVIDIA® Jetson AGX Orin series module Orin Module  \nThis design guide provides detailed information on the capabilities of the hardware module, which may differ from supported configurations by provided software. Refer to the software release documentation for information on supported capabiliti",
+      "content_length": 1404,
+      "score": 1.7682,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "e72ca269c92944f5_p11",
+      "doc_id": "e72ca269c92944f5",
+      "doc_title": "Jetson_AGX_Orin_Series_Design_Guide_设计指南_v1.6",
+      "content": "# Introduction  \nThis design guide contains recommetions and guidelines for engineers to follow and create a product that is optimized to achieve the best performance from the interfaces supported by the NVIDIA® Jetson AGX Orin series module Orin Module  \nThis design guide provides detailed information on the capabilities of the hardware module, which may differ from supported configurations by provided software. Refer to the software release documentation for information on supported capabiliti",
+      "content_length": 1404,
+      "score": 1.7682,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "f23cee2fc08d6828_p5",
+      "doc_id": "f23cee2fc08d6828",
+      "doc_title": "Jetson_AGX_Orin_Series_Data_Sheet_DS-数据手册_v1.5",
+      "content": "# Operating Requirements  \nJAOi: **TTP Surface Temperature: $\\scriptscriptstyle - 4 0 ^ { \\circ } \\mathsf { C }$ to $8 5 ^ { \\circ } \\mathsf { C }$ | TTP Surface: $8 5 ^ { \\circ } \\mathsf { C }$ max | Power Input: 5V (MV) and 7V to 20V (HV) | Operating Lifetime (24x7): 10 years JAO: **TTP Surface Temperature: $- 2 5 ^ { \\circ } \\mathsf { C }$ to ${ 8 0 ^ { \\circ } } \\mathsf { C }$ | TTP Surface: ${ 8 0 ^ { \\circ } } \\mathsf { C }$ max Power Input: 5V (MV) and 7V to 20V (HV) | Operating Lifetime ",
+      "content_length": 1787,
+      "score": 1.4585,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "901a659a65fb7193_p3",
+      "doc_id": "901a659a65fb7193",
+      "doc_title": "星载智算机（NX4）方案设计报告_20250228",
+      "content": "GPU模块为整机的主要计算节点，主要用于计算任务。GPU模块硬件上采用模组设计，包含CPLD子卡、GPU模组和GPU载板。其原理框图如下。  \n图 2 GPU模块原理框图\nGPU模块采用核心板和底板的硬件形态，充分考虑模块化设计方式。GPU功能单元和CPLD功能单元采用模组形式。\n电源模块采用通用的电路模块，具有良好复用性。其主要作用模块对输入的一次电源进行转换和隔离,通过转换后的二次及三次电源，为GPU模组、CPLD模组和底板等组件供电。\nCPLD子卡采用标准化的CPLD接口卡的形式进行设计，该模组可以应用于多种载板。其主要功能有：进行整板电源时序控制、实现对外的CAN接口、异步RS422接口和PPS信号的接收和处理、进行整板的健康监控信息的汇总和上报、提供板卡FRU信息等。\nGPU模组是整个数据算能计算模块的控制和数据处理核心，完成数据计算与传输，数据处理和加速计算，资源调度、虚拟化管理和软件重构等功能。模块对外的PCIe高速接口由GPU模组提供，千兆网口和万兆网口由其自带PCIe接口结合网卡芯片实现。\nGPU载板主要用于提供各模组的连接平台和部署接口电路。一方面各模组均插接在GP",
+      "content_length": 1985,
+      "score": 0.9141,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "6c930f6769787550_p62",
+      "doc_id": "6c930f6769787550",
+      "doc_title": "Jetson_AGX_Orin_Series_Design_Guide_DG-10653-001_v1.6",
+      "content": "| Module Pin Name | Type | Termination | Description |\n| --- | --- | --- | --- |\n| PCIe Interface C5 (Up to x8) - As Endpoint |\n| UPHY_TX[19:12]_P/N(SoC UPHY1 Lanes [7:0]) | DIFF OUT | Series Capacitor (see Design Guideline for value) | Differential Transmit Data Pairs: Connect to TX+/- pins of PCIe connector or RX_+/- pin of PCIe device through AC caps. |\n| UPHY_RX[19:12]_P/N(SoC UPHY1 Lanes [7:0]) | DIFF IN | Series Capacitor (see Design Guideline for value) if device on main PCB. | Differenti",
+      "content_length": 2738,
+      "score": -0.2589,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "e72ca269c92944f5_p63",
+      "doc_id": "e72ca269c92944f5",
+      "doc_title": "Jetson_AGX_Orin_Series_Design_Guide_设计指南_v1.6",
+      "content": "| Module Pin Name | Type | Termination | Description |\n| --- | --- | --- | --- |\n| PCIe Interface C5 (Up to x8) - As Endpoint |\n| UPHY_TX[19:12]_P/N(SoC UPHY1 Lanes [7:0]) | DIFF OUT | Series Capacitor (see Design Guideline for value) | Differential Transmit Data Pairs: Connect to TX+/- pins of PCIe connector or RX_+/- pin of PCIe device through AC caps. |\n| UPHY_RX[19:12]_P/N(SoC UPHY1 Lanes [7:0]) | DIFF IN | Series Capacitor (see Design Guideline for value) if device on main PCB. | Differenti",
+      "content_length": 2738,
+      "score": -0.2589,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "f23cee2fc08d6828_p61",
+      "doc_id": "f23cee2fc08d6828",
+      "doc_title": "Jetson_AGX_Orin_Series_Data_Sheet_DS-数据手册_v1.5",
+      "content": "# Trademarks  \nNVIDIA, the NVIDIA logo, CUDA, Jetson, NVIDIA AGX, NVIDIA Orin, NVIDIA Turing, and TensorRT are trademarks and/or registered trademarks of NVIDIA Corporation in the U.S. and other countries. Other company and product names may be trademarks of the respective companies with which they are associated.\n\n# VESA DisplayPort  \nDisplayPort and DisplayPort Compliance Logo, DisplayPort Compliance Logo for Dual-mode Sources, and DisplayPort Compliance Logo for Active Cables are trademarks o",
+      "content_length": 1259,
+      "score": -1.7268,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "6c930f6769787550_p148",
+      "doc_id": "6c930f6769787550",
+      "doc_title": "Jetson_AGX_Orin_Series_Design_Guide_DG-10653-001_v1.6",
+      "content": "# Trademarks  \nNVIDIA, the NVIDIA logo, Jetson, NVIDIA AGX, and NVIDIA Orin are trademarks and/or registered trademarks of NVIDIA Corporation in the U.S. and other countries. Other company and product names may be trademarks of the respective companies with which they are associated.\n\n# Bluetooth  \nThe Bluetooth® word mark and logos are registered trademarks owned by the Bluetooth SIG, Inc., and any use of such marks by NVIDIA is under license.\n\n# VESA DisplayPort  \nDisplayPort and DisplayPort C",
+      "content_length": 1431,
+      "score": -2.3623,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "e72ca269c92944f5_p149",
+      "doc_id": "e72ca269c92944f5",
+      "doc_title": "Jetson_AGX_Orin_Series_Design_Guide_设计指南_v1.6",
+      "content": "# Trademarks  \nNVIDIA, the NVIDIA logo, Jetson, NVIDIA AGX, and NVIDIA Orin are trademarks and/or registered trademarks of NVIDIA Corporation in the U.S. and other countries. Other company and product names may be trademarks of the respective companies with which they are associated.\n\n# Bluetooth  \nThe Bluetooth® word mark and logos are registered trademarks owned by the Bluetooth SIG, Inc., and any use of such marks by NVIDIA is under license.\n\n# VESA DisplayPort  \nDisplayPort and DisplayPort C",
+      "content_length": 1431,
+      "score": -2.3623,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "901a659a65fb7193_p4",
+      "doc_id": "901a659a65fb7193",
+      "doc_title": "星载智算机（NX4）方案设计报告_20250228",
+      "content": "AI 性能\n1.33 TFLOPS\n21 TOPS\n32 TOPS\n40 TOPS\n100 TOPS\n200 TOPS\n275 TOPS\nGPU\n256 核 NVIDIA Pascal\n48 个 Tensor Core+\n384 核 NVIDIA Volta\n64 个 Tensor Core + 512 核 NVIDIA Volta\n32 个 Tensor Core+\n1024 核 NVIDIA Ampere\n32 个 Tensor Core+\n1024 核 NVIDIA Ampere\n56 个 Tensor Core+\n1792 核 NVIDIA Ampere\n64 个 Tensor Core+2048 核 NVIDIA Ampere\nGPU 最大频率\n1.3 GHz\n1100 MHz\n1377 MHz\n625 MHz\n918 MHz\n939 MHz\n1.3 GHz\nCPU\n2核NVIDIA+\n4核ARM-A57\n6 核 Arm®v8.2\n8 核 Arm-A78AE v8.2\n6 核 Arm-A78AE v8.2\n8 核 Arm-A78AE v8.2\n8 核 Arm-A78AE v8",
+      "content_length": 1928,
+      "score": 6.1794,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "f23cee2fc08d6828_p58",
+      "doc_id": "f23cee2fc08d6828",
+      "doc_title": "Jetson_AGX_Orin_Series_Data_Sheet_DS-数据手册_v1.5",
+      "content": "# Notice  \nThis document is provided for information purposes only and shall not be regarded as a warranty of a certain functionality, condition, or quality of a product. NVIDIA Corporation (“NVIDIA”) makes no representations or warranties, expressed or implied, as to the accuracy or completeness of the information contained in this document and assumes no responsibility for any errors contained herein. NVIDIA shall have no liability for the consequences or use of such information or for any inf",
+      "content_length": 1526,
+      "score": -3.6537,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "6c930f6769787550_p146",
+      "doc_id": "6c930f6769787550",
+      "doc_title": "Jetson_AGX_Orin_Series_Design_Guide_DG-10653-001_v1.6",
+      "content": "# Notice  \nThis document is provided for information purposes only and shall not be regarded as a warranty of a certain functionality, condition, or quality of a product.NAptokeeprsetatiaatiesxpreedomplidstohurapleet information contained in this document and assumes no responsibility for any errors contained herein. NVIDIA shall have no liability for the consequences or use of such information or for any infringement of patents or other rights of third parties that may result from its use. This",
+      "content_length": 1935,
+      "score": -4.7489,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "e72ca269c92944f5_p147",
+      "doc_id": "e72ca269c92944f5",
+      "doc_title": "Jetson_AGX_Orin_Series_Design_Guide_设计指南_v1.6",
+      "content": "# Notice  \nThis document is provided for information purposes only and shall not be regarded as a warranty of a certain functionality, condition, or quality of a product.NAptokeeprsetatiaatiesxpreedomplidstohurapleet information contained in this document and assumes no responsibility for any errors contained herein. NVIDIA shall have no liability for the consequences or use of such information or for any infringement of patents or other rights of third parties that may result from its use. This",
+      "content_length": 1935,
+      "score": -4.7489,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "f23cee2fc08d6828_p59",
+      "doc_id": "f23cee2fc08d6828",
+      "doc_title": "Jetson_AGX_Orin_Series_Data_Sheet_DS-数据手册_v1.5",
+      "content": "Unless specifically agreed to in writing by NVIDIA, NVIDIA products are not designed, authorized, or warranted to be suitable for use in medical, military, aircraft, space, or life support equipment, nor in applications where failure or malfunction of the NVIDIA product can reasonably be expected to result in personal injury, death, or property or environmental damage. NVIDIA accepts no liability for inclusion and/or use of NVIDIA products in such equipment or applications and therefore such inc",
+      "content_length": 1525,
+      "score": -4.7489,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "90ee4371d4bd109e_p3",
+      "doc_id": "90ee4371d4bd109e",
+      "doc_title": "智加G2智算机_硬件方案设计报告_20260330",
+      "content": "星云卫星提供2路CAN总线，分别是 CANA和CANB，每一路CAN总线需要分配2个CANID，实现智加G2的测控通信；\n星云卫星支持1路电压采样和一路温度采样，实现智加G2的电压温度直接遥测采集；\n星云卫星内数据交换经过星载路由器，星云卫星星间星地数据交换也经过星载路由器，因此星云卫星内提供主备2路星载路由器出来的10G-SR以太网光口，实现智加G2的星内、星间、星地的以太网通信；\n星云卫星提供1路RS422的PPS接口，实现智加G2的时间同步。\n智算载荷总体设计\n智算载荷包括智加G2和OC控制板，互联关系如下。  \n智加G2为整机的主要计算节点，主要用于计算任务。智加G2硬件上采用模组设计，包含CPLD子卡、GPU模组和GPU载板。其原理框图如下。  \n图 2 智加G2原理框图\n智加G2采用核心板和底板的硬件形态，充分考虑模块化设计方式。GPU功能单元和CPLD功能单元采用模组形式。\n电源模块采用通用的电路模块，具有良好复用性。其主要作用模块对输入的一次电源进行转换和隔离,通过转换后的二次及三次电源，为GPU模组、CPLD模组和底板等组件供电。\nCPLD子卡采用标准化的CPLD接口",
+      "content_length": 1982,
+      "score": 6.0927,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "6c930f6769787550_p147",
+      "doc_id": "6c930f6769787550",
+      "doc_title": "Jetson_AGX_Orin_Series_Design_Guide_DG-10653-001_v1.6",
+      "content": "NVIDIA makes no representation or warranty that products based on this document will be suitable for any specified use. Testing of all parameters of cability of any information contained in this document, ensure the product is suitable and fit for the application planned by customer, and perform the necessary testing for the t the quality and reliability of the NVIDIA product and may result in additional or different conditions and/or requirements beyond those contained in this document. NVIDIA ",
+      "content_length": 2527,
+      "score": -5.1616,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "cb9de27a1935617d_p3",
+      "doc_id": "cb9de27a1935617d",
+      "doc_title": "20250806-智星空间_AI超算模块_方案设计报告",
+      "content": "与SAR载荷GTX接口\nSAR载荷DCU区分主备机，主备机各有2路GTX作为一组与超算连接（共4路），用于成像数据传输，仅同时使用与DCU主或备的2路GTX，不存在4路同时传输状态。（采用100MHz时钟源，单路速率3.2Gbps ，两路共6.4Gbps，建议连接器：HSMK-02L0275-26C0，要求超算的写入速率速率不低于最大传输速率）\n具体接口协议见《Fspace-300S卫星DCU与固存接口协议》。\n与X数传GTX接口\n用于发送处理前/处理后的成像数据至X数传，具备2路GTX芯片标准接口数据输出能力，各通道独立工作（主备份），每路带流控信号。（采用100MHz时钟源，建议连接器：HSMK-02L0275-26C0，匹配最大星地数传速率（900Mbps），时钟等具体特性及接插件型号等详见IDS约束）\n具体接口协议见《Fspace-300S卫星固存与数传接口协议》。\n调试接口\nAI超算模块各电路板设计有合理数量调试接口用于调测。\n热接口\n工作温度范围（℃）：-20~+55；\n轨道存储温度范围（℃）：-25~+70；\n启动温度（℃）：-20~+55。\n除安装面外，外观面黑色阳极氧",
+      "content_length": 1947,
+      "score": 1.7632,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "0bc2ccba907533d0_p13",
+      "doc_id": "0bc2ccba907533d0",
+      "doc_title": "智加NX1和G1智算机_方案设计报告（硬件）_SCS-01-ZS-FB-01",
+      "content": "图 39 LTM4644典型电路设计\nGPU载板检测电路设计\n载板检测电路主要分为电压、电流、温度监控三大类，主要用于输入电流、板内电源电压、板内主要核电电流以及板内主要芯片的温度检测，能够读取相应数据，并通过I2C将当前的板卡状态上报至上报至CPLD。若检测到板卡工作状态异常，则由CPLD控制电源下电，从而确保板卡不因为部分电路的异常工作而造成损毁。\n（1）输入电流检测电路\n输入电流检测电路原理如下所述。  \n图 40 输入电流检测分压电路\n上图中R2、R3、R4、R5采用高精度（精度0.1%）电阻，用于将输入电压进行分压，以适应输入检测芯片的输入电压范围。电路主要采样高精度（精度1%，阻值设置为5mΩ）电阻R1两端的电压差，将精密电阻两端连接至检测芯片的两个检测引脚，芯片内部存在差分运放，将精密电阻两端压差放大，通过V精密电阻/R精密电阻计算得到所需检测的电流值。\n（2）板内电压检测\n将所需检测引脚直接连接至检测芯片地引脚，即可检测对应电压。电压检测芯片采用LTC990。LTC2990是一款可用于监控系统温度、电压和电流得检测芯片。芯片通过12C串行接口，可以配置设备测量内部温度、",
+      "content_length": 1948,
+      "score": 1.5738,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "96b9e551dfd80bb1_p5",
+      "doc_id": "96b9e551dfd80bb1",
+      "doc_title": "20250819-智星空间_AI超算模块_方案设计报告",
+      "content": "# 3.3.2.5 与X数传GTX接口  \n用于发送处理前/处理后的成像数据至X数传，具备2路GTX芯片标准接口数据输出能力，各通道独立工作（主备份），每路带流控信号。（采用100MHz时钟源，建议连接器：HSMK-02L0275-26C0，匹配最大星地数传速率（900Mbps），时钟等具体特性及接插件型号等详见IDS约束）  \n具体接口协议见《Fspace-300S卫星固存与数传接口协议》。\n\n# 3.3.2.6 调试接口  \nAI超算模块各电路板设计有合理数量调试接口用于调测。\n\n# 3.3.3 热接口  \n1）工作温度范围（ $^\\circ \\mathrm{C}$ ）：-20\\~+55；\n2）轨道存储温度范围（ $^{\\circ}\\mathrm{C}$ ）：-25～+70；\n3）启动温度（ $\\mathrm{^\\circ C}$ ）：-20～+55。\n4）除安装面外，外观面黑色阳极氧化或黑色温控漆， $\\varepsilon \\mathrm{H}\\geqslant 0.85$\n\n# 3.3.4 数据接口  \n1）具备2路CAN总线接口（热备）；\n2)具备1路收发同步RS422接口",
+      "content_length": 1073,
+      "score": 0.73,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "96b9e551dfd80bb1_p6",
+      "doc_id": "96b9e551dfd80bb1",
+      "doc_title": "20250819-智星空间_AI超算模块_方案设计报告",
+      "content": "# 4.2.1 主要器件选型\n\n# 4.2.2 GPU模组选型  \n从性能/功耗比和性能/体积比的角度出发，英伟达SOC产品具有较大优势。  \nJetson 系列是英伟达嵌入式系统产品类别中的一个分支。每个英伟达 Jetson 都是一个完整的系统模组，其中包括 GPU、CPU、内存、电源管理和高速接口等。  \n图3GPU模组外形图  \n在英伟达 Jetson 系列嵌入式产品中，Jetson AGX Orin Industrial 系列能够提供更高的算力、更高的集成度和更优的能效，因此在 Jetson AGX Orin Industrial 系列中进一步选型，3 款产品对比情况见下表。  \n表 1 英伟达 Jetson AGX Orin 系列 3 款产品对比  \n| 项目 | 算力 | CPU | GPU | 内存 | 闪存 | 工作温度 | 功耗 | 尺寸 | 寿命 |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n| Jetson AGX Orin 64GB | 275 TO PS | 12核Ar m v8",
+      "content_length": 1134,
+      "score": 0.6636,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "90ee4371d4bd109e_p4",
+      "doc_id": "90ee4371d4bd109e",
+      "doc_title": "智加G2智算机_硬件方案设计报告_20260330",
+      "content": "4核ARM-A57\n6 核 Arm®v8.2\n8 核 Arm-A78AE v8.2\n6 核 Arm-A78AE v8.2\n8 核 Arm-A78AE v8.2\n8 核 Arm-A78AE v8.2\n12 核 Arm-A78AE v8.2\nCPU 最大频率\n2 GHz\n1.9 GHz\n2.2 GHz\n1.5 GHz\n2 GHz\n2.2 GHz\n2.2 GHz\n功耗\n7.5 瓦 - 15 瓦\n10 瓦 - 20 瓦\n10 瓦 - 30 瓦\n7 瓦 - 15 瓦\n10 瓦 - 25 瓦\n15 瓦 - 40 瓦\n15 瓦 - 60 瓦\n能效\n0.09 TFLOPS/W\n1.05 TOPS/W\n1.07 TOPS/W\n2.67 TOPS/W\n4 TOPS/W\n5 TOPS/W\n4.58 TOPS/W\n规格尺寸\n69.6 毫米 x 45 毫米260 引脚 SO-DIMM 连接器\n69.6 毫米 x 45 毫米260 引脚 SO-DIMM 连接器\n100 毫米 x 87 毫米699 引脚连接器集成导热板\n69.6 毫米 x 45 毫米260 引脚 SO-DIMM 连接器\n69.6 毫米 x 45 毫",
+      "content_length": 1997,
+      "score": 2.8823,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "9dcdf60714f31f66_p3",
+      "doc_id": "9dcdf60714f31f66",
+      "doc_title": "智加G3智算机_方案设计报告-外发",
+      "content": "2)重视采用回避和疏导等技术策略，灵活采用空间隔离和时间隔离等分隔技术；\n3)在设备设计和研制的初期，要注意正确选取各类有源和无源器件，并采用恰当的电路设计和印刷线路板（PCB）分层布局技术；\n4)暴露在空间环境中的活动设备或部件在设计时应尽量避免形成尖锐的边角。如果确实无法满足边角的弧度要求，应采取覆盖或屏蔽措施；\n5)尽量避免单机机壳存在缝隙，无法满足的要在相应区域采取屏蔽包扎或涂导电胶措施；\n6)抑制系统内发射机的附加发射，适当选择系统内接收机的动态范围，抑制镜象、中频及寄生。\n总体方案设计\n功能需求分析\n根据技术要求文件，智加G3单机功能要求共14条，如下所示。\n1)支持卫星星务通过CAN接口发送遥控指令给智加G3载荷；\n2)支持卫星星务通过CAN接口发送时间广播信息给智加G3载荷；\n3)支持智加G3载荷将遥测数据通过CAN接口上报给星务；\n4)支持平台通过RS422接口发送秒脉冲给智加G3载荷；\n5)智加G3载荷通过以太网口进行上注重构；\n6)智加G3载荷通过以太网口接收整星健康状态监听数据；\n7)智加G3载荷通过以太网口实现星内、星地、星间组网；\n8)支持CUDA软件生态，",
+      "content_length": 1969,
+      "score": 0.4321,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "c0b5e7ef24e9e54a_p23",
+      "doc_id": "c0b5e7ef24e9e54a",
+      "doc_title": "G1智算机_方案设计报告（硬件）_20240614——G0107",
+      "content": "符合  \n5）支持2路光接口速度10G\n实际设计路2路q\n3.1.4.2\n符合  \n6）1路PCIE 3.0 X8支持RC模式\n支持1路PCIE 3.0 X8支持RC模式\n3.1.4.4\n符合  \n7）支持2路CAN接口, 速率500kbps，CAN2.0B协议；\n支持2路CAN接口,支持速率500kbps，CAN2.0B协议\n3.1.4.3\n3.2.4.3\n符合\n机械接口要求\n主星智加G1模块外包络要求：≤211mm×158.2mm×28.5mm；\n210mm*157.2mm*28mm\n4.3.1\n符合  \n重量要求≤1.08kg。\n0.88±0.2kg  \n符合\n热学接口要求\n1）每台设备含1个单板测温点\nGPU模块1个测温点\n3.1.6\n符合  \n2）整机热量通过壳体6系铝VC材料传导至卫星舱内安装面\n选材6063-T6铝合金\n4.1\n符合  \n3）卫星安装面热流密度：平均0.45w/cm2，最大1.4w/cm2\n卫星安装面热流密度：平均0.473w/cm2，最大0.9w/cm2\n在IDS文件中体现\n符合  \n4）卫星安装面温度-20℃~ +45℃，控温精度±3℃\n卫星安装面温度",
+      "content_length": 1615,
+      "score": -0.3785,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "040d06eb80bb6419_p5",
+      "doc_id": "040d06eb80bb6419",
+      "doc_title": "智加G3智算机_方案设计报告（硬件）_20251205",
+      "content": "### 硬件总体设计\n#### 硬件组成框图\n根据技术要求，设计智加G3的硬件组成如下所示。  \n图 3 智加G3硬件组成框图\n硬件组成主要由GPU模组、CPLD、电源模块、光模块和接口芯片组成。考虑已有设计经验，CPLD相关功能设计成模组，CPLD模组和GPU模组均作为子板与GPU载板对扣连接器。\nCPLD主要用于整板时序、复位控制和对外低速接口的引出。\nGPU模组包含GPU-SOC和CPU-SOC，CPU-SOC主要用于任务流控制，对外提供高速接口和低速接口，GPU-SOC用于数据流的AI计算。\nGPU载板主要用于提供各模组的连接平台和部署接口电路。一方面各模组均插接在GPU载板上，实现信号互联；另一方面，GPU载板上设计各类接口电路、检测电路、接口电路等。载板设计一个M.2连接器，用于扩展NVMe固态存储，设计板载SSD卡用于系统和数据盘，设计千兆对外通信网口用于对外的数据通信和调试。设计光模块电路，用于引出高速网络接口。\n#### 主要器件选型\n##### GPU选型\n根据技术要求，该单机设计的最重要的技术点在于GPU器件的选型。考虑功耗、算力等要求，本设计GPU选用英伟达Je",
+      "content_length": 3697,
+      "score": -0.4263,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "0bc2ccba907533d0_p10",
+      "doc_id": "0bc2ccba907533d0",
+      "doc_title": "智加NX1和G1智算机_方案设计报告（硬件）_SCS-01-ZS-FB-01",
+      "content": "## 硬件详细方案设计\nGPU模块硬件设计\nGPU模块总体设计\nGPU模块为整机的主要计算节点，主要用于计算任务。GPU模块硬件上采用模组设计，包含CPLD模组、GPU模组和GPU载板。其原理框图如下。  \n图 16 GPU模块原理框图\nGPU模块采用核心板和底板的硬件形态，充分考虑模块化设计方式。GPU功能单元和CPLD功能单元采用模组形式，电源功能单元采用模块化设计。\n电源模块采用通用的电路模块，具有良好复用性。其主要作用模块对输入的一次电源进行转换,通过转换后的二次及三次电源，为GPU模组、CPLD模组和底板等组件供电。\nCPLD模组采用标准化的CPLD接口卡的形式进行设计，该模组可以应用于多种载板。其主要功能有：进行整板电源时序控制、实现对外的CAN接口信号和PPS信号的接收和处理、进行整板的健康监控信息的汇总和上报、提供板卡FRU信息等。模块对外的CAN接口和RS422接口，由CPLD模组提供。\nGPU模组采用工业级标准模组AGX ORING产品。GPU模组是整个数据算能计算模块的操作系统平台，完成数据计算与传输，数据处理和加速计算，资源调度、虚拟化管理和软件重构等功能。模块",
+      "content_length": 1986,
+      "score": 2.9792,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "040d06eb80bb6419_p6",
+      "doc_id": "040d06eb80bb6419",
+      "doc_title": "智加G3智算机_方案设计报告（硬件）_20251205",
+      "content": "### GPU模组及外围电路设计\n#### GPU模组相关接口设计\nGPU模组对外引出资源较多，根据技术要求，其接口设计如下所示。\n表 3 GPU模组接口设计汇总表  \n#### GPU模组PCIE接口设计\nGPU模组PCIE高速接口支持的模式如下图所示。  \n图 14 高速接口配置模式示意图\n考虑GPU模组PCIE的接口要求，实际设计如下：\n表 4 PCIE资源设计汇总表  \n#### GPU模组25G网络设计\nJetson T5000模组拥有四个集成的多千兆以太网（MGBE）控制器，能够提供总计高达100Gbps的带宽支持。每个MGBE 控制器均可独立运行高达25 Gbps 的传输速率模式，从而使模组能够按照 IEEE 802.3 标准通过以太网进行数据的发送和接收。MGBE 控制器可通过 XFI 差分通道与外部设备（例如以太网 PHY 和交换机）连接，从而实现2.5 Gbps、5 Gbps和10 Gbps的线速传输，或者通过支持25 Gbps线速的25GAUI 差分通道实现连接。\n模组对于25Gbps速率电接口规范，支持IEEE 802.3by-2016标准。\n25GAUI用于连",
+      "content_length": 1802,
+      "score": 1.9861,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "96b9e551dfd80bb1_p8",
+      "doc_id": "96b9e551dfd80bb1",
+      "doc_title": "20250819-智星空间_AI超算模块_方案设计报告",
+      "content": "# 5 硬件详细方案设计\n\n# 5.1 GPU详细设计  \nGPU模块为整机的主要计算节点，主要用于计算任务。GPU模块硬件上采用模组设计，包含CPLD模组、GPU模组和GPU载板。其原理框图如下。  \n图7GPU模块原理框图  \nGPU 模块采用核心板和底板的硬件形态，充分考虑模块化设计方式。GPU功能单元和 CPLD 功能单元采用模组形式，电源功能单元采用模块化设计。  \n电源模块采用通用的电路模块，具有良好复用性。其主要作用模块对输入的一次电源进行转换，通过转换后的二次及三次电源，为GPU模组、CPLD模组和底板等组件供电。  \nCPLD模组采用标准化的CPLD接口卡的形式进行设计，该模组可以应用于多种载板。其主要功能有：进行整板电源时序控制、实现对外的CAN接口信号和PPS信号的接收和处理、进行整板的健康监控信息的汇总和上报、提供板卡FRU信息等。模块对外的CAN接口和RS422接口，由CPLD模组提供。  \nGPU模组采用工业级标准模组AGXORINIndustrial产品。GPU模组是整个数据算能计算模块的操作系统平台，完成数据计算与传输，数据处理和加速计算，资源调度、虚拟",
+      "content_length": 1089,
+      "score": 1.7269,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "901a659a65fb7193_p8",
+      "doc_id": "901a659a65fb7193",
+      "doc_title": "星载智算机（NX4）方案设计报告_20250228",
+      "content": "MCP25625是一款完整、经济高效且尺寸小的CAN解决方案，可轻松添加到具有可用SPI接口的微控制器中，MCP25625满足车规级CAN芯片对高速(高达1Mb/s)、低静态电流电磁兼容性(EMC)和静电放电(ESD)的要求。MCP25625主要特点如下：\n1）独立CAN 2.0B控制器；\n2）非常低的待机电流，约10uA;\n3）支持高达10 MHz SPI时钟速度；\n4）电源支持2.7V至5.5V；\n5）温度支持可达：-40℃至+125℃；\n6）当设备不上电时，引脚断开，不影响总线；\n7）支持接地故障检测，包括txd永久显性检测，CAN总线永久显性检查；\n8) 支持自动热关机保护。  \n图 9 MCP25625典型应用电路示意图\n实际设计电路如下：  \n图 10 SPI转CAN接口设计  \nGPU模块设计\nGPU模块详细框图设计\nGPU模块详细硬件架构框图设计如下所示。  \n图 11 GPU模块详细框图\nGPU模组接口和结构设计\nGPU模组主要对外接口如下：  \n图 12 GPU对外接口示意图\n其主要接口信息及实际设计方案如下：\n表 11 GPU模块接口设计\n接口类型\n数量\n规格\n实",
+      "content_length": 1963,
+      "score": 1.6188,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "0bc2ccba907533d0_p4",
+      "doc_id": "0bc2ccba907533d0",
+      "doc_title": "智加NX1和G1智算机_方案设计报告（硬件）_SCS-01-ZS-FB-01",
+      "content": "## 总体设计\n整机组成与原理设计\n整机硬件组成及功能  \n图 5主星智算机硬件组成框图  \n根据技术要求，主计算卫星智能计算机整机共有5个计算节点，包含4个GPU模块（高性能计算模块）和1个FPGA模块（数据预处理模块）。5个计算模块均提供以太网接口，可通过路由载荷进行网络互联。\nGPU模块为主要的计算节点，可部署分布式计算软件和分布式文件系统软件，处理海量的图像数据和执行复杂的计算业务，可实现遥感数据高级产品在轨生产、实施遥感图像天基计算解释。1个FPGA模块，可用于原始图像数据至L0的处理、L0-L1处理、图像切片，拼图等功能。\n在整机硬件设计上，采用2种单机形态。5个计算节点中一个FPGA模块和一个GPU模块组成智加NX1单机，另外3个GPU模块设计成3个单机。这样设计的优点是可提高每个单机的复用性。\n在模块内部硬件设计上，GPU模块和FPGA模块采用模组式设计，以提高模组复用性。\n（1）GPU模块包含CPLD模组、GPU模组和GPU载板；CPLD、GPU相关电路采用模组形式，即电路在结构形式上是一块独立的印制电路板，该电路板自带专用连接器，可与相应的载板进行对插刚性连接，组成",
+      "content_length": 1993,
+      "score": 0.3989,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "0bc2ccba907533d0_p12",
+      "doc_id": "0bc2ccba907533d0",
+      "doc_title": "智加NX1和G1智算机_方案设计报告（硬件）_SCS-01-ZS-FB-01",
+      "content": "实际应用中，可以选择使用两个接口或其中一个接口，只是软件功能开发有所不同。这种设计方案简单，又具有足够灵活性。\nPCIE接口设计\nGPU模块的PCIE接口用于和FPGA互联，作为高速数据通道预留设计。实际设计中，PCIE接口由GPU核心板直出到底板连接器ERF809.0-S-DV上，该连接器可以直接连接FPGA模块（配套连接器型号ERM809.0-S-DV）。GPU模块需要注意配置，设置为RP模式，此时FPGA只能作为EP设备。\nGPU模块的PCIE接口模式配置如下所示。  \n图 34 PCIE接口RP模式配置\n调试接口设计\n（1）JTAG接口\nJTAG为CPLD模块的下载接口，载板上从CPLD模块引出连接到载板上连接器J30J(X04)。\n（2）USB接口\nGPU模块直出USB3.2,引出USB烧写接口，注意下载口为专用口，UPHY0 Lanes用UPHY0 Lane1。USB接口电路设计如下图所示。  \n图 35 USB接口电路设计\nGPU载板电源电路设计\n电源功耗设计\nGPU载板电源接口是GPU模块整个模块的电源输入通道，其他模组电源均来自载板。因此载板电源设计时，应包含CPLD",
+      "content_length": 1857,
+      "score": 0.2581,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "67f8cd08656c0a09_p3",
+      "doc_id": "67f8cd08656c0a09",
+      "doc_title": "（中文）三体计算星座画册 - 20260318-压缩",
+      "content": "# 智加×2  \n支持星上轻量化模型部署\n支持NDWI、NDVI等算法\n支持算法、模型、软件上注功能  \n| 指标 | 参数 |\n| --- | --- |\n| 架构 | 寒武纪NPU-SOC |\n| 算力 | 32TOPS @int8 |\n| 体积 | 126.5mm×126.5mm×26.8mm |\n| 重量 | 0.48kg |\n| 功耗 | 17W,峰值31.8W |\n| 输入电压 | 11.4V-13V(二次电源) |\n| 工作温度 | -20℃~55℃ |\n| 贮存温度 | -40℃~80℃ |\n| 内存 | 8G显存,8G内存 |\n| 存储 | 64GB |\n| 对外接口 | RS422*1、千兆网口*2 |\n| 操作系统 | Ubuntu20.04 |\n\n# 智加×3  \nL0-L2数据处理\n图像AI压缩\n目标识别算法\n原始数据实时存储  \n| 指标 | 参数 |\n| --- | --- |\n| 架构 | 寒武纪NPU-SOC+复旦微FPGA |\n| 算力 | 32TOPS @int8 (NPU) |\n| 体积 | 280mm×280mm×40mm |\n| 重量 | 2",
+      "content_length": 693,
+      "score": 6.1376,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "7f1638b742382331_p5",
+      "doc_id": "7f1638b742382331",
+      "doc_title": "星载计算机介绍",
+      "content": "# 智加X  \n智加X基于异构计算和软硬件协同优化，实现不同任务的⾼效计算和处理，该计算载荷采⽤1.8TFLOPS的FPGA流式算⼒、16TOPS主、16TOPS备的NPU算⼒和1.6GHz的CPU处理性能；可对原始数据进⾏辐射校正、⼏何校正，数据等级达到L级；可实现对图像进⾏AI压缩，精度更⾼、损耗更⼩；在功耗60W以内可实现数据带宽3.07Gbps的实时⽬标识别；4TB的存储⼤⼩和⾼带宽的存储速率，⽀持对原始数据进⾏实时存储。  \nX技术架构图  \n组成：边缘智能计算NPU单元MLU*+FPGA V T*+TB存储  \nX技术参数  \n| 指标 | 参数 |\n| --- | --- |\n| 架构 | 寒武纪NPU-SOC+复旦微FPGA |\n| 算力 | 32TOPS @int8 |\n| 体积 | 280mm×280mm×40mm |\n| 重量 | 2.3kg |\n| 功耗 | 35W, 峰值48W |\n| 输入电压 | 24V-29.4V (二次电源) |\n| 工作温度 | -20°C~45°C |\n| 储存温度 | -40°C~80°C |\n| 内存 | 8G显存，8G内存，8",
+      "content_length": 745,
+      "score": 6.0629,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "67f8cd08656c0a09_p2",
+      "doc_id": "67f8cd08656c0a09",
+      "doc_title": "（中文）三体计算星座画册 - 20260318-压缩",
+      "content": "# 模型部署及在轨更新能力  \n2天内完成模型在轨更新\n已实现10余个模型部署\n\n# 科学载荷在轨验证能力  \n两颗卫星搭载X射线偏振探测器 $^ { + }$ 天基天文时域模型\nX射线偏振探测器长开机进行X射线观测\n天基天文时域模型在轨处理探测数据\n成功实现伽马射线暴在轨判定和分析\n\n#  \nKEY TECHNOLOGIES FOR  \nSPACE COMPUTING  \n太空计算关键技术\n\n# 天基系统  \n天基分布式操作系统  \n具身智能卫星模型  \n星载智能计算机  \n星间激光通信机  \n星载高速路由器\n\n# 太空数字孪生平台\n\n# SPACEBORNE INTELLIGENT COMPUTER\n\n# 星载智能计算机  \n“之江智加”系列星载智能计算机，结合低成本的工业级器件和商业级操作系统，自研高通量推理优化、故障自感知以及软硬件自恢复、基于分区热流控制的大功率热控等创新技术，能够在复杂和恶劣的太空环境中，为“通信、导航、遥感、科学”卫星等各类航天器提供高可靠、高效能的在轨计算服务。\n\n# 应用场景  \n空间科学卫星  \n对地遥感卫星  \n太阳探测卫星  \n通信卫星\n\n# 产",
+      "content_length": 1195,
+      "score": 1.95,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "8c6c463d6810e424_p1",
+      "doc_id": "8c6c463d6810e424",
+      "doc_title": "之江实验室硬件测试指导手册",
+      "content": "≥10Kohm\n20K\nOK □NOK  \nM2_P3V3_2\nTP41\n≥10Kohm\n20K\nOK □NOK  \nP5V\nL72\n≥5Kohm\n11.6K\nOK □NOK  \n调试人员：xxx\n日期：xxx\n1.2 电压测试\n表格4 004号板卡电压测试表格\n测试项目\n测试点\n合格要求\n实测情况\n合格判别\n阻抗测试（参考点GND，如TP1）\n目标板\nP28V\nTP76\n与输入一致\n28V\nOK □NOK  \nP12V_FPGA\nU69\n11.4-12.6V\n11.96V\nOK □NOK  \nP12V_CPU\nU70\n11.4-12.6V\n11.95V\nOK □NOK  \nP0V8\nTP66\n0.76-0.84V\n0.780V\nOK □NOK  \nP3V3\nTP68\n3.14-3.47V\n3.31V\nOK □NOK  \nCPU_AVDD_0V8\nTP70\n0.76-0.84V\n0.79V\nOK □NOK  \nP1V2\nTP72\n1.14-1.26V\n1.18V\nOK □NOK  \nP1V8\nTP74\n1.71-1.89V\n1.79V\nOK □NOK  \nFPGA_CORE_1V0\nT",
+      "content_length": 1995,
+      "score": -3.0789,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "4fa806d6eedc305d_p0",
+      "doc_id": "4fa806d6eedc305d",
+      "doc_title": "6_SSD总剂量实验测试平台和方法_20241210",
+      "content": "# 6_SSD总剂量实验测试平台和方法_20241210  \n之江首发星座\nSSD总剂量实验测试方法  \n签署科目\n签 名\n日 期\n编写  \n校对  \n审核  \n标审  \n批准  \n之江首发星座\n工程总体部  \n目录\n1.概述2\n2.测试要求2\n2.2 测试仪器2\n2.4 测试平台搭建2\n3.测试内容和步骤3\n3.1 lsblk查看硬盘容量4\n3.2 文件持续读写4\n3.3 后台监测读写速率和读写是否报错4\n3.4 查看硬盘健康信息4\n3.5 系统启动4\n附表1 SSD总剂量试验记录表5  \n概述\n对SSD总剂量实验的测试平台和测试内容进行描述。\n测试要求\n2.2 测试仪器\n测试过程中使用到的主要仪器设备如表1所示。\n表1 测试过程中使用的仪器设备\n仪器名称\n型号\n备注\n开发板\n飞腾FT2000-4  \n串口线  \n电源  \nPCIe延长线  \nPCIe转接卡  \n千兆网线  \n2.4 测试平台搭建\n测试平台搭建实物图如图1所示，一次可以同时测试2块SSD。  \n图1 测试平台搭建实物图\n（1）需要对陪测设备进行总剂量防护，保证陪测设备工作可靠；陪测设备和被测SSD之间的信号线缆长度为",
+      "content_length": 1811,
+      "score": 4.2175,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "abc3c1151e791903_p9",
+      "doc_id": "abc3c1151e791903",
+      "doc_title": "ug580-ultrascale-sysmon",
+      "content": "7 Series FPGAs and\nZynq-7000 SoC</td><td>SYSMONE1\nKintex UltraScale and\nVirtex UltraScale\nFPGAs</td><td>SYSMONE4\nKintex UltraScale+ and\nVirtex UltraScale+\nFPGAs and Zynq\nUltraScale+ MPSOC\n(PL only)</td><td>SYSMON (PS)\nZynq UltraScale+\n(inside PS block)</td></tr><tr><td>Resolution</td><td>12-bit</td><td>10-bit</td><td>10-bit</td><td>10-bit</td></tr><tr><td>Sample rate</td><td>1.0 MSPS</td><td>0.2 MSPS</td><td>0.2 MSPS</td><td>1.0 MSPS</td></tr><tr><td>Analog-to-digital converters</td><td>2</td><t",
+      "content_length": 2481,
+      "score": 3.5727,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "411b2ba6bf2872e2_p1",
+      "doc_id": "411b2ba6bf2872e2",
+      "doc_title": "智加NX1星载智算机热设计报告-SCS-01-ZS-ZJNX1-FB-01",
+      "content": "28.1\n6.6\n125\n69.2  \nLTM4644\n1\n15\n9\n0.75\n2.75\n17\n125\n69.2  \n核心板供电电源\nDCM2322\n1\n24.84\n22.8\n5.0\n3.7\n3.2\n125\n72.4  \nLTM4644\n1\n15\n9\n2\n2.75\n17\n125\n78.7  \nPHY模块\nKSZ9031RNX\n2\n7\n7\n1.05\n36.3\n9.47\n125\n68.2  \n422转换芯片\nSIT3491E\n3\n8.55\n5.8\n1.8\n125\n21\n125\n75.1  \nLVDS时钟buffer\nADCLK954BCPZ\n1\n6\n6\n1.65\n28.7\n8.3\n150\n76  \nPCIe时钟buffer\nSI52147-A01AGMR\n1\n6\n6\n0.31\n30\n22\n150\n67.4\nGPU模块\nM,2电子盘\nHNM8T2F004T-IMAM\n1\n80\n22\n9\n导热系数10W/mK\nTBD\n/  \nGPU模组\nJetson AGX Orin\n1\n37.4\n37.4\n64.72\n5.5\n0.1\n105\n84.3  \nDDR\n4\n14\n13.75\n0.32\n10\n5\n8",
+      "content_length": 1589,
+      "score": 3.1078,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "7f8ef9aed8ad3a32_p11",
+      "doc_id": "7f8ef9aed8ad3a32",
+      "doc_title": "ACU19EG_UG",
+      "content": "# (四) QSPI Flash  \nACU19EG 核心板配有 2 片 512MBit 大小的 Quad-SPI FLASH 芯片组成 8 位带宽数据总线，FLASH 型号为 MT25QU512ABB1EW9-0SIT，它使用 1.8V CMOS 电压标准。由于 QSPIFLASH 的非易失特性，在使用中， 它可以作为系统的启动设备来存储系统的启动镜像。这些镜像主要包括FPGA的bit文件、ARM的应用程序代码以及其它的用户数据文件。QSPI FLASH的具体型号和相关参数见表 21。  \n表21 QSPI Flash的型号和参数  \n| 位号 | 芯片类型 | 容量 | 厂家 |\n| --- | --- | --- | --- |\n| U2,U3 | MT25QU512ABB1EW9-0SIT | 512M bit | 美光 |  \nQSPI FLASH 连接到 ZYNQ 芯片的 PS 部分 BANK500 的 GPIO 口上，在系统设计中需要配置这些 PS 端的 GPIO 口功能为 QSPI FLASH 接口。为图 4-1 为 QSPI Flash 在中的部分。  \n图 21 Q",
+      "content_length": 1060,
+      "score": 2.7302,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "cb9de27a1935617d_p12",
+      "doc_id": "cb9de27a1935617d",
+      "doc_title": "20250806-智星空间_AI超算模块_方案设计报告",
+      "content": "SIT3491E\n3\n0.6\n125\n21\n125\n82.9  \nADCLK954BCPZ\n1\n1.65\n28.7\n8.3\n150\n87.6\n满足Ⅱ级降额许用结温  \nSI52147-A01AGMR\n1\n0.31\n30\n22\n150\n74.2  \nGPU板\nHNM8T2F004T-IMAM\n1\n9\n导热系数10W/mK\nTBD\n/  \nJetson AGX Orin Industrial\n1\n64.72\n5.5\n0.1\n105\n87.9\n满足Ⅱ级降额许用结温  \nDDR\n3\n0.32\n10\n5\n85\n61.2  \nEMMC\n1\n0.5\n导热系数10W/mK\n/\n/  \n电感1\n2\n0.5  \n/\n/  \n电感2\n6\n1.4  \n/\n/  \n88E1512\n1\n0.4\n20.7\n17.8\n125\n65  \nDCM3623\n1\n9\n2.43\n2.03\n125\n74.3  \nLTM4644\n1\n2\n12.5\n1.8\n125\n63.6  \nTPS548A29RWWR\n1\n0.25\n11.2\n18.2\n125\n64.6  \nA3P1000\n1\n1.5\n28.1\n6.6\n125\n65.7  \nLT",
+      "content_length": 1851,
+      "score": 2.5275,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "67f8cd08656c0a09_p4",
+      "doc_id": "67f8cd08656c0a09",
+      "doc_title": "（中文）三体计算星座画册 - 20260318-压缩",
+      "content": "# 智加×4  \n数据预处理\n通用处理\n智能处理  \n| 指标 | 参数 |\n| --- | --- |\n| 架构 | 飞腾CPU+寒武纪GPU+复旦微FPGA |\n| 算力 | 18TFLOPS@fp32、72TFLOPS@fp16、72TFLOPS@bf16、192TOPS@int8 |\n| 体积 | 350mm×270mm×58mm |\n| 重量 | ≤4.2kg |\n| 功耗 | 待机100W,典型工作140W,峰值161W,间歇峰值221W |\n| 输入电压 | 36V~46.2V(一次电源) |\n| 工作温度 | -20℃~50℃ |\n| 贮存温度 | -40℃~70℃ |\n| 内存 | 48GB显存+ECC、32GB内存+ECC、FPGA内存8GB |\n| 存储 | 2TB |\n| 对外接口 | GTH收*4、GTH发*4、RS422*1 |\n| 操作系统 | EulixOS + openEuler-24.03 |\n\n# 天数智芯系列\n\n# 智加×100  \n| 指标 | 单卡参数 | 整机参数 |\n| --- | --- | --- |\n| 架构 | 飞腾CPU+天数智",
+      "content_length": 1061,
+      "score": 5.5513,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "12ed628c566e2bab_p0",
+      "doc_id": "12ed628c566e2bab",
+      "doc_title": "展品介绍260113",
+      "content": "# 展品介绍260113\n\n# 星载智能计算机  \n“之江智加”系列星载智能计算机，结合低成本的⼯业级器件和商业级操作系统，⾃研⾼通量推理优化、故障⾃感知以及软硬件⾃恢复、基于分区热流控制的⼤功率热控等创新技术，能够在复杂和恶劣的太空环境中，为“通信、导航、遥感、科学”卫星等各类航天器提供⾼可靠、⾼效能的在轨计算服务。  \n智加系列星载计算机有三个系列：采⽤寒武纪芯⽚的智加X、智加X、智加X等，采⽤天数智芯芯⽚的智加X，以及采⽤英伟达芯⽚的智加NX、智加G等。  \n截⽌⽬前，共进⾏了三次搭载验证：  \n（1）2024年2⽉3⽇，智加X搭载东⽅慧眼01号微信发射，⽀持在轨⽬标检测、云判与ROI压缩功能；\n（2）2024年9⽉24⽇，智加X随国星宇航“星时代-21”卫星发射，⽀持在轨⽬标检测、抗单粒⼦翻转可靠性实验与软件在轨重构功能；\n（3）2025年5⽉14⽇12时12分，智加NX与G搭载三体计算星座⾸次发射任务成功发射，实现单星最⾼算⼒744TOPS，整体算⼒5POPS，⽀持L-L级遥感图像在轨实时处理、天基遥感模型在轨推理、深空探测数据星间协同预处理等关键功能。  \n2026年1⽉，",
+      "content_length": 1475,
+      "score": 0.3901,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "7f1638b742382331_p0",
+      "doc_id": "7f1638b742382331",
+      "doc_title": "星载计算机介绍",
+      "content": "# 星载计算机介绍\n\n# 前⾔  \n⾯向太空公⽤计算资源严重缺失的现状和未来太空⾼级航天活动的迫切需求，针对太空⼯作环境恶劣、能源供给和空间受限、⾃主运⾏和可靠性要求⾼等挑战，之江实验室天基计算系统研究中⼼开展了全⾃主可控星载智能计算机的研究，并取得了⼀系列突破性进展，推出了智加系列星载智算机。  \n“之江智加”系列星载智能计算机，采⽤超异构架构设计，集成轻量化⾼可靠星载操作系统、⾼通量推理引擎，应⽤故障⾃感知以及软硬件⾃恢复、基于分区热流控制的⼤功率热控等创新技术，能够在复杂和恶劣的太空环境中，为“通信、导航、遥感、科学”卫星等各类航天器提供⾼可靠、⾼效能的在轨计算服务。  \n智加系列星载计算机有三个系列：采⽤寒武纪芯⽚的智加X、智加X、智加X等，采⽤天数智芯芯⽚的智加X，以及采⽤英伟达芯⽚的智加NX、智加G等。  \n截⽌⽬前，共进⾏了三次搭载验证：  \n（1）2024年2⽉3⽇，智加X搭载东⽅慧眼01号微信发射，⽀持在轨⽬标检测、云判与ROI压缩功能；\n（2）2024年9⽉24⽇，智加X随国星宇航“星时代-21”卫星发射，⽀持在轨⽬标检测、抗单粒⼦翻转可靠性实验与软件在轨重构功能；",
+      "content_length": 1207,
+      "score": 0.3332,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "7f1638b742382331_p7",
+      "doc_id": "7f1638b742382331",
+      "doc_title": "星载计算机介绍",
+      "content": "# X产品图  \nD渲染图  \n实物图  \n单卡图  \nX技术架构图\nX技术参数  \n| 指标 | 单卡参数 | 整机参数 |\n| --- | --- | --- |\n| 架构 | 飞腾CPU+天数智芯GPU | 飞腾CPU+天数智芯GPU+复旦微FPGA |\n| 算力 | 192TOPS@int8 | 768TOPS@int8256TFlops@FP1664TFlops@FP32 |\n| 体积 | 计算模块:243.8mm×211.1mm×28mm配套电源模块:100mm×83.6mm×20mm | 263mm×181mm×201m m |\n| 重量 | 计算模块1.586±0.03Kg配套电源模块:0.2±0.02kg | 20kg |\n| 功耗 | 开机静置:50W普通业务:75W峰值功耗:115W | 380W,峰值600W |\n| 输入电压 | 28V±20% (二次电源) | 28V±10% (二次电源) |\n| 工作温度 | 0°C~50°C | 0°C~45°C |\n| 储存温度 | -20°C~80°C | -20°C~80°C |\n| 内存 | 16GB显存 16G",
+      "content_length": 1165,
+      "score": 0.2781,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "621069f2db2eb376_p9",
+      "doc_id": "621069f2db2eb376",
+      "doc_title": "三体计算星座介绍",
+      "content": "# 三、太空计算的发展趋势如何？  \n太空科技是⼤国间的博弈，⽬前也只有中美两国有能⼒和实⼒在太空计算领域进⾏竞争。  \n美国积极推动太空计算发展，NASA、微软、SpaceX、Palantir等机构与企业率先布局，但⽬前均未实现规模化在轨部署验证。微软联合多家企业计划在国际空间站建设⾸个太空计算中⼼；SpaceX通过“星盾”计划搭载传感器与算⼒单元； Lumen Orbit提出部署“算⼒星座”，构建轨道AI矩阵；AWS则提供太空云计算服务，⽀持在轨数据处理与边缘计算。Palantir推出MetaConstellation平台，致⼒于将⼈⼯智能应⽤于太空领域，该系统可接⼊现有卫星⽹络，⽀持⽤⼾对全球任意区域发起实时分析请求。  \n我国在太空计算已形成先发优势，全球⾸个整轨互联的太空计算星座正式进⼊组⽹阶段。“⼗四五”期间，国家重点研发计划“地球观测与导航”重点专项、GJ专项等国家重⼤任务中，均提出了建设太空计算基础设施任务。2024年11⽉，之江实验室在世界互联⽹⼤会上发布“三体计算星座”计划，坚持开放、共享、互联、共享的原则，联合全球合作伙伴构建千星规模的太空计算星座，总算⼒将达到1",
+      "content_length": 1869,
+      "score": -0.5871,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "34f81720f16fc9c4_p4",
+      "doc_id": "34f81720f16fc9c4",
+      "doc_title": "NX1和G1智算机_鉴定级环境试验测试细则_20240906",
+      "content": "高性能计算模块的2路万兆以太网光口通过万兆调试线缆*连接到万兆调试开发板：\n万兆调试线缆*一端连接智算机G01接口，\n另一端标号01线芯通过真空罐的转接插座接万兆调试开发板光模块1的RX端；\n标号12线芯通过真空罐的转接插座接万兆调试开发板光模块1的TX端；\n标号02线芯通过真空罐的转接插座接万兆调试开发板光模块2的RX端；\n标号11线芯通过真空罐的转接插座接万兆调试开发板模块2的TX端；  \n每个模块通过电源适配器单独供电：\n电源调试线缆1*，一端和智算机的X04接口连接，另一端通过真空罐的转接插座接电源适配器；\n电源调试线缆2*，一端和智算机的X01接口连接，另一端通过真空罐的转接插座接电源适配器；\n422、CAN互联\n低速调试线缆1*，一端和智算机X05连接，另一端的CAN接口和CAN模拟源连接；RS422接口和PPS模拟源连接；RS485接口和低速调试线缆2*的RS485接口连接。其接线均通过真空罐的转接插座进行仓内仓外的连接。\n低速调试线缆2*，一端和智算机X01连接，另一端的CAN接口和CAN模拟源连接；RS422接口和PPS模拟源连接；其接线均通过真空罐的转接插座进行仓内",
+      "content_length": 1994,
+      "score": -1.6813,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "f192a05111b9908a_p0",
+      "doc_id": "f192a05111b9908a",
+      "doc_title": "主从星智算机整机（硬件）调试说明_20240701",
+      "content": "# 主从星智算机整机（硬件）调试说明_20240701  \n主从星智算机整机（硬件）\n调试说明  \n之江实验室\n二〇二四年六月  \n1 概述\n本说明规定了智算机整机的调试方法、调试步骤和记录要求。\n本说明适用于智算机整机调试，整机调试在单模块调试完成的基础上进行。\n此处调试平台指为实现单机级测试而搭建的地面测试平台，不考虑分系统级或系统级测试和调试。\n2 调试环境\n温度：15℃～35℃；\n相对湿度：20%～80%；\n大气压力：86kPa～106kPa；\n供电电压：DC 28V。\n3 调试内容\n（1）调试平台搭建\n（2）功能接口调试\n4 调试仪器设备\n调试仪器设备和软件如表1所示。\n表1 调试仪器设备和辅助测试软件\n调试仪器设备\n型号\n数量\n备注\n笔记本电脑\n通用\n1\n带千兆电口\n万兆调试开发板\nJetson AGX orign\n1\n带WX1820万兆网迅网卡\n电源适配器\nYU2805\n主星：5\n从星：2\n220V转28V\nPPS模拟源\n预处理模块/\nSR2527Z2\n1\n模拟输出秒脉冲信号\nRS422电平\n（1）CPLD模拟PPS\n（2）GPS接收模块+RS422电平转换\nCAN模拟源",
+      "content_length": 1988,
+      "score": -3.6311,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "c0decfca74955d2a_p0",
+      "doc_id": "c0decfca74955d2a",
+      "doc_title": "VRF24_VRF2412DD-50WR4-模块电源50w",
+      "content": "50W，宽电压输入，隔离稳压单路输出DIP 封装，DC-DC 模块电源  \n专利保护  \nReport  \nEN62368-1  \nReport  \nBS EN62368-1  \nRoHS\n\n# 产品特点  \n 宽输入电压范围（2:1）\n 效率高达 $88 \\%$\n 隔离电压 3000VDC\n$\\bullet$ 输入欠压保护，输出短路、过流、过压保护，过温保护\n$\\bullet$ 工作温度范围（壳温）：-40℃ to +105℃\n$\\bullet$ 封装尺寸：25.82 x 22.80 x 7.20 mm  \nVRF24_DD-50WR4产品输出功率为50W，2:1宽电压输入范围，效率高达 $88 \\%$ ，3000VDC的常规隔离电压，允许工作温度-40℃ to$+ 7 0 5 \\%$ ，具有输入欠压保护，输出短路、过流、过压保护，过温保护功能，主要用于通信、工业控制等领域。  \n选型表  \n| 认证 | 产品型号① | 输入电压(VDC) | 输出 | 满载效率(%)Min./Typ. | 最大容性负载(μF) |\n| --- | --- | --- | --- | --- | -",
+      "content_length": 883,
+      "score": -1.6323,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "c0decfca74955d2a_p3",
+      "doc_id": "c0decfca74955d2a",
+      "doc_title": "VRF24_VRF2412DD-50WR4-模块电源50w",
+      "content": "通用特性  \n| 项目 | 工作条件 | Min. | Typ. | Max. | 单位 |\n| --- | --- | --- | --- | --- | --- |\n| 隔离电压 | 输入-输出,测试时间1分钟,漏电流小于1mA | 3000 | -- | -- | VDC |\n| 绝缘电阻 | 输入-输出,绝缘电压500VDC | 1000 | -- | -- | MΩ |\n| 隔离电容 | 输入-输出,100kHz/0.1V | -- | 100 | -- | pF |\n| 工作温度(壳温) | 见温度降额曲线 | -40 | -- | +105 | °C |\n| 存储湿度 | 无凝结 | 5 | -- | 95 | %RH |\n| 存储温度 |  | -55 | -- | +125 | °C |\n| 引脚耐焊接温度 | 波峰焊焊接(焊接时间:10s) | -- | -- | 260 |\n| 海拔高度 |  | 海拔高度:≤2000m(大气压:80~110kPa) |\n| 振动 |  | ①JESD22-b103等级1:10-1000hz,10g,1mmxyz各4循环;②JES",
+      "content_length": 1395,
+      "score": -3.0669,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "c0decfca74955d2a_p2",
+      "doc_id": "c0decfca74955d2a",
+      "doc_title": "VRF24_VRF2412DD-50WR4-模块电源50w",
+      "content": "注：*Ctrl 控制引脚的电压是相对于输入引脚GND。  \n输出特性  \n| 项目 | 工作条件 | Min. | Typ. | Max. | 单位 |\n| --- | --- | --- | --- | --- | --- |\n| 输出电压精度① | 5%-100%负载 | -- | ±1 | ±3 | % |\n| 线性调节率 | 满载,输入电压从低电压到高电压 | -- | ±0.2 | ±0.5 |\n| 负载调节率② | 5%-100%负载 | -- | ±0.5 | ±1 | % |\n| 瞬态恢复时间 | 25%负载阶跃变化,标称输入电压 | -- | 250 | 500 | μs |\n| 瞬态响应偏差③ | 25%负载阶跃变化,输入电压范围 | -- | ±5 | ±8 | % |\n| 温度漂移系数 | 满载 | -- | -- | ±0.03 | %/℃ |\n| 纹波&amp;噪声④ | 20MHz带宽,输入电压范围,5%-100%负载 | -- | 250 | 350 | mVp-p |\n| 掉电保持时间 | 全工作温度范围,标称输入电压,满载 | 0.001 | -- ",
+      "content_length": 862,
+      "score": -3.3908,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "c0decfca74955d2a_p1",
+      "doc_id": "c0decfca74955d2a",
+      "doc_title": "VRF24_VRF2412DD-50WR4-模块电源50w",
+      "content": "$\\textcircled{1}$ 全文指标均在，产品增加强制外围（见图 3）下所得，否则产品可能无法正常工作；\n②输入电压不能超过此值，否则可能会造成永久性不可恢复的损坏。  \n输入特性  \n| 项目 | 工作条件 | Min. | Typ. | Max. | 单位 |\n| --- | --- | --- | --- | --- | --- |\n| 输入电流(满载/空载) | 标称24VDC输入 | -- |  |  | mA |\n| 反射纹波电流 | -- | 300 | -- |\n| 冲击电压(1sec.max.) | -0.7 | -- | 50 | VDC |\n| 启动电压 | -- | -- | 18 |\n| 输入欠压保护 | 11 | 13 | -- |\n| 启动时间 | 标称输入,恒阻负载 | -- | 30 | 100 | ms |\n| 输入滤波类型 |  | 电容滤波 |\n| 热插拔 |  | 不支持 |\n| 遥控脚(Ctrl) | 模块开启 | Ctrl 悬空或接TTL 高电平(3-12VDC) |\n| 模块关断 | Ctrl 接GND 或低电平(0-1.2VDC",
+      "content_length": 571,
+      "score": -3.4572,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "f37d83ec8c414fe0_p2",
+      "doc_id": "f37d83ec8c414fe0",
+      "doc_title": "NX2-FPGA设计输入20250506",
+      "content": "I\nGth\nMGTHRXP3_225  \nPCIe_GPU_RX4_N\nI\nGth\nMGTHRXN0_226  \nPCIe_GPU_RX4_P\nI\nGth\nMGTHRXP0_226  \nPCIe_GPU_RX5_N\nI\nGth\nMGTHRXN1_226  \nPCIe_GPU_RX5_P\nI\nGth\nMGTHRXP1_226  \nPCIe_GPU_RX6_N\nI\nGth\nMGTHRXN2_226  \nPCIe_GPU_RX6_P\nI\nGth\nMGTHRXP2_226  \nPCIe_GPU_RX7_N\nI\nGth\nMGTHRXN3_226  \nPCIe_GPU_RX7_P\nI\nGth\nMGTHRXP3_226  \nPCIe_GPU_TX0_N\nO\nGth\nMGTHTXN0_225  \nPCIE发送\nPCIe_GPU_TX0_P\nO\nGth\nMGTHTXP0_225  \nPCIe_GPU_TX1_N\nO\nGth\nMGTHTXN1_225  \nPCIe_GPU_TX1_P\nO\nGth\nMGTHTXP1_225  \nPCIe_GPU_TX2_N\nO\nGth\nMGTHTXN2_225  \nPCIe",
+      "content_length": 2590,
+      "score": 5.3262,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "f23cee2fc08d6828_p14",
+      "doc_id": "f23cee2fc08d6828",
+      "doc_title": "Jetson_AGX_Orin_Series_Data_Sheet_DS-数据手册_v1.5",
+      "content": "# Chapter 4. NVIDIA Orin SoC Overview  \nAt the heart of the NVIDIA Jetson AGX Orin SOM, is the NVIDIA Orin system on chip (SoC). NVIDIA Orin™ is a versatile SoC appropriate for a wide variety of perception and general compute tasks. Highlevel architecture of the SoC, is organized into three main processing complexes: CPU, GPU, and hardware accelerators.  \nCPUs include the Arm Cortex-A78AE based main CPU complex, which provides the general-purpose high-speed computing capability.  \nThe graphics p",
+      "content_length": 2235,
+      "score": 4.9415,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "f23cee2fc08d6828_p1",
+      "doc_id": "f23cee2fc08d6828",
+      "doc_title": "Jetson_AGX_Orin_Series_Data_Sheet_DS-数据手册_v1.5",
+      "content": "# Chapter 1. Introduction 9\n\n# Chapter 2. Functional Description . 13\n\n# Chapter 3. Power and System Management. 15  \n3.1 Input Power .... . 15\n3.2 Power Sequencing......... . 15\n3.3 Power States...... . 15  \n3.3.1 ON State.. . 15\n3.3.2 SC7 – Deep Sleep State ........ . 16\n3.3.3 OFF State.. . 16\n\n# Chapter 4. NVIDIA Orin SoC Overview. 17  \n4.1 NVIDIA Ampere GPU . .. 17  \n4.1.1 Compute Features ... . 18\n4.1.2 Graphics Features ....... . 18\n4.1.3 GPU Architecture . 19  \n4.2 CPU Complex ... . 19  \n",
+      "content_length": 2500,
+      "score": 3.3162,
+      "chunk_type": "parent",
+      "parent_id": null
+    }
+  ],
+  "token_usage": {
+    "prompt_tokens": 134254,
+    "completion_tokens": 2290,
+    "total_tokens": 136544
+  },
+  "timing": {
+    "total": 140.672
+  },
+  "error": null
+}

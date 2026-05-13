@@ -124,9 +124,10 @@ class SimplePipeline:
         options = RetrievalOptions(top_k=top_k, use_rerank=False)
         candidate_k = top_k * 2
 
-        # BM25
+        # BM25: 先构建 query_string
         t0 = time.time()
-        bm25_chunks = self.retrieval._execute_bm25(query, options, candidate_k)
+        query_string = self.retrieval._build_bm25_query(query, options)
+        bm25_chunks = self.retrieval._execute_bm25(query_string, options, candidate_k)
         timing["bm25"] = time.time() - t0
 
         # Vector
@@ -154,10 +155,12 @@ class SimplePipeline:
                 chunks.append(chunk)
         timing["rrf"] = time.time() - t0
 
-        # 4. Rerank
+        # 4. Rerank（构建增强 rerank query）
         if use_rerank and chunks:
             t0 = time.time()
-            chunks = self.retrieval._rerank(query, chunks, options)
+            from core.query_engineer.rerank_query import build_rerank_query
+            rerank_query = build_rerank_query(query)
+            chunks = self.retrieval._rerank(rerank_query, chunks, options)
             timing["rerank"] = time.time() - t0
 
         # 5. 截断

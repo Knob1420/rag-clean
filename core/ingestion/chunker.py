@@ -26,12 +26,11 @@ from langchain_text_splitters import (
     RecursiveCharacterTextSplitter,
 )
 
-from core.ingestion.cleaner import clean_text
+from core.ingestion.cleaner import clean_text, is_low_quality_content
 from core.model.models import (
     ChildDocument,
     Document,
 )
-from config import settings
 
 # ── 配置 ──────────────────────────────────────────────────────────────────────
 
@@ -45,42 +44,69 @@ MAX_PARENT_SIZE = 2000
 CHILD_CHUNK_SIZE = 500
 CHILD_CHUNK_OVERLAP = 100
 
-# 表格匹配正则
+# 表格匹配正则（完整闭合表格）
 _TABLE_PATTERN = re.compile(r"<table[^>]*>.*?</table>", re.DOTALL | re.IGNORECASE)
+# 残缺表格：有 <table 开头但缺少 </table> 闭合
+# 从 <table> 开始到下一个段落边界（\n\n）之前的所有内容
+_BROKEN_TABLE_PATTERN = re.compile(
+    r"<table[^>]*>[^\n]*(?:\n(?!\n)[^\n]*)*", re.IGNORECASE
+)
 
 
 def _html_table_to_text(html: str) -> str:
-    """将 HTML 表格转为 Markdown 格式"""
+    """
+    将 HTML 表格转为 Markdown 格式。
+    转换失败返回空字符串（而非原始 HTML，避免 HTML 碎片进入向量库）。
+    """
     import re as _re
 
-    # 提取表头
-    headers = _re.findall(r"<th[^>]*>(.*?)</th>", html, _re.DOTALL | _re.IGNORECASE)
-    headers = [_re.sub(r"<[^>]+>", "", h).strip() for h in headers]
+    def _strip_tags(s: str) -> str:
+        return _re.sub(r"<[^>]+>", "", s).strip()
 
-    # 提取所有行（包括表头行）
+    # 提取所有行
     rows = _re.findall(r"<tr[^>]*>(.*?)</tr>", html, _re.DOTALL | _re.IGNORECASE)
+    if not rows:
+        return ""
+
+    # 提取表头（<th>）
+    th_cells_all = _re.findall(r"<th[^>]*>(.*?)</th>", html, _re.DOTALL | _re.IGNORECASE)
+    headers = [_strip_tags(h) for h in th_cells_all]
+
+    # 提取每行的 <td> 单元格
+    parsed_rows: list[list[str]] = []
+    for row in rows:
+        cells = _re.findall(r"<td[^>]*>(.*?)</td>", row, _re.DOTALL | _re.IGNORECASE)
+        stripped = [_strip_tags(c) for c in cells]
+        if stripped:
+            parsed_rows.append(stripped)
+
+    # 过滤全空行（所有单元格都为空）
+    parsed_rows = [r for r in parsed_rows if any(c for c in r)]
+
+    if not parsed_rows:
+        return ""
 
     md_lines = []
 
-    # 第一行作为表头
     if headers:
+        # 有 <th> 表头：标准转换
         md_lines.append("| " + " | ".join(headers) + " |")
         md_lines.append("| " + " | ".join(["---"] * len(headers)) + " |")
-        data_rows = rows[1:]
-    else:
-        # 无表头时，第一行当作数据行，后面才是真正的数据行
-        data_rows = rows
+        data_rows = parsed_rows
+    elif parsed_rows:
+        # 无 <th> 表头：第一行作为表头
+        first_row = parsed_rows[0]
+        md_lines.append("| " + " | ".join(first_row) + " |")
+        md_lines.append("| " + " | ".join(["---"] * len(first_row)) + " |")
+        data_rows = parsed_rows[1:]
 
-    # 处理数据行
     for row in data_rows:
-        cells = _re.findall(r"<td[^>]*>(.*?)</td>", row, _re.DOTALL | _re.IGNORECASE)
-        cells = [_re.sub(r"<[^>]+>", "", c).strip() for c in cells]
-        if cells:
-            md_lines.append("| " + " | ".join(cells) + " |")
+        md_lines.append("| " + " | ".join(row) + " |")
 
-    # 如果没有提取到有效内容，返回原始 HTML
-    if not md_lines:
-        return html
+    # 检查有效内容：去掉 markdown 表格语法后是否有实质文本
+    content_check = _re.sub(r"[|\- \n]", "", "\n".join(md_lines))
+    if len(content_check) < 3:
+        return ""
 
     return "\n".join(md_lines)
 
@@ -89,8 +115,8 @@ def _html_table_to_text(html: str) -> str:
 
 
 def _generate_doc_hash(text: str) -> str:
-    """生成文档内容的 MD5 哈希"""
-    return hashlib.md5(text.encode()).hexdigest()[:16]
+    """生成文档内容的 SHA-256 哈希"""
+    return hashlib.sha256(text.encode()).hexdigest()[:16]
 
 
 # ── 分块器 ─────────────────────────────────────────────────────────────────────
@@ -110,16 +136,14 @@ class SmartChunker:
     - Document.metadata["parent_id"] = parent_id（同 doc_id，但标注这是 parent）
     """
 
-    def __init__(self, remove_images: bool = True, dataset_id: str = ""):
+    def __init__(self, remove_images: bool = True):
         """
         初始化分块器
 
         Args:
             remove_images: 清洗时是否移除图片，默认 True（与 cleaner.py 行为一致）
-            dataset_id: 数据集 ID，用于判断是否触发产品参数表格删除（仅产品类知识库生效）
         """
         self._remove_images = remove_images
-        self._dataset_id = dataset_id
 
         self._parent_splitter = MarkdownHeaderTextSplitter(
             headers_to_split_on=HEADERS_TO_SPLIT_ON,
@@ -151,17 +175,13 @@ class SmartChunker:
             List[Document]: 每个 parent 对应一个 Document，包含切分后的 children
         """
         # ── 1. 清洗全文 ────────────────────────────────────────────────────────
-        md = clean_text(markdown, remove_images=self._remove_images, dataset_id=self._dataset_id)
+        md = clean_text(markdown, remove_images=self._remove_images)
 
         if mode == "semantic":
             return self._chunk_semantic(md, title, doc_id)
 
         # ── 2. 按 Markdown 标题切分 parent sections ──────────────────────────
         raw_sections = self._parent_splitter.split_text(md)
-        for sec in raw_sections:
-            sec.page_content = clean_text(
-                sec.page_content, remove_images=self._remove_images, dataset_id=self._dataset_id
-            )
 
         # ── 2b. 丢弃目录、索引、版本修订记录、免责声明等无用 section ──────────
         raw_sections = self._drop_meta_sections(raw_sections)
@@ -188,14 +208,15 @@ class SmartChunker:
             if child_document_list:
                 child_global_idx += len(child_document_list)
 
-            # content_for_parent 始终为 parent 原始内容（已含 HTML→MD 转换）
+            # parent 内容也做 HTML→MD 转换（保持与 child 一致）
+            parent_content = self._convert_tables_to_markdown(p_doc.page_content)
             document = Document(
-                content=p_doc.page_content,
+                content=parent_content,
                 metadata={
                     "doc_id": doc_id,
                     "doc_title": title,
                     "chunk_id": parent_id,
-                    "doc_hash": _generate_doc_hash(p_doc.page_content),
+                    "doc_hash": _generate_doc_hash(parent_content),
                 },
                 children=child_document_list if child_document_list else None,
             )
@@ -224,58 +245,145 @@ class SmartChunker:
         将 parent content 切分为 child chunks。
 
         策略：
-        - 含 HTML 表格 → 整个 parent 作为 1 个 child（HTML→MD 转换）
-        - 不含 HTML 表格 → RecursiveCharacterTextSplitter 正常切分
+        1. 先提取所有完整 HTML 表格，替换为占位符
+        2. 对剩余文本用 RecursiveCharacterTextSplitter 切分
+        3. 恢复占位符：每个表格转为 Markdown 后作为独立 child chunk
+        4. 过滤 HTML 标签占比过高的碎片
         """
-        # HTML→MD 转换
-        content = self._convert_tables_to_markdown(content)
+        # ── 1. 提取完整 HTML 表格并替换为占位符 ───────────────────
+        tables: list[str] = []
 
-        # 判断是否含表格
-        has_table = bool(_TABLE_PATTERN.search(content)) or bool(
-            re.search(r"^\|.*\|", content, re.MULTILINE)
-        )
+        def _extract_table(match: re.Match) -> str:
+            tables.append(match.group(0))
+            return f"\n__TABLE_PLACEHOLDER_{len(tables) - 1}__\n"
 
+        text_no_tables = _TABLE_PATTERN.sub(_extract_table, content)
+
+        # ── 1b. 处理残缺 HTML 表格（缺少 </table> 闭合标签） ──────────
+        # MinerU 经常输出不完整的 <table>，需要收集残缺表格内容
+        broken_tables: list[str] = []
+
+        def _extract_broken_table(match: re.Match) -> str:
+            """提取残缺表格：<table> 开头到段落结束都没有 </table>"""
+            broken_tables.append(match.group(0))
+            return f"\n__BROKEN_TABLE_PLACEHOLDER_{len(broken_tables) - 1}__\n"
+
+        text_no_tables = _BROKEN_TABLE_PATTERN.sub(_extract_broken_table, text_no_tables)
+
+        # ── 2. 用 RecursiveCharacterTextSplitter 切分 ───────────────
+        parent_doc = LCDocument(page_content=text_no_tables, metadata=parent_metadata)
+        child_docs = self._child_splitter.split_documents([parent_doc])
+
+        # ── 3. 恢复占位符 + 生成 child chunks ──────────────────────
         child_document_list: List[ChildDocument] = []
         child_idx = start_child_idx
 
-        if has_table:
-            # 含表格：整个 parent 作为 1 个 child
-            child_id = f"{doc_id}_c{child_idx}"
-            child_document = ChildDocument(
-                content=content,
-                metadata={
-                    "doc_id": doc_id,
-                    "doc_title": parent_metadata.get("doc_title", ""),
-                    "chunk_id": child_id,
-                    "doc_hash": _generate_doc_hash(content),
-                    "parent_id": parent_id,
-                },
+        for c_doc in child_docs:
+            child_content = c_doc.page_content.strip()
+            if not child_content:
+                continue
+
+            # 检查是否含表格占位符（完整表格 + 残缺表格）
+            full_placeholder_matches = list(
+                re.finditer(r"__TABLE_PLACEHOLDER_(\d+)__", child_content)
             )
-            child_document_list.append(child_document)
-        else:
-            # 无表格：RecursiveCharacterTextSplitter 正常切分
-            parent_doc = LCDocument(page_content=content, metadata=parent_metadata)
-            child_docs = self._child_splitter.split_documents([parent_doc])
-            for c_doc in child_docs:
-                child_content = c_doc.page_content.strip()
-                if not child_content:
+            broken_placeholder_matches = list(
+                re.finditer(r"__BROKEN_TABLE_PLACEHOLDER_(\d+)__", child_content)
+            )
+            all_placeholders = [
+                (m, "full") for m in full_placeholder_matches
+            ] + [
+                (m, "broken") for m in broken_placeholder_matches
+            ]
+            all_placeholders.sort(key=lambda x: x[0].start())
+
+            if not all_placeholders:
+                # 无表格占位符：普通文本 chunk
+                # 过滤 HTML 碎片
+                if is_low_quality_content(child_content):
                     continue
                 child_id = f"{doc_id}_c{child_idx}"
-                child_document = ChildDocument(
-                    content=child_content,
-                    metadata={
-                        "doc_id": doc_id,
-                        "doc_title": parent_metadata.get("doc_title", ""),
-                        "chunk_id": child_id,
-                        "doc_hash": _generate_doc_hash(child_content),
-                        "parent_id": parent_id,
-                    },
+                child_document_list.append(
+                    ChildDocument(
+                        content=child_content,
+                        metadata={
+                            "doc_id": doc_id,
+                            "doc_title": parent_metadata.get("doc_title", ""),
+                            "chunk_id": child_id,
+                            "doc_hash": _generate_doc_hash(child_content),
+                            "parent_id": parent_id,
+                        },
+                    )
                 )
-                child_document_list.append(child_document)
                 child_idx += 1
+            else:
+                # 含表格占位符：拆分为文本段 + 独立表格 child
+                last_end = 0
+                for pm, table_type in all_placeholders:
+                    # 占位符前的文本段
+                    text_before = child_content[last_end : pm.start()].strip()
+                    if text_before and not is_low_quality_content(text_before):
+                        child_id = f"{doc_id}_c{child_idx}"
+                        child_document_list.append(
+                            ChildDocument(
+                                content=text_before,
+                                metadata={
+                                    "doc_id": doc_id,
+                                    "doc_title": parent_metadata.get("doc_title", ""),
+                                    "chunk_id": child_id,
+                                    "doc_hash": _generate_doc_hash(text_before),
+                                    "parent_id": parent_id,
+                                },
+                            )
+                        )
+                        child_idx += 1
 
-            # 合并过短 chunks
-            child_document_list = self._merge_short_children(child_document_list)
+                    # 表格转为 Markdown 作为独立 child
+                    table_idx = int(pm.group(1))
+                    if table_type == "full" and table_idx < len(tables):
+                        md_table = _html_table_to_text(tables[table_idx])
+                    elif table_type == "broken" and table_idx < len(broken_tables):
+                        md_table = _html_table_to_text(broken_tables[table_idx])
+                    else:
+                        md_table = ""
+                    if md_table:  # 转换成功且非空
+                        child_id = f"{doc_id}_c{child_idx}"
+                        child_document_list.append(
+                            ChildDocument(
+                                content=md_table,
+                                metadata={
+                                    "doc_id": doc_id,
+                                    "doc_title": parent_metadata.get("doc_title", ""),
+                                    "chunk_id": child_id,
+                                    "doc_hash": _generate_doc_hash(md_table),
+                                    "parent_id": parent_id,
+                                },
+                            )
+                        )
+                        child_idx += 1
+
+                    last_end = pm.end()
+
+                # 占位符后的文本段
+                text_after = child_content[last_end:].strip()
+                if text_after and not is_low_quality_content(text_after):
+                    child_id = f"{doc_id}_c{child_idx}"
+                    child_document_list.append(
+                        ChildDocument(
+                            content=text_after,
+                            metadata={
+                                "doc_id": doc_id,
+                                "doc_title": parent_metadata.get("doc_title", ""),
+                                "chunk_id": child_id,
+                                "doc_hash": _generate_doc_hash(text_after),
+                                "parent_id": parent_id,
+                            },
+                        )
+                    )
+                    child_idx += 1
+
+        # ── 4. 合并过短 chunks ────────────────────────────────────
+        child_document_list = self._merge_short_children(child_document_list)
 
         return child_document_list
 
@@ -285,6 +393,7 @@ class SmartChunker:
         """
         将连续的小 section（< MIN_PARENT_SIZE）合并，
         直到合并后达到 MIN_PARENT_SIZE。
+        同时有 MAX_PARENT_SIZE 上限保护，避免合并后过大。
         """
         if not sections:
             return []
@@ -295,6 +404,12 @@ class SmartChunker:
             if current is None:
                 current = sec
             else:
+                # Size guard: 合并后不超过 MAX_PARENT_SIZE
+                if len(current.page_content) + len(sec.page_content) + 2 > MAX_PARENT_SIZE:
+                    merged.append(current)
+                    current = sec
+                    continue
+
                 current.page_content += "\n\n" + sec.page_content
                 self._merge_metadata(current, sec)
 
@@ -305,8 +420,12 @@ class SmartChunker:
         # 处理剩余
         if current:
             if merged:
-                merged[-1].page_content += "\n\n" + current.page_content
-                self._merge_metadata(merged[-1], current)
+                # 尝试合并到最后一个，但不超过 MAX_PARENT_SIZE
+                if len(merged[-1].page_content) + len(current.page_content) + 2 <= MAX_PARENT_SIZE:
+                    merged[-1].page_content += "\n\n" + current.page_content
+                    self._merge_metadata(merged[-1], current)
+                else:
+                    merged.append(current)
             else:
                 merged.append(current)
 
@@ -371,7 +490,7 @@ class SmartChunker:
         "目录", "table of contents", "index",
         "版本修订记录", "修订记录", "变更记录", "changelog", "版本历史",
         "免责声明", "版权声明", "声明", "注意事项", "重要声明",
-        " preface", "preface", "foreword",
+        "preface", "foreword",
         "acknowledgement", "acknowledgments", "致谢",
         "abbreviation", "缩写", "glossary", "词汇表",
         "参考文献", "reference", "references",
@@ -424,7 +543,7 @@ class SmartChunker:
         合并过短的 child chunks（< MIN_CHILD_CHUNK_SIZE）。
 
         策略：
-        - 如果有前一个 chunk，合并到前一个
+        - 如果有前一个 chunk，合并到前一个（不超过 CHILD_CHUNK_SIZE）
         - 否则合并到后一个
         - 如果是中间块且前后都有，优先合并到前一个
         - 表格块（以 | 开头）不参与合并
@@ -448,29 +567,30 @@ class SmartChunker:
             # 检查是否过短
             if len(child.content) < self.MIN_CHILD_CHUNK_SIZE:
                 if result:
-                    # 合并到前一个
+                    # 合并到前一个（size guard: 不超过 CHILD_CHUNK_SIZE * 1.5）
                     prev = result[-1]
-                    prev.content = prev.content.rstrip() + "\n\n" + child.content
-                    prev.metadata["doc_hash"] = _generate_doc_hash(prev.content)
-                    # 如果不是最后一个，且后面有非表格块，尝试继续合并
-                    if i < len(children) - 1:
-                        next_child = children[i + 1]
-                        if not next_child.content.strip().startswith("|"):
-                            # 把下一个也合并进来
-                            next_content = next_child.content.lstrip()
-                            prev.content = prev.content.rstrip() + "\n\n" + next_content
-                            prev.metadata["doc_hash"] = _generate_doc_hash(prev.content)
-                            skip_next = True
+                    merged_len = len(prev.content) + len(child.content) + 2
+                    if merged_len <= CHILD_CHUNK_SIZE * 1.5:
+                        prev.content = prev.content.rstrip() + "\n\n" + child.content
+                        prev.metadata["doc_hash"] = _generate_doc_hash(prev.content)
+                    else:
+                        # 合并会超长，保留原 child
+                        result.append(child)
+                    continue
                 elif i < len(children) - 1:
-                    # 没有前一个，合并到后一个
+                    # 没有前一个，合并到后一个（size guard）
                     next_child = children[i + 1]
                     if not next_child.content.strip().startswith("|"):
-                        next_child.content = child.content.rstrip() + "\n\n" + next_child.content.lstrip()
-                        next_child.metadata["doc_hash"] = _generate_doc_hash(next_child.content)
-                        skip_next = True
-                        result.append(next_child)
+                        merged_len = len(child.content) + len(next_child.content) + 2
+                        if merged_len <= CHILD_CHUNK_SIZE * 1.5:
+                            next_child.content = child.content.rstrip() + "\n\n" + next_child.content.lstrip()
+                            next_child.metadata["doc_hash"] = _generate_doc_hash(next_child.content)
+                        else:
+                            result.append(child)
+                        continue
                     else:
                         result.append(child)
+                        continue
                 else:
                     # 最后一个且没有前一个，保留
                     result.append(child)
@@ -496,7 +616,7 @@ class SmartChunker:
         3. 计算相邻片段的 cosine similarity
         4. 相似度低于阈值的断点切分
         5. 每个语义 chunk 创建一个 Document
-        6. 每个 Document 内部用 _split_children_with_tables 切 child chunks
+        6. 每个 Document 内部用 _split_children 切 child chunks
 
         Returns:
             List[Document]: 每个语义 chunk 对应一个 Document
@@ -563,7 +683,7 @@ class SmartChunker:
 
             parent_id = f"{doc_id}_p{chunk_idx}"
 
-            child_document_list, content_for_parent = self._split_children_with_tables(
+            child_document_list = self._split_children(
                 chunk_text,
                 {"doc_title": title},
                 doc_id,
@@ -574,12 +694,12 @@ class SmartChunker:
                 child_global_idx += len(child_document_list)
 
             document = Document(
-                content=content_for_parent,
+                content=chunk_text,
                 metadata={
                     "doc_id": doc_id,
                     "doc_title": title,
                     "chunk_id": parent_id,
-                    "doc_hash": _generate_doc_hash(content_for_parent),
+                    "doc_hash": _generate_doc_hash(chunk_text),
                 },
                 children=child_document_list if child_document_list else None,
             )
@@ -616,7 +736,7 @@ class SmartChunker:
         """当无法分块时，创建单个 Document"""
         parent_id = f"{doc_id}_p{parent_idx}"
 
-        child_document_list, content_for_parent = self._split_children_with_tables(
+        child_document_list = self._split_children(
             md,
             {"doc_title": title},
             doc_id,
@@ -625,12 +745,12 @@ class SmartChunker:
         )
 
         document = Document(
-            content=content_for_parent,
+            content=md,
             metadata={
                 "doc_id": doc_id,
                 "doc_title": title,
                 "chunk_id": parent_id,
-                "doc_hash": _generate_doc_hash(content_for_parent),
+                "doc_hash": _generate_doc_hash(md),
             },
             children=child_document_list if child_document_list else None,
         )

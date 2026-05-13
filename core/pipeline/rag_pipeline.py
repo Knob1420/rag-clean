@@ -132,7 +132,7 @@ class RAGPipeline:
         for pid, children in parent_children.items():
             if any(c.chunk_type == "summary" for c in children):
                 parent_ids_to_expand.append(pid)
-            elif len(children) >= 1:
+            elif len(children) >= 2:
                 parent_ids_to_expand.append(pid)
             else:
                 single_child_ids.append(pid)
@@ -190,7 +190,7 @@ class RAGPipeline:
                 continue
 
             # 4b. >= 2 个 child from same parent → 展开为 parent
-            if len(children) >= 1:
+            if len(children) >= 2:
                 if chunk.parent_id in parent_map:
                     parent_src = parent_map[chunk.parent_id]
                     max_score = max(c.score for c in children)
@@ -408,7 +408,6 @@ class RAGPipeline:
         query_rewrite_only: bool = False,
         dataset_ids: Optional[List[str]] = None,
         use_generation: bool = True,
-        use_dag: bool = False,
     ) -> PipelineResult:
         """
         执行 Query Rewrite + Retrieval + Generation pipeline
@@ -437,17 +436,6 @@ class RAGPipeline:
         import time
 
         timing = {}
-
-        # 如果启用 DAG 模式，走 DAG 路径
-        if use_dag:
-            return self.run_dag(
-                query=query,
-                top_k=top_k,
-                use_rerank=use_rerank,
-                rerank_top_k=rerank_top_k,
-                dataset_ids=dataset_ids,
-                use_generation=use_generation,
-            )
 
         # 0. Query Understanding（前置：多问句拆分 + 意图分类）
         t0 = time.time()
@@ -530,6 +518,12 @@ class RAGPipeline:
         per_query_bm25_chunks: Dict[str, List[RetrievedChunk]] = {}
         per_query_vector_chunks: Dict[str, List[RetrievedChunk]] = {}
 
+        # 细粒度计时
+        t_rerank_total = 0.0
+        t_parent_expand_total = 0.0
+        # 汇总 _hybrid_search 内部的细粒度 timing
+        agg_hybrid_timing: Dict[str, float] = {}
+
         for sq in sub_questions:
             rr = sub_question_rewrite_map.get(sq.query)
             rq_list = rr.rewritten_queries if rr else [sq.query]
@@ -544,14 +538,20 @@ class RAGPipeline:
                     use_rerank=False,
                     dataset_ids=dataset_ids,
                 )
-                # 记录 BM25 / Vector 原始结果（用于分析）
-                bm25_chunks = self.retrieval._bm25_search(rq, options)
-                vector_chunks = self.retrieval._vector_search(rq, options)
+                # 预处理：构建 query_string + query_vector
+                query_string = self.retrieval._build_bm25_query(rq, options)
+                from core.client.embedder import encode
+                query_vector = encode(rq)
+                # 一次 hybrid 拿到 bm25 / vector / hybrid 三组结果
+                fused_chunks, bm25_chunks, vector_chunks, ht = self.retrieval._hybrid_search(
+                    query_string, query_vector, options, return_intermediates=True
+                )
                 per_query_bm25_chunks[rq] = bm25_chunks
                 per_query_vector_chunks[rq] = vector_chunks
 
-                # 使用 _hybrid_search 做真实检索（BM25 + Vector + RRF）
-                fused_chunks = self.retrieval._hybrid_search(rq, options)
+                # 汇总 hybrid_timing
+                for k, v in ht.items():
+                    agg_hybrid_timing[k] = agg_hybrid_timing.get(k, 0.0) + v
 
                 # 合并去重（该 sub_question 内）
                 top_k_per_rq = max(1, (top_k or rerank_top_k) // max(len(rq_list), 1))
@@ -562,8 +562,11 @@ class RAGPipeline:
 
             # 该 sub_question 独立 rerank
             if use_rerank and sq_chunks:
+                t_rr = time.time()
+                from core.query_engineer.rerank_query import build_rerank_query
+                rerank_query = build_rerank_query(sq.query)
                 sq_chunks = self.retrieval._rerank(
-                    sq.query,
+                    rerank_query,
                     sq_chunks,
                     RetrievalOptions(
                         top_k=top_k,
@@ -571,9 +574,13 @@ class RAGPipeline:
                         dataset_ids=dataset_ids,
                     ),
                 )
+                t_rerank_total += time.time() - t_rr
 
             # 展开 parent：child/summary → parent（按 parent_id 去重取 max rerank score）
+            t_pe = time.time()
             sq_chunks = self._expand_to_parent_chunks(sq_chunks)
+            t_parent_expand_total += time.time() - t_pe
+
             logger.info(
                 f"[Pipeline] sub_question='{sq.query}' parent展开后: {len(sq_chunks)} 条"
             )
@@ -586,7 +593,13 @@ class RAGPipeline:
                     all_chunks.append(chunk)
                     seen_chunk_ids.add(chunk.chunk_id)
 
-        timing["retrieve"] = time.time() - t0
+        t_retrieve_total = time.time() - t0
+        timing["retrieve"] = round(t_retrieve_total, 3)
+        timing["rerank"] = round(t_rerank_total, 3)
+        timing["parent_expand"] = round(t_parent_expand_total, 3)
+        # 从 _hybrid_search 汇总的细粒度 timing
+        for k, v in agg_hybrid_timing.items():
+            timing[k] = round(v, 3)
 
         # 3. 结构化参数查询（每条 sub_question 独立查询）
         spec_context = ""
@@ -660,132 +673,3 @@ class RAGPipeline:
         result.generation_usage = generation_usage
 
         return result
-
-    def run_dag(
-        self,
-        query: str,
-        top_k: int = 20,
-        use_rerank: bool = True,
-        rerank_top_k: Optional[int] = None,
-        dataset_ids: Optional[List[str]] = None,
-        use_generation: bool = True,
-    ) -> "PipelineResult":
-        """
-        DAG 模式的 Pipeline
-
-        流程：QueryPlanner → QueryIR → DAGExecutor → Retrieval → Rerank → Generation
-        """
-        import time
-
-        timing = {}
-
-        # Step 1: QueryPlanner 生成 QueryIR
-        t0 = time.time()
-        from core.query_engineer.query_planner import QueryPlanner
-
-        planner = QueryPlanner()
-        query_ir = planner.plan(query)
-        timing["planning"] = time.time() - t0
-
-        # Step 2: DAGExecutor 执行
-        t0 = time.time()
-        from core.query_engineer.dag_executor import DAGExecutor
-
-        executor = DAGExecutor(retrieval_service=self.retrieval)
-        dag_result = executor.execute_query_ir(query_ir, top_k=top_k)
-        timing["dag_execution"] = time.time() - t0
-
-        chunks = dag_result.chunks or dag_result.filtered or []
-
-        # Step 3: 可选的 Rerank
-        if use_rerank and chunks:
-            t0 = time.time()
-            chunks = self.retrieval._rerank(
-                query,
-                chunks,
-                RetrievalOptions(
-                    top_k=top_k,
-                    rerank_top_k=rerank_top_k or top_k,
-                    dataset_ids=dataset_ids,
-                ),
-            )
-            timing["rerank"] = time.time() - t0
-
-        # Step 4: Parent 展开
-        t0 = time.time()
-        chunks = self._expand_to_parent_chunks(chunks)
-        timing["parent_expand"] = time.time() - t0
-
-        # Step 5: 结构化参数查询（复用现有 SpecMatcher）
-        spec_context = ""
-        if query_ir.entities or query_ir.required_fields:
-            spec_results = query_products(
-                target_models=query_ir.entities,
-                required_fields=query_ir.required_fields,
-                numerical_constraints={
-                    c.field: f"{c.op}{c.value}"
-                    for c in query_ir.constraints
-                    if c.type == "numeric"
-                },
-            )
-            spec_context = format_spec_context(spec_results, query_ir.intent)
-
-        # Step 6: Generation
-        generation_answer = None
-        generation_usage = None
-        if use_generation and chunks:
-            t0 = time.time()
-            try:
-                generation_svc = get_generation_service()
-                # 构建 fake understanding result（兼容现有 generation）
-                understanding = QueryUnderstandingResult(
-                    original_query=query,
-                    sub_queries=[SubQuery(query=query, intent=query_ir.intent)],
-                    generation_constraints=[],
-                )
-                # 构建 fake PipelineResult（复用 _generate）
-                temp_result = PipelineResult(
-                    original_query=query,
-                    understanding_result=understanding,
-                    rewritten_queries=[],
-                    chunks=chunks,
-                    per_sub_question_chunks={query: chunks},
-                    rq_intent_map={query: query_ir.intent},
-                    total=len(chunks),
-                    timing={},
-                    spec_context=spec_context,
-                    per_sub_question_spec_context={query: spec_context},
-                    per_sub_question_generation_constraints={},
-                    intent=query_ir.intent,
-                    per_query_bm25_chunks={},
-                    per_query_vector_chunks={},
-                    generation_answer=None,
-                    generation_usage=None,
-                )
-                answer, usage = self._generate(query, temp_result, generation_svc)
-                generation_answer = answer
-                generation_usage = usage
-            except Exception as e:
-                logger.warning(f"[Pipeline DAG] Generation failed: {e}")
-            timing["generation"] = time.time() - t0
-
-        timing["total"] = sum(timing.values())
-
-        return PipelineResult(
-            original_query=query,
-            understanding_result=None,  # DAG 模式不使用 Understand
-            rewritten_queries=[],
-            chunks=chunks,
-            per_sub_question_chunks={query: chunks},
-            rq_intent_map={},
-            total=len(chunks),
-            timing=timing,
-            spec_context=spec_context,
-            per_sub_question_spec_context={},
-            per_sub_question_generation_constraints={},
-            intent=query_ir.intent,
-            per_query_bm25_chunks={},
-            per_query_vector_chunks={},
-            generation_answer=generation_answer,
-            generation_usage=generation_usage,
-        )

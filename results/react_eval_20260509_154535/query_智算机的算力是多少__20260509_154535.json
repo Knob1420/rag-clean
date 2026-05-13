@@ -1,0 +1,55 @@
+{
+  "eval_id": "20260509_154535",
+  "timestamp": "2026-05-09T16:14:51.557394",
+  "query": "智算机的算力是多少？",
+  "answer": "根据知识库检索结果，星载智能计算机（智算机）包含多个系列和型号，各型号的算力如下：\n\n## 智算机算力汇总表\n\n| 系列 | 型号 | 算力 | 备注 |\n|------|------|------|------|\n| **智加NX系列** | 智加NX1 | 248 TOPS @ INT8 | [来源: 星载智能计算机产品参数表] |\n| | 智加NX2 | 248 TOPS @ INT8 | [来源: 星载智能计算机产品参数表] |\n| | 智加NX3 | 248 TOPS @ INT8 | [来源: 星载智能计算机产品参数表] |\n| | 智加NX4 | 248 TOPS @ INT8 | [来源: 星载智能计算机产品参数表] |\n| **智加G系列** | 智加G1 | 248 TOPS @ INT8 | [来源: 星载智能计算机产品参数表] |\n| | 智加G1A | 248 TOPS @ INT8 | [来源: 星载智能计算机产品参数表] |\n| | 智加G1B | 248 TOPS @ INT8 | [来源: 星载智能计算机产品参数表] |\n| | 智加G2 | 248 TOPS @ INT8 | [来源: 星载智能计算机产品参数表] |\n| | 智加G3 | 2070 TFLOPS @ FP4 | [来源: 星载智能计算机产品参数表] |\n| **智加X系列** | 智加X1 | 32 TOPS @ INT8 | [来源: 星载智能计算机产品参数表] |\n| | 智加X2 | 16 TOPS @ INT8 | [来源: 星载智能计算机产品参数表] |\n| | 智加X3 | 32 TOPS @ INT8 | [来源: 星载智能计算机产品参数表] |\n| | 智加X4 | 192 TOPS @ INT8 (72 TFLOPS @ FP16) | [来源: 星载智能计算机产品参数表] |\n| | 智加X100 | 768 TOPS @ INT8 (256 TFLOPS @ FP16) | [来源: 星载智能计算机产品参数表] |\n| | 智加X100-GPU | 192 TOPS @ INT8 | [来源: 星载智能计算机产品参数表] |\n\n## 关键信息总结\n\n1. **算力范围**：智算机的算力从16 TOPS到768 TOPS不等，覆盖了从轻量级到高性能的不同需求。\n\n2. **主流算力**：\n   - NX系列和G系列（除G3外）大多为**248 TOPS @ INT8**\n   - G3型号提供**2070 TFLOPS @ FP4**的高性能算力\n   - X系列算力差异较大，从16 TOPS到768 TOPS\n\n3. **精度类型**：\n   - 大部分型号使用INT8精度\n   - 部分型号支持FP4、FP16、FP32等不同精度\n\n4. **架构差异**：\n   - NX系列和G系列主要采用英伟达GPU-SOC架构\n   - X系列主要采用国产化架构（飞腾CPU+寒武纪NPU等）\n\n如果您需要了解特定型号的详细信息或其他参数，请告诉我具体型号。",
+  "terminated_reason": "finish",
+  "total_iterations": 3,
+  "steps": [
+    {
+      "iteration": 0,
+      "thought": "",
+      "action": "resolve_entities",
+      "action_input": {
+        "entities": [
+          "智算机"
+        ]
+      },
+      "observation": "【实体解析结果】\n\n输入: 智算机\n  类型: 大类\n  标准名: 星载智能计算机\n  子实体: 智加NX1, 智加NX2, 智加NX3, 智加NX4, 智加G1, 智加G1A, 智加G1B, 智加G2, 智加G3, 智加X1, 智加X2, 智加X3, 智加X4, 智加X100, 智加X100-GPU",
+      "duration": 2.89
+    },
+    {
+      "iteration": 1,
+      "thought": "",
+      "action": "spec_query",
+      "action_input": {
+        "entities": [
+          "星载智能计算机"
+        ],
+        "fields": [
+          "算力"
+        ]
+      },
+      "observation": "【产品参数表查询结果】\n\n## 系列：智加NX系列\n\n### 1. 智加NX1\n   分类: 星载智能计算机\n   合作单位: 国星宇航\n   架构: 英伟达GPU-SOC+赛灵思FPGA-SOC\n   算力: 248TOPS@INT8\n   重量: 2.35kg（带盖）/ 2.07±0.1kg（不带盖）\n   功耗: 开机静置51W / 普通业务93.5W / 峰值128W\n   尺寸: 231mm×160mm×52.5mm（带盖）/ 231mm×160mm×45.5mm（不带盖）\n   内存: GPU-SOC: 64GB+ECC； FPGA-SOC: 4GB(PS)+4GB(PL)+ECC\n   存储: GPU-SOC: 4TB； FPGA-SOC: 4TB\n   对外接口: CAN×4、PPS×2、千兆以太网×4、万兆以太网×2\n   核心芯片: (非国产) ORIN+XCZU19EG\n   输入电压: 28V±20%（一次电源）\n   工作温度: -20℃~50℃\n   储存温度: -25℃~55℃\n   操作系统: Ubuntu 22.04.4 LTS\n   设计寿命: 5年",
+      "duration": 3.117
+    },
+    {
+      "iteration": 2,
+      "thought": "",
+      "action": "finish",
+      "action_input": {},
+      "observation": "提交最终回答（1309 字）",
+      "duration": 26.109
+    }
+  ],
+  "accumulated_chunks": [],
+  "token_usage": {
+    "prompt_tokens": 13334,
+    "completion_tokens": 990,
+    "total_tokens": 14324
+  },
+  "timing": {
+    "total": 32.117
+  },
+  "error": null
+}

@@ -4,6 +4,7 @@
 
 from core.client.embedder import EmbeddingClient, get_embedder, encode, encode_batch
 from core.client.rerank_client import RerankClient, get_rerank_client, rerank_documents
+from core.query_engineer.keyword_extractor import ChineseKeywordExtractor, get_keyword_extractor
 from core.retrieve.retrieval import RetrievalService, get_retrieval_service
 from core.retrieve.retrieval_models import (
     RetrievedChunk,
@@ -26,6 +27,8 @@ __all__ = [
     "RerankClient",
     "get_rerank_client",
     "rerank_documents",
+    "ChineseKeywordExtractor",
+    "get_keyword_extractor",
     "RetrievalService",
     "get_retrieval_service",
     "RetrievedChunk",

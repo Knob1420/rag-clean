@@ -1,0 +1,650 @@
+{
+  "eval_id": "20260513_140929",
+  "timestamp": "2026-05-13T14:55:02.451273",
+  "query": "智算机的算力是多少？",
+  "answer": "根据我查阅的知识库文档，智算机的算力信息如下：\n\n## 智算机算力规格\n\n智算机是\"三体计算星座\"项目中的星载智能计算设备，主要用于在轨人工智能处理。根据文档中的信息，智算机的算力配置如下：\n\n### 1. 单板算力（根据《之江星座首发星座系统方案设计报告_0519_1940》）\n- **单板稀疏算力**：275 TOPS @ INT8\n- **单板稠密算力**：138 TOPS @ INT8\n\n### 2. 整星算力配置（不同卫星配置不同）\n\n#### 主计算星（01、02星）：\n- **单星模式**：\n  - 整星智能稀疏算力：1100 TOPS @ INT8\n  - 整星智能稠密算力：552 TOPS @ INT8\n- **说明**：主计算星每颗卫星配备4块GPU板卡，因此整星算力是单板算力的4倍\n\n#### 从计算星（03-14星）：\n- **单星模式**：\n  - 整星智能稀疏算力：275 TOPS @ INT8  \n  - 整星智能稠密算力：138 TOPS @ INT8\n- **说明**：从计算星每颗卫星配备1块GPU板卡\n\n### 3. 星座互联模式算力\n- **01+02星互联模式**：\n  - 稀疏算力：2200 TOPS @ INT8\n  - 稠密算力：1104 TOPS @ INT8\n- **01+02+03+04星互联模式**：\n  - 稀疏算力：2750 TOPS @ INT8\n  - 稠密算力：1380 TOPS @ INT8\n- **星座理论最大算力**：\n  - 稀疏算力：5500 TOPS @ INT8\n  - 稠密算力：2760 TOPS @ INT8\n\n### 4. 另一版本数据（根据《之江星座首发星座系统方案设计报告_0608发布》）\n该版本提供了略有不同的数据：\n- **01、02星单板稀疏算力**：248 TOPS @ INT8\n- **01、02星单板稠密算力**：124 TOPS @ INT8\n- **整星智能稀疏算力**：992 TOPS @ INT8\n- **整星智能稠密算力**：441 TOPS @ INT8\n\n### 5. 智算机型号信息\n从文档中可以看到智算机有多种型号：\n- **智加NX1智算机**：包含FPGA预处理主板和GPU高性能处理主板\n- **智加G1智算机**：仅包含GPU高性能处理主板\n- **智加NX3智算机**：针对海王星SAR遥感卫星的型号\n- **星载智算机G2A**：正样件型号\n\n### 总结\n智算机的算力配置根据卫星类型和运行模式有所不同：\n- **单板基本算力**：约138-275 TOPS @ INT8（稠密-稀疏）\n- **整星算力**：从138 TOPS到1100 TOPS不等，取决于卫星配置\n- **星座级算力**：最高可达5500 TOPS @ INT8（稀疏模式）\n\n这些算力数据主要用于支持在轨人工智能处理任务，包括图像处理、模型推理等太空计算应用。\n\n[来源：之江星座首发星座系统方案设计报告_0519_1940、之江星座首发星座系统方案设计报告_0608发布、NX1和G1智算机鉴定级环境试验测试细则等文档]",
+  "terminated_reason": "finish",
+  "total_iterations": 4,
+  "steps": [
+    {
+      "iteration": 0,
+      "thought": "",
+      "action": "bm25_search",
+      "action_input": {
+        "queries": [
+          {
+            "label": "智算机产品定义",
+            "queries": [
+              "智算机",
+              "智算",
+              "智能计算"
+            ]
+          }
+        ]
+      },
+      "observation": "━━━━━━━━━━ 子问题: 智算机产品定义 [BM25] ━━━━━━━━━━\n  ═══ 查询 1: \"智算机\" ═══\n\n  找到 10 条匹配结果：\n  [1] 文档=Z_之江星座首发星座系统方案设计报告_0519_1940 | 分数=0.6758\n    内容: 智算机-GPU1\n192.168.7.  \n智算机-GPU2\n192.168.8.  \n智算机-GPU3\n192.168.9.  \n智算机-GPU4\n192.168.10.\n从计算星-3\n智算机-FPGA\n192.168.11.  \n智算机-GPU\n192.168.12.\n从计算星-4\n智算机-FPGA\n192.168.16.  \n智算机-GPU\n192.168.17.\n从计算星-5\n智算机-FPGA\n192.168.21.  \n智算机-GPU\n192.168.22.\n从计算星-6\n智算机-FPGA\n192.168.26.  \n智算机-GPU\n192.168.27.\n从计算星-7\n智算机-FPGA\n192.168.31.  \n智算机-GPU\n192.168.32.\n从计算星-8\n智算机-FPGA\n192.168.3",
+      "duration": 6.006
+    },
+    {
+      "iteration": 1,
+      "thought": "",
+      "action": "bm25_search",
+      "action_input": {
+        "queries": [
+          {
+            "label": "智算机算力参数",
+            "queries": [
+              "算力",
+              "TOPS",
+              "INT8",
+              "稀疏算力",
+              "稠密算力"
+            ]
+          }
+        ]
+      },
+      "observation": "━━━━━━━━━━ 子问题: 智算机算力参数 [BM25] ━━━━━━━━━━\n  ═══ 查询 1: \"算力\" ═══\n\n  找到 10 条匹配结果：\n  [1] 文档=Z_之江星座首发星座系统方案设计报告_0519_1940 | 分数=-1.5483\n    内容: 192.168.41.  \n智算机-GPU\n192.168.42.\n从计算星-10\n智算机-FPGA\n192.168.46.  \n智算机-GPU\n192.168.47.\n从计算星-11\n智算机-FPGA\n192.168.51.  \n智算机-GPU\n192.168.52.\n从计算星-12\n智算机-FPGA\n192.168.56.  \n智算机-GPU\n192.168.57.\n从计算星-13\n智算机-FPGA\n192.168.61.  \n智算机-GPU\n192.168.62.\n从计算星-14\n智算机-FPGA\n192.168.66.  \n智算机-GPU\n192.168.67.  \n星座计算能力分析\n计算性能分析\n算力分析\n01、02星单星模式：该星单板稀疏算力为275TOPS@INT8，整星智能稀疏算力为1100TOPS",
+      "duration": 11.379
+    },
+    {
+      "iteration": 2,
+      "thought": "",
+      "action": "bm25_search",
+      "action_input": {
+        "queries": [
+          {
+            "label": "智算机型号配置",
+            "queries": [
+              "智算机-GPU",
+              "智算机-FPGA",
+              "星载智算机",
+              "G2A",
+              "NX4A"
+            ]
+          }
+        ]
+      },
+      "observation": "━━━━━━━━━━ 子问题: 智算机型号配置 [BM25] ━━━━━━━━━━\n  ═══ 查询 1: \"智算机-GPU\" ═══\n\n  找到 10 条匹配结果：\n  [1] 文档=Z_之江星座首发星座系统方案设计报告_0519_1940 | 分数=3.4834\n    内容: 智算机-GPU1\n192.168.7.  \n智算机-GPU2\n192.168.8.  \n智算机-GPU3\n192.168.9.  \n智算机-GPU4\n192.168.10.\n从计算星-3\n智算机-FPGA\n192.168.11.  \n智算机-GPU\n192.168.12.\n从计算星-4\n智算机-FPGA\n192.168.16.  \n智算机-GPU\n192.168.17.\n从计算星-5\n智算机-FPGA\n192.168.21.  \n智算机-GPU\n192.168.22.\n从计算星-6\n智算机-FPGA\n192.168.26.  \n智算机-GPU\n192.168.27.\n从计算星-7\n智算机-FPGA\n192.168.31.  \n智算机-GPU\n192.168.32.\n从计算星-8\n智算机-FPGA\n192.1",
+      "duration": 13.894
+    },
+    {
+      "iteration": 3,
+      "thought": "",
+      "action": "finish",
+      "action_input": {},
+      "observation": "提交最终回答（1328 字）",
+      "duration": 36.626
+    }
+  ],
+  "accumulated_chunks": [
+    {
+      "chunk_id": "3c044dc9d7f641d0_p11",
+      "doc_id": "3c044dc9d7f641d0",
+      "doc_title": "Z_之江星座首发星座系统方案设计报告_0519_1940",
+      "content": "智算机-GPU1\n192.168.7.  \n智算机-GPU2\n192.168.8.  \n智算机-GPU3\n192.168.9.  \n智算机-GPU4\n192.168.10.\n从计算星-3\n智算机-FPGA\n192.168.11.  \n智算机-GPU\n192.168.12.\n从计算星-4\n智算机-FPGA\n192.168.16.  \n智算机-GPU\n192.168.17.\n从计算星-5\n智算机-FPGA\n192.168.21.  \n智算机-GPU\n192.168.22.\n从计算星-6\n智算机-FPGA\n192.168.26.  \n智算机-GPU\n192.168.27.\n从计算星-7\n智算机-FPGA\n192.168.31.  \n智算机-GPU\n192.168.32.\n从计算星-8\n智算机-FPGA\n192.168.36.  \n智算机-GPU\n192.168.37.\n从计算星-9\n智算机-FPGA\n192.168.41.  \n智算机-GPU\n192.168.42.\n从计算星-10\n智算机-FPGA\n192.168.46.  \n智算机-GPU\n192.168.47.\n从计算星-11\n智算机-",
+      "content_length": 1994,
+      "score": 3.4834,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "9d7bd049e65f5ea6_p0",
+      "doc_id": "9d7bd049e65f5ea6",
+      "doc_title": "智算机评审结论",
+      "content": "# 智算机评审结论  \n之江实验室科研任务专家组评审意见  \n报告名称\n智算机电性件研制与质量总结报告  \n评审意见：  \n，之江实验室在杭州组织召开了智算机转阶段评审会。参加会议的有成都国星宇航科技股份有限公司专家与代表，会议成立了评审组（名单附后）。会议听取了之江实验室汇报的《智算机电性件研制与质量总结报告》，经过讨论、质询，形成评审意见如下：\n智算机电性件产品按照研制技术流程完成了初样阶段各项研制任务，各项任务符合相关大纲及细则要求；\n智算机电性件产品各项功能指标满足设计要求；\n智算机电性件产品初样阶段质量问题及异常现象均已完成问题分析和闭环管理，产品质量受控；\n电性件阶段文件齐套。\n评审组同意通过评审，可以转入正样研制工作。  \n评审组组长签名：",
+      "content_length": 331,
+      "score": 0.0494,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "193c79c204b88d15_p17",
+      "doc_id": "193c79c204b88d15",
+      "doc_title": "NX1和G1智算机鉴定级电磁兼容试验报告20240830(公开)",
+      "content": "Frequency Scanning parameter</td></tr><tr><td>频率范围\nFrequency Range</td><td colspan=\"2\">扫描步长\nStep Size</td><td>驻留时间\nDwell Time</td></tr><tr><td>10kHz~1MHz</td><td colspan=\"2\">0.05f0</td><td>3s</td></tr><tr><td>1MHz~30MHz</td><td colspan=\"2\">0.01f0</td><td>3s</td></tr><tr><td>30MHz~1GHz</td><td colspan=\"2\">0.005f0</td><td>3s</td></tr><tr><td>1GHz~18GHz</td><td colspan=\"2\">0.0025f0</td><td>3s</td></tr><tr><td colspan=\"4\">注：f0为信号源调谐频率</td></tr><tr><td colspan=\"4\">GJB151B-2013 RS103 干扰信号\nGJB151B-2013",
+      "content_length": 1986,
+      "score": -0.041,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "566af09a1e7b6517_p16",
+      "doc_id": "566af09a1e7b6517",
+      "doc_title": "Z4_电磁兼容试验报告",
+      "content": "Frequency Scanning parameter</td></tr><tr><td>频率范围\nFrequency Range</td><td colspan=\"2\">扫描步长\nStep Size</td><td>驻留时间\nDwell Time</td></tr><tr><td>10kHz~1MHz</td><td colspan=\"2\">0.05f0</td><td>3s</td></tr><tr><td>1MHz~30MHz</td><td colspan=\"2\">0.01f0</td><td>3s</td></tr><tr><td>30MHz~1GHz</td><td colspan=\"2\">0.005f0</td><td>3s</td></tr><tr><td>1GHz~18GHz</td><td colspan=\"2\">0.0025f0</td><td>3s</td></tr><tr><td colspan=\"4\">注：f0为信号源调谐频率</td></tr><tr><td colspan=\"4\">GJB151B-2013 RS103 干扰信号\nGJB151B-2013",
+      "content_length": 1987,
+      "score": -0.041,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "494a22605c20d15e_p0",
+      "doc_id": "494a22605c20d15e",
+      "doc_title": "AI智算机IDS20260304",
+      "content": "# 之江首发星座\n\n# 主星智算机-智加 NX4A IDS 表  \n| 签署科目 | 签 名 | 日 期 |\n| --- | --- | --- |\n| 编 写 | 张良 | 2026.0122 |\n| 校 对 | 高少波 | 2026.0122 |\n| 审 核 | 陈启亮 | 2026.0122 |\n| 标 审 |  |  |\n| 批 准 | 颜迪颖 | 2026.0122 |  \n之江实验室  \n天基计算系统研究中心\n\n# 主星智算机-智加NX4A IDS表  \n会签页  \n|  | 姓名 | 单位(部门) | 日期 |\n| --- | --- | --- | --- |\n| 会签 | 任静和 | 之江实验室 | 2026.1.22 |\n| 会签 | 宫禄齐 | 之江实验室 | 2026.1.22 |\n| 会签 | 乔良 | 二院空间总体部 | 2026.3.3 |\n| 会签 |  |  |  |\n| 会签 |  |  |  |\n| 会签 |  |  |  |\n| 会签 |  |  |  |\n| 会签 |  |  |  |\n| 会签 |  |  |  |\n| 会签 |  |  | ",
+      "content_length": 573,
+      "score": -0.3144,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "ffed9a7c0b960445_p0",
+      "doc_id": "ffed9a7c0b960445",
+      "doc_title": "星载智算机投产通知",
+      "content": "# 关于启动星载智算机产品投产的通知\n\n# 之江实验室：  \n根据贵司提供的产品规范，结合我司对产品的评估结果，经我司综合评估，现决定委托贵司承担我司星载智算机产品的研制工作，请贵司按照下表投产数量和交付计划要求启动产品生产工作，确保产品按期交付。  \n| 序号 | 产品名称 | 规格型号 | 数量 | 交付时间 | 备注 |\n| --- | --- | --- | --- | --- | --- |\n| 1 | 星载智算机（电性件） | G2A | 1 | 2026.04.30\n(正样交付后归还) | 不涉及研制费用，免费搭载 |\n| 2 | 星载智算机（正样件） | G2A | 2 | 2026.05.31 |\n| 3 | 星载智算机（正样件） | G2A | 2 | 2026.07.31 |",
+      "content_length": 353,
+      "score": 1.4027,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "eb733935110cdd1c_p9",
+      "doc_id": "eb733935110cdd1c",
+      "doc_title": "F300S卫星平台与超算联试大纲&细则-20260305（发之江）(1)",
+      "content": "电缆5 星务计算机-超算 CAN通信线缆连接正确  \n电缆6 星务计算机-超算-X测控 422通信线缆连接正确  \n3加电状态检查\n加电后电流是否正常  \n测试人签字：  \n复核人签字：  \n附表1-3：供电接口测试记录表\n测试时间  \n测试地点  \n测试条件  \n产品名称  \n产品编号  \n序号\n测试项目  \n供电接口名称\n供电线缆\n信号名称\n接点号\n导通\n正负极阻抗（Ω）\n实测结果\n执行人\n复核人  \n浪涌电流测试\n测试浪涌电流值（A）\n浪涌测试波形\n浪涌电流持续时间波形\n浪涌电流上升斜率波形  \n反射纹波测试\n反射纹波电压（mV）\n关机纹波波形\n开机纹波波形  \n电压拉偏测试\n正向拉偏\n反向拉偏  \n拉偏后电压\n拉偏后电流\n拉偏后功耗\n测试结果\n拉偏后电压\n拉偏后电流\n拉偏后功耗\n测试结果  \n功耗测试\n+28V供电\n+29V供电（正向拉偏）\n+21V供电（反向拉偏）  \n电压\n电流\n功耗\n电压\n电流\n功耗\n电压\n电流\n功耗  \n附表2-1：遥控指令（GPU-SOC）测试表\n测试时间  \n测试地点  \n测试条件  \n协议\n产品名称  \n产品编号  \n序号\n测试项目\n实操步骤\n预期",
+      "content_length": 1683,
+      "score": 1.0392,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "494a22605c20d15e_p1",
+      "doc_id": "494a22605c20d15e",
+      "doc_title": "AI智算机IDS20260304",
+      "content": "修订记录  \n| 序号 | 章节名称 | 修订内容简述 | 修订日期 | 修订前版本号 | 修订后版本号 | 修订人 | 复核人 |\n| --- | --- | --- | --- | --- | --- | --- | --- |\n| 1 | 接口数据单13、14、19、20 | 修改CAN信号接点负荷栏电压描述; | 2026.2.5 | V1.1 | V1.2 | 张良 | 薛宏亮 |\n| 2 | 接口数据单27 | 修改说明栏第3点CAN芯片型号描述; | 2026.2.5 | V1.1 | V1.2 | 张良 | 薛宏亮 |\n| 3 | 接口数据单21 | 修改同步422差分信号接点号; | 2026.2.5 | V1.1 | V1.2 | 张良 | 薛宏亮 |\n| 4 | 接口数据单28 | 更新同步422差分信号接点号修改后的图片; | 2026.2.5 | V1.1 | V1.2 | 张良 | 薛宏亮 |\n| 5 | 接口数据单3 | 变更工作温度范围和启动温度范围 | 2026.2.5 | V1.1 | V1.2 | 任静和 | 祁振飞 |\n| 6 |  |  |  ",
+      "content_length": 1750,
+      "score": -1.66,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "376394e23474ea29_p8",
+      "doc_id": "376394e23474ea29",
+      "doc_title": "SCS-01-LY-ZLR1-SB-09【参考模板】智算机、路由器的研制和质量总结报告_zzh20250206",
+      "content": "# 1.5.3.2 多星及 12 星组网试验  \n正样路由-路由有线连接、单星路由-智算机有线连接，组成多星，开展星-星通信试验。  \n12 星有线组网试验现场的照片，如下图 1-2所示。  \n图1-2 12星有线组网试验照片  \n试验结果，如下表 1-6 所示。  \n表 1-6 单机与各载荷的联试  \n| 序号 | 联试对象 | 试验时间 | 地点 | 结果满足 |\n| --- | --- | --- | --- | --- |\n| 1 | 1星: 路由+智算 |  | 杭州 |  |\n| 2 | 2星: 路由+智算 |  | 杭州 |  |\n| 3 | 3星: 路由+智算 |  | 杭州 |  |\n| 4 | 4星: 路由+智算 | 2024.08.01~09.01 | 成都 | 是,各帧长与帧间隔均10Gps |\n| 5 | 5星: 路由+智算 |  |  |  |\n| 6 | 6星: 路由+智算 |  |  |  |\n| 7 | 7星: 路由+智算 |  |  |  |\n| 8 | 8星: 路由+智算 |  |  |  |  \n表1-7 正弦振动条件  \n| 9 | 9星: 路",
+      "content_length": 650,
+      "score": -1.5566,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "ced1c18f7205c94b_p0",
+      "doc_id": "ced1c18f7205c94b",
+      "doc_title": "感算卫星0312卫星智算路由初样对接测试纪要-2024.09.06(1)",
+      "content": "# 感算卫星0312卫星智算路由初样对接测试纪要-2024.09.06(1)  \n感算卫星智算&路由载荷初样对接测试纪要\n概述\n~，成都国星宇航及之江实验室针对智算载荷（编号1）、路由载荷（编号1、编号2）在成都国星宇航总部大楼AIT测试间分别进行载荷与卫星平台初样对接联调测试，对接测试记录和结果如下：  \n图1 现场测试图  \n测试软件版本记录\n表格1 对接测试星上软件版本记录\n序号\n所属系统\n单机名称\n软件内容\n软件版次\n备注  \n综电\n星务板\nARM\nGS_XWA_M2S090_ARM_0.5.0\n吴文露  \nFPGA\nGS_XW_M2S090_FPGA_0.5.0\n陈安康  \n配电板\nARM\nGS_PDA_TMS570_ARM_0.5.0\nGS_PDB_ TMS570_ARM_0.5.0\n王梦蝶  \n功率板\nARM\nGS_GLA_ TMS570_ARM_0.5.0\n王梦蝶  \nAI载荷板\nFPGA\nGS_AI_7K325T_FPGA_0.5.0\n王宝平  \nNX\nGS_AI_ORINNX_GPU_0.5.0\n杨坡  \n路由载荷\n路由载荷（编号1、编号2）\nCPU\nZLR1_CP",
+      "content_length": 1998,
+      "score": -1.7898,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "09b34254ebca3928_p10",
+      "doc_id": "09b34254ebca3928",
+      "doc_title": "SCS-01-LY-ZLR1-SB-05【三方签字版】与感算星平台第3次联试结果报告_智算&路由&激光&大模型&图像处理_20250109",
+      "content": "# 附录三：智算载荷测试问题表  \n附录表-2 智算载荷测试问题表  \n| 编号 | 测试项 | 器件 | 问题名称 | 测试记录 | 说明 |\n| --- | --- | --- | --- | --- | --- |\n| 1. | 智算遥控指令 | 智算机(星5) | ZG-K314: 智算机 GPU 本地系统恢复从 IMG 镜像文件恢复 | 已修复 | 系统恢复后,免密配置失效 |\n| 2. | 智算机(星5) | ZG-K288: GPU-遥控智算机模块GPU 星间链路通断测试 | 已修复 | 指令计数+1,ping 状态返回失败待之江排查(后续在智算星7,测试通过) |\n| 3. | 智算机(星5) | ZG-K298: GPU-遥控智算机模块GPU 星间链路性能测试 | 已修复 | 指令计数+1,ping 状态返回失败待之江排查(后续在智算星7,测试通过) |\n| 4. | 智算机(星5) | ZG-K316: 智算机 GPU 星网算法启动 | 待解决 | 遥测返回正常。之江方查看日志。系统复位后测试存在问题,待之江修改 |\n| 5. | 智算机(星5) | ZF-K903",
+      "content_length": 2545,
+      "score": 1.1491,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "a81b4055d592f1c5_p1",
+      "doc_id": "a81b4055d592f1c5",
+      "doc_title": "1_智算搭载载荷研制任务书--平台下发",
+      "content": "# 3.2技术指标  \na)成像技术指标如下表：  \n表 3-1 成像模式与指标  \n| 工作模式 | 分辨率 | 成像幅宽（标称值） |\n| --- | --- | --- |\n| 1m条带模式 | 1m | 10km |\n| 2m条带模式 | 2m | 20~25km |\n| 0.3m聚束（电扫） | 0.3m | 3km（R）×3km（A） |  \nb)舰船检测概率 $\\geqslant 90\\%$ (该指标不作为验收标准)\n\n# 4接口要求  \n搭载智算载荷对外接口如下表所示。  \n表 4-1 搭载智算载荷对外接口  \n| 序号 | 接口类型 | 接口关系 | 接口特性 | 功能 | 数量 |\n| --- | --- | --- | --- | --- | --- |\n| 1 | 电源接口 | 电源控制器→搭载智算载荷 | 1路母线电源:39.6~48.6V1路指令电源:28V±0.5V | 供电 | 2 |\n| 2 | CAN接口(主备) | 综合电子←→搭载智算载荷 | 见数据约定 | 遥控遥测 | 2 |\n| 3 | 异步422 | 综合电子→搭载智算载荷 | 按照规范 ",
+      "content_length": 721,
+      "score": -2.5121,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "b9b7dc83d7d9f3ab_p0",
+      "doc_id": "b9b7dc83d7d9f3ab",
+      "doc_title": "智算滤波正样图纸-签字版",
+      "content": "编号 ZS-ZJ-NX1-LB-Z  \n密级  \n阶段标记 Z  \n名称 ZS-ZJ-NX1-LB-Z图样  \n单位 之江实验室  \n编 写 2025.4.20  \n校对 张岩 2015.4.21  \n20250429  \n标 审  \n会签  \n之江实验室  \n本图纸（文件）版权为之江实验室所有，未经之江实验室书面同意，任何个人或组织不得复制、修改或翻译本图纸（文件）的任何部分。  \nXZ0XN-ΓZ-SZ  \n全部  \n3.2  \n技术要求：  \n1. 去除毛刺，锐角倒钝，不得划伤、碰撞；\n2. 未注尺寸公差按照GB/T1804-m级；\n未注形位公差按照GB/T1184-K级；\n3. 丝印字体按图示线稿，字体为实心，丝印颜色pantone white；\n4. 未注尺寸参考三维模型；\n5. 零件脱脂清洗.",
+      "content_length": 357,
+      "score": -5.5866,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "b83694a50e8607ab_p0",
+      "doc_id": "b83694a50e8607ab",
+      "doc_title": "太空计算星座：把人工智能送上天（李超）",
+      "content": "# 太空计算星座：把⼈⼯智能送上天（李超）  \n随着⼈⼯智能技术的快速迭代发展，AI正以颠覆性⼒量重构各⾏各业的底层逻辑与格局范式，正在从“关键变量”成⻓为经济⾼质量发展的“强劲增量”。太空作为⼈类拓展技术边界的重要疆域，理应成为⼈⼯智能发挥其变⾰作⽤的核⼼领域之⼀。“⼈⼯智能不能因缺失算⼒⽽缺席太空”，建设太空⼈⼯智能基础设施，正是实现这⼀变⾰的关键所在。\n\n# （⼩题⼀）为何要把⼈⼯智能送上天？  \n太空中蕴藏着遥感、⽓象、深空探测等多维度的海量数据资源，更为重要的是，这些数据天然具备全球全域覆盖性与实时性，是地⾯数据⽆法复刻的。这正是⼈⼯智能在太空场景实现价值突破的关键前提。  \n借助⼈⼯智能技术，能够打破传统太空数据应⽤的局限，实现基于模型的太空多源数据在轨智能融合与实时处理。通过将算⼒与模型送⼊太空，充分挖掘太空多源数据所蕴含的体系化价值，并以模型服务的⽅式，提供全时全域的智能化在轨应⽤能⼒。  \n先让我们回到现实。当前，虽然在轨卫星数量已近千颗，但绝⼤多数仍以“孤岛”形式运⾏。传统的卫星管理依赖于“放⻛筝”式的地⾯管控和“提线⽊偶”般的操控⽅式⸺卫星之间⼏乎不联通，地⾯站与",
+      "content_length": 2385,
+      "score": -1.1272,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "ca3021cefdbb2a7f_p0",
+      "doc_id": "ca3021cefdbb2a7f",
+      "doc_title": "ITU·人工智能与太空计算挑战赛介绍",
+      "content": "# ITU·⼈⼯智能与太空计算挑战赛介绍  \n“ITU·兴智杯⼈⼯智能与太空计算挑战赛”是之江实验室联合国际电信联盟和中国信息通信研究院共同发起的全球⾸个太空计算主题国际赛事。  \n全球⾸个聚焦“在轨智能计算”的国际赛事，开设太空智能赋能粮⻝⽣产、太空智能促进清洁饮⽔、太空智能赋能韧性城市和社区三个赛道，获奖团队将有机会获得之江实验室提供的算法上星、⽅案落地的全流程⽀持。  \n主办单位：国际电信联盟、中国信息通信研究院、之江实验室  \n协办单位：可持续发展⼤数据研究中⼼、浙江省之江发展基⾦会  \n报名时间：2026年1⽉1⽇-2026年1⽉31⽇  \n⼤赛报名截⽌了，赛队报名情况远超预期：总计有来⾃36个国家和地区的258⽀队伍报名参赛（兴智杯报名通道69个，ITU通道189个），其中⾮洲国家共有54⽀队伍报名，除中国⼤陆地区报名69个赛队之外，巴西报名43⽀队伍成为报名最踊跃的国家，同时和出现了若⼲成员来⾃两个国家以上的跨国赛队。",
+      "content_length": 422,
+      "score": -1.796,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "b83694a50e8607ab_p1",
+      "doc_id": "b83694a50e8607ab",
+      "doc_title": "太空计算星座：把人工智能送上天（李超）",
+      "content": "# （⼩题三）通往星⾠之路决⾮坦途  \n尽管前景⼴阔，但建设太空⼈⼯智能基础设施绝⾮易事，我们仍⾯临重重挑战。  \n⾸先，在星载⾼性能芯⽚、抗辐射加固技术、异轨星间⾼速激光通信、天地⼀体分布式计算系统、超⼤规模星座⾃主管控与卫星具⾝智能、天基基础模型与领域模型等关键领域，我们仍需要持续攻关，加强⾃主创新与核⼼技术突破。  \n其次，太空⼈⼯智能基础设施的价值需要在星座建设达到⼀定规模后才能很好地体现。⽬前我国的商业卫星数量与国外相⽐还有较⼤差距，卫星组⽹进度仍需加快，距离形成真正的⽹络效应、规模效应仍⾯临挑战，商业⽣态培育仍待加强。  \n再次，⾼昂的“运费”是最现实的难题。当前我国卫星发射成本仍然较⾼，单次⽕箭发射所能搭载的卫星数量有限，可重复使⽤运载⽕箭技术尚处验证阶段。这意味着现阶段，我们必须⾛条更符合国情的太空⼈⼯智能发展路线，从原始创新、成本控制、⽣态建设等维度综合发⼒。  \n应对挑战，笔者建议采取如下策略：  \n⼀是加强顶层设计，强化核⼼技术攻关。将发展太空⼈⼯智能纳⼊国家战略规划，充分发挥新型举国体制优势，围绕⾼算⼒星载智能计算机、星间⾼速激光通信、通信路由⼀体化设计、天基分",
+      "content_length": 1079,
+      "score": -1.9158,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "553a9e3bb1e9705c_p0",
+      "doc_id": "553a9e3bb1e9705c",
+      "doc_title": "（浙江日报）编织太空算力网——探访“三体计算星座”指挥中心",
+      "content": "# （浙江⽇报）编织太空算⼒⽹⸺探访“三体计算星座”指挥中⼼  \n编织太空算⼒⽹  \n探访“三体计算星座”指挥中⼼  \n本报记者李攀通讯员盛汪淼芷  \n春节前⼣，杭城褪去了往⽇的喧嚣，之江实验室“三体计算星座”指挥中⼼依然忙碌，⼀场特别的在轨试验正在进⾏。  \n实验室外的⼀处荒地上，直径约7⽶的卫星基站在暗夜中矗⽴。突然，天线缓缓转动。紧接着，横贯指挥中⼼整⾯墙的巨屏滚动刷新，千⾥之外卫星的实时轨迹与遥测数据在屏幕上跳动。“连上了！”科研⼈员⽴刻开始操作，抓紧短暂的窗⼝期，完成今⽇的测试任务。  \n这是“三体计算星座”⾯向⽔环境监测的三星协同在轨智能处理试验，利⽤卫星搭载的地表要素提取模型，在太空中提取到地表的⼀处结冰⽔体信息，并快速传回指挥中⼼。实验成功验证“卫星载荷⼯作―在轨数据处理―星间协同传输―在轨模型计算―任务结果下传”的全链路能⼒。据之江实验室天基计算系统研究中⼼主任、计算星座科研任务总体部技术总师李超介绍，团队近期还实现了六颗卫星的在轨全互联，标志着卫星组⽹互联迈出了重要⼀步。  \n“⽬前，我们已经通过在轨协同完成了10个⼈⼯智能模型与应⽤的部署与验证，探索了深空探测、智",
+      "content_length": 1512,
+      "score": -2.3949,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "e583c7ffab96132e_p3",
+      "doc_id": "e583c7ffab96132e",
+      "doc_title": "三体计算星座首发星座在轨测试细则-改模板003更新汇总0324初稿去修订",
+      "content": "√\n√  \n测量？  \n2\n单星L0-L4/云判业务\n云判算法与图像处理算法在轨处理，通过配置分别执行一期舰船检测、二期图像分割、三期全流程处理、四期云判、五期图像增强等图像处理流程。生成L0-L4图像结果及云判结果并回传，图像处理结果满足要求。  \n√  \n检验  \n3\n双星L0-L4业务\n感算星到达指定地点拍照，然后将L0数据通过星间通信传输至相邻计算星进行在轨处理并回传。可通过配置分别执行一期舰船检测、二期图像分割、三期全流程处理、五期图像增强等图像处理流程。生成L0-L4图像结果并回传，图像处理结果满足要求。  \n√  \n检验  \n4\n四星大模型业务\n针对上传用户指令，通过星间通信传输至感算星，后者拍照并通过星载大模型实时执行大模型任务，结果通过星间通信回传地面站，回传图文结果符合预期  \n√  \n检验？  \n5\n单星高通量计算引擎\n根据用户上传指令，支持配置一期1pod、一期3pod、二期1pod、二期4pod以及异构版等多种业务模式的高通量计算引擎执行，并支持在轨图像处理，最后能够将处理的结果回传至地面站。同时，处理性能能够匹配相机遥感图像生成速度。\n√\n√  \n测试？  ",
+      "content_length": 1989,
+      "score": -2.4047,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "f4c0f076357c10d5_p21",
+      "doc_id": "f4c0f076357c10d5",
+      "doc_title": "Z_之江星座首发星座系统方案设计报告_0608发布",
+      "content": "# 7 星座计算能力分析\n\n# 7.1 星载智算机概述  \n星载智算机主要负责提供整套系统的算力资源和存储资源，作为星上智能处理单元，还负责对卫星获取数据进行处理、存储和转发，并提供高性能计算、高速数据传输、稳定可靠存储以及高效优化算法等一系列支持。  \n图22星载智算机总体框图  \n上图为星载智算机的总体框架，该智算机包含弹性可伸缩智能计算架构，是支撑天基计算分布式操作系统的运行的硬件基础，具备软硬件故障感知自恢复功  \n能。\n\n# 7.2 计算性能分析\n\n# 7.2.1 星座算力分析  \n星座共有以下六种算力组合：  \n(1) 01、02 星单星模式:该星单板稀疏算力为 248TOPS@INT8，整星智能稀疏算力为 992TOPS@INT8。该星单板稠密算力为 124TOPS@INT8，整星智能稠密算力为 441TOPS@INT8。\n(2) 03-12 星单星模式:整星智能稀疏算力为 248TOPS@INT8，整星智能稠密算力为 124TOPS@INT8。\n(3) $_ { 0 1 + 0 2 }$ 星互联模式:该互联模式智能稀疏算力为 1984TOPS@INT8，该互联模式智能稠",
+      "content_length": 1470,
+      "score": 3.213,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "b944aa4a4924843c_p10",
+      "doc_id": "b944aa4a4924843c",
+      "doc_title": "智算机正样交付后各阶段遥控遍历测试项",
+      "content": "复位CAN A总线  \nTMS029：遥控指令计数+1\nTMS027：CAN总线复位计数+1（使用CAN A总线查询遥测）\nTMS028：CAN总线复位类型→接收到A总线恢复指令复位  \n复位CAN B总线  \nTMS029：遥控指令计数+1\nTMS027：CAN总线复位计数+1（使用CAN B总线查询遥测）\nTMS028：CAN总线复位类型→接收到B总线恢复指令复位  \n同时复位CANA、CANB总线  \nTMS029：遥控指令计数+1\nTMS027：CAN总线复位计数+1（当前连接CAN总线）\nTMS028：CAN总线复位类型→接收到AB总线同时复位的指令  \n路由切换到主网口（备用）  \nTMS029：遥控指令计数+1\nTMS062：当前使用网口编号→实际使用网口\nip address查看是否真实切换到对应网口  \n路由切换到备网口（备用）  \nTMS029：遥控指令计数+1\nTMS062：当前使用网口编号→实际使用网口\nip address查看是否真实切换到对应网口  \n主星-智算机计算模块GPU文件下传（CFDP协议）：/mnt/mmc01/zhijia/log/contro",
+      "content_length": 1991,
+      "score": -1.9406,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "b944aa4a4924843c_p7",
+      "doc_id": "b944aa4a4924843c",
+      "doc_title": "智算机正样交付后各阶段遥控遍历测试项",
+      "content": "智算机计算模块GPU星间链路通断测试  \nTMS029：遥控指令计数+1\nTMS059：星间通信测试状态→测试成功  \n智算机计算模块GPU星间链路性能测试  \nTMS029：遥控指令计数+1\nTMS059：星间通信测试状态→测试成功  \n算力测试（int8）  \nTMS029：遥控指令计数+1\nTMS060：算力测试值→根据实际类型查看测试类型及测试值  \n算力测试（dla int8）  \nTMS029：遥控指令计数+1\nTMS060：算力测试值→根据实际类型查看测试类型及测试值  \n算力测试（fp16）  \nTMS029：遥控指令计数+1\nTMS060：算力测试值→根据实际类型查看测试类型及测试值  \n算力测试（fp32）  \nTMS029：遥控指令计数+1\nTMS060：算力测试值→根据实际类型查看测试类型及测试值  \n智算机计算模块GPU文件解压file_download解压\n前提：/mnt/mmc01/zhijia/install已有file_download.tar.gz\nTMS029：遥控指令计数+1\nTMS061：文件解压状态→1 成功\n/mnt/mmc01/zhiji",
+      "content_length": 1972,
+      "score": -3.2482,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "901a659a65fb7193_p3",
+      "doc_id": "901a659a65fb7193",
+      "doc_title": "星载智算机（NX4）方案设计报告_20250228",
+      "content": "GPU模块为整机的主要计算节点，主要用于计算任务。GPU模块硬件上采用模组设计，包含CPLD子卡、GPU模组和GPU载板。其原理框图如下。  \n图 2 GPU模块原理框图\nGPU模块采用核心板和底板的硬件形态，充分考虑模块化设计方式。GPU功能单元和CPLD功能单元采用模组形式。\n电源模块采用通用的电路模块，具有良好复用性。其主要作用模块对输入的一次电源进行转换和隔离,通过转换后的二次及三次电源，为GPU模组、CPLD模组和底板等组件供电。\nCPLD子卡采用标准化的CPLD接口卡的形式进行设计，该模组可以应用于多种载板。其主要功能有：进行整板电源时序控制、实现对外的CAN接口、异步RS422接口和PPS信号的接收和处理、进行整板的健康监控信息的汇总和上报、提供板卡FRU信息等。\nGPU模组是整个数据算能计算模块的控制和数据处理核心，完成数据计算与传输，数据处理和加速计算，资源调度、虚拟化管理和软件重构等功能。模块对外的PCIe高速接口由GPU模组提供，千兆网口和万兆网口由其自带PCIe接口结合网卡芯片实现。\nGPU载板主要用于提供各模组的连接平台和部署接口电路。一方面各模组均插接在GP",
+      "content_length": 1985,
+      "score": -4.1929,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "86666016195200f2_p83",
+      "doc_id": "86666016195200f2",
+      "doc_title": "ug1075-zynq-ultrascale-pkg-pinout",
+      "content": "unconnected.</td><td>Can be left unconnected.</td><td>Can be left unconnected.</td><td>Can be left unconnected.</td></tr><tr><td>PS_DDR_CK_N0</td><td>CK_c_A.</td><td>CK_c_A.</td><td>CK_c_A.</td><td>CK_c_A.</td></tr><tr><td>PS_DDR_CK_N1</td><td>CK_c_B.</td><td>CK_c_B.</td><td>CK_c_B.</td><td>CK_c_B.</td></tr><tr><td>PS_DDR_CK0</td><td>CK_t_A.</td><td>CK_t_A.</td><td>CK_t_A.</td><td>CK_t_A.</td></tr><tr><td>PS_DDR_CK1</td><td>CK_t_B.</td><td>CK_t_B.</td><td>CK_t_B.</td><td>CK_t_B.</td></tr><tr><td",
+      "content_length": 1981,
+      "score": -4.7685,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "f23cee2fc08d6828_p3",
+      "doc_id": "f23cee2fc08d6828",
+      "doc_title": "Jetson_AGX_Orin_Series_Data_Sheet_DS-数据手册_v1.5",
+      "content": "# AI Performance  \nJAOi: Up to 248 TOPs (INT8)  \nJAO 64GB: Up to 275 Sparse TOPS (INT8)  \nJAO 32GB: Up to 200 Sparse TOPs (INT8)\n\n# Ampere GPU  \nJAOi: two graphics processing cluster (GPC) | eight texture processing clusters (TPC) | 2048 NVIDIA® CUDA® cores | 64 Tensor cores Ray-Tracing cores | 156 Sparse TOPS | Maximum Operating Frequency: 1.185 GHz  \nJAO 64GB: two graphics processing cluster (GPC) | eight texture processing clusters (TPC) | 2048 NVIDIA® CUDA® cores | 64 Tensor cores Ray-Tracin",
+      "content_length": 1595,
+      "score": -5.101,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "86666016195200f2_p73",
+      "doc_id": "86666016195200f2",
+      "doc_title": "ug1075-zynq-ultrascale-pkg-pinout",
+      "content": "be left unconnected.</td><td>CKE[1].</td><td>Can be left unconnected.</td><td>CKE[1].</td></tr><tr><td>PS_DDR_CS_N0</td><td>CS#.</td><td>CS#[0].</td><td>CS#.</td><td>CS#[0].</td></tr><tr><td>PS_DDR_CS_N1</td><td>Can be left unconnected.</td><td>CS#[1].</td><td>Can be left unconnected.</td><td>CS#[1].</td></tr><tr><td>PS_DDR_DM0 toPS_DDR_DM3</td><td>Connect DM0 toPS_DDR_DM0, DM1 toPS_DDR_DM1, and so on.</td><td>Connect DM0 toPS_DDR_DM0, DM1 toPS_DDR_DM1, and so on.</td><td>Connect DM0 toPS_DDR_DM",
+      "content_length": 1999,
+      "score": -6.4599,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "86666016195200f2_p75",
+      "doc_id": "86666016195200f2",
+      "doc_title": "ug1075-zynq-ultrascale-pkg-pinout",
+      "content": "ECC.</td><td>DQ39 (ECC_bit[7]), can be left unconnected without ECC.</td></tr><tr><td>PS_DDRDQ_N0 toPS_DDRDQ_N3</td><td>Connect DQS#0 to PS_DDRDQ_N0,DQS#1 to PS_DDRDQ_N1,and so on.</td><td>Connect DQS#0 to PS_DDRDQ_N0,DQS#1 to PS_DDRDQ_N1,and so on.</td><td>Connect DQS#0 to PS_DDRDQ_N0,DQS#1 to PS_DDRDQ_N1,and so on.</td><td>Connect DQS#0 to PS_DDRDQ_N0,DQS#1 to PS_DDRDQ_N1,and so on.</td></tr><tr><td>PS_DDR_DQS_N4 to PS_DDR_DQS_N7</td><td>Connect DQS#4 toPS_DDR_DQS_N4,DQS#5 toPS_DDR_DQS_N5,and ",
+      "content_length": 2672,
+      "score": -6.5066,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "86666016195200f2_p84",
+      "doc_id": "86666016195200f2",
+      "doc_title": "ug1075-zynq-ultrascale-pkg-pinout",
+      "content": "on.</td><td>Connect DQ0_A toPS_DDR_DQ0,DQ1_A toPS_DDR_DQ1, and so on.</td></tr><tr><td>PS_DDR_DQ16 toPS_DDR_DQ31</td><td>Connect DQ0_B toPS_DDR_DQ16,DQ1_B toPS_DDR_DQ17, and so on.</td><td>Connect DQ0_B toPS_DDR_DQ16,DQ1_B toPS_DDR_DQ17, and so on.</td><td>Connect DQ0_B toPS_DDR_DQ16,DQ1_B toPS_DDR_DQ17, and so on.</td><td>Connect DQ0_B toPS_DDR_DQ16,DQ1_B toPS_DDR_DQ17, and so on.</td></tr><tr><td>PS_DDR_DQ32 toPS_DDR_DQ63</td><td>Can be left unconnected.</td><td>Can be left unconnected.</td><t",
+      "content_length": 1741,
+      "score": -6.5196,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "f23cee2fc08d6828_p6",
+      "doc_id": "f23cee2fc08d6828",
+      "doc_title": "Jetson_AGX_Orin_Series_Data_Sheet_DS-数据手册_v1.5",
+      "content": "Table 1-1. Jetson AGX Orin SOM Product Summary  \n<table><tr><td>Specification</td><td>Description</td></tr><tr><td>Total module power</td><td>JAOi: 15W | 35W | 60W, and up to 75WJAO 64GB: 15W | 30W | 50W, and up to 60WJAO 32GB: 15W | 30W | 40W</td></tr><tr><td>CPU</td><td>JAOi: Arm® v8.2 (64-bit) | 12x (up to 6× lock step) Arm Cortex-A78AE cores | three CPU clusters (four cores/cluster) | TBD SPECint_rate2006JAO 64GB: Arm® v8.2 (64-bit) | 12x (up to 6× lock step) Arm Cortex-A78AE cores | three C",
+      "content_length": 1990,
+      "score": -0.5706,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "5d2bcce8462c8a69_p9",
+      "doc_id": "5d2bcce8462c8a69",
+      "doc_title": "3.天基中心-之江星座首期项目实施方案-v11-20240625",
+      "content": "数字孪生平台软件总体架构如图 15所示：  \n图 15 数字孪生平台总体架构图\n（1）孪生星座软件\n孪生星座软件包含孪生卫星、孪生星座调度及孪生星座同步3个模块。其中，孪生卫星模块构建卫星的数字孪生模型，搭建基于卫星云载荷电性件的地面环境，提供包括星载智算机、星载路由器、星间/星地网络等的基础孪生能力，实现硬件在环的模拟； 孪生星座调度模块执行星座整体的配置与调度，对星座状态进行实时监测和状态更新；孪生星座同步模块以测运控平台窗口期采集的星座数据为基础，计算卫星的空间位置姿态，分析载荷、网络及星载应用的运行状态，通过调度模块，执行孪生星座状态更新。孪生星座软件架构如图 16所示：  \n图 16 孪生星座软件架构图\n（2）星载应用研发管理软件\n星载应用研发管理软件包含开发框架、应用测试及应用服务3个模块。其中，开发框架模块提供面向开发者的本地开发环境、代码脚手架和多语言版本星载SDK，以方便开发者使用星载智算、存储等资源，简化星载应用的创建与开发调试过程；应用测试模块负责对星载应用执行在地运行检测，支持可靠性和性能测试，确保星载应用的高可用性；应用服务模块具备应用开发的全流程管理能力，经",
+      "content_length": 1880,
+      "score": -0.8522,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "f23cee2fc08d6828_p4",
+      "doc_id": "f23cee2fc08d6828",
+      "doc_title": "Jetson_AGX_Orin_Series_Data_Sheet_DS-数据手册_v1.5",
+      "content": "# DL Accelerator  \nJAOi/JAO: 2x NVDLA 2.0 Engines  \nJAOi: Maximum Operating Frequency: 1.4 GHz | 46 TOPS each (Sparse INT8)  \nJAO 64GB: Maximum Operating Frequency: 1.6 GHz | 52.5 TOPS each (Sparse INT8)  \nJAO 32GB: Maximum Operating Frequency: 1.4 GHz | 46 TOPs each (Sparse INT8)\n\n# Storage  \n64GB eMMC 5.1 Flash Storage | Bus Width: 8-bit | Maximum Bus Frequency: 200 MHz (HS400 or HS533)  \n64MB NOR Boot Flash | 8MB NOR Secure Key Flash\n\n# Display Controller  \n1x shared HDMI 2.1, eDP1.4, VESA Di",
+      "content_length": 1919,
+      "score": -1.1692,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "f23cee2fc08d6828_p15",
+      "doc_id": "f23cee2fc08d6828",
+      "doc_title": "Jetson_AGX_Orin_Series_Data_Sheet_DS-数据手册_v1.5",
+      "content": "# 4.1.1 Compute Features  \nAmpere introduces third-generation NVIDIA Tensor Cores which offer a wider range of precisions including TensorFloat-32 (TF32), bfloat16, FP16, and INT8 all of which provide unmatched versatility and performance.  \nTensorFloat-32 (TF32) is a new format that uses the same 10-bit mantissa as half-precision (FP16) math and is shown to have more than sufficient margin for the precision requirements of AI workloads. In addition, since the TF32 adopts the same 8-bit exponent",
+      "content_length": 2290,
+      "score": -1.8584,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "96b9e551dfd80bb1_p50",
+      "doc_id": "96b9e551dfd80bb1",
+      "doc_title": "20250819-智星空间_AI超算模块_方案设计报告",
+      "content": "rowspan=\"8\"></td><td></td><td>口；</td><td></td></tr><tr><td>支持固存管理功能见章节</td><td>支持固存管理功能</td><td>符合</td></tr><tr><td>固存坏快及擦写次数信息保存、系统文件链表保存、软件程序运行区、存储数据等有ECC自动纠错措施保证,FPGA程序内部关键节点有三模冗余措施处理；</td><td>固存坏快及擦写次数信息保存、系统文件链表保存、软件程序运行区、存储数据等有ECC自动纠错措施保证,FPGA程序内部关键节点有三模冗余措施处理；</td><td>符合</td></tr><tr><td>要求有整机防拴锁设计能力,同时要求单机电源入口、FPGA电源入口等关键位置有电流监测功能,支持自动延时复位等功能；</td><td>防拴锁设计,同时单机电源入口、FPGA电源入口等关键位置有电流监测功能,支持自动延时复位等功能；</td><td>符合</td></tr><tr><td>支持各类异常自主检测上报；</td><td>支持各类异常自主检测上报；</td><td>符合</td></tr><tr><",
+      "content_length": 2288,
+      "score": -2.3343,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "f23cee2fc08d6828_p8",
+      "doc_id": "f23cee2fc08d6828",
+      "doc_title": "Jetson_AGX_Orin_Series_Data_Sheet_DS-数据手册_v1.5",
+      "content": "<table><tr><td>Description</td><td>Orin SoC Features on Jetson AGX Orin SOM</td></tr><tr><td colspan=\"2\">NVIDIA Ampere GPU</td></tr><tr><td colspan=\"2\">Advanced GPU including CUDA cores, Ray-Tracing (RT) cores and 3rd Generation Tensor cores | Enhanced compute capability</td></tr><tr><td colspan=\"2\">JAOi: two GPC | eight TPC | Up to 156 INT8 Sparse TOPS or 78 FP16 TFLOPS | Up to 4.8 FP32 TFLOPS or 10.649 FP16 TFLOPS (CUDA cores)</td></tr><tr><td colspan=\"2\">JAO 64GB: two GPC | eight TPC | Up to ",
+      "content_length": 1996,
+      "score": -2.3472,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "c0b5e7ef24e9e54a_p22",
+      "doc_id": "c0b5e7ef24e9e54a",
+      "doc_title": "G1智算机_方案设计报告（硬件）_20240614——G0107",
+      "content": "表 47主要材料选用清单\n序号\n材料名称\n牌号\n零部件名称\n使用位置\n1\n铝板\n6063-T6\n智算机/路由器壳体\n星内\n2\n铝均温板\n6063\n从星智算机底板\n星内\n3\n导热垫\nHFC H800-LY\n电路板\n星内\n4\n硅橡胶\nGD414\n电路板\n星内\n5\n螺钉\nTA2纯钛\n螺钉\n星内\n使用的原材料需要配套单位提供入厂检验合格证，加强材料贮存、生产过程中质量管控，并提供最终产品检测合格证明。\n技术指标对照表\n设计指标达到情况，详见下表。  \n智加G1单机技术指标对照表  \n表 49智加G1单机技术指标对照表\n项目\n技术要求\n设计指标\n对应章节\n符合情况\n功能要求\n（18条）\n1）支持分布式文件系统和太空分布式软件；\n可支持分布式文件系统和太空分布式软件；\n2.2.4\n2.3.1\n符合  \n2）支持TensorFlow、PyTorch、CUDA、cuDNN等优化过的数学库和深度学习框架；\n可支持TensorFlow、PyTorch、CUDA、cuDNN等优化过的数学库和深度学习框架；\n2.2.4\n2.3.1\n符合  \n3）具备图像处理和存储、数据流传输/通信控制、简单管理以及星上高速数",
+      "content_length": 1973,
+      "score": -2.737,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "cb9de27a1935617d_p3",
+      "doc_id": "cb9de27a1935617d",
+      "doc_title": "20250806-智星空间_AI超算模块_方案设计报告",
+      "content": "与SAR载荷GTX接口\nSAR载荷DCU区分主备机，主备机各有2路GTX作为一组与超算连接（共4路），用于成像数据传输，仅同时使用与DCU主或备的2路GTX，不存在4路同时传输状态。（采用100MHz时钟源，单路速率3.2Gbps ，两路共6.4Gbps，建议连接器：HSMK-02L0275-26C0，要求超算的写入速率速率不低于最大传输速率）\n具体接口协议见《Fspace-300S卫星DCU与固存接口协议》。\n与X数传GTX接口\n用于发送处理前/处理后的成像数据至X数传，具备2路GTX芯片标准接口数据输出能力，各通道独立工作（主备份），每路带流控信号。（采用100MHz时钟源，建议连接器：HSMK-02L0275-26C0，匹配最大星地数传速率（900Mbps），时钟等具体特性及接插件型号等详见IDS约束）\n具体接口协议见《Fspace-300S卫星固存与数传接口协议》。\n调试接口\nAI超算模块各电路板设计有合理数量调试接口用于调测。\n热接口\n工作温度范围（℃）：-20~+55；\n轨道存储温度范围（℃）：-25~+70；\n启动温度（℃）：-20~+55。\n除安装面外，外观面黑色阳极氧",
+      "content_length": 1947,
+      "score": -3.7821,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "96b9e551dfd80bb1_p5",
+      "doc_id": "96b9e551dfd80bb1",
+      "doc_title": "20250819-智星空间_AI超算模块_方案设计报告",
+      "content": "# 3.3.2.5 与X数传GTX接口  \n用于发送处理前/处理后的成像数据至X数传，具备2路GTX芯片标准接口数据输出能力，各通道独立工作（主备份），每路带流控信号。（采用100MHz时钟源，建议连接器：HSMK-02L0275-26C0，匹配最大星地数传速率（900Mbps），时钟等具体特性及接插件型号等详见IDS约束）  \n具体接口协议见《Fspace-300S卫星固存与数传接口协议》。\n\n# 3.3.2.6 调试接口  \nAI超算模块各电路板设计有合理数量调试接口用于调测。\n\n# 3.3.3 热接口  \n1）工作温度范围（ $^\\circ \\mathrm{C}$ ）：-20\\~+55；\n2）轨道存储温度范围（ $^{\\circ}\\mathrm{C}$ ）：-25～+70；\n3）启动温度（ $\\mathrm{^\\circ C}$ ）：-20～+55。\n4）除安装面外，外观面黑色阳极氧化或黑色温控漆， $\\varepsilon \\mathrm{H}\\geqslant 0.85$\n\n# 3.3.4 数据接口  \n1）具备2路CAN总线接口（热备）；\n2)具备1路收发同步RS422接口",
+      "content_length": 1073,
+      "score": -3.903,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "34f81720f16fc9c4_p0",
+      "doc_id": "34f81720f16fc9c4",
+      "doc_title": "NX1和G1智算机_鉴定级环境试验测试细则_20240906",
+      "content": "# NX1和G1智算机_鉴定级环境试验测试细则_20240906  \n之江星座首发星座\n主星和从星智算机\n鉴定级环境试验测试细则  \n签署科目\n签 名\n日 期\n编写  \n校对  \n审核  \n标审  \n批准  \n之江首发星座  \n目录\n1概述1\n2引用文件1\n3鉴定级环境试验项目和顺序1\n4试验计划1\n5被试品与陪试品2\n5.1单板被试品2\n5.2单机被试品3\n5.3陪试品5\n5.3.1冷板5\n5.3.2振动夹具6\n6测试项目及平台搭建8\n6.1上电测试项目8\n6.2温度摸底测试项目10\n6.3单板试验平台搭建11\n6.3.1FPGA板试验平台11\n6.3.2GPU板试验平台16\n6.4单机试验平台搭建17\n6.4.1智加NX1试验平台18\n6.4.2智加G1试验平台21\n6.4.3单机热真空试验平台21\n7现场测试方法23\n7.1查看操作系统加载23\n7.2FPGA集成测试25\n7.3FPGA CAN接口测试28\n7.4FPGA拉流测试29\n7.5GPU集成测试31\n7.6GPU CAN接口测试33\n7.7GPU拉流测试35\n8测试设备汇总38\n8.1测试线缆38\n8.2测试仪器38\n",
+      "content_length": 1892,
+      "score": 2.4909,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "9c6c6ab2f32ea029_p0",
+      "doc_id": "9c6c6ab2f32ea029",
+      "doc_title": "海王星载荷_智加NX3智算机GPU载板单板硬件设计输入_20250917",
+      "content": "# 海王星载荷_智加NX3智算机GPU载板单板硬件设计输入_20250917  \n智加NX3智算机GPU载板\n单板硬件设计输入  \n拟制: 戴文涛  \n会签：宫禄齐  \n智加NX3智算机GPU载板单板硬件设计输入\n概述\n智加NX3智算机是针对合作方宁波智晖空间技术有限公司研制的智算机，卫星平台为海王星SAR遥感卫星。\n智加NX3智算机由FPGA模块、GPU模块和结构件组成。FPGA模块由CXP接口板、FPGA载板和FPGA模组构成，CXP接口板与FPGA板直接互联。FPGA载板和FPGA模组借用三体星座首次发射的NX1智算机上正样板卡和模组，技术状态保持不变。\n新设计任务如下,一是CXP接口板进行新研；二是GPU载板进行改版，与NX1智算机相比，仅增加GPU与CPLD之间的串口，并修改GPU载板对外422接口定义。\n本设计输入规定了智加NX3智算机GPU载板的研制时间节点，并针对与NX1智算机的不同，阐述GPU载板改版注意事项，其他未明确提出的要求均参考NX1智算机的归档技术状态。\n本文件的依据文件如下：\n《智算搭载载荷研制任务书—平台下发》\n《海王星座智算机IDS表-V0.75_20",
+      "content_length": 1534,
+      "score": 1.7802,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "b944aa4a4924843c_p0",
+      "doc_id": "b944aa4a4924843c",
+      "doc_title": "智算机正样交付后各阶段遥控遍历测试项",
+      "content": "# 智算机正样交付后各阶段遥控遍历测试项  \n阶段一 整星组装测试\n加电后遥测检查\n表75 智算机加电遥测判读\n序号\n测试步骤/指令名称\n操作\n遥测显示/判断依据\n测试结果\n测试结论  \n开启程控电源输出\n/\n整星加电  \n28V供电开\n给载荷上电  \n综电通信状态判读\n遥测判读\n智算机各模块通信正常  \n智算机高性能计算模块GPU遥测判读\n快遥判读\n参考智算机遥控遥测大表GPU遥测页  \n慢遥判读\n参考智算机遥控遥测大表GPU遥测页  \n智算机高性能计算模块CPLD遥测判读\n遥测判读（快遥）\n参考智算机遥控遥测大表GPU-CPLD遥测页  \n智算机预处理FPGA遥测判读\n快遥判读\n参考智算机遥控遥测大表FPGA遥测页  \n慢遥判读\n参考智算机遥控遥测大表FPGA遥测页  \n智算机预处理模块CPLD遥测判读\n遥测判读（快遥）\n参考智算机遥控遥测大表FPGA-CPLD遥测页  \n高性能计算模块（GPU）遥控指令遍历\n表格 76 高性能计算模块GPU遥控遍历指令表\n序号\n测试步骤/指令名称\n操作\n遥测显示/判断依据\n执行结果\n测试结论  \n强制待机（停止业务）  \nCAN通信中断  \n复位",
+      "content_length": 1969,
+      "score": 1.1509,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "3c044dc9d7f641d0_p10",
+      "doc_id": "3c044dc9d7f641d0",
+      "doc_title": "Z_之江星座首发星座系统方案设计报告_0519_1940",
+      "content": "接收1563.05±0.2nm(ITU： C18）\nB 终端：发射1563.05±0.2nm（ITU：C18），\n接收1540.56±0.2nm(ITU： C46）\n4\n激光束散角\n≥50μrad\n5\n捕获跟踪角度范围\n方位≥±90°，俯仰≥±10°\n6\n最大跟踪角速度\n≥0.2°/s\n7\n最大跟踪角加速度\n方位/俯仰≥0.01°/s2\n8\n捕跟方式\n无独立信标光\n9\n捕获视场\n≥3mrad\n10\n捕获概率\n≥95%\n11\n捕获时间\n≤15s@2mrad\n12\n跟踪精度\n≤5μrad（3σ）@NASDA微振动条件\n13\n日凌规避角\n≤3°\n14\n通信体制\nOOK（NRZ）\n15\n通信方式\n全双工\n16\n编码方式\nRS（）\n17\n速率要求(编码后)\n双向10Gbps@3000km\n18\n通信误码率(译码后)\n≤1×10-7@10Gbps\n19\n重量\n≤8kg，均含处理部分、热控部分和内部电缆重量\n20\n功耗\n≤70W，含热控部分功耗\n21\n锁定状态舱外包络\nX*Y*Z≤190mm×190mm×145mm\n（含热控，整星坐标 Z 方向）\n22\n使用寿命要求\n在轨运行寿命不小于3年\n表6.4",
+      "content_length": 1991,
+      "score": 0.5987,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "b944aa4a4924843c_p5",
+      "doc_id": "b944aa4a4924843c",
+      "doc_title": "智算机正样交付后各阶段遥控遍历测试项",
+      "content": "28V供电开  \n智算机各模块通信正常  \n上注文件传输（脚本文件）\n参考遥控遥测大表，选定一个对应指令，主从星有区别（主星CFDP，从星SCP）\nTMS226：上注文件类型→脚本文件\nTMS227：上注文件状态→上注进行中--上注成功\n上传文件可以在/mnt/mmc01/zhijia/script目录下找到  \n上注文件传输（参数文件）\n参考遥控遥测大表，选定一个对应指令，主从星有区别（主星CFDP，从星SCP）\nTMS226：上注文件类型→参数文件\nTMS227：上注文件状态→上注进行中--上注成功\n上传文件可以在/mnt/mmc01/zhijia/param目录下找到  \n脚本文件/参数文件比对\n/\n使用网口连接智算机，查看获取的脚本文件和参数文件是否符合预期  \n智算载荷GPU模块遥感数据上行测试（仅限从星）\n表7-13 智算载荷GPU模块遥感数据上行测试表（仅限从星）\n序号\n测试步骤/指令名称\n操作\n遥测显示/判断依据\n测试结果\n测试结论  \n开启程控电源输出\n/\n整星加电  \n28V供电开\n给载荷上电  \n综电通信状态判读\n遥测判读\n智算机各模块通信正常  \n遥感数据存入综",
+      "content_length": 1988,
+      "score": 0.3727,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "b944aa4a4924843c_p9",
+      "doc_id": "b944aa4a4924843c",
+      "doc_title": "智算机正样交付后各阶段遥控遍历测试项",
+      "content": "检测开机校时\n观察智算机遥测系统时间变化\nTMS040：系统时间→同广播时间误差1s以内\nTMS236：系统时间→同广播时间误差1s以内  \nGPU校时\n改变广播数据时间，发送校时指令\nTMS040：系统时间→同广播时间误差1s以内  \nFPGA-PS校时\n改变广播数据时间，发送校时指令\nTMS236：系统时间→同广播时间误差1s以内  \n智算载荷GPU模块遥感数据上行测试（仅限从星）\n表7-13 智算载荷GPU模块遥感数据上行测试表（仅限从星）\n序号\n测试步骤/指令名称\n操作\n遥测显示/判断依据\n测试结果\n测试结论  \n开启程控电源输出\n/\n整星加电  \n28V供电开\n给载荷上电  \n综电通信状态判读\n遥测判读\n智算机各模块通信正常  \n遥感数据存入综电NX模块\n/\n通过网口直连NX模块，1.5M相机历史遥感数据存入NX载荷  \n相机数据读取 从星\n综电ip设置为192.168.1.103-112\nTMS057：相机数据处理：文件下载状态→相机数据文件下载中—下载已完成\n从综电获取相机L0数据，/mnt/rs/l0/目录下出现已解压的相机数据文件  \n智算机处获取L0数据解析比对\n/",
+      "content_length": 1995,
+      "score": -0.1209,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "2e66562ac2826dab_p0",
+      "doc_id": "2e66562ac2826dab",
+      "doc_title": "NX1智算机FPGA模块浪涌电流分析报告20251202",
+      "content": "# NX1智算机FPGA模块浪涌电流分析报告20251202  \nNX1智算机FPGA模块\n浪涌电流分析报告  \n签署科目\n签 名\n日 期\n编写  \n校对  \n审核  \n标审  \n批准  \n之江首发星座\n工程总体部  \n目录\n1.概述2\n2.测试条件2\n3.浪涌产生原因分析2\n4.整改措施3\n5.整改后影响分析6\n附件1浪涌电流比对6  \n概述\n智加NX1单机FPGA模块（所选用隔离电源模块的型号为：DCM2322T72S13A0M60）的浪涌电流有6A左右，考虑到某些卫星平台对浪涌电流的要求更高（启动和浪涌电流应不大于稳态电流值的1.5倍或2A（取其中较大者），斜率不大于105A/s，持续时间一次电源负载不大于5ms），显然其浪涌电流无法满足这些卫星平台的要求。本文档进一步对NX1单机FPGA模块浪涌电流的整改措施进行分析，寻找一种可以继续减小浪涌电流的方式，以满足上面提到的更加严苛的浪涌电流要求。\n测试条件\n（1）测试板卡编号：FPGA电性件0720005\n（2）直流稳压源+空气开关测试方式\n浪涌产生原因分析\n在28V输入条件下，对FPGA模块（电源模块的型号为：DCM2322T7",
+      "content_length": 2462,
+      "score": 0.5414,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "5d2bcce8462c8a69_p5",
+      "doc_id": "5d2bcce8462c8a69",
+      "doc_title": "3.天基中心-之江星座首期项目实施方案-v11-20240625",
+      "content": "图 4 星载智能计算机总体框图\n图 5是在主计算卫星上搭载的星载智算机整体架构框图，虚线框即为星载智算机内部组成。为满足主计算卫星高算力的需求，配备4个高性能计算模块和1个预处理模块。图上还显示了各个模块之间的连接关系。星载智算机的连接对象包括：（1）光电载荷互联，接收图像数据；（2）与卫星平台中的综合电子计算机互联，由综合电子计算机作为星载智算机的高可靠健康状态管理单元；（3）与星间星地通信互联的星载路由器。  \n图 5 星载智算机整体架构\n星载智算机由卫星平台提供的直流电源供电，主要数据通信链路如下：\n（1）健康状态上报链路\n星载智算机各个模块通过CAN总线与卫星平台的综合电子计算机连接，周期性上报其健康状态信息，包含电压、电流及温度等数据。综合电子计算机负责汇总各单元上报信息（记录日志和报警信息），通过星地通信链路下传到地面数据站；\n（2）遥测程控指令链路\n卫星平台的综合电子计算机通过CAN总线向星载智算机发送控制指令，对星载智算机内各模块进行上电、下电、重启、复位、安装系统、挂载镜像等操作。\n（3）业务数据输入/输出链路\n数据预处理模块可对业务数据，如遥感图像进行裁剪、校正等预",
+      "content_length": 1980,
+      "score": 4.6516,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "7e4c3c34f8c23c96_p13",
+      "doc_id": "7e4c3c34f8c23c96",
+      "doc_title": "25_智加NX1和G1智算机正样件研制与质量总结报告_SCS-01-ZS-ZB-01",
+      "content": "否  \n20345600003\nMolex\n工业级\n-40℃~-85℃\n1\n否  \n1054500101\nMolex\n工业级\n-40℃~-85℃\n1\n否  \n91302067RDM\n中航光电\n普军级\n-40℃~-85℃\n1\n是  \nJ30JA2-9ZKWV2A-J\n中航光电\n普军级\n-40℃~-85℃\n3\n是  \nHJ30J-24ZKWP14\n中航光电\n普军级\n-40℃~-85℃\n1\n是  \nJ30J-21ZKWP7-J\n中航光电\n普军级\n-40℃~-85℃\n3\n是  \nJ30JA2-31ZKWV2A-J\n中航光电\n普军级\n-40℃~-85℃\n2\n是  \nJ30J-15ZKWP7-J\n中航光电\n普军级\n-40℃~-85℃\n2\n是  \nSS4350-L-D-K-TR\nsamtec\n工业级\n-40℃~-85℃\n1\n否\n电平转换电路\n电平转换芯片\nTXB0108PW\nTI\n工业级\n-40℃~-85℃\n2\n否  \nSN74LVC1T45DBVR\nTI\n工业级\n-40℃~-85℃\n2\n否  \n原材料选用和控制情况\n原材料采购按之江实验室内部标准《Q/ZJLab-CX-84采购与外包控制程序》进行",
+      "content_length": 1994,
+      "score": 3.1675,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "99b5cb5818e1f201_p2",
+      "doc_id": "99b5cb5818e1f201",
+      "doc_title": "No.02 分布式计算系统集成与测试方案-2024-0715A",
+      "content": "具备以太网单播传输方式\n支持端口速率控制\n支持TCP/IP、UDP等多种网络协议的传输、支持命令型数据、流式数据和突发型数据的传输\n支持断网条件下重连功能，断网重连时间：≤5s\n分布式操作系统的软件功能与性能要求\n分布式操作系统的软件功能要求为：\n（1）实现12颗星天地一体化组网，完成卫星接入地面时，卫星资源可管可控；\n（2）支持卫星在轨运行，某节点异常情况任务不中断运行，支持任务迁移；\n（3）支持星地数据同步，包括地面数据上传，星上数据下传；\n（4）支持12星协同计算，支持L0-L4级某阶段或全阶段数据处理；\n（5）支持单星任务计算，支持L0-L4级某阶段数据处理。\n分布式操作系统的软件性能要求为：\n（1）支持不少于12颗卫星接入分布式集群，支持接入分布式集群的卫星算力资源预分配，在卫星接入后支持分钟级算力资源调度，并依据卫星算力平台架构提供算力虚拟化能力；\n（2）天基计算星群星地断连情况下，集群自治时间不低于一个轨道周期；\n（3）针对高算力平台的支持不少于20个任务的并发调度；\n（4）星地、星星建链后，支持场景下多任务编排调度，星地、星星间任务协同并发处理。\n遥感图像处理系统功能和",
+      "content_length": 1920,
+      "score": 2.6945,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "29e101f187187803_p5",
+      "doc_id": "29e101f187187803",
+      "doc_title": "2_SCS-01-ZS-JY-01之江首发星座星载智算机技术要求V1.0",
+      "content": "# 7 软件配置项  \n星载智算机相关软件配置项描述如下表3。  \n表 3 星载智算机相关软件配置项  \n| 配置项名称 | 所属分系统 | 功能描述 |\n| --- | --- | --- |\n| 高通量星载计算引擎 | 星载智算机 | 实现星载智算适配优化和调度功能 |\n| 轻量化星载操作系统 | 星载智算机 | 轻量化可裁剪的嵌入式操作系统及配套软件 |\n\n# 8 环境试验要求  \n启动温度范围（ $^{\\circ}\\mathrm{C}$ ）： $-20^{\\circ}\\mathrm{C} \\sim 50^{\\circ}\\mathrm{C}$  \n工作温度范围（℃）：-20℃～50℃  \n储存温度范围（℃）：-25℃～55℃  \n分系统经受的环境试验应按照《SCSGF-08之江首发星座卫星星上产品环境试验条件》中的规定，在经受了设备级环境试验后，对于组装、总装和试验、运输和装卸、发射前、发射和在轨阶段，其性能仍应满足规范要求。\n\n# 9 电磁兼容性（EMC）要求  \n分系统电磁兼容性应满足《SCSGF-07之江首发星座卫星电磁兼容设计要求》的要求。\n\n# 10 寿命要求  \n卫星",
+      "content_length": 804,
+      "score": 2.5057,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "bab2762cbee3474a_p0",
+      "doc_id": "bab2762cbee3474a",
+      "doc_title": "之江首发星座_智算机_总体评审意见",
+      "content": "# 之江首发星座_智算机_总体评审意见  \n之江实验室科研任务技术方案专家组评审意见表  \n方案名称\n之江首发星座星载智算机方案设计\n意见建议：  \n，之江实验室组织召开了“之江首发星座星载智算机方案设计”评审会。会议成立了评审组，听取了项目组所作的《之江首发星座星载智算机方案设计报告》，经过讨论、质询，形成评审意见如下：\n1、之江首发星座星载智算机方案合理可行、接口明确，功能、性能满足太空计算载荷研制技术要求；\n2、研制计划符合项目进度要求，可以作为后续工作开展的依据。\n评审组同意通过评审。  \n评审组组长签名：",
+      "content_length": 260,
+      "score": 1.5636,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "e583c7ffab96132e_p5",
+      "doc_id": "e583c7ffab96132e",
+      "doc_title": "三体计算星座首发星座在轨测试细则-改模板003更新汇总0324初稿去修订",
+      "content": "提前一周规划任务，地面测运控系统任务生成->提交任务单，国星进行任务仿真，并申请测站资源，\n测试卫星入境地面站：\n地面站->上传相关指令单->日志下传到地面\n接近设定测试时间：路由器载荷提前开机\n到达设定时间：路由器执行日志拷贝任务、生成遥测结果，综电或分布式系统下传日志\n入境之江站：遥测信息回传\n8.2.2.3.3 判断准则\n日志下载执行各个步骤的遥测结果均正常  \n8.2.3 星载激光通信机（激光补充）\n8.2.3.1 开机自检\n8.2.3.1.1 测试方法\n卫星对星载激光通信机上电。根据地面系统接收到的遥测，检查激光通信机载荷的健康性能，此测试项可结合其他载荷的健康测试项目同步进行。  \n8.2.3.1.2 测试步骤\n地面系统提前向卫星注入激光通信机开机、软件启动等相关指令，卫星通过国星地面站时传输遥测，地面解析遥测并进行相关遥测判读。\n(时序表已粘贴至附件，请文字补充步骤，按照时间顺序，区分不同地面站)  \n8.2.3.1.3 判断准则\n地面根据遥测结果判断星载智算机硬件、软件各项功能是否正常。\n8.2.3.2 日志下传\n8.2.3.1.1 测试方法\n卫星对星载智算机上电。根据",
+      "content_length": 1983,
+      "score": 1.232,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "867cd5e09164a41d_p0",
+      "doc_id": "867cd5e09164a41d",
+      "doc_title": "G2",
+      "content": "# 产品简介  \n之江智加G2是之江实验室为满足卫星在轨高效数据处理需求，基于异构计算体系（CPU+GPU）和软硬件协同加速技术的一款高性能星载计算载荷，支持SAR图像存储和管理、天基遥感模型在轨推理，实现目标检测和位置解算、图像分类等功能。\n\n# 产品特色\n\n# 超异构  \n“之江智加”系列星载计算机，以CPU、NPU/GPU、FPGA为基本组成单元，采用超异构架构设计，具备灵活高效的处理能力。\n\n# 高可靠  \n自研多级容错系统，在恶劣太空环境下保证系统可用性 $98\\%$ 以上。\n\n# 轻量化  \n实现星载操作系统“轻量化”，基础系统100MB以内，典型应用2MB以内。\n\n# 强实时  \n自研高通量计算引擎，提升星载算法库和模型的处理的实时性。\n\n# 智能化  \n预置遥感领域专用模型，实现遥感影像数据的在轨智能处理。\n\n# 定制化  \n弹性可伸缩硬件架构，可根据用户需求提供软硬件一体的定制化服务。\n\n# 技术参数  \n| 指标 | 参数 |\n| --- | --- |\n| 架构 | GPU-SOC |\n| 算力 | 248TOPS@INT8 |\n| 体积 | 210mm×157.",
+      "content_length": 803,
+      "score": -1.4048,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "004376e833fdc720_p0",
+      "doc_id": "004376e833fdc720",
+      "doc_title": "2_智加G2智算机_验收级环境试验测试细则_20251215",
+      "content": "# 2_智加G2智算机_验收级环境试验测试细则_20251215  \n智加G2智算机\n验收级环境试验测试细则  \n签署科目\n签 名\n日 期\n编写\n张良  \n校对  \n审核  \n标审\n王宝慧  \n批准\n宫禄齐  \n之江实验室\n二零二五年十一月  \n目录\n1概述1\n2引用文件1\n3验收级环境试验项目和顺序1\n3.1试验项目1\n3.2试验顺序1\n4试验计划1\n5被试品与陪试品2\n5.1单机被试品2\n5.2陪试品3\n5.2.1冷板3\n5.2.2振动夹具4\n6测试项目及平台搭建5\n6.1上电测试项目5\n6.2G2单机试验平台搭建6\n7温度试验运行步骤7\n7.1热循环试验运行步骤7\n7.2热真空试验运行步骤9\n8现场测试方法11\n8.1整体测试流程11\n8.2OC板功能测试12\n8.3查看GPU操作系统加载13\n8.4GPU硬件参数测试15\n8.4.1功耗测试15\n8.4.2热敏电阻阻值测试15\n8.5GPU功能测试17\n8.5.1执行功能测试17\n8.5.2功能测试过程和结果说明18\n8.6GPU性能测试20\n8.6.1执行性能测试21\n8.6.2性能测试过程和结果说明21\n9测试设备汇总23\n",
+      "content_length": 1958,
+      "score": -1.7417,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "004376e833fdc720_p1",
+      "doc_id": "004376e833fdc720",
+      "doc_title": "2_智加G2智算机_验收级环境试验测试细则_20251215",
+      "content": "G2测试工装示意图如下所示。  \n图 4 G2测试工装示意图\n测试项目及平台搭建\n上电测试项目\n单板或单机在做振动试验、热试验过程中均需要进行上电测试，不同试验的条件及要求不同，上电测试项目也有所不同，具体如下所示。\n表 5 上电测试项目\n被试品\n环境试验类型\n功能测试\n性能测试\n注意事项\nG2\n正弦振动试验\nGPU板（12项功能）：\nOC指令控制功能\nPCIe设备识别、\n温度状态获取、\n电源状态获取、\n主千兆网口、\n备千兆网口、\n主万兆网口、\n备万兆网口、\n主CAN接口、\n备CAN接口、\nRS422接口、\n温度电压检测。\n无\n振动前后分别进行一次上述项的测试，振动过程中不上电  \n随机振动试验  \n无\n\\  \n热循环试验  \nGPU板（6项性能）：\nSSD读写性能、\n主千兆网口速率、\n备千兆网口速率、\n主万兆网口速率、\n备万兆网口速率、\nGPU算力。\n在不进行功能性能测试操作时，应持续监测系统状态  \n热真空试验  \n同上\n需要专用线缆  \n老练试验  \n同上\n\\  \nG2单机试验平台搭建\n常压条件下，智加G2试验平台搭建如下图所示。  \n图 5 G2试验平台搭建示意图\n试验平台搭建",
+      "content_length": 1987,
+      "score": -2.2015,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "8577fc19e560b594_p0",
+      "doc_id": "8577fc19e560b594",
+      "doc_title": "智加NX4A智算机硬件板卡设计输入_20260108",
+      "content": "# 智加NX4A智算机硬件板卡设计输入_20260108  \n智加NX4A智算机硬件板卡\n设计输入  \n拟制：\n会签：  \n智加NX4A智算机硬件板卡设计输入\n概述\n本设计输入规定了智加NX4A智算机硬件板卡的研制时间节点、指标要求和详细改动项，用于指导NX4A单机内部GPU载板和FPGA载板硬件板卡的详细设计。\n引用文件《二院傲天XXXX》。\n研制数量和时间节点\n（1）研制数量：\n交付数量：正样件2套；生产数量：2套；\n（2）时间要求\n序号\n研制关键节点\n时间\n备注\n1\n完成技术要求签署  \n2\n完成IDS签署  \n3\n完成FPGA载板改版研制\n2026.3.20\n研制进度要求参见G1A GPU载板改版进度要求\n4\n完成GPU载板改版研制\n2026.3.20  \n5\n完成GTX接口板生产\n2025.3.20  \n6\n完成单机组装\n2025.3.25\n包含板卡三防点胶；组装前先进行1轮高低温摸底实验；\n7\n完成单机环境试验\n2025.4.25  \n8\n完成单机交付\n2025.5.15  \n项目背景\n根据技术要求，智加NXA4智算机可由NX4 GTX接口板+G1A GPU载板+NX4A ",
+      "content_length": 1582,
+      "score": 1.9873,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "ea7a56d51aae9695_p0",
+      "doc_id": "ea7a56d51aae9695",
+      "doc_title": "NX4",
+      "content": "# 产品简介  \n之江智加NX4是之江实验室为满足卫星在轨高效数据处理需求，基于异构计算体系和软硬件协同加速技术的一款高性能星载计算载荷，由基于ZYNQ FPGA-SOC设计的预处理模块和基于NVIDIA AGX ORIN GPU-SOC设计的高性能计算模块组成，支持高光谱图像数据的实时接收、高效转发与可靠存储，并具备在轨智能处理能力，实现特征及目标的高效提取。\n\n# 产品特色\n\n# 超异构  \n“之江智加”系列星载计算机，以CPU、NPU/GPU、FPGA为基本组成单元，采用超异构架构设计，具备灵活高效的处理能力。\n\n# 高可靠  \n自研多级容错系统，在恶劣太空环境下保证系统可用性 $98\\%$ 以上。\n\n# 轻量化  \n实现星载操作系统“轻量化”，基础系统100MB以内，典型应用2MB以内。\n\n# 强实时  \n自研高通量计算引擎，提升星载算法库和模型的处理的实时性。\n\n# 智能化  \n预置遥感领域专用模型，实现遥感影像数据的在轨智能处理。\n\n# 定制化  \n弹性可伸缩硬件架构，可根据用户需求提供软硬件一体的定制化服务。\n\n# 技术参数  \n| 指标 | 参数 |\n| --- | -",
+      "content_length": 953,
+      "score": 0.9866,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "734102f66e9f9360_p0",
+      "doc_id": "734102f66e9f9360",
+      "doc_title": "智加NX4A_IDS表-20260303",
+      "content": "# 智加NX4A_IDS表-20260303  \n之江首发星座\n主星智算机-智加NX4A IDS表  \n签署科目\n签 名\n日 期\n编写  \n校对  \n审核  \n标审  \n批准  \n之江实验室\n天基计算系统研究中心  \n主星智算机-智加NX4A IDS表\n会签页  \n姓名\n单位（部门）\n日期\n会签  \n之江实验室  \n会签  \n之江实验室  \n会签  \n会签  \n会签  \n会签  \n会签  \n会签  \n会签  \n会签  \n会签  \n会签  \n会签  \n修订记录\n序号\n章节名称\n修订内容简述\n修订日期\n修订前\n版本号\n修订后\n版本号\n修订人\n复核人\n1\n接口数据单13、14、19、20\n修改CAN信号接点负荷栏电压描述；\n2026.2.5\nV1.1\nV1.2\n张良\n薛宏亮\n2\n接口数据单27\n修改说明栏第3点CAN芯片型号描述；\n2026.2.5\nV1.1\nV1.2\n张良\n薛宏亮\n3\n接口数据单21\n修改同步422差分信号接点号；\n2026.2.5\nV1.1\nV1.2\n张良\n薛宏亮\n4\n接口数据单28\n更新同步422差分信号接点号修改后的图片；\n2026.2.5\nV1.1\nV1.2\n张良\n",
+      "content_length": 1983,
+      "score": -0.022,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "99d2b524b82f15bd_p0",
+      "doc_id": "99d2b524b82f15bd",
+      "doc_title": "ZS-NX100GPU-0-4",
+      "content": "| 线性尺寸公差 | 尺寸范围 | 0.5~3 | &gt;3~6 | &gt;6~30 | &gt;30~120 | &gt;120~400 | &gt;400~1000 | &gt;1000~2000 | &gt;2000~4000 |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n| 公差等级f | ±0.05 | ±0.05 | ±0.1 | ±0.15 | ±0.2 | ±0.3 | ±0.5 | ±1 |\n| 倒/圆角尺寸公差 | 尺寸范围 | 0.5~3 | &gt;3~6 | &gt;6~30 | &gt;30 | 角度尺寸公差 | ≤10 | &gt;10~50 | &gt;50~120 | &gt;120~400 | &gt;400 |\n| 公差等级f | ±0.2 | ±0.5 | ±1 | ±2 | ±1° | ±30° | ±20° | ±10° | ±5° |\n| 直线度平面度 | 尺寸范围 | ≤10 | &gt;10~30 | &gt;30~100 | &gt;100~300 ",
+      "content_length": 1055,
+      "score": -3.9583,
+      "chunk_type": "parent",
+      "parent_id": null
+    }
+  ],
+  "token_usage": {
+    "prompt_tokens": 42824,
+    "completion_tokens": 1285,
+    "total_tokens": 44109
+  },
+  "timing": {
+    "total": 67.907
+  },
+  "error": null
+}

@@ -21,7 +21,6 @@ class ChatBackend:
         use_rewrite: bool = True,
         use_rerank: bool = True,
         rerank_top_k: Optional[int] = 5,
-        user_roles: Optional[List[str]] = None,
     ) -> Dict:
         """
         发送聊天请求到后端
@@ -29,16 +28,13 @@ class ChatBackend:
         Args:
             query: 用户问题
             top_k: 检索返回的chunk数量
+            use_rewrite: 是否使用查询改写
             use_rerank: 是否使用重排序
             rerank_top_k: Rerank后保留数量
-            user_roles: 用户角色列表
 
         Returns:
             包含 answer, sources, usage 等字段的字典
         """
-        if user_roles is None:
-            user_roles = ["employee", "admin"]
-
         try:
             async with httpx.AsyncClient(timeout=180.0) as client:
                 request_data = {
@@ -46,7 +42,6 @@ class ChatBackend:
                     "top_k": top_k,
                     "use_rewrite": use_rewrite,
                     "use_rerank": use_rerank,
-                    "user_roles": user_roles,
                 }
                 if rerank_top_k is not None:
                     request_data["rerank_top_k"] = rerank_top_k

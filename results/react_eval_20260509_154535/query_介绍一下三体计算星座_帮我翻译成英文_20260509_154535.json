@@ -1,0 +1,288 @@
+{
+  "eval_id": "20260509_154535",
+  "timestamp": "2026-05-09T15:46:28.677900",
+  "query": "介绍一下三体计算星座，帮我翻译成英文",
+  "answer": "# 三体计算星座介绍\n\n## 一、什么是三体计算星座？\n\n**三体计算星座**是之江实验室协同全球合作伙伴共同构建的千星规模太空计算基础设施，旨在实现\"计算上天、卫星互联、模型上天\"，为通信、导航、遥感和空间科学等卫星提供天基计算服务，支撑\"人工智能+\"科学和\"人工智能+\"全球合作[来源: 三体计算星座介绍]。\n\n## 二、建设背景与必要性\n\n### 当前太空计算面临的挑战：\n1. **数据传输瓶颈**：我国仅有30多个地面站，仅有20%~30%的卫星数据能够回传地面[来源: 三体计算星座介绍]\n2. **数据时效性差**：传统方式从数据回传到分析处理至少需要1-2小时，无法满足灾害应急等实时需求[来源: 7B展厅参考解说词（2026年1月29日）]\n3. **算力不足**：单颗卫星算力从1T到十几T，但AI应用需要P级算力[来源: 三体计算星座介绍]\n4. **卫星孤立**：卫星大多相互独立，无法协同工作，难以完成复杂任务[来源: 7B展厅参考解说词（2026年1月29日）]\n\n## 三、核心目标与规模\n\n### 主要目标：\n- **规模目标**：建设1000颗计算卫星组成的星座\n- **算力目标**：达到1EOPS（10^18次操作/秒）的太空计算基础设施[来源: 三体计算星座介绍]\n- **覆盖能力**：实现全球区域实时覆盖，同时段不少于28颗卫星与中国地面站建链[来源: 三体计算星座介绍]\n\n### 星座构成：\n- **高轨**：6颗卫星\n- **中轨**：36颗卫星  \n- **低轨**：958颗卫星[来源: 三体计算星座介绍]\n\n## 四、三大核心任务\n\n### 1. 计算上天\n将大算力计算单元、路由器、星间小型高速通信机部署到卫星，变\"天感地算\"为\"天感天算\"[来源: 三体计算星座介绍]。\n\n### 2. 星间互联\n基于天基分布式操作系统和星间组网技术将多个太空计算节点链接成网，实现\"星间互联\"，形成\"太空云计算\"能力[来源: 三体计算星座介绍]。\n\n### 3. 模型上天\n将地面模型部署上天，实现在轨信息与数据的自主感测及计算任务自主规划[来源: 三体计算星座介绍]。\n\n## 五、关键技术突破（3+2体系）\n\n### 硬件三件套：\n1. **星载计算机**：智加X星载计算机可实现1POPS算力\n2. **激光通信机**：可达100Gbps通信速率\n3. **星载路由器**：单口10G、440G交换容量，正在研制单口100G星载路由器[来源: 三体计算星座介绍]\n\n### 软件两核心：\n1. **天基分布式操作系统**：实现对算力、存储、网络等资源的统一管理\n2. **具身智能卫星模型**：让星座自主感知-推理-决策-执行，实现星座自治[来源: 三体计算星座介绍]\n\n## 六、建设时间规划\n\n### 第一阶段（2025年-2027年）：1-100颗\n- 之江实验室为推进主体\n- 构建太空计算技术验证平台\n- 形成太空计算技术体系与建设标准[来源: 三体计算星座介绍]\n\n### 第二阶段（2027年-2032年）：101-1000颗\n- 国家队接力推进\n- 融入GW星座\n- 建成千星规模的大型计算星座[来源: 三体计算星座介绍]\n\n## 七、应用场景\n\n### 1. 科学研究支撑\n- 变革空间科学研究范式\n- 支撑深空探索、粒子观测等开放科学研究[来源: 三体计算星座介绍]\n\n### 2. 全球合作促进\n- 与国际电信联盟（ITU）发起太空AI大赛\n- 与联合国教科文组织合作\"橄榄叶计划\"\n- 与地球观测组织（GEO）等国际组织合作[来源: 7B展厅参考解说词（2026年1月29日）]\n\n### 3. 具体应用领域\n- **无人机运行管理**：构建低空经济天地一体化网络\n- **城市治理**：实现城市建筑、环境、交通等要素的大范围实时监测\n- **气象应用**：提升对极端天气的识别与预测精度\n- **航空器直联**：为飞机提供太空互联网直联服务\n- **矿产勘探**：通过高光谱模型实现卫星智能探矿[来源: 三体计算星座介绍]\n\n## 八、建设模式创新\n\n与美国SpaceX公司\"星链\"的封闭式建设模式不同，\"三体计算星座\"采取**开放共享的建设路径**，通过\"共商共建共享共发展\"的创新模式，倡导全球科研机构和组织共同参与建设与使用，实现技术共研、设施共建与算力共享[来源: 三体计算星座介绍]。\n\n## 九、当前进展\n\n- **首发任务**：已完成12颗计算卫星部署\n- **在轨算力**：整体在轨算力达5POPS\n- **模型支持**：最大可支持1400亿参数模型在轨部署与推理\n- **组网测试**：已实现六颗卫星的在轨建链[来源: 三体计算星座介绍]\n\n---\n\n# Introduction to Three-Body Computing Constellation (English Translation)\n\n## 1. What is the Three-Body Computing Constellation?\n\nThe **Three-Body Computing Constellation** is a thousand-satellite-scale space computing infrastructure jointly constructed by the Zhejiang Lab in collaboration with global partners. It aims to achieve \"computing in space, satellite interconnection, and models in orbit,\" providing space-based computing services for communication, navigation, remote sensing, and space science satellites, supporting \"AI+\" science and \"AI+\" global cooperation[来源: 三体计算星座介绍].\n\n## 2. Background and Necessity\n\n### Current Challenges in Space Computing:\n1. **Data Transmission Bottleneck**: China has only over 30 ground stations, with only 20%~30% of satellite data able to be transmitted back to Earth[来源: 三体计算星座介绍]\n2. **Poor Data Timeliness**: Traditional methods require at least 1-2 hours from data transmission to analysis, unable to meet real-time needs such as disaster response[来源: 7B展厅参考解说词（2026年1月29日）]\n3. **Insufficient Computing Power**: Single satellites have computing power ranging from 1T to tens of T, but AI applications require P-level computing power[来源: 三体计算星座介绍]\n4. **Satellite Isolation**: Most satellites operate independently, unable to collaborate, making complex tasks difficult[来源: 7B展厅参考解说词（2026年1月29日）]\n\n## 3. Core Objectives and Scale\n\n### Main Objectives:\n- **Scale Target**: Build a constellation of 1000 computing satellites\n- **Computing Power Target**: Achieve 1EOPS (10^18 operations per second) space computing infrastructure[来源: 三体计算星座介绍]\n- **Coverage Capability**: Achieve real-time global coverage, with no less than 28 satellites simultaneously linked to Chinese ground stations[来源: 三体计算星座介绍]\n\n### Constellation Composition:\n- **High Orbit**: 6 satellites\n- **Medium Orbit**: 36 satellites\n- **Low Orbit**: 958 satellites[来源: 三体计算星座介绍]\n\n## 4. Three Core Missions\n\n### 1. Computing in Space\nDeploy high-computing-power units, routers, and small high-speed inter-satellite communication machines to satellites, transforming \"space sensing, ground computing\" to \"space sensing, space computing\"[来源: 三体计算星座介绍].\n\n### 2. Satellite Interconnection\nLink multiple space computing nodes into a network based on space-based distributed operating systems and inter-satellite networking technology, achieving \"satellite interconnection\" and forming \"space cloud computing\" capabilities[来源: 三体计算星座介绍].\n\n### 3. Models in Orbit\nDeploy ground models into space, achieving autonomous sensing of in-orbit information and data, and autonomous planning of computing tasks[来源: 三体计算星座介绍].\n\n## 5. Key Technological Breakthroughs (3+2 System)\n\n### Hardware Three Components:\n1. **Spaceborne Computer**: ZhiJia X spaceborne computer can achieve 1POPS computing power\n2. **Laser Communication Machine**: Can reach 100Gbps communication rate\n3. **Spaceborne Router**: Single-port 10G, 440G switching capacity, currently developing single-port 100G spaceborne router[来源: 三体计算星座介绍]\n\n### Software Two Cores:\n1. **Space-based Distributed Operating System**: Achieves unified management of computing, storage, and network resources\n2. **Embodied Intelligent Satellite Model**: Enables the constellation to autonomously perceive-reason-decide-execute, achieving constellation autonomy[来源: 三体计算星座介绍]\n\n## 6. Construction Timeline\n\n### Phase 1 (2025-2027): 1-100 satellites\n- Zhejiang Lab as the main promoter\n- Build space computing technology verification platform\n- Form space computing technology system and construction standards[来源: 三体计算星座介绍]\n\n### Phase 2 (2027-2032): 101-1000 satellites\n- National team takes over promotion\n- Integrate into GW constellation\n- Complete large-scale computing constellation of thousand satellites[来源: 三体计算星座介绍]\n\n## 7. Application Scenarios\n\n### 1. Scientific Research Support\n- Transform space science research paradigms\n- Support open scientific research such as deep space exploration and particle observation[来源: 三体计算星座介绍]\n\n### 2. Global Cooperation Promotion\n- Launch space AI competition with International Telecommunication Union (ITU)\n- Cooperate with UNESCO on \"Olive Leaf Plan\"\n- Collaborate with international organizations like Group on Earth Observations (GEO)[来源: 7B展厅参考解说词（2026年1月29日）]\n\n### 3. Specific Application Areas\n- **Drone Operation Management**: Build integrated air-ground network for low-altitude economy\n- **Urban Governance**: Achieve large-scale real-time monitoring of urban buildings, environment, traffic, etc.\n- **Meteorological Applications**: Improve identification and prediction accuracy of extreme weather\n- **Aircraft Direct Connection**: Provide space internet direct connection services for aircraft\n- **Mineral Exploration**: Achieve satellite intelligent mineral exploration through hyperspectral models[来源: 三体计算星座介绍]\n\n## 8. Construction Model Innovation\n\nUnlike the closed construction model of SpaceX's \"Starlink,\" the \"Three-Body Computing Constellation\" adopts an **open and shared construction path**. Through the innovative model of \"joint consultation, joint construction, sharing, and common development,\" it advocates global scientific research institutions and organizations to participate in construction and use, achieving technology co-research, facility co-construction, and computing power sharing[来源: 三体计算星座介绍].\n\n## 9. Current Progress\n\n- **Initial Mission**: Completed deployment of 12 computing satellites\n- **In-orbit Computing Power**: Overall in-orbit computing power reaches 5POPS\n- **Model Support**: Maximum support for 140 billion parameter model deployment and inference in orbit\n- **Networking Tests**: Achieved in-orbit link establishment for six satellites[来源: 三体计算星座介绍]",
+  "terminated_reason": "finish",
+  "total_iterations": 3,
+  "steps": [
+    {
+      "iteration": 0,
+      "thought": "",
+      "action": "keyword_search",
+      "action_input": {
+        "queries": [
+          "三体计算星座",
+          "三体星座",
+          "计算星座"
+        ],
+        "top_k": 10
+      },
+      "observation": "（纯关键词检索）\n找到 3 条匹配结果：\n\n[1] doc_id=621069f2db2eb376 | 标题=三体计算星座介绍 | 分数=62.6658\n  内容: # 三体计算星座介绍\n\n# 三体计算星座篇  \n作为国家“第四疆域”的太空是⼈⼯智能最好的应⽤场景之⼀。太空领域已进⼊技术爆发期，卫星互联⽹、可回收⽕箭、深空探测等技术突破和产业创新正在重塑⼈类探索、研究及开发太空的边界，⼈类的经济、科技和安全活动都越来越依赖太空，使之成为国家的核⼼战略资源，也是国际开放合作的重要舞台。与此同时，⼈⼯智能的快速发展正当其时。伴随着算⼒、数据、模型为核⼼的体系化创新，⼈⼯智能技术可变⾰空间科学研究范式，有效⽀撑深空探索、粒⼦观测等开放科学研究，服务卫星通信、导航增强、实时遥感等国家战略需求，已逐渐在太空应⽤中扮演更多更重要的⻆⾊。\n\n# 为什么要建设计算星座？  \n今天，太空中的卫星越来越多。2023年初，我国约有1000个在轨卫星，计划中还有2万个卫星上天，但是我国境内仅有30多地⾯站，卫星下传的数据受限，仅有 $2 0 \\% { \\sim } 3 0 \\%$ 的卫星数据能够回传地⾯，同时",
+      "duration": 3.518
+    },
+    {
+      "iteration": 1,
+      "thought": "",
+      "action": "semantic_search",
+      "action_input": {
+        "queries": [
+          "三体计算星座的主要目标和功能是什么",
+          "三体计算星座的技术特点和应用场景"
+        ],
+        "top_k": 10
+      },
+      "observation": "（混合检索：BM25=0.18, Vector=0.82）\n找到 23 条匹配结果：\n\n[1] doc_id=621069f2db2eb376 | 标题=三体计算星座介绍 | 分数=0.0159\n  内容: # 什么是三体计算星座？（⼀段话描述）  \n三体计算星座是之江实验室落实“共商共建共享共发展”的⾏动，联合全球合作伙伴共同建设的千星规模计算星座。三体计算星座将通过星间激光⾼速互联、星座稳定组⽹、算⼒分布式调度，打造开放共享的太空计算系统，构建天基智能计算基础设施，为通信、导航、遥感和空间科学等卫星提供天基计算服务。\n\n# 最新介绍：  \n“三体计算星座”是之江实验室协同全球合作伙伴共同构建的千星规模的太空计算基础设施，实现“计算上天、卫星互联、模型上天”，为通导遥科卫星和各类航天器提供太空计算服务，⽀撑“⼈⼯智能+”科学、“⼈⼯智能+”全球合作。\n\n# “三体”计算星座的⽬标？  \n1000颗计算卫星/1EOPS算⼒  \n依托太空计算技术突破，通过将太空计算组件部署到卫星、完成基于分布式计算架构和星间组⽹技术的卫星互联以及⼈⼯智能模型在轨部署运⾏，“三体计算星座”核⼼⽬标是定义新",
+      "duration": 4.615
+    },
+    {
+      "iteration": 2,
+      "thought": "",
+      "action": "finish",
+      "action_input": {},
+      "observation": "提交最终回答（7671 字）",
+      "duration": 83.998
+    }
+  ],
+  "accumulated_chunks": [
+    {
+      "chunk_id": "621069f2db2eb376_p0",
+      "doc_id": "621069f2db2eb376",
+      "doc_title": "三体计算星座介绍",
+      "content": "# 三体计算星座介绍\n\n# 三体计算星座篇  \n作为国家“第四疆域”的太空是⼈⼯智能最好的应⽤场景之⼀。太空领域已进⼊技术爆发期，卫星互联⽹、可回收⽕箭、深空探测等技术突破和产业创新正在重塑⼈类探索、研究及开发太空的边界，⼈类的经济、科技和安全活动都越来越依赖太空，使之成为国家的核⼼战略资源，也是国际开放合作的重要舞台。与此同时，⼈⼯智能的快速发展正当其时。伴随着算⼒、数据、模型为核⼼的体系化创新，⼈⼯智能技术可变⾰空间科学研究范式，有效⽀撑深空探索、粒⼦观测等开放科学研究，服务卫星通信、导航增强、实时遥感等国家战略需求，已逐渐在太空应⽤中扮演更多更重要的⻆⾊。\n\n# 为什么要建设计算星座？  \n今天，太空中的卫星越来越多。2023年初，我国约有1000个在轨卫星，计划中还有2万个卫星上天，但是我国境内仅有30多地⾯站，卫星下传的数据受限，仅有 $2 0 \\% { \\sim } 3 0 \\%$ 的卫星数据能够回传地⾯，同时还⾯临⽆效数据多（如云层遮挡）、数据时效差等问题。  \n为此，我们提出在天上做计算，但是太空的算⼒远不能满⾜卫星对算⼒的需求。今天的单颗卫星的算⼒从1T到⼗⼏T，但是",
+      "content_length": 1002,
+      "score": 62.6658,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "621069f2db2eb376_p1",
+      "doc_id": "621069f2db2eb376",
+      "doc_title": "三体计算星座介绍",
+      "content": "# 什么是三体计算星座？（⼀段话描述）  \n三体计算星座是之江实验室落实“共商共建共享共发展”的⾏动，联合全球合作伙伴共同建设的千星规模计算星座。三体计算星座将通过星间激光⾼速互联、星座稳定组⽹、算⼒分布式调度，打造开放共享的太空计算系统，构建天基智能计算基础设施，为通信、导航、遥感和空间科学等卫星提供天基计算服务。\n\n# 最新介绍：  \n“三体计算星座”是之江实验室协同全球合作伙伴共同构建的千星规模的太空计算基础设施，实现“计算上天、卫星互联、模型上天”，为通导遥科卫星和各类航天器提供太空计算服务，⽀撑“⼈⼯智能+”科学、“⼈⼯智能+”全球合作。\n\n# “三体”计算星座的⽬标？  \n1000颗计算卫星/1EOPS算⼒  \n依托太空计算技术突破，通过将太空计算组件部署到卫星、完成基于分布式计算架构和星间组⽹技术的卫星互联以及⼈⼯智能模型在轨部署运⾏，“三体计算星座”核⼼⽬标是定义新⼀类“计算卫星”并构建互联组⽹的计算星座，建设1EOPS算⼒的太空计算基础设施，突破在轨计算瓶颈，打破太空中的算⼒和数据孤岛，赋予卫星星座⾃主智能。\n\n# “三体”计算星座建设模式  \n我们希望采⽤“共商共建",
+      "content_length": 1331,
+      "score": 62.6658,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "621069f2db2eb376_p2",
+      "doc_id": "621069f2db2eb376",
+      "doc_title": "三体计算星座介绍",
+      "content": "# “三体”计算星座建设时间规划\n\n# （原版简约版）  \n系统建设分三个阶段：  \n（1）技术验证阶段（2025年）：构建由 $^ { 1 2 + 1 }$ 颗计算卫星组成的“⾸发星座”，完成P级算⼒上天、激光稳定建链、卫星编队组⽹多星协同、天基⼤模型等关键技术验证；\n（2）场景验证阶段（2027年）：对遥感、天⽂、导航、通信等典型场景进⾏⽰范验证，与合作伙伴共建典型⽰范系统，形成百余颗计算卫星规模的计算星座；\n（3）⼤规模组⽹阶段（2032年）：为⾏业提供协议、⼯具、算⼒、算法等基础服务，搭建开放技术创新平台，构建太空计算合作⽣态，建成千星规模的⼤型计算星座。\n\n# （新版）  \n“三体计算星座”计划由⾼中低轨布局的1000颗卫星组成，其中⾼轨6颗，中轨36颗，低轨958颗。届时可实现全球区域实时覆盖，同时段有不少于28颗卫星与中国地⾯站建链，实现天地⼀体化组⽹。通过“三体计算星座”，可为每个中国卫星提供不少于10颗接⼊节点以⽀撑实时算⼒服务。  \n建设主要分为两个阶段推进：在前100颗建设阶段，之江实验室聚焦太空计算技术突破，建设太空计算技术验证平台，打造太空⼈⼯智能开放创新设施",
+      "content_length": 1106,
+      "score": 62.6658,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "67f8cd08656c0a09_p0",
+      "doc_id": "67f8cd08656c0a09",
+      "doc_title": "（中文）三体计算星座画册 - 20260318-压缩",
+      "content": "# THREE-BODYCOMPUTING CONSTELLATION\n\n# 三体计算星座\n\n#  \n目录  \n01 关于我们\n05 三体计算星座\n13 太空计算关键技术\n16 星载智能计算机\n27 星间激光通信机\n29 星载高速路由器\n31 天基分布式操作系统\n33 具身智能卫星模型  \n41 太空数字孪生平台\n\n# 01\n\n# ABOUT US\n\n# 关于我们\n\n# ABOUT US关于我们  \n2017 年成立\n\n# 之江实验室  \n之江实验室是浙江省深入实施创新驱动发展战略、探索新型举国体制浙江路径的重大科技创新平台，于2017年9月正式挂牌成立。实验室聚焦智能计算，瞄准国家战略前沿、科技创新变革、战略产业创新三大战略需求，打造国家战略科技力量，建设服务支撑浙江创新发展的策源地，成为世界领先水平的科技创新基地。\n\n# 天基计算系统研究中心  \n天基计算系统研究中心以构建“三体计算星座”为使命，采用“共商共建共享共发展”的方式，联合全球合作伙伴共同建设千星规模的计算星座，打造开放共享的太空计算系统，构建天基智能计算基础设施，为通信、导航、遥感和空间科学等卫星提供天基计算服务，为国",
+      "content_length": 1026,
+      "score": 0.0137,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "e425c6fbb4e76805_p0",
+      "doc_id": "e425c6fbb4e76805",
+      "doc_title": "7B展厅参考解说词（2026年1月29日）",
+      "content": "# B展厅参考解说词（2026年1⽉29⽇）\n\n# ⼀、三体计算星座简介\n\n# （⼀）星座建设的必要性  \n欢迎⼤家进⼊到“三体计算星座”的展厅，要了解什么是“三体计算星座”，我们⾸先要了解，我们实验室要建设星座的原因是什么。  \n⽬前，全球在轨卫星数量已经有17000多颗，中国1100多颗。（26年1⽉数据）这个数量听起来很多是不是挺多的？但是实际上，天上的卫星，看起来多，⽤到的少。为什么这么说呢？  \n第⼀个原因，其实有 $9 0 \\%$ 的太空数据是传不下来的。为什么呢？我们知道，卫星的数据是需要通过与地⾯站通信下传的，⼀⽅⾯，传输带宽有限的，另⼀⽅⾯，我们国家的地⾯站并不是全球都有的。当卫星围绕地球转的时候，总会有与地⾯站失去联系的时候，这个时候就⽆法下传数据了。⽽卫星产⽣的原始数据都⾮常⼤，⽽卫星的存储空间⼜有限，这就会导致数据丢失严重，没有发挥应有的价值。  \n第⼆个原因，是数据的时效性问题。⽐如说，当台⻛、洪⽔、地震等⾃然灾害发⽣的时候，我们⼀定是希望能够越快的掌握灾情越好，这样我们才能越快的进⾏应急处理。但是按照传统的⽅式，我们等待遥感卫星的数据回传到地⾯，再进⾏分析处",
+      "content_length": 2286,
+      "score": 0.0132,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "621069f2db2eb376_p6",
+      "doc_id": "621069f2db2eb376",
+      "doc_title": "三体计算星座介绍",
+      "content": "# （⼆）太空计算关键技术突破  \n通过“具⾝智能卫星模型、天基分布式操作系统、星载计算机、星载路由器、激光通信机”等核⼼软硬件技术的突破，形成“计算上天、星间互联、模型上天”的系统级能⼒。\n\n# 1.具⾝智能卫星模型  \n具⾝智能卫星模型具备卫星在轨⾃治、任务⾃主规划、在轨智能调度等关键能⼒，⽀持⾃然语⾔交互、视觉解析、语义理解与任务规划等多种任务。\n\n# 2.天基分布式操作系统  \n天基分布式操作系统实现对三体计算星座的算⼒、存储、⽹络等资源进⾏统⼀管理，实现在轨计算任务编排调度及应⽤状态监测。\n\n# 3.星载计算机、星载路由器与激光通信机  \nP级星载智能计算机具备⼤模型在轨⾼效推理、⾼吞吐数据处理、载荷故障秒级修复等能⼒。研制的星载路由器和激光通信机，通过路由和通信⼀体化设计，能够覆盖100Mbps⾄200Gbps的多速率空间激光通信体系。\n\n# （三）“三体计算星座+科学”  \n“三体计算星座 $\\vdots +$ 科学”重点任务的核⼼⽬标是通过与国际组织紧密合作，联合全球伙伴开展国际卫星共建及太空计算载荷与应⽤共研，积极开展“⼈⼯智能+”科学⾏动计划，充分发挥“三体计算星座",
+      "content_length": 1047,
+      "score": 0.013,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "c7448408d613b22f_p0",
+      "doc_id": "c7448408d613b22f",
+      "doc_title": "术语翻译",
+      "content": "# 术语翻译\n\n# 之江实验室相关术语  \n共商共建共享共发展 openness, collaboration, sharing, and discovery  \n之江实验室 Zhejiang Lab  \n天基计算系统研究中⼼ Research Center for Space Computing System\n\n# 三体计算星座产品术语  \n三体计算星座 3-body computing constellation 或 three-body computing constellation  \n三体计算星座⾸次发射 the first launch of the -body Computing Constellation  \n星载智能计算机 spaceborne intelligent computer  \n星载智能计算单元 spaceborne intelligent computing unit  \n激光通信机 laser communication terminal  \n星间激光通信机 inter-satellite laser communication terminal  \n",
+      "content_length": 2412,
+      "score": 0.0122,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "aa5cb33568f971f3_p0",
+      "doc_id": "aa5cb33568f971f3",
+      "doc_title": "【合作协议】20251010_之江实验室 西安中科西光航天科技有限公司 关于“三体计算星座”共建及模型联合研发的战略合作协议",
+      "content": "# 之江实验室\n\n# 西安中科西光航天科技有限公司\n\n# 关于“三体计算星座”共建及\n\n# 模型联合研发的\n\n# 战略合作协议  \n二○二五年九月  \n本协议由下列双方：之江实验室（以下称“甲方”）与西安中科西光航天科技有限公司（以下称“乙方”）签署：  \n甲方：之江实验室  \n统一社会信用代码：12330000MB1478604D  \n通讯地址：浙江省杭州市余杭区文一西路2880号  \n法定代表人/负责人：王坚  \n授权代表：赵志峰  \n项目联系人：陈高伟  \n联系方式：15957108870  \n联系人电子邮箱：  \n乙方：西安中科西光航天科技有限公司  \n统一社会信用代码：91610138MAB0QBL297  \n通讯地址：陕西省西咸新区空港新城商务中心二期4号楼5层  \n法定代表人/负责人：秦静  \n项目联系人：雷腾  \n联系方式：13700289975  \n联系人电子邮箱：  \n经友好协商，双方同意通过“共商共建共享共发展”的新机制，开展“三体计算星座”共建、高光谱模型联合研发，支撑地方政府筹建高光谱数据要素库及智算中心，提升对地高光谱观测能力，推动“人工智能+”科学、“人工",
+      "content_length": 1050,
+      "score": 0.0121,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "baf1f625fd69eb1f_p0",
+      "doc_id": "baf1f625fd69eb1f",
+      "doc_title": "关于三体计算星座首发成功后续影响的报告",
+      "content": "# 关于三体计算星座⾸发成功后续影响的报告  \n省委科技委员会：  \n太空是⼤国战略竞争的核⼼领域，在如何把计算和⼈⼯智能整合到下⼀代航天器上，抢占太空计算先机，中美两国都在加紧谋划布局中。三体计算星座⾸发成功，初步实现“计算上天、星间互联、模型上天”，为⼈⼯智能在太空应⽤提供了先例，在全球引发了⼴泛关注和强烈反响，深刻改变了太空产业发展路径，对我国太空科技发展、国家重⼤战略任务推进、未来产业布局等也带来了⾮常深远影响。现将有关情况报告如下：\n\n# ⼀、占据了太空计算先发优势。  \n⼀是引领了太空计算发展。三体计算星座⾸发12颗计算卫星发射成功，在通导遥三类卫星之外定义了第四类计算卫星，搭载的16台星载智能计算机，通过天基分布式操作系统实现协同计算，在轨整体算⼒达5POPS，是⽬前全球算⼒最⼤的太空计算基础设施，为我国太空计算发展赢得了战略主动。  \n⼆是开创了太空基础设施建设新路径。与美国SpaceX公司“星链”计划封闭式建设模式不同，在三体计算星座建设中，之江实验室与卫星、载荷等各类⺠企、科研院所、机构平台紧密协同，通过体制互补和合作模式创新，合作建设各主体所属的卫星或星座，在不改",
+      "content_length": 2294,
+      "score": 0.0117,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "b6b779dc030fa916_p0",
+      "doc_id": "b6b779dc030fa916",
+      "doc_title": "【补充协议】20260113_《之江实验室 中国航天科技集团商业卫星有限公司 关于推进“人工智能+卫星”发展与共建“三体计算星座”的战略合作协议》补充协议",
+      "content": "# 《之江实验室 中国航天科技集团商业卫星有限公司 关于\n\n# 推进“人工智能+卫星”发展与共建“三体计算星座”的\n\n# 战略合作协议》补充协议  \n协议内容：通用基带处理与智算模块  \n协议编号：ZJGZSQ20010020250729006BG  \n甲方：中国航天科技集团商业卫星有限公司  \n地址：北京市海淀区知春路61号院  \n授权代表：张程  \n联系人：张程  \n联系方式： 15313682046  \n乙方：之江实验室  \n地址：浙江省杭州市余杭区文一西路2880号  \n授权代表：李超  \n联系人：黄利君  \n联系方式：16657044696  \n甲乙双方于2025年7月签订了编号为ZJGZSQ20010020250729006的《之江实验室 中国航天科技集团商业卫星有限公司关于推进“人工智能+卫星”发展与共建“三体计算星座”的战略合作协议》，在此基础上，针对甲乙双方共同参与研究开发的通用基带处理与智算模块相关事项，经过平等协商，在真实、充分地表达各自意愿的基础上，根据《中华人民共和国民法典》的规定，达成如下补充协议，并由双方共同恪守。  \n1. 技术目标和内容：甲乙双方共同研",
+      "content_length": 1962,
+      "score": 0.0114,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "591cbbd0bee49db0_p0",
+      "doc_id": "591cbbd0bee49db0",
+      "doc_title": "实验室、天基中心介绍信息汇总",
+      "content": "# 实验室、天基中⼼介绍信息汇总\n\n# 标准名称  \n之江实验室  \nZhejiang Lab  \n天基计算系统研究中⼼  \nResearch Center for Space Computing System\n\n# 地址  \n杭州市余杭区⽂⼀西路2880号  \nAdd: No. Wenyi West Road, Yuhang District, Hangzhou, Zhejiang Province, , China\n\n# 官⽅介绍\n\n# 之江实验室  \n之江实验室是浙江省深⼊实施创新驱动发展战略、探索新型举国体制浙江路径的重⼤科技创新平台，于2017年9⽉正式挂牌成⽴。实验室聚焦智能计算，瞄准国家战略前沿、科技创新变⾰、战略产业创新三⼤战略需求，打造国家战略科技⼒量，建设服务⽀撑浙江创新发展的策源地，成为世界领先⽔平的科技创新基地。\n\n# 备注：英⽂版和中⽂版不对应  \nZhejiang Lab is a non-profit research institution funded by the Zhejiang provincial government, China. Focu",
+      "content_length": 1911,
+      "score": 0.0112,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "e425c6fbb4e76805_p2",
+      "doc_id": "e425c6fbb4e76805",
+      "doc_title": "7B展厅参考解说词（2026年1月29日）",
+      "content": "# 三、太空计算关键技术  \n现在看到的⼀个卫星模型，就是我们⾸发的12颗卫星中的01星、02星的模型。  \n【补充科普：卫星构成】卫星可以分为卫星平台和有效载荷两个部分。卫星平台就是保证卫星正常运⾏的必要系统，包括结构、电⼒、姿态确定和控制系统、推进系统、通信系统、热控制系  \n统、综合电⼦系统。有效载荷，就是执⾏卫星任务的设备，⽐如执⾏地球观测任务的相机、雷达。⽽我们⾃⼰要做的，就是完成计算任务的载荷⸺计算载荷。  \n旁边的，是我们实验室主要聚焦的太空计算关键技术硬件技术，就是我们刚刚提到的 $3 + 2$ 。  \n星载计算机负责提供算⼒和存储资源，激光通信机负责卫星之间的通信，星载路由器是星间（激光/微波）、星地（测控）及星内（算⼒设备）通信的统⼀互联枢纽。我们可以看到，卫星上边标注了星载计算机、路由器和激光的位置。  \n计算机是我们研制的1POPS算⼒的星载计算机，常⻅的计算机⼤多是⼗⼏TOPS，正在研发10POPS算⼒。路由器是单⼝10G，总容量440G，正在研发100G的，总容量1T的路由器。激光是100Gbps通信速率，轻⼩型激光通信机，⽬前已经在中国的互联⽹星座上应⽤。",
+      "content_length": 1835,
+      "score": 0.0109,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "e5e03e180c193781_p0",
+      "doc_id": "e5e03e180c193781",
+      "doc_title": "【MOU】20241220_之江实验室 阿曼兰斯有限责任公司 地卫二空间技术（杭州）有限公司 关于太空计算的合作谅解备忘录",
+      "content": "# 之江实验室\n\n# ZHEJIANG LAB\n\n# 阿曼兰斯有限责任公司\n\n# OMAN LENS LLC\n\n# 地卫二空间技术(杭州)有限公司\n\n# STAR.VISION AEROSPACE GROUP LIMITED\n\n# 关于太空计算的合作谅解备忘录\n\n# MEMORANDUM OF UNDERSTANDINGS ON\n\n# COOPERATION ON SPACE COMPUTING  \n二〇二四年十一月  \n2024.11  \n中国 杭州  \nCHINA HANGZHOU  \n鉴于：  \n各方均认同太空计算理念，并有意发挥各自技术优势，共同致力于太空计算关键技术研发以及三体计算星座的合作建设。各方均同意共同推动太空计算国际组织创建，共同努力促进太空计算技术的标准化进程及其全球化应用。经友好协商，各方达成以下合作意向。  \nWhereas:  \nAll parties acknowledge the concept of space computing and are willing to leverage their respective technological st",
+      "content_length": 3222,
+      "score": 0.0108,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "621069f2db2eb376_p8",
+      "doc_id": "621069f2db2eb376",
+      "doc_title": "三体计算星座介绍",
+      "content": "# 太空计算相关资料\n\n# ⼀、什么是太空计算？  \n太空计算是通过把⾼性能计算机发射到太空中，构建天基智能计算基础设施，为各类卫星和航天器直接在太空提供计算服务的全新模式。当前，全球在轨卫星和航天器数量已超15000个，但由于太空缺少计算资源，相关感测数据需要先传回地⾯的信息中⼼进⾏加⼯处理，此类“天感地算”⽅式受限于传输带宽、传输距离、环境⼲扰和地⾯接收站布局等问题，数据有效利⽤率低，极⼤限制了卫星和航天器⼯作效能的发挥。太空计算将会全⾯变⾰太空信息处理的⽅式，变“天感地算”为“天感天算”，极⼤地提升卫星和航天器的⼯作效能和智能化⽔平，为⼈类探索、开发和利⽤太空这个“第四疆域”提供更加先进的技术⼿段，有效⽀撑深空探索、粒⼦观测等科学研究，⾼质量服务卫星通信、导航增强、实时遥感等国家战略需求。为抢占“第四疆域”的发展主动权，我国应加快部署太空计算。\n\n# ⼆、太空计算的实现路径有哪些？  \n从全球对太空计算的探索来看，实现太空计算的路径有三种。  \n⼀是太空基地计算中⼼模式。在⽉球、⽕星等地外星球上建设太空基地，部署计算资源；或者在太空中的拉格朗⽇点（是指周围天体引⼒平衡，航天器可以",
+      "content_length": 1103,
+      "score": 0.0105,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "cc0ea7c7c43a919c_p0",
+      "doc_id": "cc0ea7c7c43a919c",
+      "doc_title": "在轨测试成果发文-新华社",
+      "content": "# 在轨测试成果发⽂-新华社\n\n# “三体计算星座”实现星间组⽹突破  \n新华社杭州2⽉XX⽇电（记者朱涵）记者12⽇从浙江新型研发机构之江实验室了解到，“三体计算星座”已实现星间组⽹突破，通过在轨协同完成了10个⼈⼯智能模型与应⽤的部署与验证，探索了深空探测、智慧城市建设、⾃然资源普查等场景的太空计算创新应⽤。\n\n# 三体计算星座指挥⼤厅  \n“三体计算星座”是之江实验室协同全球合作伙伴共同打造的千星规模太空计算基础设施，通过“计算上天、星间互联、模型上天”，推动太空科研范式变⾰。2025年5⽉14⽇，三体计算星座⾸发12颗计算卫星成功发射⼊轨。  \n据了解，经过九个⽉的在轨测试，⾸发任务已形成组⽹、计算、模型部署以及科学载荷在轨验证等四⼤核⼼能⼒。  \n专家表⽰，把模型送上天，是推动⼈⼯智能在太空应⽤与发展的关键。截⾄⽬前，团队已实现10个⼈⼯智能模型和应⽤的在轨部署。其中，80亿参数天基遥感模型和80亿参数天基天⽂时域模型，是全球在轨运⾏的参数规模最⼤的模型之⼀，有6个模型与算法通过地⾯上注实现了在轨更新部署。  \n已部署的各模型已成功执⾏多次在轨任务。在2025年11⽉10⽇，",
+      "content_length": 907,
+      "score": 0.0104,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "90fac7d94e4702ef_p0",
+      "doc_id": "90fac7d94e4702ef",
+      "doc_title": "三体计算星座在轨应用介绍-260226",
+      "content": "# 三体计算星座在轨应⽤介绍-260226\n\n# ⼀、天基遥感模型  \n合作单位：之江实验室、北京师范⼤学、⾹港⼤学、航天体系院  \n天基遥感模型由之江实验室⾃研，参数量达8B，融合RGB、SAR、红外、多光谱等多源遥感数据，可统⼀完成图像级、区域级与像素级14类任务处理，具备300余种⽬标识别、300余种图像分类及60余种场景分割能⼒，是当前遥感领域综合性能领先的视觉语⾔模型。该模型已于三体计算星座⾸发任务中部署⼊轨，⽬前已完成参数统计、场景分类、图像解译、⽬标检测等在轨推理任务验证。\n\n# ⼆、L-L遥感图像处理算法  \n合作单位：之江实验室  \nL-L遥感图像处理算法由之江实验室⾃研，已部署于三体计算星座⾸发任务12星，构成⼀个在轨实时处理流⽔线，能将原始遥感影像逐级转化为可供⼤模型使⽤的多级数据产品。具体流程为：原始影像（L级）经过辐射校正、波段配准、去噪及筛选（L-L）后，进⾏系统⼏何校正（L-L），再经影像融合（L-L），最终完成⽬标识别、场景分割与图像压缩（L-L）。\n\n# 三、天基天⽂时域模型  \n合作单位：国家天⽂台、⼴西⼤学、之江实验室  \n天基天⽂时域模型由国家天",
+      "content_length": 1131,
+      "score": 0.003,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "90fac7d94e4702ef_p1",
+      "doc_id": "90fac7d94e4702ef",
+      "doc_title": "三体计算星座在轨应用介绍-260226",
+      "content": "# 六、伏羲⽓象模型  \n合作单位：复旦⼤学、巡天千河、航天⼋院  \n“伏羲”是由复旦⼤学与上海科学智能研究院联合研发的全球⽓象⼤模型。为融合微波、红外等多源卫星数据以进⾏⽓象同化，团队基于伏羲⼤模型架构构建了专⻔的同化模型⸺伏羲-DA。⽓象预报流程⾸先由伏羲-DA模型对载荷数据进⾏预处理，再由伏羲-C模型⽣成最终的天⽓预报。⽬前已上注⾄三体计算星座的是轻量化设计后的伏羲-DA模型，其参数量为0.15B，模型⽂件⼤⼩约336MB。\n\n# 七、千问⼤语⾔模型  \n合作单位：国星宇航  \n2025年11⽉，之江实验室配合国星宇航将千问⼤模型Qwen部署到三体计算星座，并成功执⾏在轨任务，在太空中成功执⾏多次端到端推理任务，问题从地⾯上传⾄卫星，由⼤模型完成在轨推理，并将结果数据回传地⾯，全流程耗时不到2分钟。\n\n# ⼋、多源遥感影像融合算法  \n合作单位：宁波⼤学  \n多源遥感影像融合算法是宁波⼤学孟祥超教授团队研制的新型多源遥感影像融合算法，旨在解决传统⽅法在⼤场景遥感影像融合中鲁棒性差、易致⾊彩失真与空间清晰度不⾜的问题。该算法已上注⾄三体计算星座，成功实现1.5⽶全⾊影像和6⽶多光谱",
+      "content_length": 1036,
+      "score": 0.0029,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "621069f2db2eb376_p3",
+      "doc_id": "621069f2db2eb376",
+      "doc_title": "三体计算星座介绍",
+      "content": "# 第⼆阶段（2028年—）：101-1000颗  \n之江实验室与星⽹集团、国家航天科技集团联合，按照“三体计算星座”标准继续推进星座建设。星⽹集团、国家航天科技集团等相关国家战略科技⼒量为该阶段的建设主体，推动“三体计算星座”融⼊GW星座。新建星座的算⼒所有权归星⽹集团等单位所有，之江实验室可通过合作或采购⽅式，获取星上算⼒使⽤权。  \n该阶段，之江实验室作为技术输出⽅，聚焦“三件套”、天基分布式操作系统与天基模型等太空计算关键核⼼技术创新与引领，协同参与技术体系与标准制定，持续提供核⼼技术赋能。在此过程中，之江实验室将通过相关知识产权授权或转让，享有相应成果转化收益。\n\n# 三体计算星座已形成的能⼒\n\n# （⼀）计算能⼒  \n⾸发任务搭载16台星载智能计算机，16个计算节点之间可通过天基分布式操作系统实现协同计算，在轨整体算⼒达5POPS，是全球⽬前算⼒最⼤的太空计算基础设施。\n\n# （⼆）组⽹能⼒  \n⾸发任务星内、星间、星地全链路均采⽤以太⽹通信协议。星内通过星载⾼速路由器实现星内⽹络互联，最⼤交换容量为184Gbps；星间通过激光通信机实现互联，最⼤速率可达100Gbps；星",
+      "content_length": 1243,
+      "score": 0.0024,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "621069f2db2eb376_p5",
+      "doc_id": "621069f2db2eb376",
+      "doc_title": "三体计算星座介绍",
+      "content": "# “三体”计算星座重点⼯作任务\n\n# （⼀）太空计算基础设施建设  \n“太空计算基础设施建设”重点任务的核⼼⽬标是以共建“三体计算星座”为牵引，与合作伙伴联合开展卫星共研和星座共建，⼒争在2027年底完成100颗卫星研制发射⽬标。\n\n# 1.⾸发任务成功发射并运⾏良好  \n⾸发任务于2025年5⽉14⽇12时12分在酒泉成功发射⼊轨，⽬前12颗卫星在轨运⾏情况良好，已成功完成三星星间10G激光组⽹、三星星间微波组⽹、12颗星星地组⽹、三星星间与地⾯协同业务、8B天基遥感模型、天基天⽂时域模型等关键任务的在轨验证。下⼀步计划开展6星混合建链组⽹、6星分布式业务、双星协同瞬变源观测等相关在轨测试。\n\n# 2.⾼效推进商业卫星联合研制  \n聚焦2027年底百星规模星座⽬标，计算卫星的合作建设正在有序推进，⽬前已与11个合作单位签署436颗卫星合作共建协议，其中23颗卫星已启动研制。下⼀步加快推进中国卫通GEO通信试验卫星、傲天科技态势感知卫星、苍宇天基⾼轨卫星等合作共建，以及与鸿擎科技、雄安新区共建“雄安星座”等。\n\n# 3.积极对接国家战略科技⼒量  \n围绕国家太空基础设施战略，通过技术",
+      "content_length": 1044,
+      "score": 0.0142,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "e425c6fbb4e76805_p3",
+      "doc_id": "e425c6fbb4e76805",
+      "doc_title": "7B展厅参考解说词（2026年1月29日）",
+      "content": "# 五、三体计算星座的任务历程  \n⾸发任务的成功，并没有⼤家想的那么容易。\n\n# 第⼀，时间紧。  \n可以看⼀下，这是计算星座总体部成⽴的红头⽂件，2024年7⽉，实验室联合国星宇航、氦星光联、航天驭星、天链测控等合作伙伴成⽴了计算星座科研任务总体部，7⽉31⽇，正式⽴项，从项⽬⽴项启动，到⾸发任务成功发射，只⽤了不到9个⽉的时间。“在传统航天项⽬⾥，⼏乎是不可能实现的。”  \n为了保证任务成功，⾸发任务的⼀些关键技术，我们还提前进⾏了搭载验证。2024年9⽉24⽇，智加X随国星宇航“星时代-21”卫星发射，验证在轨⽬标检测、抗单粒⼦翻转可靠性实验和软件轨重构功能。2025年11⽉11⽇，天基分布式操作系统和天基遥感模型搭载阿曼星发射成功，提前完成了技术验证。\n\n# 第⼆，任务复杂。  \n卫星系统是⼀个⾮常复杂的系统，涉及到⽕箭、发射场、卫星的平台、计算载荷、科学载荷、地⾯系统等等。⾸发任务，我们有13个合作伙伴，有将近500⼈参与协作，还需要⼤家往返于杭州、嘉兴、成都、上海、⽆锡、宁夏中卫等六地，要协调卫星制造、试验、出⼚、⽕箭发射、地⾯站接受、数据回传等整个链条。  \n⼀个卫星的",
+      "content_length": 1017,
+      "score": 0.0115,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "14d4c71c391db385_p0",
+      "doc_id": "14d4c71c391db385",
+      "doc_title": "在轨测试-三体计算星座项目进展（顺序版）",
+      "content": "# 在轨测试-三体计算星座项⽬进展（顺序版）\n\n# 六星互联、⼈⼯智能上天、变⾰太空科研范式  \n三体计算星座是之江实验室落实“共商共建共享共发展”⾏动，协同全球合作伙伴共同打造千星规模的太空计算星座，通过“计算上天、星间互联、模型上天”，建设以卫星组⽹和在轨计算为核⼼、以模型在轨服务为⽬标的太空计算基础设施，打造⾯向全球开放的太空⼈⼯智能科技创新合作平台，推动“⼈⼯智能+”科学、“⼈⼯智能 $\\cdot + ^ { \\mathfrak { s } }$ ”全球合作快速发展，推进太空科研范式变⾰，⽀撑国家战略科技⼒量，助⼒“航天 $^ { \\cdot + }$ ⼈⼯智能”创新发展。  \n2025年5⽉14⽇，三体计算星座⾸发任务成功发射并进⼊预定轨道。⾸发任务由同⼀轨道⾯的12颗计算卫星组成，每颗卫星均配备星载计算单元、激光/微波通信机、星载路由器、天基分布式操作系统、天基模型等太空计算软硬件，通过星间通信组⽹，实现星间数据和算⼒互联互通，形成太空分布式计算系统。  \n三体计算星座⾸发任务⽰意图  \n为保障⾸发任务顺利开展，之江实验室联合国星宇航、氦星光联等合作伙伴于2024年7⽉成⽴",
+      "content_length": 1195,
+      "score": 0.0108,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "67930e85eaec29c8_p0",
+      "doc_id": "67930e85eaec29c8",
+      "doc_title": "在轨测试-党群新闻通稿",
+      "content": "# 在轨测试-党群新闻通稿\n\n# 三体计算星座实现星间组⽹突破\n\n# ⼗个AI模型完成在轨验证  \n2⽉初，三体计算星座开展了⾯向⽔环境监测的三星协同在轨智能处理试验，通过地表要素提取模型在⽔⾯结冰的情况下提取出了关键⽔体，验证了“卫星载荷⼯作—在轨数据处理—星间协同传输—在轨模型计算—任务结果下传”的全链路能⼒。12⽇，记者从浙江的之江实验室获悉，三体计算星座实现了星间组⽹突破，通过在轨协同完成了10个⼈⼯智能模型与应⽤的部署与验证，探索了深空探测、智慧城市建设、⾃然资源普查等场景的太空计算创新应⽤。  \n三体计算星座指挥⼤厅  \n三体计算星座是之江实验室协同全球合作伙伴共同打造的千星规模太空计算基础设施，通过“计算上天、星间互联、模型上天”，推动太空科研范式变⾰，助⼒“航天 $^ { \\cdot + }$ ⼈⼯智能”创新发展。2025年5⽉14⽇，三体计算星座⾸发12颗计算卫星成功发射⼊轨。  \n之江实验室计算星座总体部技术总师李超介绍，经过九个⽉的在轨测试，三体计算星座⾸发任务已形成组⽹、计算、模型部署以及科学载荷在轨验证等四⼤核⼼能⼒。  \n把模型送上天，是推动⼈⼯智能在太空应",
+      "content_length": 1382,
+      "score": 0.0104,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "621069f2db2eb376_p4",
+      "doc_id": "621069f2db2eb376",
+      "doc_title": "三体计算星座介绍",
+      "content": "# 天基遥感模型⸺提升观测效率  \n为星座增加“智慧⼤脑”，调度卫星协同处理多源数据，在轨⾃主完成地表活动监测。\n\n# （四）应⽤部署能⼒  \n⾯向⾸发任务后续的各类应⽤上星需求，地⾯系统已建⽴孪⽣平台⽤于验证待上星软件镜像的安全性，从需求发起、地⾯孪⽣平台验证、上星部署测试到最终结果下传的全流程，可在2-3天完成。\n\n# 三体计算星座的预期应⽤  \n“三体计算星座”旨在通过技术创新与模式创新，为空天信息产业注⼊新质⽣产⼒，创造经济增⻓点。\n\n# （⼀）打造⽆⼈机运⾏管理基础设施  \n⾯向低空经济⾼质量发展需求，基于太空实时计算服务，构建地⾯⽹络、卫星通信、窄带链路等多⽹融合的低空经济天地⼀体化⽹络，打造⽆⼈机运⾏管理基础设施，推动“数字孪⽣空域”建设，实现⽆⼈机精确定位、路径智能规划、多维实时监测等能⼒，⼤幅提升⽆⼈机监管效率，拓展城市⽴体交通、物流物资运输、智能集群作业、公共安全治理等低空经济应⽤场景。\n\n# （⼆）拓展遥感赋能城市治理与可持续发展  \n基于天基对地观测系统，实现对城市建筑、环境、交通等要素的⼤范围、实时监测与智能分析，为城市规划、地块价值评估、安全防灾及基础设施管",
+      "content_length": 1004,
+      "score": 0.0024,
+      "chunk_type": "parent",
+      "parent_id": null
+    }
+  ],
+  "token_usage": {
+    "prompt_tokens": 19683,
+    "completion_tokens": 2759,
+    "total_tokens": 22442
+  },
+  "timing": {
+    "total": 92.131
+  },
+  "error": null
+}

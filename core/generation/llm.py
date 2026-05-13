@@ -6,17 +6,19 @@ LLM 调用 — 从 generation.py 精简
 - _parse_json_response() — JSON 解析
 - extract_doc_info() — 供 analyzer 调用
 - extract_chunk_info_batch() — 供 pipeline 调用
+- call_with_tools() — ReAct Agent 专用（带 tool calling + 重试）
 """
 
 import asyncio
 import json
 import re
+import time
 from typing import Any, Dict, List, Optional
-import httpx
 from loguru import logger
 from openai import OpenAI
 
 from config import settings
+from core.retrieve.retrieval_models import TokenUsage
 from prompt import (
     SUMMARY_SYSTEM_PROMPT,
     build_summary_prompt,
@@ -30,14 +32,27 @@ class LLMClient:
         self.api_key = settings.deepseek_api_key
         self.base_url = settings.deepseek_base_url
         self.model = settings.deepseek_model
+        self._client: Optional[OpenAI] = None
 
-    def call(self, messages: List[Dict[str, str]], temperature: float = 0.3) -> str:
+    @property
+    def client(self) -> OpenAI:
+        """懒初始化 OpenAI client（复用）"""
+        if self._client is None:
+            self._client = OpenAI(
+                api_key=self.api_key,
+                base_url=self.base_url,
+                timeout=120.0,
+            )
+        return self._client
+
+    def call(self, messages: List[Dict[str, str]], temperature: float = 0.3, max_tokens: int = 2000) -> str:
         """
         调用 DeepSeek API。
 
         Args:
             messages: 消息列表
             temperature: 温度参数
+            max_tokens: 最大生成 token 数
 
         Returns:
             LLM 回复文本
@@ -46,16 +61,11 @@ class LLMClient:
             logger.warning("使用 Mock 模式（未配置 API Key）")
             return '{"doc_type": "其他", "domain": "Product_Tech", "entities": {}, "filter_terms": [], "topics": [], "doc_intent": null, "summary": "暂无摘要", "confidence": 0}'
 
-        client = OpenAI(
-            api_key=self.api_key,
-            base_url=self.base_url,
-            timeout=120.0,
-        )
-        response = client.chat.completions.create(
+        response = self.client.chat.completions.create(
             model=self.model,
             messages=messages,
             temperature=temperature,
-            max_tokens=2000,
+            max_tokens=max_tokens,
         )
         content = response.choices[0].message.content
         logger.info(
@@ -64,6 +74,102 @@ class LLMClient:
             f"completion_tokens={response.usage.completion_tokens}"
         )
         return content
+
+    def call_with_tools(
+        self,
+        messages: List[Dict[str, Any]],
+        tools: List[Dict[str, Any]],
+        max_retries: int = 2,
+        temperature: float = 0.1,
+        max_tokens: int = 4096,
+    ) -> Optional[Dict[str, Any]]:
+        """
+        调用 LLM（带 tool calling），支持瞬态错误重试。
+
+        供 ReAct Agent 使用。
+
+        Args:
+            messages: 消息列表
+            tools: OpenAI Function Calling 工具定义
+            max_retries: 最大重试次数（默认 2）
+            temperature: 温度参数
+            max_tokens: 最大 token 数
+
+        Returns:
+            {"message": dict, "usage": TokenUsage} 或 None
+        """
+        if not self.api_key:
+            # Mock 模式
+            return {
+                "message": {
+                    "role": "assistant",
+                    "content": "请配置 API Key 以使用 ReAct Agent。",
+                    "tool_calls": None,
+                },
+                "usage": None,
+            }
+
+        for attempt in range(max_retries + 1):
+            try:
+                response = self.client.chat.completions.create(
+                    model=self.model,
+                    messages=messages,
+                    tools=tools,
+                    temperature=temperature,
+                    max_tokens=max_tokens,
+                )
+
+                choice = response.choices[0]
+                message = choice.message
+
+                # 构建 assistant message dict（含 tool_calls）
+                msg_dict: Dict[str, Any] = {
+                    "role": "assistant",
+                    "content": message.content,
+                }
+                if message.tool_calls:
+                    msg_dict["tool_calls"] = [
+                        {
+                            "id": tc.id,
+                            "type": "function",
+                            "function": {
+                                "name": tc.function.name,
+                                "arguments": tc.function.arguments,
+                            },
+                        }
+                        for tc in message.tool_calls
+                    ]
+
+                usage = None
+                if response.usage:
+                    usage = TokenUsage(
+                        prompt_tokens=response.usage.prompt_tokens,
+                        completion_tokens=response.usage.completion_tokens,
+                        total_tokens=response.usage.total_tokens,
+                    )
+
+                return {"message": msg_dict, "usage": usage}
+
+            except Exception as e:
+                error_str = str(e)
+                is_transient = any(
+                    marker in error_str.lower()
+                    for marker in ["429", "500", "502", "503", "timeout", "rate_limit", "overloaded"]
+                )
+
+                if is_transient and attempt < max_retries:
+                    wait_time = attempt + 1  # 线性退避：1s, 2s
+                    logger.warning(
+                        f"[LLM] 瞬态错误 (attempt {attempt+1}/{max_retries+1}): "
+                        f"{error_str[:100]}, {wait_time}s 后重试"
+                    )
+                    time.sleep(wait_time)
+                    continue
+
+                logger.error(f"[LLM] tool calling 调用失败: {e}")
+                return None
+
+        return None
 
     def generate_summary(self, content: str) -> Dict[str, Any]:
         """
@@ -96,7 +202,7 @@ class LLMClient:
                 "primary_entity": "",
             }
 
-    async def _call_async(self, messages: List[Dict[str, str]]) -> str:
+    async def _call_async(self, messages: List[Dict[str, str]], max_tokens: int = 2000) -> str:
         """异步调用 DeepSeek API"""
         import httpx
 
@@ -111,6 +217,7 @@ class LLMClient:
                     "model": settings.deepseek_model,
                     "messages": messages,
                     "temperature": 0.3,
+                    "max_tokens": max_tokens,
                 },
             )
             response.raise_for_status()

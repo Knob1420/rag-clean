@@ -434,20 +434,17 @@ async def parse_pdf(file: UploadFile = File(..., description="PDF 文件")):
 
 @app.post("/api/v1/search", response_model=SearchResponse)
 async def search(request: SearchRequest):
-    """检索接口 — 使用 RAGPipeline，支持 Query Understand + Query Rewrite 开关"""
+    """检索接口 — 使用 SimplePipeline（BM25 + Vector + RRF + Spec）"""
     try:
-        pipeline = RAGPipeline()
+        pipeline = SimplePipeline()
 
-        # ---- Query Understand + Rewrite + Retrieval ----
+        # ---- SimplePipeline 检索 ----
         pipeline_result = pipeline.run(
             query=request.query,
             top_k=request.top_k,
-            use_understand=request.use_understand,
-            use_rewrite=request.use_rewrite,
+            use_hyde=request.use_hyde,
             use_rerank=request.use_rerank,
             rerank_top_k=request.rerank_top_k,
-            use_generation=False,
-            query_rewrite_only=False,
         )
 
         chunks = pipeline_result.chunks

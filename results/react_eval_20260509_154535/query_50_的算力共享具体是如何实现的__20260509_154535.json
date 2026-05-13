@@ -1,0 +1,1239 @@
+{
+  "eval_id": "20260509_154535",
+  "timestamp": "2026-05-09T16:21:35.692292",
+  "query": "50%的算力共享具体是如何实现的？",
+  "answer": "根据从知识库检索到的合作协议和技术文档，我为您详细解释\"50%的算力共享\"的具体实现方式：\n\n## 一、50%算力共享的基本定义\n\n在\"三体计算星座\"的合作共建模式中，**50%的算力共享**是指合作双方对卫星星载智算机算力资源的平等使用权分配机制。具体来说：\n\n1. **合作原则**：在星载智算机可用的情况下，合作双方各有上述卫星算力**50%的使用权**[来源: 【合作协议】20250424_之江实验室 济南智星空间科技有限公司 关于\"三体计算星座\"共建及十颗SAR卫星联合研制的合作协议]\n\n2. **适用范围**：这一机制适用于：\n   - 与济南智星空间科技有限公司合作的10颗SAR卫星\n   - 与北京开运联合信息技术集团股份有限公司合作的16颗太空态势感知卫星[来源: 【合作协议】20250616_之江实验室 北京开运联合信息技术集团股份有限公司 关于广视星座与\"三体计算星座\"融合互通及十六颗太空态势感知卫星联合研制的合作协议]\n\n## 二、技术实现基础\n\n### 1. 星载智算机硬件平台\n算力共享的基础是搭载在卫星上的**智加X5星载智算机**，其主要技术参数如下：\n\n| 参数 | 规格 |\n|------|------|\n| 架构 | GPU-SOC+FPGA-SOC |\n| 算力 | 248TOPS@INT8 |\n| 整机尺寸 | 150mm×150mm×51mm |\n| 重量 | 1.5kg-2kg |\n| 功耗 | 待机60W，常时93W，峰值120W |\n| 存储 | GPU：2TB；FPGA：2TB |\n| 接口 | CAN、RS422、GTX |\n| 操作系统 | Ubuntu操作系统 |\n\n### 2. 太空分布式操作系统\n算力共享通过**太空分布式操作系统**实现，该系统具备以下功能：\n- 对分布式星群的计算、存储、网络等资源进行统一管控\n- 支持计算任务的灵活编排部署和高效运行\n- 提供天基云服务，实现地面云的太空延伸[来源: Z_之江星座首发星座系统方案设计报告_0608发布]\n\n## 三、具体实现机制\n\n### 1. 资源隔离与分配\n- **物理隔离**：每颗卫星搭载独立的星载智算机\n- **逻辑分区**：通过软件定义的方式将算力资源划分为两个50%的逻辑分区\n- **动态调度**：根据任务需求和优先级动态调整算力分配\n\n### 2. 合作共享机制的具体条款\n根据合作协议，50%算力共享的实现包括：\n\n1. **使用权分配**：双方各有50%的算力使用权\n2. **数据共享**：卫星数据在不影响乙方正常商业任务的条件下，由双方协商可用于\"三体计算星座\"的科学研究\n3. **具体实施**：具体以双方另行签订的共享协议约定为准[来源: 【合作协议】20250424_之江实验室 济南智星空间科技有限公司 关于\"三体计算星座\"共建及十颗SAR卫星联合研制的合作协议]\n\n### 3. 技术支撑体系\n- **星间激光通信**：12颗卫星通过激光通信载荷实现通信互联\n- **编队组网**：12颗卫星分成三组，每组卫星具备同轨面等相位差均布编队组网能力\n- **微波备份**：2颗主计算卫星和2颗从计算卫星携带微波通信机，保障在激光通信断联情况下的组网通信[来源: Z_之江星座首发星座系统方案设计报告_0608发布]\n\n## 四、应用场景\n\n1. **科学研究**：合作方可将50%的算力用于\"三体计算星座\"的科学研究\n2. **商业任务**：另一方保留50%的算力用于自身的商业遥感任务\n3. **协同计算**：通过分布式操作系统实现多星协同计算，提升整体计算效率\n\n## 五、管理机制\n\n1. **联合工程总体部**：双方联合成立工程总体部，负责工程统一指挥调度\n2. **联合攻关团队**：按照航天工程要求，成立联合攻关团队，制定研制计划、技术流程和质量要求\n3. **协商机制**：卫星数据的使用需要双方协商确定，确保不影响正常商业任务\n\n## 总结\n\n50%的算力共享是通过**硬件平台+软件系统+合作协议**三位一体的方式实现的：\n- **硬件基础**：星载智算机提供物理算力资源\n- **软件支撑**：太空分布式操作系统实现资源调度和管理\n- **协议保障**：合作协议明确双方的权利义务和具体实施细节\n\n这种模式既保证了合作双方对算力资源的平等使用权，又通过技术手段实现了资源的有效隔离和动态调度，为太空计算基础设施的共建共享提供了可行的技术和管理方案。",
+  "terminated_reason": "finish",
+  "total_iterations": 5,
+  "steps": [
+    {
+      "iteration": 0,
+      "thought": "",
+      "action": "keyword_search",
+      "action_input": {
+        "queries": [
+          "算力共享",
+          "50%算力",
+          "算力分配"
+        ],
+        "top_k": 10
+      },
+      "observation": "（纯关键词检索）\n找到 4 条匹配结果：\n\n[1] doc_id=553a9e3bb1e9705c | 标题=（浙江日报）编织太空算力网——探访“三体计算星座”指挥中心 | 分数=28.1938\n  内容: # （浙江⽇报）编织太空算⼒⽹⸺探访“三体计算星座”指挥中⼼  \n编织太空算⼒⽹  \n探访“三体计算星座”指挥中⼼  \n本报记者李攀通讯员盛汪淼芷  \n春节前⼣，杭城褪去了往⽇的喧嚣，之江实验室“三体计算星座”指挥中⼼依然忙碌，⼀场特别的在轨试验正在进⾏。  \n实验室外的⼀处荒地上，直径约7⽶的卫星基站在暗夜中矗⽴。突然，天线缓缓转动。紧接着，横贯指挥中⼼整⾯墙的巨屏滚动刷新，千⾥之外卫星的实时轨迹与遥测数据在屏幕上跳动。“连上了！”科研⼈员⽴刻开始操作，抓紧短暂的窗⼝期，完成今⽇的测试任务。  \n这是“三体计算星座”⾯向⽔环境监测的三星协同在轨智能处理试验，利⽤卫星搭载的地表要素提取模型，在太空中提取到地表的⼀处结冰⽔体信息，并快速传回指挥中⼼。实验成功验证“卫星载荷⼯作―在轨数据处理―星间协同传输―在轨模型计算―任务结果下传”的全链路能⼒。据之江实验室天基计算系统研究中⼼主任、",
+      "duration": 3.437
+    },
+    {
+      "iteration": 1,
+      "thought": "",
+      "action": "semantic_search",
+      "action_input": {
+        "queries": [
+          "50%的算力共享实现方式",
+          "算力共享机制",
+          "卫星算力分配方案"
+        ],
+        "top_k": 10
+      },
+      "observation": "（混合检索：BM25=0.18, Vector=0.82）\n找到 61 条匹配结果：\n\n[1] doc_id=f06c9a7314fb8974 | 标题=SCS-01-LY-ZLR1-SB-06 CXPD科学载荷与智算机、路由器以太网接口第2次对接测试报告_20241106 | 分数=0.0137\n  内容: # 4.5 通过分布式操作系统完成科学载荷 APP分发、运行、结果回传\n\n# （1）科学载荷经之江路由器连接智算机  \n| 测试项目 | 科学载荷APP分发、运行、结果回传 |\n| --- | --- |\n| 测试目的 | 验证分布式操作系统能够正确将CXPD科学载荷APP的分析结果回传 |\n| 测试环境 | 智算机——路由器———PC\n——网线———转接板—— |\n| 操作步骤 | 智算机将APP分析的结果下传至地面站 |\n| 通过标准 | 地面之江站接收到分析结果 |\n| 测试结果 | 本次未测试 |\n| 结论 | 本次未测试 |\n\n# 5 第一次对接遗留事项的复测结果  \n| 序号 | 测试项目 | 问题记录简介 | 处理措施 | 责任方 |\n| --- | --- | -",
+      "duration": 5.352
+    },
+    {
+      "iteration": 2,
+      "thought": "",
+      "action": "keyword_search",
+      "action_input": {
+        "queries": [
+          "合作共享机制",
+          "算力使用权",
+          "共享协议"
+        ],
+        "top_k": 10
+      },
+      "observation": "（纯关键词检索）\n找到 8 条匹配结果：\n\n[1] doc_id=802af7095af8d82d | 标题=【合作协议】20240617_之江实验室 成都国星宇航科技股份有限公司 关于共建“之江星座“”战略合作协议 | 分数=25.2373\n  内容: # 之江实验室\n\n# 成都国星宇航科技股份有限公司\n\n# 关于共建“之江星座”  \n战略合作协议  \n甲方： 之江实验室  \n住所地： 浙江省杭州市文一西路1818号  \n法定代表人/负责人： 王坚  \n授权代表：赵志峰  \n项目负责人： 陈宏宇  \n通讯地址：浙江省杭州市中泰街道科创大道之江实验室  \n联系方式： 13761094610  \n联系人电子邮箱：  \n乙方： 成都国星宇航科技股份有限公司  \n住所地：四川省成都高新区锦和路1699号4栋1层  \n法定代表人/负责人：陆川  \n项目负责人： 王亚波  \n通讯地址： 上海市徐汇区古井南路88号建工汇豪大厦1505室  \n联系方式： 18964647858  \n联系人电子邮箱：  \n充分发挥双方在智能计算、人工智能、星座建设、卫星研制、空间应用等方面的创新优势，共建太空计算系统",
+      "duration": 5.993
+    },
+    {
+      "iteration": 3,
+      "thought": "",
+      "action": "semantic_search",
+      "action_input": {
+        "queries": [
+          "算力分配机制",
+          "算力调度",
+          "分布式操作系统算力管理"
+        ],
+        "top_k": 10
+      },
+      "observation": "（混合检索：BM25=0.18, Vector=0.82）\n找到 68 条匹配结果：\n\n[1] doc_id=09b34254ebca3928 | 标题=SCS-01-LY-ZLR1-SB-05【三方签字版】与感算星平台第3次联试结果报告_智算&路由&激光&大模型&图像处理_20250109 | 分数=0.0137\n  内容: # 附录三：智算载荷测试问题表  \n附录表-2 智算载荷测试问题表  \n| 编号 | 测试项 | 器件 | 问题名称 | 测试记录 | 说明 |\n| --- | --- | --- | --- | --- | --- |\n| 1. | 智算遥控指令 | 智算机(星5) | ZG-K314: 智算机 GPU 本地系统恢复从 IMG 镜像文件恢复 | 已修复 | 系统恢复后,免密配置失效 |\n| 2. | 智算机(星5) | ZG-K288: GPU-遥控智算机模块GPU 星间链路通断测试 | 已修复 | 指令计数+1,ping 状态返回失败待之江排查(后续在智算星7,测试通过) |\n| 3. | 智算机(星5) | ZG-K298: GPU-遥控智算机模块GPU ",
+      "duration": 6.819
+    },
+    {
+      "iteration": 4,
+      "thought": "",
+      "action": "finish",
+      "action_input": {},
+      "observation": "提交最终回答（1870 字）",
+      "duration": 46.561
+    }
+  ],
+  "accumulated_chunks": [
+    {
+      "chunk_id": "553a9e3bb1e9705c_p0",
+      "doc_id": "553a9e3bb1e9705c",
+      "doc_title": "（浙江日报）编织太空算力网——探访“三体计算星座”指挥中心",
+      "content": "# （浙江⽇报）编织太空算⼒⽹⸺探访“三体计算星座”指挥中⼼  \n编织太空算⼒⽹  \n探访“三体计算星座”指挥中⼼  \n本报记者李攀通讯员盛汪淼芷  \n春节前⼣，杭城褪去了往⽇的喧嚣，之江实验室“三体计算星座”指挥中⼼依然忙碌，⼀场特别的在轨试验正在进⾏。  \n实验室外的⼀处荒地上，直径约7⽶的卫星基站在暗夜中矗⽴。突然，天线缓缓转动。紧接着，横贯指挥中⼼整⾯墙的巨屏滚动刷新，千⾥之外卫星的实时轨迹与遥测数据在屏幕上跳动。“连上了！”科研⼈员⽴刻开始操作，抓紧短暂的窗⼝期，完成今⽇的测试任务。  \n这是“三体计算星座”⾯向⽔环境监测的三星协同在轨智能处理试验，利⽤卫星搭载的地表要素提取模型，在太空中提取到地表的⼀处结冰⽔体信息，并快速传回指挥中⼼。实验成功验证“卫星载荷⼯作―在轨数据处理―星间协同传输―在轨模型计算―任务结果下传”的全链路能⼒。据之江实验室天基计算系统研究中⼼主任、计算星座科研任务总体部技术总师李超介绍，团队近期还实现了六颗卫星的在轨全互联，标志着卫星组⽹互联迈出了重要⼀步。  \n“⽬前，我们已经通过在轨协同完成了10个⼈⼯智能模型与应⽤的部署与验证，探索了深空探测、智",
+      "content_length": 1512,
+      "score": 28.1938,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "c0decfca74955d2a_p0",
+      "doc_id": "c0decfca74955d2a",
+      "doc_title": "VRF24_VRF2412DD-50WR4-模块电源50w",
+      "content": "50W，宽电压输入，隔离稳压单路输出DIP 封装，DC-DC 模块电源  \n专利保护  \nReport  \nEN62368-1  \nReport  \nBS EN62368-1  \nRoHS\n\n# 产品特点  \n 宽输入电压范围（2:1）\n 效率高达 $88 \\%$\n 隔离电压 3000VDC\n$\\bullet$ 输入欠压保护，输出短路、过流、过压保护，过温保护\n$\\bullet$ 工作温度范围（壳温）：-40℃ to +105℃\n$\\bullet$ 封装尺寸：25.82 x 22.80 x 7.20 mm  \nVRF24_DD-50WR4产品输出功率为50W，2:1宽电压输入范围，效率高达 $88 \\%$ ，3000VDC的常规隔离电压，允许工作温度-40℃ to$+ 7 0 5 \\%$ ，具有输入欠压保护，输出短路、过流、过压保护，过温保护功能，主要用于通信、工业控制等领域。  \n选型表  \n| 认证 | 产品型号① | 输入电压(VDC) | 输出 | 满载效率(%)Min./Typ. | 最大容性负载(μF) |\n| --- | --- | --- | --- | --- | -",
+      "content_length": 883,
+      "score": 24.9392,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "c0decfca74955d2a_p1",
+      "doc_id": "c0decfca74955d2a",
+      "doc_title": "VRF24_VRF2412DD-50WR4-模块电源50w",
+      "content": "$\\textcircled{1}$ 全文指标均在，产品增加强制外围（见图 3）下所得，否则产品可能无法正常工作；\n②输入电压不能超过此值，否则可能会造成永久性不可恢复的损坏。  \n输入特性  \n| 项目 | 工作条件 | Min. | Typ. | Max. | 单位 |\n| --- | --- | --- | --- | --- | --- |\n| 输入电流(满载/空载) | 标称24VDC输入 | -- |  |  | mA |\n| 反射纹波电流 | -- | 300 | -- |\n| 冲击电压(1sec.max.) | -0.7 | -- | 50 | VDC |\n| 启动电压 | -- | -- | 18 |\n| 输入欠压保护 | 11 | 13 | -- |\n| 启动时间 | 标称输入,恒阻负载 | -- | 30 | 100 | ms |\n| 输入滤波类型 |  | 电容滤波 |\n| 热插拔 |  | 不支持 |\n| 遥控脚(Ctrl) | 模块开启 | Ctrl 悬空或接TTL 高电平(3-12VDC) |\n| 模块关断 | Ctrl 接GND 或低电平(0-1.2VDC",
+      "content_length": 571,
+      "score": 24.9392,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "c0decfca74955d2a_p2",
+      "doc_id": "c0decfca74955d2a",
+      "doc_title": "VRF24_VRF2412DD-50WR4-模块电源50w",
+      "content": "注：*Ctrl 控制引脚的电压是相对于输入引脚GND。  \n输出特性  \n| 项目 | 工作条件 | Min. | Typ. | Max. | 单位 |\n| --- | --- | --- | --- | --- | --- |\n| 输出电压精度① | 5%-100%负载 | -- | ±1 | ±3 | % |\n| 线性调节率 | 满载,输入电压从低电压到高电压 | -- | ±0.2 | ±0.5 |\n| 负载调节率② | 5%-100%负载 | -- | ±0.5 | ±1 | % |\n| 瞬态恢复时间 | 25%负载阶跃变化,标称输入电压 | -- | 250 | 500 | μs |\n| 瞬态响应偏差③ | 25%负载阶跃变化,输入电压范围 | -- | ±5 | ±8 | % |\n| 温度漂移系数 | 满载 | -- | -- | ±0.03 | %/℃ |\n| 纹波&amp;噪声④ | 20MHz带宽,输入电压范围,5%-100%负载 | -- | 250 | 350 | mVp-p |\n| 掉电保持时间 | 全工作温度范围,标称输入电压,满载 | 0.001 | -- ",
+      "content_length": 862,
+      "score": 24.9392,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "f06c9a7314fb8974_p8",
+      "doc_id": "f06c9a7314fb8974",
+      "doc_title": "SCS-01-LY-ZLR1-SB-06 CXPD科学载荷与智算机、路由器以太网接口第2次对接测试报告_20241106",
+      "content": "# 4.5 通过分布式操作系统完成科学载荷 APP分发、运行、结果回传\n\n# （1）科学载荷经之江路由器连接智算机  \n| 测试项目 | 科学载荷APP分发、运行、结果回传 |\n| --- | --- |\n| 测试目的 | 验证分布式操作系统能够正确将CXPD科学载荷APP的分析结果回传 |\n| 测试环境 | 智算机——路由器———PC\n——网线———转接板—— |\n| 操作步骤 | 智算机将APP分析的结果下传至地面站 |\n| 通过标准 | 地面之江站接收到分析结果 |\n| 测试结果 | 本次未测试 |\n| 结论 | 本次未测试 |\n\n# 5 第一次对接遗留事项的复测结果  \n| 序号 | 测试项目 | 问题记录简介 | 处理措施 | 责任方 |\n| --- | --- | --- | --- | --- |\n| 1 | 科学载荷与之江路由器、智算机通信链路 | 物理层联通测试,通信链路不通 | 第二次对接通过 | 广西大学 |\n| 2 | 科学载荷与路由器联通 ping 测试不通过 | 第二次对接通过 | 广西大学 |\n| 3 | VLAN 域内应用层数据测试,因通信链路不通,测试",
+      "content_length": 1325,
+      "score": 0.0137,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "1a503d41b66a8eb2_p1",
+      "doc_id": "1a503d41b66a8eb2",
+      "doc_title": "【合作协议】20250424_之江实验室 济南智星空间科技有限公司 关于“三体计算星座”共建及十颗SAR卫星联合研制的合作协议",
+      "content": "# （三）合作共享机制  \n原则上，在星载智算机可用的情况下，双方各有上述10颗SAR卫星算力 $50\\%$ 的使用权；卫星数据在不影响乙方正常商业任务的条件下，由双方协商可用于“三体计算星座”的科学研究。具体以双方另行签订的共享协议约定为准。\n\n# 二、合作机制  \n（一）为推动工程高效实施，双方联合成立工程总体部，负责工程统一指挥调度。\n（二）双方按照航天工程要求，成立联合攻关团队，制定研制计划、技术流程和质量要求，严格按计划组织任务实施。\n（三）双方应尽合理努力按时、按质保证交付节点，如需就研制周期和交付节点发生变更，变更方须提前30天以书面形式正式通知另一方并与另一方协商延期事宜。\n\n# 三、知识产权  \n（一）本协议签订前，双方各自所拥有的知识产权并不因本协议的签署而发生任何改变。双方在合作期间，各自工作范围内完成的科技成果及其形成知识产权归各方独自所有。双方各自提供的技术资料仅限于具体业务协议约定的用途或提供的一方授予的用途，不得用于其他用途。双方共同完成的科技成果及其形成知识产权归属和权益分配由双方另行签订具体项目合作协议进行约定。\n（二）任一方保证在项目开发中提供或形成",
+      "content_length": 1789,
+      "score": 0.0134,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "502a5d67ab11af3f_p1",
+      "doc_id": "502a5d67ab11af3f",
+      "doc_title": "【合作协议】20250616_之江实验室 北京开运联合信息技术集团股份有限公司 关于广视星座与“三体计算星座”融合互通及十六颗太空态势感知卫星联合研制的合作协议",
+      "content": "# （三）合作共享机制  \n双方确认，太空计算组件的遥测、上注下传链路接入“三体计算星座”地面测运控系统。原则上，双方各有上述16颗卫星算力 $50\\%$ 的使用权；卫星数据由双方协商使用，可用于“三体计算星座”的科学研究。\n\n# 二、合作机制  \n（一）为推动工程高效实施，双方联合成立工程总体部，负责工程统一指挥调度。\n（二）双方按照航天工程要求，成立联合攻关团队，制定研制计划、技术流程和质量要求，严格按计划组织任务实施。\n\n# 三、知识产权  \n（一）本协议签订前，双方各自所拥有的知识产权并不因本协议的签署而发生任何改变。双方在合作期间，各自工作范围内完成的科技成果及其形成知识产权归各方独自所有。双方各自提供的技术资料仅限于甲乙双方就本次合作签署的具体业务协议约定的用途或提供的一方授予的用途，不得用于其他用途。双方共同完成的科技成果及其形成知识产权归属和权益分配由双方另行签订具体项目合作协议进行约定。  \n（二）任一方保证在项目开发中提供或形成的智力成果不会侵犯任何他方的知识产权，否则守约方有权单方解除本协议及根据本协议而签署的具体项目合作协议。\n\n# 四、条款  \n双方应当妥善保",
+      "content_length": 1099,
+      "score": 0.0126,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "f4c0f076357c10d5_p1",
+      "doc_id": "f4c0f076357c10d5",
+      "doc_title": "Z_之江星座首发星座系统方案设计报告_0608发布",
+      "content": "# 5 测控任务 .. . 25  \n5.1 入轨初期测控 . 25\n5.2 在轨测试阶段测控 . 25\n5.3 星座轨控阶段测控 . 26\n5.4 星座长管阶段测控 . 26\n\n# 6 星间链路设计与分析 . . 27  \n6.1 星间激光建链任务分析 . . 27  \n6.1.1 捕获跟踪体制分析 . . 27\n6.1.2 通信距离及俯仰角度分析 . . 27\n6.1.3 三型光学头适应角度分析 . . 28\n\n# 6.2 激光建链约束分析 .. . 28  \n6.2.1 卫星姿态及位置精度需求 . . 28\n6.2.2 对卫星时统精度需求 . 29\n\n# 6.3 激光终端选型及产品性能指标 . . 29\n\n# 7 星座计算能力分析 ... . 31  \n7.1 星载智算机概述 . . 31\n7.2 计算性能分析 . . 32  \n7.2.1 星座算力分析 . . 32\n7.2.2 星座数据源规模分析 . 32\n7.2.3 星座图像处理计算性能分析 . 32\n7.2.4 星座大模型计算性能分析 . . 33  \n7.3 计算任务调度分析 .. . 33\n7.4 小结 .. . 33",
+      "content_length": 2410,
+      "score": 0.0128,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "193c79c204b88d15_p11",
+      "doc_id": "193c79c204b88d15",
+      "doc_title": "NX1和G1智算机鉴定级电磁兼容试验报告20240830(公开)",
+      "content": "&lt;447\n&lt;448\n&lt;449\n&lt;450\n&lt;451\n&lt;452\n&lt;453\n&lt;454\n&lt;455\n&lt;456\n&lt;457\n&lt;458\n&lt;459\n&lt;460\n&lt;461\n&lt;462\n&lt;463\n&lt;464\n&lt;465\n&lt;466\n&lt;467\n&lt;468\n&lt;469\n&lt;470\n&lt;471\n&lt;472\n&lt;473\n&lt;474\n&lt;475\n&lt;476\n&lt;477\n&lt;478\n&lt;479\n&lt;480\n&lt;481\n&lt;482\n&lt;483\n&lt;484\n&lt;485\n&lt;486\n&lt;487\n&lt;488\n&lt;489\n&lt;490\n&lt;491\n&lt;492\n&lt;493\n&lt;494\n&lt;495\n&lt;496\n&lt;497\n&lt;498\n&lt;499\n&lt;500\n501 ms 50.02 ms 50.03 ms 50.04 ms 50.05 ms\nMean Results\nMeas Group 1",
+      "content_length": 1927,
+      "score": 0.0121,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "9be3dc105e538809_p10",
+      "doc_id": "9be3dc105e538809",
+      "doc_title": "3 星载路由器软件规格说明书-20240726-会签盖章版",
+      "content": "# 4.2.2.2 测试用例\n\n# 4.2.2.2.1 路由器+智算机  \n表 10 路由器 + 智算机用例描述表  \n| 用例名称 | 星载路由器和智算机对接测试 |\n| --- | --- |\n| 用例概述 | 将智算机的业务口和管理口分别接入不同的Vlan区域,并验证连通性 |\n| 所需设备 | 星载路由器ZLR1,智算机ZJG1、ZJG2、ZJG3、ZJG4 |\n| 测试拓扑 | ZLR1port1=ZJG1port1; ZLR1port2=ZJG2port1; ZLR1port3=ZJG3port1; ZLR1port4=ZJG4port1; ZLR1port5=ZJG1port2; ZLR1port6=ZJG2port2; ZLR1port7=ZJG3port2; ZLR1port8=ZJG4port2其中“=”表示光纤或网线连接 |\n| 测试步骤 | (1) ZLR1port1、ZLR1port2、ZLR1port3、ZLR1port4、ZLR1port5、 ZLR1port6、ZLR1port7、ZLR1port88配置为2层ACESS接口;(2) ZLR1port1、",
+      "content_length": 883,
+      "score": 0.0114,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "9f1ec66fefdedcab_p7",
+      "doc_id": "9f1ec66fefdedcab",
+      "doc_title": "2.浙江省重大科创平台项目合同书-天基中心-v11-20240625",
+      "content": "合计（万元）\n920\n详见明细表\n注：财政经费不得用于购置生产设备、生产及科研共享设备及通用办公设备，只能用于购置本项目专用的科研仪器设备。  \n九、知识产权归属、成果管理及合作权益分配\n本项目旨在深入探讨天基分布式智能计算系统的各研究方向，每个专业技术方向由不同的项目学术或专业骨干负责，他们各自独立开展研究内容。项目组还特别设计了一系列学术骨干间的优势互补与交叉合作研究模式，以期通过团队成员间的紧密合作，促进科研创新和技术突破。通过明确的知识产权归属、完善的成果管理、公平公正的合作权益与机制，确保本项目任务顺利开展。 1）知识产权归属 项目的研究成果，包括专利、论文、著作权等知识产权和成果转化收益，归属于之江实验室。为充分展示项目的理论和实践成果，项目组通过发表学术论文、参加或组织国内外重要学术会议以及申请专利授权等方式来体现。所有知识产权明确归属之江实验室，并由本项目资助。在学术论文发表中，必须标注之江实验室为第一单位，体现其在研究工作中的主导地位。同样，对专利申请，之江实验室也作为第一专利权人。 2）成果管理 项目组需要对成果进行分类管理，包括科研论文、专利申请、软件开发、技术报",
+      "content_length": 1857,
+      "score": 0.0115,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "9f1ec66fefdedcab_p8",
+      "doc_id": "9f1ec66fefdedcab",
+      "doc_title": "2.浙江省重大科创平台项目合同书-天基中心-v11-20240625",
+      "content": "1）知识产权归属\n项目的研究成果，包括专利、论文、著作权等知识产权和成果转化收益，归属于之江实验室。为充分展示项目的理论和实践成果，项目组通过发表学术论文、参加或组织国内外重要学术会议以及申请专利授权等方式来体现。所有知识产权明确归属之江实验室，并由本项目资助。在学术论文发表中，必须标注之江实验室为第一单位，体现其在研究工作中的主导地位。同样，对专利申请，之江实验室也作为第一专利权人。\n2）成果管理\n项目组需要对成果进行分类管理，包括科研论文、专利申请、软件开发、技术报告、产品样品等。按照之江实验室科研成果管理的监管机制，确保成果使用、转移、分享等活动符合相关法规和项目合同规定，防止不当使用或侵权行为的发生。\n3）合作权益\n项目组非常重视合作权益的公平与公正，在署名顺序的分配上，将严格按照各课题负责人或学术骨干的工作量和成果的重要性进行。为促进团队合作和资源共享，项目将定期组织项目交流会和学术报告会，促进科研材料、关键技术和实验数据共享的重要机制，确保合作进程的顺利进行和权益的公平合理性。\n4）合作机制\n本项目由之江实验室全权承担，负责项目的整体组织、过程管理和技术工作执行。之江实验室",
+      "content_length": 1978,
+      "score": 0.0105,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "621069f2db2eb376_p1",
+      "doc_id": "621069f2db2eb376",
+      "doc_title": "三体计算星座介绍",
+      "content": "# 什么是三体计算星座？（⼀段话描述）  \n三体计算星座是之江实验室落实“共商共建共享共发展”的⾏动，联合全球合作伙伴共同建设的千星规模计算星座。三体计算星座将通过星间激光⾼速互联、星座稳定组⽹、算⼒分布式调度，打造开放共享的太空计算系统，构建天基智能计算基础设施，为通信、导航、遥感和空间科学等卫星提供天基计算服务。\n\n# 最新介绍：  \n“三体计算星座”是之江实验室协同全球合作伙伴共同构建的千星规模的太空计算基础设施，实现“计算上天、卫星互联、模型上天”，为通导遥科卫星和各类航天器提供太空计算服务，⽀撑“⼈⼯智能+”科学、“⼈⼯智能+”全球合作。\n\n# “三体”计算星座的⽬标？  \n1000颗计算卫星/1EOPS算⼒  \n依托太空计算技术突破，通过将太空计算组件部署到卫星、完成基于分布式计算架构和星间组⽹技术的卫星互联以及⼈⼯智能模型在轨部署运⾏，“三体计算星座”核⼼⽬标是定义新⼀类“计算卫星”并构建互联组⽹的计算星座，建设1EOPS算⼒的太空计算基础设施，突破在轨计算瓶颈，打破太空中的算⼒和数据孤岛，赋予卫星星座⾃主智能。\n\n# “三体”计算星座建设模式  \n我们希望采⽤“共商共建",
+      "content_length": 1331,
+      "score": 0.0104,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "67f8cd08656c0a09_p10",
+      "doc_id": "67f8cd08656c0a09",
+      "doc_title": "（中文）三体计算星座画册 - 20260318-压缩",
+      "content": "# 安全可靠  \n基于角色的用户权限访问控制，可靠的星地认证机制，实现安全可靠的星载算力、存储资源共享。\n\n# 星群自治  \n针对星地常态化断连-非对称网络、星间弱网的问题，实现天基虚拟星群自治功能，确保任务执行的可靠性和不中断。\n\n# FEATURES 产品特点  \n应用程序 APPLICATION PROGRAM  \n| 应用名称 | 状态 | 版本号 |\n| --- | --- | --- |\n| 之江天枪 | 运行中 | adotg.L1 |\n| amamam | 更新中 | adotg.L1 |\n| L0-L1 | 运行中 | adotg.L1 |\n| L1-L2 | 已停止 | adotg.L1 |\n| L2-L3 | 运行中 | adotg.L1 |  \n3..2  \n星地同步 SATELLITE-GROUNO SYNCHRONIZATION  \n星间同步 INTERSTELLAR SYNCHRONIZATION\n\n# EMBODIED INTELLIGENTSATELLITE MODEL具身智能卫星模型  \n具身智能卫星模型在传统卫星平台架构基础上深度融合人工智能技术，",
+      "content_length": 893,
+      "score": 0.0028,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "5d2bcce8462c8a69_p6",
+      "doc_id": "5d2bcce8462c8a69",
+      "doc_title": "3.天基中心-之江星座首期项目实施方案-v11-20240625",
+      "content": "（1）高通量高可靠星载路由器设计与研制\n针对现有卫星平台无法支撑在轨高性能计算任务与大容量星间数据交换的现状，采用“开源操作系统+专用交换芯片”的软硬研发思路研制面向天基分布式计算系统的高通量高可靠星载路由器；结合网络体系架构和协议标准，设计面向新型感算卫星的星内网络架构，定义星内各载荷与数据交换设备间的接口与协议，支持星内载荷设备间的数据高速交换；针对太空环境抗粒子反转与拴锁等问题，进行软硬件协同优化，包括器件更新、ECC、主备切换等，提升系统数据交换的可靠性。\n（2）鲁棒性星间路由协议研究\n针对卫星网络拓扑动态变化和链路不稳定性导致的路由挑战，设计基于动态拓扑的星载路由协议，优化路径发现和维护机制，实现高效的路由选择和快速的路径恢复。针对可预测网络拓扑变化情况，通过引入智能学习算法，使路由协议能够根据历史数据和实时网络状态预测链路稳定性，动态调整路由策略，以应对复杂多变的太空环境。针对不可预测网络拓扑变化情况，设计快速检测和故障通知机制，并完善备份路由策略，有效缩短服务中断时间。\n（3）网络测试与验证\n针对太空场景下天基计算系统的网络环境复杂多变且难以在轨验证的情况，搭建硬件在环的",
+      "content_length": 1856,
+      "score": 0.0028,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "9f1ec66fefdedcab_p4",
+      "doc_id": "9f1ec66fefdedcab",
+      "doc_title": "2.浙江省重大科创平台项目合同书-天基中心-v11-20240625",
+      "content": "（2）非稳态网络下分布式计算技术：针对分布式计算在太空所面临的间歇性不稳定网络以及如何与地面融合等问题带来的技术挑战，天基计算分布式计算操作系统创新的提出基于节点的动态变化实现动态组云、基于节点的拓扑感知实现场景和资源维度的应用编排能力，构建相对稳定的虚拟计算集群；创新的提出基于场景任务驱动的动态调度技术，实现多种场景下的任务调度策略及星上服务动态扩缩容能力；创新地提出星载高通量计算技术，从模型轻量化、算子融合进行多层协作优化，实现星载应用高效运行。\n（3）高可靠星间通信网络技术：突破激光链路快速建立和稳定维持、鲁棒性网络协议栈等关键技术，建立高速星间激光通信链路，组建太空计算网络。针对天基计算星群之间大量数据实时交互的需求，围绕现阶段卫星激光通信存在的建链难、通信时间短等问题，研究激光链路快速建立和稳定维持技术，包括基于恒星导航和信标光导引建链的粗瞄准技术和基于高带宽扫描和章动补偿的精跟踪技术，实现卫星激光通信快速建链、链路长时间稳定保持。\n（4）天地、星间协同的开源遥感大模型应用技术：基于大算力星载计算机、高速星间激光通信、高带宽天地通信和遥感多模态基础大模型，通过大模型在轨实时推",
+      "content_length": 1996,
+      "score": 0.0027,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "cae23e7a0ff65a35_p0",
+      "doc_id": "cae23e7a0ff65a35",
+      "doc_title": "天基分布式操作系统宣传单页250925",
+      "content": "# 产品简介  \n之江天基分布式操作系统基于容器、虚拟化、云原生、边缘计算技术，依托搭载高算力计算载荷的卫星星座，在太空构建分布式计算集群，对接入系统的算力、存储、网络等资源进行统一管理，将地面成熟的互联网、云计算技术延伸到太空，实现在轨计算任务的灵活编排调度、高效部署运行。\n\n# 产品功能  \n自定义应用上星  \n支持用户将自行开发、通过  \n计算任务编排调度  \n基于容器化框架，将计算任务在卫星节点间智能调度编排  \n应用状态监测  \n监控系统应用、用户应用的运行状态  \n计算资源状态监测  \n多级资源可视化监测：集群、卫星、节点、容器组、容器\n\n# 系统架构  \n天基分布式管理平台：负责对业务相关内容提供入口，提供任务部署、结果获取、在轨资源等内容的操作和查看能力\n天基监控平台：负责实现各个系统组件、系统资源等信息的查看、分析等  \n天基分布式管理平台  \n| 调度层 | 集群资源调度 | 任务编排调度 | 应用管理分发 | 数据协同 |\n| --- | --- | --- | --- | --- |\n| 平台管理层 | 在轨资源管理 | 在轨集群自治 | 在轨存储管理 |\n| ",
+      "content_length": 1380,
+      "score": 0.0027,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "c0decfca74955d2a_p3",
+      "doc_id": "c0decfca74955d2a",
+      "doc_title": "VRF24_VRF2412DD-50WR4-模块电源50w",
+      "content": "通用特性  \n| 项目 | 工作条件 | Min. | Typ. | Max. | 单位 |\n| --- | --- | --- | --- | --- | --- |\n| 隔离电压 | 输入-输出,测试时间1分钟,漏电流小于1mA | 3000 | -- | -- | VDC |\n| 绝缘电阻 | 输入-输出,绝缘电压500VDC | 1000 | -- | -- | MΩ |\n| 隔离电容 | 输入-输出,100kHz/0.1V | -- | 100 | -- | pF |\n| 工作温度(壳温) | 见温度降额曲线 | -40 | -- | +105 | °C |\n| 存储湿度 | 无凝结 | 5 | -- | 95 | %RH |\n| 存储温度 |  | -55 | -- | +125 | °C |\n| 引脚耐焊接温度 | 波峰焊焊接(焊接时间:10s) | -- | -- | 260 |\n| 海拔高度 |  | 海拔高度:≤2000m(大气压:80~110kPa) |\n| 振动 |  | ①JESD22-b103等级1:10-1000hz,10g,1mmxyz各4循环;②JES",
+      "content_length": 1395,
+      "score": 0.0024,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "c7448408d613b22f_p0",
+      "doc_id": "c7448408d613b22f",
+      "doc_title": "术语翻译",
+      "content": "# 术语翻译\n\n# 之江实验室相关术语  \n共商共建共享共发展 openness, collaboration, sharing, and discovery  \n之江实验室 Zhejiang Lab  \n天基计算系统研究中⼼ Research Center for Space Computing System\n\n# 三体计算星座产品术语  \n三体计算星座 3-body computing constellation 或 three-body computing constellation  \n三体计算星座⾸次发射 the first launch of the -body Computing Constellation  \n星载智能计算机 spaceborne intelligent computer  \n星载智能计算单元 spaceborne intelligent computing unit  \n激光通信机 laser communication terminal  \n星间激光通信机 inter-satellite laser communication terminal  \n",
+      "content_length": 2412,
+      "score": 0.0137,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "09b34254ebca3928_p10",
+      "doc_id": "09b34254ebca3928",
+      "doc_title": "SCS-01-LY-ZLR1-SB-05【三方签字版】与感算星平台第3次联试结果报告_智算&路由&激光&大模型&图像处理_20250109",
+      "content": "# 附录三：智算载荷测试问题表  \n附录表-2 智算载荷测试问题表  \n| 编号 | 测试项 | 器件 | 问题名称 | 测试记录 | 说明 |\n| --- | --- | --- | --- | --- | --- |\n| 1. | 智算遥控指令 | 智算机(星5) | ZG-K314: 智算机 GPU 本地系统恢复从 IMG 镜像文件恢复 | 已修复 | 系统恢复后,免密配置失效 |\n| 2. | 智算机(星5) | ZG-K288: GPU-遥控智算机模块GPU 星间链路通断测试 | 已修复 | 指令计数+1,ping 状态返回失败待之江排查(后续在智算星7,测试通过) |\n| 3. | 智算机(星5) | ZG-K298: GPU-遥控智算机模块GPU 星间链路性能测试 | 已修复 | 指令计数+1,ping 状态返回失败待之江排查(后续在智算星7,测试通过) |\n| 4. | 智算机(星5) | ZG-K316: 智算机 GPU 星网算法启动 | 待解决 | 遥测返回正常。之江方查看日志。系统复位后测试存在问题,待之江修改 |\n| 5. | 智算机(星5) | ZF-K903",
+      "content_length": 2545,
+      "score": 0.0134,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "77a098ae064b2e88_p4",
+      "doc_id": "77a098ae064b2e88",
+      "doc_title": "之江实验室智算机分系统环境试验大纲V2（20260410）-带鉴定件试验-黄总批注",
+      "content": "# 5 环境试验项目和顺序  \n智算机分系统鉴定级与验收级环境试验矩阵见表 5与表 6。  \n表 5 智算机分系统鉴定试验矩阵  \n| 序号 | 项目 | 建议试验顺序 | 鉴定级 | 电子电工组件 |\n| --- | --- | --- | --- | --- |\n| 1 | 温度循环应力筛选试验 | 1 | 试验温度: -30~+60℃循环次数: 20次变温速率: 5℃/min~10℃/min | R |\n| 2 | 性能检查 | 2 | 参照相应章节要求执行 | R |\n| 3 | 冲击试验 | 3 | 频率范围:100Hz~1000Hz, +8dB/Oct;1000Hz~2000Hz, 1000g;加载方向: ±X、Y、Z向。每个轴正负方向各冲击3次。 | R |\n| 4 | 正弦振动试验 | 4 | 频率范围:7~20 Hz, 9.375 mm(0-P);20~100 Hz, 15g;扫描率: 2oct/min, 各轴对数从低到高扫描1次。 | R |\n| 5 | 随机振动试验 | 5 | 20-50Hz, +6 dB/oct50-800Hz, 0.25 g2/Hz800-2",
+      "content_length": 997,
+      "score": 0.0132,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "77a098ae064b2e88_p5",
+      "doc_id": "77a098ae064b2e88",
+      "doc_title": "之江实验室智算机分系统环境试验大纲V2（20260410）-带鉴定件试验-黄总批注",
+      "content": "表 6 智算机分系统验收试验矩阵  \n| 序号 | 项目 | 建议试验顺序 | 验收级 | 电子电工组件 |\n| --- | --- | --- | --- | --- |\n| 1 | 温度循环应力筛选试验 | 1 | 试验温度: -30~+60℃循环次数: 20次变温速率: 5℃/min~10℃/min | R |\n| 2 | 性能检查 | 2 | 参照相应章节要求执行 | R |\n| 3 | 正弦振动试验 | 3 | 频率范围:7~20 Hz, 6.25 mm(0-P);20~100 Hz, 10g扫描率: 4oct/min, 各轴对数从低到高扫描1次 | R |\n| 4 | 随机振动试验 | 4 | 20-50Hz, +6 dB/oct50-800Hz, 0.1 g2/Hz800-2000Hz, -6 dB/oct总均方根加速度 11.2g振动方向: X/Y/Z 三个方向。验收级每轴1min。 | R |\n| 5 | 常压热循环试验 | 5 | 试验要求:高低温首末次6h, 中间循环保持2h, 通电测试试验压力:正常环境压力试验温度: -30~+60℃循环次数: ≥12.5次变温",
+      "content_length": 849,
+      "score": 0.013,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "5eece6ea787fbac5_p28",
+      "doc_id": "5eece6ea787fbac5",
+      "doc_title": "ug576-ultrascale-gth-transceivers",
+      "content": "| Port | Direction | Clock Domain | Description |\n| --- | --- | --- | --- |\n| CPLLREFCLKSEL[2:0] | In | Async | Input to dynamically select the input reference clock to the Channel PLL. Set this input to 3 'b001 when only one clock source is connected to the Channel PLL reference clock selection multiplexer. Reset must be applied to the Channel PLL after changing the reference clock input. 000: Reserved 001: GTREFCLK0 selected 010: GTREFCLK1 selected 011: GTNORTHREFCLK0 selected 100: GTNORTHREFC",
+      "content_length": 2708,
+      "score": 0.0128,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "39fadb7909f4b731_p167",
+      "doc_id": "39fadb7909f4b731",
+      "doc_title": "MT40A256M16GE-075E",
+      "content": "# CRC Error Handling  \nThe CRC error mechanism shares the same ALERT_n signal as CA parity for reporting write errors to the DRAM. The controller has two ways to distinguish between CRC errors and CA parity errors: 1) Read DRAM mode/MPR registers, and 2) Measure time ALERT_n is LOW. To speed up recovery for CRC errors, CRC errors are only sent back as a \"short\" pulse; the maximum pulse width is roughly ten clocks (unlike CA parity where ALERT_n is LOW longer than 45 clocks). The ALERT_n LOW coul",
+      "content_length": 1893,
+      "score": 0.0124,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "67f0e1d450064ed4_p170",
+      "doc_id": "67f0e1d450064ed4",
+      "doc_title": "8gb_auto_ddr4_dram",
+      "content": "# CRC Error Handling  \nThe CRC error mechanism shares the same ALERT_n signal as CA parity for reporting write errors to the DRAM. The controller has two ways to distinguish between CRC errors and CA parity errors: 1) Read DRAM mode/MPR registers, and 2) Measure time ALERT_n is LOW. To speed up recovery for CRC errors, CRC errors are only sent back as a \"short\" pulse; the maximum pulse width is roughly ten clocks (unlike CA parity where ALERT_n is LOW longer than 45 clocks). The ALERT_n LOW coul",
+      "content_length": 1901,
+      "score": 0.0122,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "653079c31c64cc01_p3",
+      "doc_id": "653079c31c64cc01",
+      "doc_title": "系统代号索引",
+      "content": "模型  \n| 产品 | 代号 | 备注 |\n| --- | --- | --- |\n| 天基遥感模型/之江天绘 | ZJTH |  |\n| 天基遥感模型/8B版本 | ZJTH-8B/ZJTH |  |\n| 天基遥感模型/1B版本 | ZJTH-1B |  |\n| 天基遥感模型/0.6B版本 | ZJTH-0.6B |  |\n| 天基遥感模型/SAR模型 | ZJTH-SAR |  |\n| 天基遥感模型/灾害模型 | ZJTH-ZH |  |\n| 天基遥感模型智能体-星策 | ZJTH-XC |  |\n| 具身智能卫星模型 | EISM |  |\n| 天基模型 | MX |  |\n| 遥感图像处理软件 | YG |  |\n| 天基天文时域模型 | SATM | Space-based Astronomical Time-domain Model |  \n地⾯系统  \n| 系统 | 代号 | 子系统 | 代号 |\n| --- | --- | --- | --- |\n| 地球站 | DQZ | 3M站 | ZJTL |\n| 7.3M站 | ZJYX |\n| 测运控系统 | CYK |  |",
+      "content_length": 569,
+      "score": 0.0121,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "63baf9e0310a6bd1_p123",
+      "doc_id": "63baf9e0310a6bd1",
+      "doc_title": "88E1510 88E1518 88E1512 88E1514_20210603",
+      "content": "10 = 340ms\n11 = 670ms</td></tr></table>  \nTable 115: 1000BASE-T Pair Skew Register , Register 20  \n| Bits | Field | Mode | HW Rst | SW Rst | Description |\n| --- | --- | --- | --- | --- | --- |\n| 15:12 | Pair 7,8 (MDI[3]±) | RO | 0x0 | Retain | Skew = Bit value x 8n s. Value is correct to within ± 8 ns. The contents of 20_5.15:0 are valid only if Register21_5.6=1 |\n| 11:8 | Pair 4,5 (MDI[2]±) | RO | 0x0 | Retain | Skew = bit value x 8 ns. Value is correct to within ± 8 ns. |\n| 7:4 | Pair 3,6 (MDI",
+      "content_length": 2000,
+      "score": 0.0119,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "9f1d2b5fd22e73be_p9",
+      "doc_id": "9f1d2b5fd22e73be",
+      "doc_title": "具身智能卫星模型介绍",
+      "content": "# 模型性能  \n| Models | Fire | Flood | Volcano | Landslide | Average |\n| --- | --- | --- | --- | --- | --- |\n| SAM | 34.87638 | 13.55992 | 24.87482 | 26.89705 | 25.05204 |\n| RemoteSA M | 5.193009 | 11.84886 | 13.85041 | 7.243705 | 9.533995 |\n| Flacon- Disaster w/o language | 67.15957 | 83.33944 | 52.59159 | 66.48967 | 67.39507 |  \nFalcon-  \nDisaster  \n.  \n.  \n.  \n.  \n.\n\n# SAR模型  \n针对SAR图像的分类、分割、⽬标检测等多任务处理能⼒  \n图像分类  \n\"answer\": \"forest, water area, farmland,rural residential area.'  \n\"gt\": \"farmland, w",
+      "content_length": 1055,
+      "score": 0.0117,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "3a89a3f6bdb4fa23_p21",
+      "doc_id": "3a89a3f6bdb4fa23",
+      "doc_title": "ug1085-zynq-ultrascale-trm",
+      "content": "# Chapter 23: SPI Controller  \nSPI Controller Introduction . 626\nSPI Controller Functional Description. . 627  \nRegister Overview . . 632  \nProgramming Model . 633\n\n# Chapter 24: Quad-SPI Controllers  \nQuad-SPI Controllers Introduction . 640  \nSystem Control . . 643  \nGeneric Quad-SPI Controller . . 645  \nLegacy Quad-SPI Controller. . 654  \nRegister Overview . . 667  \nProgramming and Usage Considerations . . . 671  \nGeneric Quad-SPI Controller Programming . . . . 672  \nLegacy Quad-SPI Controller",
+      "content_length": 1134,
+      "score": 0.0114,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "96530ce75b7d0eb8_p74",
+      "doc_id": "96530ce75b7d0eb8",
+      "doc_title": "MT25QU512ABB",
+      "content": "Table 45: Operating Conditions  \n| Symbol | Parameter | Min | Max | Units |\n| --- | --- | --- | --- | --- |\n| VCC | Supply voltage | 1.7 | 2.0 | V |\n| TA | Ambient operating temperature (IT range) | -40 | 85 | °C |\n| TA | Ambient operating temperature (AT range) | -40 | 105 | °C |\n| TA | Ambient operating temperature (UT range) | -40 | 125 | °C |  \nTable 46: Input/Output Capacitance\nNote 1 applies to entire table  \n| Symbol | Description | Test Condition | Min | Max | Units |\n| --- | --- | --- |",
+      "content_length": 1874,
+      "score": 0.0111,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "6e548e59ec955e3f_p1",
+      "doc_id": "6e548e59ec955e3f",
+      "doc_title": "SCS-01-IDS-05之江首发星座从星智算机-智加NX1 IDS表-V1.2(1)",
+      "content": "修订记录  \n| 序号 | 章节名称 | 修订内容简述 | 修订日期 | 修订前版本号 | 修订后版本号 | 修订人 | 复核人 |\n| --- | --- | --- | --- | --- | --- | --- | --- |\n| 1 | 接口数据单9、11、14、19、20 | 见G-ZS-ZJNX1-C01G-ZS-ZJNX1-C02 | 202431 | V1.0 | V1.1 | 薛宏亮 | 任静和 |\n| 2 | (1)接口数据单3、4、5、6(2)阶段标记由C变Z | (1)见G-ZS-ZJNX1-C05(2)依据转阶段评审结论, IDS由C变更Z | 202410 | V1.1 | V1.2 | 薛宏亮祁振飞 | 任静和 |\n| 3 |  |  |  |  |  |  |  |\n| 4 |  |  |  |  |  |  |  |\n| 5 |  |  |  |  |  |  |  |\n| 6 |  |  |  |  |  |  |  |\n| 7 |  |  |  |  |  |  |  |\n| 8 |  |  |  |  |  |  |  |\n| 9 |  |  |",
+      "content_length": 1472,
+      "score": 0.0108,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "74e9ce255bb1392d_p38",
+      "doc_id": "74e9ce255bb1392d",
+      "doc_title": "tps650864",
+      "content": "# 6.5.1 TPS6508641 OTP Summary  \nThe following tables list the TPS6508641 device settings for the buck regulators, general purpose LDOs, VTT LDO, load switches, and GPOs. LDOA1 is used in sequence so all registers with SWB2_LDOA1 will function as LDOA1. Additionally, SWB1 and SWB2 are merged so all registers with LDOA1_SWB2 are unused. All values which can be modified by ${ \\mathsf { I } } ^ { 2 } { \\mathsf { C } }$ after power on are shown in italics. Additional details (such as GPO power good ",
+      "content_length": 2118,
+      "score": 0.0106,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "2e726e43191448e9_p9",
+      "doc_id": "2e726e43191448e9",
+      "doc_title": "U4 SI52147-A01AGMR  QFN48",
+      "content": "Table 5. Block Read and Block Write Protocol  \n| Block Write Protocol | Block Read Protocol |\n| --- | --- |\n| Bit | Description | Bit | Description |\n| 1 | Start | 1 | Start |\n| 8:2 | Slave address—7 bits | 8:2 | Slave address—7 bits |\n| 9 | Write | 9 | Write |\n| 10 | Acknowledge from slave | 10 | Acknowledge from slave |\n| 18:11 | Command Code—8 bits | 18:11 | Command Code—8 bits |\n| 19 | Acknowledge from slave | 19 | Acknowledge from slave |\n| 27:20 | Byte Count—8 bits | 20 | Repeat start |\n| ",
+      "content_length": 1226,
+      "score": 0.0105,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "2e726e43191448e9_p10",
+      "doc_id": "2e726e43191448e9",
+      "doc_title": "U4 SI52147-A01AGMR  QFN48",
+      "content": "Table 6. Byte Read and Byte Write Protocol  \n| Byte Write Protocol | Byte Read Protocol |\n| --- | --- |\n| Bit | Description | Bit | Description |\n| 1 | Start | 1 | Start |\n| 8:2 | Slave address-7 bits | 8:2 | Slave address-7 bits |\n| 9 | Write | 9 | Write |\n| 10 | Acknowledge from slave | 10 | Acknowledge from slave |\n| 18:11 | Command Code-8 bits | 18:11 | Command Code-8 bits |\n| 19 | Acknowledge from slave | 19 | Acknowledge from slave |\n| 27:20 | Data byte-8 bits | 20 | Repeated start |\n| 28 ",
+      "content_length": 1093,
+      "score": 0.0104,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "633ca8e68d1d6a70_p1",
+      "doc_id": "633ca8e68d1d6a70",
+      "doc_title": "【合作协议】20251210_之江实验室 十方星链（苏州）航天科技有限公司 关于 “三体计算星座”共建的合作协议",
+      "content": "# （二）联合工作机制  \n原则上，甲方提供的太空计算组件的遥测、上注下传链路接入“三体计算星座”地面测运控系统；乙方卫星平台的基础能力足够支撑甲方太空计算组件的在轨运行，并为甲方协调安排太空计算组件有效运行期间所需的测试弧段和测控资源，配合甲方完成地面测  \n试和在轨测试验证；双方各有上述3颗卫星算力 $50\\%$ 的使用权，卫星算力接入甲方数据中心服务器，接受分布式操作系统统一调度；相关数据由双方协商使用，可用于“三体计算星座”科学研究，具体使用模式以双方另行签订的共享协议约定为准。\n\n# 二、合作机制  \n（一）为推动工程高效实施，双方协商组成联合团队，按照航天工程要求，制定研制计划、技术流程和质量要求，严格按计划组织任务实施。\n（二）双方共同开展星座融合建设总体论证、关键技术研究、在轨试验方案设计等，协调开展系统研制、在轨试验，共同推进星座融合建设。\n\n# 三、知识产权  \n（一）本协议签订前，双方各自所拥有的知识产权并不因本协议的签署而发生任何改变。双方在合作期间，各自工作范围内完成的科技成果及其形成知识产权归各方独自所有。双方各自提供的技术资料仅限于甲乙双方就本次合作签署的",
+      "content_length": 1003,
+      "score": 0.0027,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "36ccec02d749925b_p0",
+      "doc_id": "36ccec02d749925b",
+      "doc_title": "8_正样NX1-Z0112智算机低温跑算力测试后自动重启故障排查报告_待闭环",
+      "content": "# 8_正样NX1-Z0112智算机低温跑算力测试后自动重启故障排查报告_待闭环  \n正样NX1-Z0112智算机低温跑算力测试后\n自动重启故障排查报告\n1问题现象\n2025.01.01热循环试验中发现，NX1-Z0112低温下跑性能测试后，2个循环测试偶现GPU自动重启，其他8.5个循环正常；\n2025.02.08热循环试验中发现，NX1-Z0112低温环境下跑算力测试软件后，观察GPU板功耗只有5W，然后出现GPU自动重启的现象，测试多次必现。\n2问题排查\n2.1常温测试\n（1）2025.02.08，冷板升温到0℃，跑算力测试软件后正常；\n（2）2025.02.08，冷板升温到35℃，跑算力测试软件后正常；\n分析：故障现象只在低温阶段出现，判断不是功耗过大造成重启；可能与低温下硬件故障有关。\n2.2低温故障复现测试\n（1）2025.02.10，13：00低温条件下测试：发现温度下降的过程中已经出现systemd退出\n（2）重测多次，未出现重启现象，均正常；  \n（3）2025.02.11测试：保温-30℃大于1.5h条件下，11:00、13:00、15:00共3轮（每轮3次，间隔5",
+      "content_length": 630,
+      "score": 0.0027,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "a0fe4f0c202fda45_p1",
+      "doc_id": "a0fe4f0c202fda45",
+      "doc_title": "【合作协议】20251217_之江实验室 宁波智晖空间技术有限公司 关于“海王星座”与“三体计算星座”融合互通及卫星联合研制的合作协议",
+      "content": "# （三）联合研发遥感模型  \n1. 甲方负责提供遥感模型训练和推理算力资源，根据乙方提供的数据训练地物识别等垂直领域模型，实现SAR等多种遥感数据融合应用分析。\n2. 乙方负责提供 SAR 成像数据及分析结果，用于模型训练，并根据甲方反馈的数据质量分析结果，不断优化成像算法提高 SAR 遥感数据成像质量。\n\n# （四）合作共建机制  \n原则上，甲方提供的太空计算组件的遥测、上注下传链路接入“三体计算星座”地面测运控系统；乙方保证卫星平台的基础能力足够支撑甲方太空计算组件的在轨运行，并为甲方预留每天至少2轨的测试弧段和测控资源，配合甲方完成地面测试和在轨测试验证；双方各有上述39颗卫星算力 $50\\%$ 的使用权，卫星算力接入甲方数据中心服务器，接受分布式操作系统统一调度；乙方协调卫星平台相关载荷设备资源，支持甲方开展天基模型上注与在轨科学研究；卫星数据接入甲方数据中心服务器，由双方协商使用，可用于“三体计算星座”的科学研究，具体以双方另行签订的共享协议约定为准。\n\n# 二、合作机制  \n（一）为推动工程高效实施，双方联合成立工程总体部，负责工程统一指挥调度。  \n（二）双方按照航天工",
+      "content_length": 1023,
+      "score": 0.0026,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "5d2bcce8462c8a69_p4",
+      "doc_id": "5d2bcce8462c8a69",
+      "doc_title": "3.天基中心-之江星座首期项目实施方案-v11-20240625",
+      "content": "图 2 项目总体技术路线\n项目拟通过太空计算和星座互联技术的持续创新，大幅降低各类星座的研发和建设成本，提升星座的智能化水平，使得大规模星座的运营成为可能。“之江星座”将联合全球的科研机构、企业、城市，以太空计算国际合作组织为纽带，采用“共商共建共享”的创新机制，共同研制国际标准，研制太空分布式操作系统、星载智算机、星间激光通信机、星载路由器等关键软硬件并对合作伙伴开放共享、技术赋能，降低星座构建和运营成本，汇集数据、模型、算力等太空计算资源，以开源技术社区等模式进行安全开放共享，全面提升太空计算服务全球的质量和水平。\n2.2 项目任务分解情况\n任务整体分解为四项子任务，分别为：星座系统总体设计和工程研制、天基智能计算集群、太空计算软件、数字孪生与数据服务平台。任务间关系可参考图 2。天基智能计算集群作为计算、存储、网络等主要基础资源，供分布式操作系统编排调度，执行地面服务平台上注部署的星载算法和应用任务，所有过程都由数字孪生平台监测管理。\n（1）星座系统总体设计和卫星工程研制：在之江星座顶层架构下设计优化的首发星座，包括星座系统布局、发射次序和空间布设维持，争取获得最大在轨价值，具备",
+      "content_length": 1922,
+      "score": 0.0025,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "67f8cd08656c0a09_p1",
+      "doc_id": "67f8cd08656c0a09",
+      "doc_title": "（中文）三体计算星座画册 - 20260318-压缩",
+      "content": "# 应用场景  \n“人工智能 $+ ^ { \\prime \\prime }$ 在太空变革科学研究范式  \n双星协同探测  \n天基天文时域模型  \n提升观测效率  \n天基遥感模型  \n在轨气象预报  \n天基气象模型  \n提高卫星效能  \n太阳观测数据在轨处理\n\n# “人工智能+”全球合作\n\n# 兴智杯人工智能与太空计算挑战赛  \n主办方: 国际电信联盟、之江实验室、中国信息通信研究院  \n全球首个聚焦“在轨智能计算”的国际赛事、上星验证机会、获奖者将获颁联合国组织与省部级赛事签发证书。  \n赛道一 太空智能赋能粮食生产  \n赛道二 太空智能促进清洁饮水  \n赛道三 太空智能赋能韧性城市和社区\n\n# 橄榄叶计划  \n中国首个面向全球开放共享的公益性太空科学试验平台合作计划，每年发射1-2颗公益性科学试验卫星，面向全球科学家、青年学生及创新者公开征集太空科学载荷和太空智能应用，提供开放搭载和验证服务。  \n征集一 科学载荷搭载验证  \n征集二 太空智能应用验证  \nunesco  \n发起合作单位：之江实验室、雄安科学院、鸿擎科技  \n是中国首个面向全球开放共享的公益性太空科学试验平台合作计划",
+      "content_length": 1056,
+      "score": 0.0025,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "7013d4982497eb42_p8",
+      "doc_id": "7013d4982497eb42",
+      "doc_title": "三体计算星座：把人工智能送入太空（王坚 雄安 2025年11...",
+      "content": "# AI不能因为算力的缺失而缺席太空\n\n# Put Al into Space  \n第四类卫星  \n通讯卫星、导航卫星、遥感卫星、计算卫星  \nCommunication,Navigation Oservation nd oming  \n三体计算星座：计算卫星+互联互通+机制创新  \n三体计算星座：计算卫星+互联互通+机制创新  \nThree-Body Computing Constellation Computing Satellite + Interconnections + Coopetati6n  \n⽬标：1000颗计算卫星或E规模算⼒  \nGoal： Compute at E scale  \n三体计算星座⾸发  \n三体计算星座首发  \n3-Body Computing Constellation: The first launch  \n12时12分  \n长征二号丁运载火箭  \n酒泉  \n12:12 a.m. May 14,2025, Long March 2D,Jiuquan  \n太空计算卫星星座  \n成功发射\n\n# China's three-body solution: ",
+      "content_length": 1862,
+      "score": 0.0024,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "55d4b46aa36bf822_p2",
+      "doc_id": "55d4b46aa36bf822",
+      "doc_title": "首发任务介绍",
+      "content": "# ⾸发任务简介  \n“三体计算星座”是之江实验室通过“共商共建共享共发展”的新机制，联合全球创新主体构建的，开放共享的天基智能计算基础设施。通过“计算上天、星间组⽹、模型上天”构建千星规模的计算星座（或算⼒达1EOPS），为空间各类航天器提供天基计算服务。  \n“三体计算星座”⾸发12星于2025年5⽉14⽇搭载⻓征⼆号丁运载⽕箭在酒泉卫星发射中⼼成功发射，标志着我国⾸个整轨互联的太空计算星座正式进⼊组⽹阶段。  \n⾸发任务由同⼀轨道⾯的12颗计算卫星组成，每颗卫星均配备星载计算机、激光/微波通信机、星载路由器、天基分布式操作系统、天基模型等太空计算软硬件，通过星间通信链路组⽹，实现星间数据和算⼒互联，形成太空分布式计算系统，⽀持⽤⼾⾃定义太空计算应⽤。  \n⾸发的12颗计算卫星将在太空实现全互联组⽹，单星最⾼算⼒达744TOPS，互联后具备5POPS在轨计算能⼒和30TB存储容量，激光通信速率最⼤可达100Gbps，路由器单端⼝交换速率达10Gbps，所有卫星均部署了80亿参数天基模型，⽀持遥感数据实时处理、海量图像智能分析、智能协同观测控制等场景，实现了“计算上天、星间互联和模型",
+      "content_length": 1568,
+      "score": 0.0024,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "d383217208f986e8_p0",
+      "doc_id": "d383217208f986e8",
+      "doc_title": "【合作协议】20250806_之江实验室 北京蓝箭鸿擎科技有限公司 关于“鸿鹄”系列星座与“三体计算星座”融合互通及同轨二十颗卫星联合研制的合作协议",
+      "content": "# 之江实验室\n\n# 北京蓝箭鸿擎科技有限公司\n\n# 关于“鸿鹄”系列星座与“三体计算星座”融合互通及同轨二十颗卫星联合研制的合作协议  \n本协议由下列双方：之江实验室（以下称“甲方”）与北京蓝箭鸿擎科技有限公司（以下称“乙方”）签署：  \n甲方：之江实验室  \n统一社会信用代码：12330000MB1478604D  \n通讯地址：浙江省杭州市余杭区文一西路2880号  \n法定代表人/负责人：王坚  \n授权代表：李超  \n项目负责人：李超  \n联系方式：15120099176  \n联系人电子邮箱：  \n乙方：北京蓝箭鸿擎科技有限公司  \n统一社会信用代码：91310117MA1J2K3B0J  \n通讯地址：上海市闵行区剑川路888号16号楼  \n法定代表人/负责人：万军  \n项目负责人：闫旭  \n联系方式：15029979695  \n联系人电子邮箱：  \n依据“共商、共建、共享、共发展”的原则，双方经友好协商，同意推动“鸿鹄”系列星座与“三体计算星座”融合互通，并开展同轨二十颗卫星联合研制和发射入轨，达成如下合作内容：\n\n# 一、合作内容  \n（一）甲方负责提供太空计算组件，包括20台",
+      "content_length": 1226,
+      "score": 0.0023,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "528995ddd0069992_p2",
+      "doc_id": "528995ddd0069992",
+      "doc_title": "【合作协议】20251104_之江实验室 地卫二空间技术（杭州）有限公司 关于“三体计算星座”共建及十颗卫星联合研制的合作协议",
+      "content": "# 附件一 太空计算组件主要技术参数  \n根据任务要求，合作内容第一项中，卫星搭载由甲方提供的太空计算组件，主要参数如下（具体参数以双方后续签订的任务书为准）。\n\n# 一、10P星载智算机  \n10P星载智算机由5个智加G3模块组成，5个智加G3之间通过网络交换实现分布式算力存储资源共享和任务协同调度。  \n| 指标 | 智加G3 |\n| --- | --- |\n| 算力 | 不低于2070TFLOPS@FP4 |\n| 功耗 | ≤150W |\n| 标称内存 | 128GB,标称访存带宽273GB/s |\n| SSD标称存储容量 | 不低于3.84TB |\n| 对外接口 | 1)供电接口:1路供电电源,36V~46.2V;2)低速通信:2路CAN2.0B接口,速率500Kbps;3)直接遥测接口:1路AD温度采集接口,1路AD电压采集接口;4)秒脉冲:1路RS422接口;5)100G以太网接口:4*25Gbps光口,通信协议支持1路100GBASE-SR4或4路25GBASE-SR;6)千兆网络接口:2路1000B-T接口,速率10M/100M/1000M自适应;7)调试接口:自定义1",
+      "content_length": 1112,
+      "score": 0.0023,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "8470b718bcf97054_p0",
+      "doc_id": "8470b718bcf97054",
+      "doc_title": "SCS-01-GF-01之江首发星座卫星空间辐射防护规范",
+      "content": "# SCSGF-01之江首发星座卫星空间辐射防护规范  \n修订记录  \n目录\n1前言1\n2引用文件1\n3卫星轨道空间环境及效应1\n3.1太阳紫外辐射2\n3.2大气环境分析2\n3.2.1环境概述2\n3.2.2设计要求3\n3.3空间粒子辐射及效应4\n3.3.1电离总剂量效应4\n3.3.2位移总剂量效应7\n3.3.3太阳电池辐射损伤效应8\n3.3.4单粒子效应9\n4卫星产品空间环境防护设计指标要求11\n5卫星产品空间环境防护设计建议12\n5.1一般建议12\n5.2太阳紫外辐射环境防护设计建议12\n5.3大气与真空环境防护设计建议12\n5.4抗原子氧剥蚀防护设计建议13\n5.5抗电离总剂量效应防护设计建议13\n5.6抗单粒子效应防护设计建议14\n5.7抗位移总剂量效应防护设计建议20\n5.8抗太阳电池辐射损伤防护设计建议21\n5.9抗灾害性空间环境事件危害规避设计建议21\n6结语21\n\n## 前言\n太空计算卫星星座（简称之江星座）首批卫星轨道高度500km，太阳同步轨道倾角97°，属于低轨低倾角卫星，预计发射时间2025年，在轨寿命3~5年。\n卫星在轨运行期间，将遭遇太阳紫外辐射、空间带电粒子",
+      "content_length": 1183,
+      "score": 0.0137,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "8dc5e1e50bb1a5d9_p1",
+      "doc_id": "8dc5e1e50bb1a5d9",
+      "doc_title": "SCS-01-GF-01之江首发星座卫星空间防护规范_签发版",
+      "content": "# 1 前言  \n太空计算卫星星座（简称之江星座）首批卫星轨道高度 $500\\mathrm{km}$ ，太阳同步轨道倾角 $97^{\\circ}$ ，属于低轨低倾角卫星，预计发射时间2025年，在轨寿命3~5年。  \n卫星在轨运行期间，将遭遇太阳紫外辐射、空间带电粒子辐射、地球大气、原子氧等空间环境，它们都随时空变化而变化，并与太阳活动密切相关。空间环境与卫星所使用的电子元器件和材料发生相互作用，产生各种空间环境效应，可对卫星会造成一定程度的损伤与危害，甚至威胁整个卫星的安全。因此在卫星研制过程中，为保证卫星在任务期内具有充分的空间环境适应能力、不受所面临的空间环境影响，需在其设计与研制过程中，采取充分的空间环境工程设计措施。  \n卫星设计与研制中需考虑的空间环境主要包括：太阳电磁辐射环境、真空环境、带电粒子辐射环境、热环境等，需考虑的空间环境效应主要包括：紫外辐射损伤、热辐射效应、电离总剂量效应、单粒子效应、表面充放电效应、太阳电池辐射损伤效应、真空放电、真空出气等。  \n本报告根据现有的认识，对上述空间环境及效应在卫星设计中需采取的有关措施进行描述。在对空间环境分析与认识的进一步深",
+      "content_length": 2419,
+      "score": 0.0134,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "f4c0f076357c10d5_p2",
+      "doc_id": "f4c0f076357c10d5",
+      "doc_title": "Z_之江星座首发星座系统方案设计报告_0608发布",
+      "content": "# 2.3.2 星座构型  \n图3首发星座在轨连接示意图  \n首发星座构型如上图所示，星座主要载荷配置如下表所示：  \n表 1 首 发 星 座 主 要 功 能 分 配  \n| 功能 | 分配 |\n| --- | --- |\n| 算力 | 1POPS | 01、02星 |\n| 248TOPS | 03~12星 |\n| 星间激光通信 | 100Gbps或10 Gbps | 01与02星间 |\n| 10Gbps | 01与03星间 |\n| 02与04星间 |\n| 04~09星双向 |\n| 100Mbps | 03与12星间 |\n| 10~12星双向 |\n| 星间微波通信 | 配备 | 01与02星间 |\n| 01与03星间 |\n| 02与04星间 |\n| 无配备 | 其余星间 |\n| (遥感) | 配备 | 03~12星 |\n| 无配备 | 01、02星 |  \n(1) 12 颗星同轨分布，卫星标称间距保持约为 1500km；\n(2) 其中 01 星 $\\sim 0 4$ 星编为一组，组内配有强算力、高速激光通信、微波通信备份和遥感载荷，称为“主链4星”，作为在轨第一试验网络载体，验证高性能",
+      "content_length": 1215,
+      "score": 0.0132,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "5d2bcce8462c8a69_p0",
+      "doc_id": "5d2bcce8462c8a69",
+      "doc_title": "3.天基中心-之江星座首期项目实施方案-v11-20240625",
+      "content": "# 3.天基中心-之江星座首期项目实施方案-v11-20240625  \n项目编号：  \n之江实验室科研项目\n实施方案  \n项目名称：\n天基分布式智能计算系统\n项目负责人：\n陈宏宇\n牵头中心：\n天基计算系统研究中心\n提交时间：  \n之江实验室\n2024年制\n目录\n一、项目概要4\n1.1 项目简介4\n1.2 战略意义与必要性6\n1.3 总体目标与考核指标8\n1.3.1 项目总体目标8\n1.3.2 项目考核指标9\n1.4 预期应用场景10\n二、项目任务分解13\n2.1 项目总体实施技术路线13\n2.2 项目任务分解情况15\n2.3 项目各任务内容16\n2.3.1 任务一：星座系统总体设计和工程研制16\n2.3.2 任务二：天基智能计算集群18\n2.3.3 任务三：太空计算软件24\n2.3.4 任务四：地面应用中心28\n三、项目成果及考核方式36\n四、项目实施计划38\n4.1 总体实施计划38\n4.2 各课题/任务实施计划38\n4.2.1 星载智算机任务实施计划39\n4.2.2 激光通信机任务实施计划39\n4.2.3 星载路由器任务实施计划40\n4.2.4 太空分布式操作系统任务实施计划40",
+      "content_length": 1996,
+      "score": 0.013,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "d383217208f986e8_p2",
+      "doc_id": "d383217208f986e8",
+      "doc_title": "【合作协议】20250806_之江实验室 北京蓝箭鸿擎科技有限公司 关于“鸿鹄”系列星座与“三体计算星座”融合互通及同轨二十颗卫星联合研制的合作协议",
+      "content": "# 附件一 太空计算组件主要技术参数  \n根据任务要求，合作内容第一项中，卫星搭载由甲方提供的太空计算组件，主要参数如下（具体参数以双方后续约定的任务书为准）。\n\n# 一、星载智算机  \n| 指标 | 智加 NX1 |\n| --- | --- |\n| 架构 | GPU-SOC+FPGA-SOC |\n| 算力 | 248TOPS@INT8 |\n| 体积 | 231mm×160mm×52.5mm |\n| 重量 | ≤2.38kg |\n| 功耗 | 93.5W, 峰值 153W |\n| 输入电压 | 28V±20% |\n| 工作温度 | -20℃~50℃ |\n| 储存温度 | -25℃~55℃ |\n| 内存 | GPU: 64GB+ECC\nFPGA: 4GB(PS)+4GB(PL)+ECC |\n| 存储 | GPU: 4TB FPGA: 4TB |\n| 对外接口 | CAN、RS422、千兆/万兆以太网 |\n| 操作系统 | Ubuntu22.04 系统、FPGA 系统 |\n\n# 二、激光通信机  \n| 指标 | 10Gbps 激光通信机 |\n| --- | --- |\n| 通信距离范围 |",
+      "content_length": 1327,
+      "score": 0.0126,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "2ef81b51fed2bdaf_p0",
+      "doc_id": "2ef81b51fed2bdaf",
+      "doc_title": "XG006-XG007星载智算机验收整星测试细则",
+      "content": "XG006-XG007 星载智算机验收整名 称 星测试细则  \n单 位 卫星总体部  \n编 写  \n校 对  \n审 核  \n标 审  \n批 准  \n西安中科西光航天科技集团有限公司  \n2026 年 1 月  \n| 内容概要:本细则约束了XG006和XG007卫星星载智算机验收测试项目和合格判决,作为单机整星桌面验收测试的执行文件。 |\n| --- |\n| 主题词 | 星载智算机XG006 XG007 整星验收 测试细则 |\n| 更改栏 | 更改单号 | 更改日期 | 更改人 | 更改办法 |\n\n# 目 录\n\n# XG010 卫星方案设计报告  \n1 前言 ..\n2 引用文件..  \n3 大系统接口设计. 错误!未定义书签。  \n3.1 技术流程. .错误!未定义书签。  \n4 总结 . 错误!未定义书签。\n\n# XG006-XG007 星载智算机整星测试细则\n\n# 1 前言  \n本细则规定了星载智算机产品测试项目和测试方法，是测试作业指导书。细则除对产品的测试项目、测试方法、过程数据记录等进行了说明外，并对测试的环境、所用的仪器设备、测试人员要求、测试前准备状态检查以及其它注意事项等",
+      "content_length": 902,
+      "score": 0.0122,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "92580339da07a6f1_p0",
+      "doc_id": "92580339da07a6f1",
+      "doc_title": "SCS-01-GF-05之江首发星座卫星设计和建造规范_签发版",
+      "content": "# 之江首发星座卫星设计和建造规范  \n| 签署科目 | 签 名 | 日 期 |\n| --- | --- | --- |\n| 编 写 | 李旭 | 2024.06.23 |\n| 校 对 | 周智慧 | 2024.06.24 |\n| 审 核 | 王志 | 2024.6.24 |\n| 标 审 | 王凡 | 2024.6.24 |\n| 批 准 | ### | 2024.06.27 |  \n之江首发星座  \n工程总体部  \n修订记录\n\n之江首发星座  \n工程总体部  \n修订记录  \n| 序号 | 章节名称 | 修订内容简述 | 修订日期 | 修订前版本号 | 修订后版本号 | 修订人 | 复核人 |\n| --- | --- | --- | --- | --- | --- | --- | --- |\n| 1 |  |  |  |  |  |  |  |\n| 2 |  |  |  |  |  |  |  |\n| 3 |  |  |  |  |  |  |  |\n| 4 |  |  |  |  |  |  |  |\n| 5 |  |  |  |  |  |  |  |\n| 6 |  |  |  | ",
+      "content_length": 900,
+      "score": 0.0121,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "75690b3812b74239_p0",
+      "doc_id": "75690b3812b74239",
+      "doc_title": "2_西光XG006_XG007卫星星载智算机-智加NX4 IDS表-西光会签按0910",
+      "content": "# XG006/XG007卫星\n\n# 星载智算机-智加 NX4 IDS 表  \n| 签署科目 | 签 名 | 日 期 |\n| --- | --- | --- |\n| 编 写 | 曹许 | 2025.9.4 |\n| 校 对 | 陈民言 | 2025.9.4 |\n| 审 核 | 张玉兵 | 2025.09.04 |\n| 标 审 | 王宗慧 | 2025.9.4 |\n| 批 准 | 赵超 | 2025.9.4 |  \n之江实验室  \n天基计算系统研究中心  \n# 星载智算机-智加 NX4 IDS 表  \n会签页  \n|  | 姓名 | 单位(部门) | 日期 |\n| --- | --- | --- | --- |\n| 会签 | 李盈达剑 | 中科西光 | 20250905 |\n| 会签 | 牛冰宇 | 中科西光 | 20250905 |\n| 会签 | 范文民 | 中科西光 | 20250905 |\n| 会签 |  |  |  |\n| 会签 |  |  |  |\n| 会签 |  |  |  |\n| 会签 |  |  |  |\n| 会签 |  |  |  |\n| 会签 |  |  |  |\n| ",
+      "content_length": 584,
+      "score": 0.0119,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "876b705e965abd8f_p24",
+      "doc_id": "876b705e965abd8f",
+      "doc_title": "灵犀11A卫星环境与可靠性试验规范_A01_会签归档版",
+      "content": "colspan=\"2\">拉偏-10%电压</td></tr><tr><td></td><td>第一次</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td>第二次</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td>第三次</td><td></td><td></td><td></td><td></td><td></td><td></td><td></t",
+      "content_length": 4011,
+      "score": 0.0117,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "204bd3f49a08b13c_p0",
+      "doc_id": "204bd3f49a08b13c",
+      "doc_title": "SCS-01-GF-02之江首发星座卫星技术文件编制要求_签发版",
+      "content": "# 之江首发星座卫星\n\n# 技术文件  \n| 签署科目 | 签 名 | 日 期 |\n| --- | --- | --- |\n| 编 写 | 王 | 2024.6.24 |\n| 校 对 | 周智慧 | 2024.06.24 |\n| 审 核 | 王志 | 2024.6.24 |\n| 标 审 | 王氏 | 2024.6.24 |\n| 批 准 |  | 2024.06.27 |  \n之江首发星座  \n工程总体部  \n修订记录\n\n之江首发星座  \n工程总体部  \n修订记录  \n| 序号 | 章节名称 | 修订内容简述 | 修订日期 | 修订前版本号 | 修订后版本号 | 修订人 | 复核人 |\n| --- | --- | --- | --- | --- | --- | --- | --- |\n| 1 |  |  |  |  |  |  |  |\n| 2 |  |  |  |  |  |  |  |\n| 3 |  |  |  |  |  |  |  |\n| 4 |  |  |  |  |  |  |  |\n| 5 |  |  |  |  |  |  |  |\n| 6 |  |  |  |  |  ",
+      "content_length": 896,
+      "score": 0.0112,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "99b5cb5818e1f201_p0",
+      "doc_id": "99b5cb5818e1f201",
+      "doc_title": "No.02 分布式计算系统集成与测试方案-2024-0715A",
+      "content": "# No.02 分布式计算系统集成与测试方案0715A  \n之江首发星座\n分布式计算系统集成与测试方案  \n签署科目\n签 名\n日 期\n编写  \n校对  \n审核  \n标审  \n批准  \n之江首发星座\n工程总体部  \n修订记录\n序号\n章节名称\n修订内容简述\n修订日期\n修订前\n版本号\n修订后\n版本号\n修订人\n复核人\n1  \n2  \n3  \n4  \n5  \n6  \n7  \n8  \n9  \n10  \n11  \n12  \n13  \n14  \n15  \n16  \n17  \n18  \n19  \n20  \n目录\n1前言1\n2引用文件1\n3系统技术要求1\n4系统设计方案1\n5系统集成方案1\n5.1智算机与路由器集成测试1\n5.1.1电特性测试1\n5.1.2功能及性能测试3\n5.2路由器与激光通信机集成测试4\n5.2.1电特性测试4\n5.2.2性能测试4\n5.2.3功能测试4\n5.3智算机、路由器与激光通信机集成测试4\n5.3.1电特性测试4\n5.3.2性能测试4\n5.3.3功能测试4\n6单星系统测试方案4\n6.1系统遥控遥测4\n6.2业务模式测试4\n6.2.1单星原始数据下传模式4\n6.2.2单星感兴趣区",
+      "content_length": 1931,
+      "score": 0.0111,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "f4d7d407bae1cbfb_p0",
+      "doc_id": "f4d7d407bae1cbfb",
+      "doc_title": "Q NI XYK2122-2024 信息层自主管理软件要求V1.6（普通商密）",
+      "content": "# 中国星网网络创新研究院有限公司企业标准  \nQ/NI XYK2122-2024 V1.6  \n替代 Q/NI XYK2122-2024 V1.2\n\n# 信息层自主管理软件要求\n\n# Software Requirements for Self Management Component  \n（V1.6）  \n2024－10－20 发布  \n2024－10－30 实施\n\n# 目 次  \n1 范围.\n2 引言文件..\n3 术语、定义和缩略语.\n4 通用要求..\n4.1 功能要求 ..\n4.2 安全性要求..\n4.3 信息接口及注册.\n5 软件架构.\n6 设备中间统一层要求..\n6.1 tty 串口设备 .. /\n6.2 存储设备 ... 4\n6.3 socket 接口 .. /\n7 应用层通用底层协议帧格式..\n7.1 协议类型.\n7.2 参考示例 ..\n8 网管接口协议.. 9\n8.1 OSS 数据库.\n8.2 Restful 接口 .. .. 10\n9 软件应用层. .12\n9.1 遥控遥测. .12\n9.2 重构 .. . 13\n9.3 波位规划 .. .14\n9.4 本星和相邻卫",
+      "content_length": 1585,
+      "score": 0.0109,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "3916994e49e50780_p2",
+      "doc_id": "3916994e49e50780",
+      "doc_title": "【合作协议】20250815_之江实验室 北京微纳星空科技股份有限公司 关于“泰景卫星星座”与“三体计算星座”融合互通及102颗卫星联合研制的合作协议",
+      "content": "# 附件一 太空计算组件主要技术参数  \n根据任务要求，合作内容第一项“2025年联合研制2颗试验卫星并发射入轨”中，卫星搭载由甲方提供的太空计算组件，主要参数如下。\n\n# 一、星载智算机  \n| 指标 | 智加G1 |\n| --- | --- |\n| 架构 | GPU-SOC |\n| 算力 | 248TOPS@INT8 |\n| 体积 | 210mm×157.2mm×37mm |\n| 重量 | ≤1.29kg |\n| 功耗 | 64W,峰值103.3W |\n| 输入电压 | 28V±20% |\n| 工作温度 | -20℃~50℃ |\n| 储存温度 | -25℃~55℃ |\n| 内存 | 64GB+ECC |\n| 存储 | 2TB |\n| 对外接口 | CAN、RS422、千兆/万兆以太网 |\n| 操作系统 | Ubuntu22.04系统 |\n\n# 二、激光通信机  \n| 指标 | 10Gbps激光通信机 |\n| --- | --- |\n| 通信距离范围 | 100km~2500km |\n| 重量 | ≤8.8kg(含处理部分、热控部分、光学头安装隔热垫及转接板、内部电缆) |\n| 功耗",
+      "content_length": 901,
+      "score": 0.0108,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "389891b91bc1ab7a_p36",
+      "doc_id": "389891b91bc1ab7a",
+      "doc_title": "Q NI XYK2101-2024 卫星总体设计要求 V1.6（普通商密）",
+      "content": "# 附录 A\n\n# （规范性附录）\n\n# 卫星用频规划\n\n# A.1 S频段天线频率  \n表 A-1 S 频段天线频率规划（FDD 体制）  \n| 链路名称 | 频段（MHz） | 有效带宽（MHz） | 极化 |\n| --- | --- | --- | --- |\n| 上行 | 1930-2010 | 40 | 右旋圆极化 |\n| 下行 | 2120-2190 | 40 | 左旋圆极化 |\n\n# A.2 Ka 频段天线频率（含 Ka近全向测控）  \n表 $\\mathbf { A } { - } 2 \\mathbf { K } \\mathbf { a }$ 频段天线频率规划  \n| 链路名称 | 频段（GHz） | 带宽（MHz） | 说明 |\n| --- | --- | --- | --- |\n| Ka下行链路 | 17.7-18.6, 18.8-20.2 | 2300 | 右旋圆极化 |\n| Ka测控下行链路 | 20.15-20.2 | 50 | 右旋圆极化 |\n| Ka上行链路 | 27.5--30 | 2500 | 左旋圆极化 |\n| Ka测控上行链路 | 27.5-27.5",
+      "content_length": 1112,
+      "score": 0.0106,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "55d4b46aa36bf822_p1",
+      "doc_id": "55d4b46aa36bf822",
+      "doc_title": "首发任务介绍",
+      "content": "# 新闻稿  \n5⽉14⽇12时12分，太空计算卫星星座搭载⻓征⼆号丁运载⽕箭在酒泉卫星发射中⼼成功发射，标志着我国⾸个整轨互联的太空计算星座正式进⼊组⽹阶段。⼀箭⼗⼆颗计算卫星是之江实验室主导构建的“三体计算星座”的⾸次发射，也是国星宇航“星算”计划的⾸次发射。  \n本次⾸发⼊轨的12颗计算卫星均搭载了星载智算系统、星间通信系统，能够实现整轨卫星互联，具备太空在轨计算能⼒，将构建天地⼀体化⽹络。计算卫星最⾼单星算⼒达744TOPS，星间激光通信速率最⼤可达100Gbps，颗卫星互联后具备5POPS计算能⼒和30TB存储容量。（国星宇航算⼒写得多，⽂宣临时改的5P）卫星同时搭载了80亿参数的天基模型，可对L-L级卫星数据进⾏在轨处理，将执⾏异轨卫星激光接⼊、天⽂科学观测等在轨试验任务。\n\n# 发射照⽚和视频  \n??DCDBB-DC-E-BDB-BE--DCFB.jpg??陈良超拍 摄.mp??郭⽂茂拍摄.mp??孙海英拍摄.jpg??孙海英拍摄2.jpg??汪江波拍摄.jpg??汪江波拍 摄2.jpg??汪江波拍摄3.jpg??汪江波拍摄4.jpg??汪江波拍摄5.jpg??王海霞拍",
+      "content_length": 1301,
+      "score": 0.0105,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "ced1c18f7205c94b_p0",
+      "doc_id": "ced1c18f7205c94b",
+      "doc_title": "感算卫星0312卫星智算路由初样对接测试纪要-2024.09.06(1)",
+      "content": "# 感算卫星0312卫星智算路由初样对接测试纪要-2024.09.06(1)  \n感算卫星智算&路由载荷初样对接测试纪要\n概述\n~，成都国星宇航及之江实验室针对智算载荷（编号1）、路由载荷（编号1、编号2）在成都国星宇航总部大楼AIT测试间分别进行载荷与卫星平台初样对接联调测试，对接测试记录和结果如下：  \n图1 现场测试图  \n测试软件版本记录\n表格1 对接测试星上软件版本记录\n序号\n所属系统\n单机名称\n软件内容\n软件版次\n备注  \n综电\n星务板\nARM\nGS_XWA_M2S090_ARM_0.5.0\n吴文露  \nFPGA\nGS_XW_M2S090_FPGA_0.5.0\n陈安康  \n配电板\nARM\nGS_PDA_TMS570_ARM_0.5.0\nGS_PDB_ TMS570_ARM_0.5.0\n王梦蝶  \n功率板\nARM\nGS_GLA_ TMS570_ARM_0.5.0\n王梦蝶  \nAI载荷板\nFPGA\nGS_AI_7K325T_FPGA_0.5.0\n王宝平  \nNX\nGS_AI_ORINNX_GPU_0.5.0\n杨坡  \n路由载荷\n路由载荷（编号1、编号2）\nCPU\nZLR1_CP",
+      "content_length": 1998,
+      "score": 0.0028,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "ced1c18f7205c94b_p1",
+      "doc_id": "ced1c18f7205c94b",
+      "doc_title": "感算卫星0312卫星智算路由初样对接测试纪要-2024.09.06(1)",
+      "content": "初样测试线缆\n电缆网检查\n导通性测试\n路由器载荷同综电平台的低频线缆完成了检查，线缆导通性、匹配性、线缆与壳绝缘阻抗均满足要求。\n符合  \n匹配性测试  \n符合  \n绝缘阻抗测试  \n符合  \n星载路由器\nLY-ZLR1-02#\n供配电输出检查  \n主：28.03V\n备：28.03V\n符合  \n功能&性能测试\n加电后遥测检查\n遥测解析正常，各遥测波道对应数据长度和协议保持一致\n遗留项CPU慢遥：CAN正确指令计数，CAN错误计数不判断广播数据输入\n符合  \nCPU遥控指令测试\n共计31条遥控指令，正确执行29条，1条功能待合入，1条功能不合入\n符合  \nCPLD遥控指令测试\n共计6条遥控指令，正确执行3条，3条功能待合入\n符合  \n广播数据转发测试\n星上递增数形式转发广播数据，在星载路由端查询遥测广播结果和星务转发广播数据一致，PPS转发正常。\n符合  \n相机数据备份链路上行测试\nNX存入3.25G相机原始数据，通过遥控指令控制星载路由从NX读取相机原始数据，读取文件成功。\n符合  \n系统日志下行到NX测试\n发送遥控指令控制星载路由下传日志文件到NX，在NX读取日志文件，可正常解压，数",
+      "content_length": 1989,
+      "score": 0.0026,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "ced1c18f7205c94b_p2",
+      "doc_id": "ced1c18f7205c94b",
+      "doc_title": "感算卫星0312卫星智算路由初样对接测试纪要-2024.09.06(1)",
+      "content": "GPU帧间隔：65.8us，数据帧总时长3.9ms ；\n高性能计算模块CPLD帧间隔：136 us，数据帧总时长1.09ms ；\nFPGA帧间隔21.96us，数据帧总时长：3.86ms。\n数据预处理模块CPLD：69.4us\n符合  \nCAN总线，应答时间要求\n应答时间要求：＜2ms\n高性能计算模块GPU应答时间： 1.01ms；\n高性能计算模块CPLD应答时间：141.8us；\n数据预处理模块FPGA应答时间：384us\n数据预处理模块CPLD应答时间：116.4us\n符合  \nCAN主备切换\n星务切换备份CANB链路智算机高性能计算模块/预处理模块均能正常接收星务遥测轮询\n符合  \nCAN单节点故障模拟测试\n关闭GPU节点，FPGA节点 CAN总线通信正常。\n符合  \nPPS通断测试\n星务发送PPS信号；\n高性能计算GPU模块测试1000S，无丢帧现象；\n数据预处理FPGA模块测试1000S，无丢帧现象。\n符合  \nPPS电平特性/RS422多节点总线波形测量：1HZ\n上升时间和下降时间不超过10us\n上升沿：29.4ns\n下降沿：15.71ns\n高电平3.33v\n低电平-0.0",
+      "content_length": 1928,
+      "score": 0.0024,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "802af7095af8d82d_p0",
+      "doc_id": "802af7095af8d82d",
+      "doc_title": "【合作协议】20240617_之江实验室 成都国星宇航科技股份有限公司 关于共建“之江星座“”战略合作协议",
+      "content": "# 之江实验室\n\n# 成都国星宇航科技股份有限公司\n\n# 关于共建“之江星座”  \n战略合作协议  \n甲方： 之江实验室  \n住所地： 浙江省杭州市文一西路1818号  \n法定代表人/负责人： 王坚  \n授权代表：赵志峰  \n项目负责人： 陈宏宇  \n通讯地址：浙江省杭州市中泰街道科创大道之江实验室  \n联系方式： 13761094610  \n联系人电子邮箱：  \n乙方： 成都国星宇航科技股份有限公司  \n住所地：四川省成都高新区锦和路1699号4栋1层  \n法定代表人/负责人：陆川  \n项目负责人： 王亚波  \n通讯地址： 上海市徐汇区古井南路88号建工汇豪大厦1505室  \n联系方式： 18964647858  \n联系人电子邮箱：  \n充分发挥双方在智能计算、人工智能、星座建设、卫星研制、空间应用等方面的创新优势，共建太空计算系统，经友好协商，达成如下协议：\n\n# 第一条 合作目的  \n双方依据“共商、共建、共享、共发展”的原则，合作建设全球覆盖、资源共享、标准统一的太空计算系统，形成千星规模的“之江星座”天基计算基础设施，为通导遥卫星及星座提供太空计算服务。共同打造和培养高水平人",
+      "content_length": 1977,
+      "score": 25.2373,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "d2f989ce80c8c016_p0",
+      "doc_id": "d2f989ce80c8c016",
+      "doc_title": "【合作协议】20241010_之江实验室 地卫二空间技术（杭州）有限公司 战略合作协议",
+      "content": "# 之江实验室\n\n# 地卫二空间技术（杭州）有限公司\n\n# 战略合作协议  \n本协议由下列双方：之江实验室（以下称“甲方”）与地卫二空间技术（杭州）有限公司（以下称“乙方”）签署：\n\n# 甲方：之江实验室  \n统一社会信用代码：12330000MB1478604D  \n通讯地址：浙江省杭州市中泰街道科创大道之江实验室  \n法定代表人/负责人：王坚  \n授权代表：赵志峰  \n项目负责人：陈宏宇  \n联系方式：13761094610  \n联系人电子邮箱：  \n乙方：地卫二空间技术（杭州）有限公司  \n统一社会信用代码：91330108MA2KF2G917  \n通讯地址：浙江省杭州市西湖区转塘街道转塘科技经济区块16号2幢409室  \n法定代表人/负责人：温卓明  \n项目负责人：王春晖  \n联系方式：15606525683  \n联系人电子邮箱：\n\n# 一、合作内容  \n依据“共商、共建、共享、共发展”的原则，围绕太空计算系统建设，甲乙双方发挥各自优势，联合开展太空计算系统关键技术研发、星座联合共建、天地一体化应用开发等方面的合作，建立战略合作伙伴关系，内容如下：  \n（一）太空计算系统技术合",
+      "content_length": 1358,
+      "score": 19.7136,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "afff7483f7043aa4_p0",
+      "doc_id": "afff7483f7043aa4",
+      "doc_title": "【合作协议】20241010_烟台国丰投资控股集团有限公司 之江实验室 地卫二空间技术（杭州）有限公司 陆海空间（烟台）信息技术有限公司关于太空计算系统的战略合作协议",
+      "content": "# 烟台国丰投资控股集团有限公司\n\n# 之江实验室\n\n# 地卫二空间技术（杭州）有限公司\n\n# 陆海空间（烟台）信息技术有限公司\n\n# 关于太空计算系统的  \n战略合作协议  \n本协议由下列各方：烟台国丰投资控股集团有限公司（以下称“甲方”）、之江实验室（以下称“乙方”）、地卫二空间技术（杭州）有限公司（以下称“丙方”）与陆海空间（烟台）信息技术有限公司（以下称“丁方”）签署：  \n甲方：烟台国丰投资控股集团有限公司  \n统一社会信用代码：91370600684822338G  \n通讯地址：山东省烟台市芝罘区南大街267号  \n法定代表人/负责人：荣锋  \n联系方式：0535-6518520  \n联系人电子邮箱：  \n乙方：之江实验室  \n统一社会信用代码：12330000MB1478604D  \n通讯地址：浙江省杭州市中泰街道科创大道之江实验室  \n法定代表人/负责人：王坚  \n授权代表：赵志峰  \n项目负责人：陈宏宇  \n联系方式：13761094610  \n联系人电子邮箱：  \n丙方：地卫二空间技术（杭州）有限公司  \n统一社会信用代码：91330108MA2KF2G917  \n",
+      "content_length": 1920,
+      "score": 18.9062,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "f970a83a4711e23e_p8",
+      "doc_id": "f970a83a4711e23e",
+      "doc_title": "ds90lv110t",
+      "content": "# Multi-Drop Applications  \nFigure 8. Multi-Drop Applications\n\n# Point-to-Point Distribution Applications  \nFigure 9. Point-to-Point Distribution Applications  \nFor applications operating at data rate greater than 400Mbps, a point-to-point distribution application should be used. This improves signal quality compared to multi-drop applications due to no stub PCB trace loading. The only load is a receiver at the far end of the transmission line. Point-to-point distribution applications will have ",
+      "content_length": 1199,
+      "score": 0.0128,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "3a89a3f6bdb4fa23_p1118",
+      "doc_id": "3a89a3f6bdb4fa23",
+      "doc_title": "ug1085-zynq-ultrascale-trm",
+      "content": "Table 37-5: Processors, DDR, and DMA Clock Control  \n| Control Register | Reset Value,Register Set,Address Offset | RegisterParameter | Reset State | Pre-FSBL | Comments |\n| --- | --- | --- | --- | --- | --- |\n| CPU_R5_CTRL(RPU MPCore) | 0200_0600 h,0x090 | [SRCSEL][DIVISOR0][CLKACT][CLKACT_CORE] | RPLL.06 h.Enabled.Enabled. |  |  |\n| ACPU_CTRL(APU MPCore) | 0300_0400 h,0x060 | [SRCSEL][DIVISOR0][CLKACT_FULL][CLKACT_HALF] | APLL.04 h.Enabled.Enabled. |  |  |\n| CSU_PLL_CTRL | 0100_1500 h,0x0A0 | ",
+      "content_length": 858,
+      "score": 0.0124,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "3a89a3f6bdb4fa23_p1119",
+      "doc_id": "3a89a3f6bdb4fa23",
+      "doc_title": "ug1085-zynq-ultrascale-trm",
+      "content": "Table 37-6: System Clock Control  \n| Register Name | Reset Value, Address Offset | Register Parameter | Reset State | Pre-FSBL | Comments |\n| --- | --- | --- | --- | --- | --- |\n| DBG_LP_CTRL | 0100_2000h, LPD 0x068 | [SRCSEL] [DIVISOR0] [CLKACT] | RPLL. 020 h. Enabled. |  |  |\n| DBG_FPD_CTRL | 0100_2500 h, FPD 0x068 | [SRCSEL] [DIVISOR0] [CLKACT] | IOPLL_TO_FPD. 025 h. Enabled. |  |  |\n| DBG_TRACE_CTRL | 0000_2500 h, FPD 0x064 | [SRCSEL] [DIVISOR0] [CLKACT] | IOPLL_TO_FPD. 025 h. Clock stop. | ",
+      "content_length": 1271,
+      "score": 0.0122,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "876b705e965abd8f_p6",
+      "doc_id": "876b705e965abd8f",
+      "doc_title": "灵犀11A卫星环境与可靠性试验规范_A01_会签归档版",
+      "content": "# (2) 试验要求  \n➢ 整机温度循环试验要否开盖由各研制单位自定，试验时应采取措施，防止产品受潮（避免使用两箱法）。\n➢ 对于有恒温槽功能的晶振电路的电路板或整机，在不损伤电路板或整机的情况下应进行该项试验。\n➢ 整机（含单板）温度循环时原则上应通电，通电的具体要求为：在升温及高温保持阶段（通断测试除外），受试产品应通电；在降温阶段及低温保持阶段，研制方可根据受试产品特性和试验环境判断是否断电。  \n产品在通电过程中应进行动态监测；所有温度循环中，在上、下限时电源通断累积至少三次（如条件不允许可免做电源通断三次的试验）。  \n➢ 试验的前 n次(可停止次数)循环中出现故障应在排除故障后继续试验，故障前的循环次数应累计。在完成 n次(可停止次数)循环后，降温至室温状态进行性能测试，若性能检测正常，且在试验中止前2个循环中没有出现过故障，则最后2次循环可免做；否则须继续完成最后2次循环的无故障试验。如果仍然出现故障，则须根据具体情况进行分析并做出处理意见。\n\n# 4.2应力筛选随机振动\n\n# 4.2.1 试验量级  \n表 4-2 环境应力筛选随机振动试验条件  \n| 频率范围（Hz）",
+      "content_length": 1005,
+      "score": 0.0121,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "5617cc40a157a4e0_p2",
+      "doc_id": "5617cc40a157a4e0",
+      "doc_title": "WX1820AL datasheet Rev1.07",
+      "content": "# 1.2 引脚描述  \nNote: the single-ended signal IO level stard of WX1820AL chip is 1.8V LVCMOS stard.  \nTable1:Chip status  \n| Ball # | Pin Name | Type | Description |\n| --- | --- | --- | --- |\n| H5 | PCIE_BSY | Output Active-High | Asserted when PCI Express link has traffic |\n| B1 | ETH_UP_1 | Asserted when Ethernet port1 is UP |\n| C1 | ETH_1G_0 | Asserted when Ethernet port0 is at 1Gbps |\n| D1 | ETH_100M_0 | Asserted when Ethernet port0 is at 100Mbps |\n| E1 | ETH_BSY_1 | Asserted when Ethernet port",
+      "content_length": 960,
+      "score": 0.0119,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "5eece6ea787fbac5_p124",
+      "doc_id": "5eece6ea787fbac5",
+      "doc_title": "ug576-ultrascale-gth-transceivers",
+      "content": "# Ports and Attributes  \nTable 3-25 defines the pattern generator ports.  \nTable 3-25: Pattern Generator Ports\nTable 3-26 defines the pattern generator attribute.  \n| Port Name | Dir | Clock Domain | Description |\n| --- | --- | --- | --- |\n| TXPRBSSEL[3:0] | In | TXUSRCLK2 | Transmitter PRBS generator test pattern control.4 &#x27;b0000: Stard operation mode (test pattern generation is off)4 &#x27;b0001: PRBS-74 &#x27;b0010: PRBS-94 &#x27;b0011: PRBS-154 &#x27;b0100: PRBS-234 &#x27;b0101: PRBS-31",
+      "content_length": 1515,
+      "score": 0.0114,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "25ce685b5f7971b3_p1",
+      "doc_id": "25ce685b5f7971b3",
+      "doc_title": "王坚-2025-8-18 AI and 3-Body Computing Constelationn  Chengdu  V3",
+      "content": "# Early Exploration : Parallel Distributed Processing  \nCHAPTER 1  \nThe Appeal of Parallel Distributed Processing  \nJ. L. McCLELLAND, D. E. RUMELHART, and G. E. HINTON  \nWhat makes people smarter than machines? They certainly are not quicker or more precise. Yet people are far better at perceiving objects in natural scenes and noting their relations,at understanding language and retrieving contextually appropriate information from memory,at making plans and carrying out contextually appropriate ",
+      "content_length": 1078,
+      "score": 0.0112,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "80af4696d6cc7f3a_p135",
+      "doc_id": "80af4696d6cc7f3a",
+      "doc_title": "ds925-zynq-ultrascale-plus",
+      "content": "# Notes:\n\n# DSP48 Slice Switching Characteristics  \nTable 83: DSP48 Slice Switching Characteristics  \n| Symbol | Description | Speed Grade and VCCINT Operating Voltages | Units |\n| --- | --- | --- | --- |\n| 0.90V | 0.85V | 0.72V(1) |\n| -3 | -2 | -1 | -2 | -1 |\n| Maximum Frequency |\n| FMAX | With all registers used. | 891 | 775 | 645 | 644 | 600 | MHz |\n| FMAXPATDET | With pattern detector. | 794 | 687 | 571 | 562 | 524 | MHz |\n| FMAXMULT_NOMREG | Two register multiply without MREG. | 635 | 544 |",
+      "content_length": 1197,
+      "score": 0.0111,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "5617cc40a157a4e0_p9",
+      "doc_id": "5617cc40a157a4e0",
+      "doc_title": "WX1820AL datasheet Rev1.07",
+      "content": "Table10:MII/NCSI  \n| Ball # | MII Pin Name | NCSI Pin Name | Type | Description |\n| --- | --- | --- | --- | --- |\n| T22 | RMII_TXD_0 | NCSI_RXD_0 | Output | Received data signals from WX1820 to BMC |\n| R18 | RMII_TXD_1 | NCSI_RXD_1 |\n| U20 | RMII_TX_EN | NCSI_CSR_DV | Output | Carrier Sense/Receive Data Valid |\n| V21 | RMII_CSR_DV | NCSI_TX_EN | Input | Transmit Enable |\n| V22 | RMII_REF_CLK | NCSI_REF_CLK | Input | NCSI reference clock |\n| U22 | RMII_RXD_0 | NCSI_TXD_0 | Input | Transmit data s",
+      "content_length": 1556,
+      "score": 0.0106,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "67f0e1d450064ed4_p202",
+      "doc_id": "67f0e1d450064ed4",
+      "doc_title": "8gb_auto_ddr4_dram",
+      "content": "# Write Timing Definitions  \nThe write timings shown in the following figures are applicable in normal operation mode, that is, when the DLL is enabled and locked.\n\n# Write Timing – Clock-to-Data Strobe Relationship  \nThe clock-to-data strobe relationship is shown below and is applicable in normal operation mode, that is, when the DLL is enabled and locked.  \nRising data strobe edge parameters:  \n• t DQSS (MIN) to t DQSS (MAX) describes the allowed range for a rising data strobe edge relative to",
+      "content_length": 2273,
+      "score": 0.0105,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "aa5cb33568f971f3_p0",
+      "doc_id": "aa5cb33568f971f3",
+      "doc_title": "【合作协议】20251010_之江实验室 西安中科西光航天科技有限公司 关于“三体计算星座”共建及模型联合研发的战略合作协议",
+      "content": "# 之江实验室\n\n# 西安中科西光航天科技有限公司\n\n# 关于“三体计算星座”共建及\n\n# 模型联合研发的\n\n# 战略合作协议  \n二○二五年九月  \n本协议由下列双方：之江实验室（以下称“甲方”）与西安中科西光航天科技有限公司（以下称“乙方”）签署：  \n甲方：之江实验室  \n统一社会信用代码：12330000MB1478604D  \n通讯地址：浙江省杭州市余杭区文一西路2880号  \n法定代表人/负责人：王坚  \n授权代表：赵志峰  \n项目联系人：陈高伟  \n联系方式：15957108870  \n联系人电子邮箱：  \n乙方：西安中科西光航天科技有限公司  \n统一社会信用代码：91610138MAB0QBL297  \n通讯地址：陕西省西咸新区空港新城商务中心二期4号楼5层  \n法定代表人/负责人：秦静  \n项目联系人：雷腾  \n联系方式：13700289975  \n联系人电子邮箱：  \n经友好协商，双方同意通过“共商共建共享共发展”的新机制，开展“三体计算星座”共建、高光谱模型联合研发，支撑地方政府筹建高光谱数据要素库及智算中心，提升对地高光谱观测能力，推动“人工智能+”科学、“人工",
+      "content_length": 1050,
+      "score": 0.0027,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "cbe652a20fd34ad9_p2",
+      "doc_id": "cbe652a20fd34ad9",
+      "doc_title": "智加G1智算机单机正样验收大纲及细则",
+      "content": "RS422接口测试  \n符合IDS要求和建造规范要求  \nCAN接口测试  \n符合IDS要求和建造规范要求  \nAD采集接口测试  \n符合IDS要求和建造规范要求  \n千兆网接口测试  \n符合IDS要求和建造规范要求  \n万兆网接口测试  \n符合IDS要求和建造规范要求  \n3\n硬件相关性测试\n固态存储容量  \n符合IDS要求和建造规范要求  \n单机算力  \n符合IDS要求和建造规范要求  \nFPGA模块内存容量  \n符合IDS要求和建造规范要求  \nGPU内存容量  \n符合IDS要求和建造规范要求  \n4\n硬件相关功能测试\nCAN通信功能  \n符合IDS要求和建造规范要求  \n5  \n硬件状态监测上报功能  \n符合IDS要求和建造规范要求  \n6\n高速以太网通信  \n支持基于万兆以太网光纤和千兆以太网电口的网络通信  \n7\nCAN接口通信  \n实现两路CAN接口通信，支持CANA/B切换；支持CANA接口板内总线互联；CANB接口内部总线互联  \n8\nCAN指令收发  \n支持通过CAN接口完成指令的接收与遥测信息发送  \n9\n系统更新  \n支持通过千兆以太网实现系统的更新  \n10\n",
+      "content_length": 1980,
+      "score": 0.0025,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "5d2bcce8462c8a69_p9",
+      "doc_id": "5d2bcce8462c8a69",
+      "doc_title": "3.天基中心-之江星座首期项目实施方案-v11-20240625",
+      "content": "数字孪生平台软件总体架构如图 15所示：  \n图 15 数字孪生平台总体架构图\n（1）孪生星座软件\n孪生星座软件包含孪生卫星、孪生星座调度及孪生星座同步3个模块。其中，孪生卫星模块构建卫星的数字孪生模型，搭建基于卫星云载荷电性件的地面环境，提供包括星载智算机、星载路由器、星间/星地网络等的基础孪生能力，实现硬件在环的模拟； 孪生星座调度模块执行星座整体的配置与调度，对星座状态进行实时监测和状态更新；孪生星座同步模块以测运控平台窗口期采集的星座数据为基础，计算卫星的空间位置姿态，分析载荷、网络及星载应用的运行状态，通过调度模块，执行孪生星座状态更新。孪生星座软件架构如图 16所示：  \n图 16 孪生星座软件架构图\n（2）星载应用研发管理软件\n星载应用研发管理软件包含开发框架、应用测试及应用服务3个模块。其中，开发框架模块提供面向开发者的本地开发环境、代码脚手架和多语言版本星载SDK，以方便开发者使用星载智算、存储等资源，简化星载应用的创建与开发调试过程；应用测试模块负责对星载应用执行在地运行检测，支持可靠性和性能测试，确保星载应用的高可用性；应用服务模块具备应用开发的全流程管理能力，经",
+      "content_length": 1880,
+      "score": 0.0025,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "9f1ec66fefdedcab_p5",
+      "doc_id": "9f1ec66fefdedcab",
+      "doc_title": "2.浙江省重大科创平台项目合同书-天基中心-v11-20240625",
+      "content": "（1）单口最大交换速率不低于10Gbps；\n（2）整体交换容量不少于100Gbps；\n（3）支持基于以太网GE光电口的激光通信载荷直连，能适配多种速率的激\n光通信载荷。\n2.5 分布式计算系统\n（1）支持不少于5颗卫星组成一个分布式集群，支持接入分布式集群的卫星算力资源预分配，在卫星接入后支持分钟级算力资源调度，并依据卫星算力平台架构提供算力虚拟化能力；\n（2）天基计算星群星地断连情况下，集群自治时间不低于一个轨道周期；\n（3）针对高算力平台的支持不少于20个任务的并发调度；\n（4）星地、星星建链后，支持场景下多任务编排调度，星地、星星间任务协同并发处理。\n2.6 遥感图像处理系统\n（1）根据业务场景支持星上全流程图像处理，星上图像处理工具链包含辐射校正、波段配准、几何校正、云判、目标识别、图像压缩、图像拼接功能。\n2.7 天基遥感大模型\n（1）构建7B参数的天基遥感大模型，支持星上文图检索、视觉问答等任务，实现天基遥感大模型的星上部署与验证。\n（2）开发基于大模型的结构化描述智能标注工具，构建面向遥感领域大模型训练和评估的大规模高质量数据集。\n2.8 地面孪生系统与数据服务平台\n（1",
+      "content_length": 1999,
+      "score": 0.0025,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "99b5cb5818e1f201_p2",
+      "doc_id": "99b5cb5818e1f201",
+      "doc_title": "No.02 分布式计算系统集成与测试方案-2024-0715A",
+      "content": "具备以太网单播传输方式\n支持端口速率控制\n支持TCP/IP、UDP等多种网络协议的传输、支持命令型数据、流式数据和突发型数据的传输\n支持断网条件下重连功能，断网重连时间：≤5s\n分布式操作系统的软件功能与性能要求\n分布式操作系统的软件功能要求为：\n（1）实现12颗星天地一体化组网，完成卫星接入地面时，卫星资源可管可控；\n（2）支持卫星在轨运行，某节点异常情况任务不中断运行，支持任务迁移；\n（3）支持星地数据同步，包括地面数据上传，星上数据下传；\n（4）支持12星协同计算，支持L0-L4级某阶段或全阶段数据处理；\n（5）支持单星任务计算，支持L0-L4级某阶段数据处理。\n分布式操作系统的软件性能要求为：\n（1）支持不少于12颗卫星接入分布式集群，支持接入分布式集群的卫星算力资源预分配，在卫星接入后支持分钟级算力资源调度，并依据卫星算力平台架构提供算力虚拟化能力；\n（2）天基计算星群星地断连情况下，集群自治时间不低于一个轨道周期；\n（3）针对高算力平台的支持不少于20个任务的并发调度；\n（4）星地、星星建链后，支持场景下多任务编排调度，星地、星星间任务协同并发处理。\n遥感图像处理系统功能和",
+      "content_length": 1920,
+      "score": 0.0024,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "f4c0f076357c10d5_p22",
+      "doc_id": "f4c0f076357c10d5",
+      "doc_title": "Z_之江星座首发星座系统方案设计报告_0608发布",
+      "content": "# 7.2.4 星座大模型计算性能分析  \n以速率优先的大模型处理算法为例，考虑 128Token 输入情况，7B 规模参数量理论单次计算量为17TOPS，满足单星单卡算力下进行推理。\n\n# 7.3 计算任务调度分析  \n按照“之江星座”一期建设规模，根据业务对算力需求的大小可分为以下三种计算任务调度模式：\n\n# (1) 多星协同调用  \n该模式需要基于星间通信维持任务业务数据交互、任务状态数据同步等能力，需要基于星地通信保证任务结果数据回传、任务指令上行、资源/任务状态回传、应用镜像上注。\n\n# (2) 星内多节点调用  \n该模式需要基于星内多节点通信维持任务数据交互，需要基于星地通信保证任务结果数据回传、任务指令上行、资源/任务状态回传、应用镜像上注。\n\n# (3) 星内单节点调度  \n该模式需要基于星地通信保证任务结果数据回传、任务指令上行、资源/任务状态回传、应用镜像上注。  \n太空算力地面管控中心进行任务编排调度时会从当前计算卫星的任务运行、算力使用、卫星轨道位置等多个维度完成算力的预分配，按照卫星接入地面的时间节点依次进行镜像上注、任务部署，直至最终的任务运行。\n\n# 7.",
+      "content_length": 1520,
+      "score": 0.0024,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "f4c0f076357c10d5_p21",
+      "doc_id": "f4c0f076357c10d5",
+      "doc_title": "Z_之江星座首发星座系统方案设计报告_0608发布",
+      "content": "# 7 星座计算能力分析\n\n# 7.1 星载智算机概述  \n星载智算机主要负责提供整套系统的算力资源和存储资源，作为星上智能处理单元，还负责对卫星获取数据进行处理、存储和转发，并提供高性能计算、高速数据传输、稳定可靠存储以及高效优化算法等一系列支持。  \n图22星载智算机总体框图  \n上图为星载智算机的总体框架，该智算机包含弹性可伸缩智能计算架构，是支撑天基计算分布式操作系统的运行的硬件基础，具备软硬件故障感知自恢复功  \n能。\n\n# 7.2 计算性能分析\n\n# 7.2.1 星座算力分析  \n星座共有以下六种算力组合：  \n(1) 01、02 星单星模式:该星单板稀疏算力为 248TOPS@INT8，整星智能稀疏算力为 992TOPS@INT8。该星单板稠密算力为 124TOPS@INT8，整星智能稠密算力为 441TOPS@INT8。\n(2) 03-12 星单星模式:整星智能稀疏算力为 248TOPS@INT8，整星智能稠密算力为 124TOPS@INT8。\n(3) $_ { 0 1 + 0 2 }$ 星互联模式:该互联模式智能稀疏算力为 1984TOPS@INT8，该互联模式智能稠",
+      "content_length": 1470,
+      "score": 0.0024,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "5a053f6ecbae54d5_p2",
+      "doc_id": "5a053f6ecbae54d5",
+      "doc_title": "AI超算模块单机正样验收大纲及细则",
+      "content": "4\n硬件相关功能测试\nCAN通信功能  \n符合IDS要求和建造规范要求  \n5  \n硬件状态监测上报功能  \n符合IDS要求和建造规范要求  \n7\nCAN接口通信  \n实现两路CAN接口通信，支持CANA/B切换；支持CANA接口板内总线互联；CANB接口内部总线互联  \n8\nCAN指令收发  \n支持通过CAN接口完成指令的接收与遥测信息发送  \n10\n422接口同步通信功能  \n支持通过同步RS422实现软件上注功能  \n8\n硬件保护功能  \n支持输入电源隔离、防浪涌、防反接以及短路保护设计  \n9\n状态监测上报  \n具备温度、电源状态和系统状态上报功能  \n10\n板卡FRU  \n支持板卡信息存储和快速识别  \n11\n软件通信接口与协议  \nCAN、以太网、SPI、串口、PCIE数据通信软件接口实现；各个通信接口应用层通信协议的实现  \n12\n遥控与遥测功能  \n具备遥控指令数据接收、解析与执行功能；可采集硬件、系统、软件、指令执行状态、业务状态等各类遥测信息并上报  \n13\n文件和数据上注  \n支持文件和数据上注接收、处理与保存  \n14\n软件更新/重置  \n支持软件的版本更新与重",
+      "content_length": 1996,
+      "score": 0.0023,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "3c044dc9d7f641d0_p11",
+      "doc_id": "3c044dc9d7f641d0",
+      "doc_title": "Z_之江星座首发星座系统方案设计报告_0519_1940",
+      "content": "智算机-GPU1\n192.168.7.  \n智算机-GPU2\n192.168.8.  \n智算机-GPU3\n192.168.9.  \n智算机-GPU4\n192.168.10.\n从计算星-3\n智算机-FPGA\n192.168.11.  \n智算机-GPU\n192.168.12.\n从计算星-4\n智算机-FPGA\n192.168.16.  \n智算机-GPU\n192.168.17.\n从计算星-5\n智算机-FPGA\n192.168.21.  \n智算机-GPU\n192.168.22.\n从计算星-6\n智算机-FPGA\n192.168.26.  \n智算机-GPU\n192.168.27.\n从计算星-7\n智算机-FPGA\n192.168.31.  \n智算机-GPU\n192.168.32.\n从计算星-8\n智算机-FPGA\n192.168.36.  \n智算机-GPU\n192.168.37.\n从计算星-9\n智算机-FPGA\n192.168.41.  \n智算机-GPU\n192.168.42.\n从计算星-10\n智算机-FPGA\n192.168.46.  \n智算机-GPU\n192.168.47.\n从计算星-11\n智算机-",
+      "content_length": 1994,
+      "score": 0.0023,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "236f5d4cc7f83a27_p55",
+      "doc_id": "236f5d4cc7f83a27",
+      "doc_title": "sn75dp159",
+      "content": "# 11 Power Supply Recommetions\n\n# 11.1 Power Management  \nTo minimize the power consumption of customer application, SNx5DP159 uses dual power supply. $\\mathsf { V } _ { \\mathsf { C C } }$ is 3.3-V with $10 \\%$ range to support the $_ { }$ voltage. The $\\mathsf { V } _ { \\mathsf { D D } }$ is 1.00-V to 1.27-V range to supply the internal digital control circuit. v operates in two different working states. See 表 14 for conditions for each mode. When OE is deasserted and then reasserted the device",
+      "content_length": 1356,
+      "score": 0.0132,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "63baf9e0310a6bd1_p71",
+      "doc_id": "63baf9e0310a6bd1",
+      "doc_title": "88E1510 88E1518 88E1512 88E1514_20210603",
+      "content": "# 2.18.2 Software Configuration - Management Interface  \nThe management interface provides access to the internal registers via the MDC and MDIO pins and is compliant with IEEE 802.3u Clause 22 and Clause 45 MDIO protocol. MDC is the management data clock input and, it can run from DC to a maximum rate of 12 MHz. At high MDIO fanouts the maximum rate may be decreased depending on the output loading. MDIO is the management data input/output and is a bi-directional signal that runs synchronously t",
+      "content_length": 1791,
+      "score": 0.0128,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "419bc4c45dbb155d_p53",
+      "doc_id": "419bc4c45dbb155d",
+      "doc_title": "SNx5DP159",
+      "content": "# 10 Power Supply Recommetions\n\n# 10.1 Power Management  \nTo minimize the power consumption of customer application, SNx5DP159 uses dual power supply. $\\mathsf { V } _ { \\mathsf { C C } }$ is 3.3-V with $10 \\%$ range to support the $_ { }$ voltage. The $\\mathsf { V } _ { \\mathsf { D D } }$ is 1.00-V to 1.27-V range to supply the internal digital control circuit. SNx5DP159 operates in two different working states. See Table 14 for conditions for each mode. When OE is deasserted and then reasserte",
+      "content_length": 1368,
+      "score": 0.0126,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "3a89a3f6bdb4fa23_p1121",
+      "doc_id": "3a89a3f6bdb4fa23",
+      "doc_title": "ug1085-zynq-ultrascale-trm",
+      "content": "Table 37-8: FPD Peripheral Clock Control  \n| Register Name | Reset Value, Address Offset | Register Parameter | Reset State | Pre-FSBL | Comments |\n| --- | --- | --- | --- | --- | --- |\n| DP_Video_REF_CTRL | 0103_2300 h, 0x070 | [SRCSEL] [DIVISOR0] [DIVISOR1] [CLKACT] | VPLL. 23 h. 0 h. Enabled. |  |  |\n| DP AUDIO_REF_CTRL | 0103_2300 h, 0x074 | [SRCSEL] [DIVISOR0] [DIVISOR1] [CLKACT] | VPLL. 23 h. 0 h. Enabled. |  |  |\n| DP_STC_REF_CTRL | 0120_3200 h, 0x07C | [SRCSEL] [DIVISOR0] [DIVISOR1] [CLK",
+      "content_length": 1009,
+      "score": 0.0124,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "63baf9e0310a6bd1_p130",
+      "doc_id": "63baf9e0310a6bd1",
+      "doc_title": "88E1510 88E1518 88E1512 88E1514_20210603",
+      "content": "Table 128: Checker Control\n, Register 18  \n| Bits | Field | Mode | HW Rst | SW Rst | Description |\n| --- | --- | --- | --- | --- | --- |\n| 15:5 | Reserved | R/W | 0x000 | Retain | Set to 0s |\n| 4 | CRC Counter Reset | R/W, SC | 0x0 | Retain | 1 = ResetThis bit will self-clear after writing 1. |\n| 3 | Reserved | R/W | 0x0 | Retain | Reserved. |\n| 2:0 | Enable CRC Checker | R/W | 0x0 | Retain | 000 = Disable/reset CRC checker010 = Check data from Copper Interface100 = Check data from SGMII Interfa",
+      "content_length": 932,
+      "score": 0.0121,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "3a89a3f6bdb4fa23_p1116",
+      "doc_id": "3a89a3f6bdb4fa23",
+      "doc_title": "ug1085-zynq-ultrascale-trm",
+      "content": "Table 37-3: System PLL Clock Control Register Settings  \n| Register Name | Reset value, Address offset (LPD, FPD) | Register Parameter | Reset State | Pre-FSBL | Comments |\n| --- | --- | --- | --- | --- | --- |\n| RPLL_CTRL | 0001_2C09 h, LPD 0x030 | [RESET] [BYPASS] [FBDIV] [DIV2] [PRE_SRC] [POST_SRC] | Held in reset. Bypass enabled. 2C h. Divide by 2. PS_REF_CLK. PS_REF_CLK. |  |  |\n| IOPLL_CTRL | 0001_2C09 h, LPD 0x020 | [RESET] [BYPASS] [FBDIV] [DIV2] [PRE_SRC] [POST_SRC] | Held in reset. Byp",
+      "content_length": 1495,
+      "score": 0.0119,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "d0d16bb8c5fac5c5_p664",
+      "doc_id": "d0d16bb8c5fac5c5",
+      "doc_title": "pg150-ultrascale-memory-ip",
+      "content": "| General Control | I/O | Width | Description |\n| --- | --- | --- | --- |\n| vio_tg_start | I | 1 | Enable traffic generator to proceed from &quot;START&quot; state to &quot;LOAD&quot; state after calibration completes.If you do not plan to program instruction table NOR PRBS data seed, tie this signal to 1&#x27;b1.If you plan to program instruction table OR PRBS data seed, set this bit to 0 during reset. After reset deassertion and done with instruction/seed programming, set this bit to 1 to star",
+      "content_length": 2115,
+      "score": 0.0117,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "63baf9e0310a6bd1_p125",
+      "doc_id": "63baf9e0310a6bd1",
+      "doc_title": "88E1510 88E1518 88E1512 88E1514_20210603",
+      "content": "0xFF = 256 packets received (max count).\nBit 16_6.4 must be set to 1 in order for register to be valid.</td></tr><tr><td>7:0</td><td>CRC Error Count</td><td>RO</td><td>0x00</td><td>Retain</td><td>0x00 = No CRC errors detected in the packets received.\n0xFF = 256 CRC errors detected in the packets received (max count).\nBit 16_6.4 must be set to 1 in order for register to be valid.</td></tr></table>  \nTable 119: Checker Control\n, Register 18  \n| Bits | Field | Mode | HW Rst | SW Rst | Description |",
+      "content_length": 1208,
+      "score": 0.0114,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "6c930f6769787550_p106",
+      "doc_id": "6c930f6769787550",
+      "doc_title": "Jetson_AGX_Orin_Series_Design_Guide_DG-10653-001_v1.6",
+      "content": "| Parameter | Requirement | Units | Notes |\n| --- | --- | --- | --- |\n| Max Frequency 3.3V Signaling |  |  | See Note 1 |\n| DS | 25 (12.5) | MHz (MB/s) |\n| HS | 50 (25) |\n| Max Frequency 1.8V Signaling |  |  |\n| SDR12 | 25 (12.5) |  |\n| SDR25 | 50 (25) |  |\n| SDR50 | 100 (50) |  |\n| SDR104 | 208 (104) |  |\n| DDR50 | 50 (50) |  |\n| Topology | Point to point |  |  |\n| Reference plane | GND or PWR |  | See Note 2 |\n| Trace Impedance | 50 | Ω | ±15%. 45Ω optional depending on stack-up |\n| Max Via Co",
+      "content_length": 1226,
+      "score": 0.0112,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "6c930f6769787550_p119",
+      "doc_id": "6c930f6769787550",
+      "doc_title": "Jetson_AGX_Orin_Series_Design_Guide_DG-10653-001_v1.6",
+      "content": "# SPI  \nOrin module provides multiple Serial Peripheral interfaces (SPI) as listed in Table 14-1.  \nTable 14-1. Orin Module SPI Pin Description  \n| Pin # | Module Pin Name (SoC SPI Function) | SoC Signal | Usage/Description | Direction | Pin Type |\n| --- | --- | --- | --- | --- | --- |\n| J57 | SPI1_CLK | GP47_SPI1_CLK | SPI 1 Clock | Bidir | CMOS - 1.8V (3.3V tolerant, back-drive capable to 1.8V) |\n| D55 | SPI1_MOSI | GP49_SPI1_MOSI | SPI 1 Initiator Out / Target In |\n| A56 | SPI1_MISO | GP48_SP",
+      "content_length": 1370,
+      "score": 0.0111,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "902b25677176d5cd_p63",
+      "doc_id": "902b25677176d5cd",
+      "doc_title": "A3P1000-FG256I",
+      "content": "# 3.3 V LVCMOS Wide Range  \nTable 2-47 $\\bullet$ Minimum and Maximum DC Input and Output Levels Applicable to Advanced I/O Banks  \n| 3.3 V\nLVCMOS\nWide Range | Equiv.\nSoftware\nDefault\nDrive\nStrength\nOption1 | VIL | VIH | VOL | VOH | IOL | IOH | IOSL | IOSH | IIL2 | IIH3 |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n| Drive\nStrength | Min\nV | Max\nV | Min\nV | Max\nV | Max\nV | Min\nV | μA | μA | Max\nmA4 | Max\nmA4 | μA5 | μA5 |\n| 100 μA | 2 mA | -0.3 | 0.8 | 2 | 3.6 | 0.2 ",
+      "content_length": 1989,
+      "score": 0.0109,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "e72ca269c92944f5_p107",
+      "doc_id": "e72ca269c92944f5",
+      "doc_title": "Jetson_AGX_Orin_Series_Design_Guide_设计指南_v1.6",
+      "content": "| Parameter | Requirement | Units | Notes |\n| --- | --- | --- | --- |\n| Max Frequency 3.3V Signaling |  |  | See Note 1 |\n| DS | 25 (12.5) | MHz (MB/s) |\n| HS | 50 (25) |\n| Max Frequency 1.8V Signaling |  |  |\n| SDR12 | 25 (12.5) |  |\n| SDR25 | 50 (25) |  |\n| SDR50 | 100 (50) |  |\n| SDR104 | 208 (104) |  |\n| DDR50 | 50 (50) |  |\n| Topology | Point to point |  |  |\n| Reference plane | GND or PWR |  | See Note 2 |\n| Trace Impedance | 50 | Ω | ±15%. 45Ω optional depending on stack-up |\n| Max Via Co",
+      "content_length": 1226,
+      "score": 0.0108,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "e72ca269c92944f5_p120",
+      "doc_id": "e72ca269c92944f5",
+      "doc_title": "Jetson_AGX_Orin_Series_Design_Guide_设计指南_v1.6",
+      "content": "# SPI  \nOrin module provides multiple Serial Peripheral interfaces (SPI) as listed in Table 14-1.  \nTable 14-1. Orin Module SPI Pin Description  \n| Pin # | Module Pin Name (SoC SPI Function) | SoC Signal | Usage/Description | Direction | Pin Type |\n| --- | --- | --- | --- | --- | --- |\n| J57 | SPI1_CLK | GP47_SPI1_CLK | SPI 1 Clock | Bidir | CMOS - 1.8V (3.3V tolerant, back-drive capable to 1.8V) |\n| D55 | SPI1_MOSI | GP49_SPI1_MOSI | SPI 1 Initiator Out / Target In |\n| A56 | SPI1_MISO | GP48_SP",
+      "content_length": 1370,
+      "score": 0.0106,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "419bc4c45dbb155d_p39",
+      "doc_id": "419bc4c45dbb155d",
+      "doc_title": "SNx5DP159",
+      "content": "# 8.5.4.2.2 Misc Control  \nTable 7. Misc Control  \n<table><tr><td>ADDRESS</td><td>BIT</td><td>DEFAULT</td><td>DESCRIPTION</td><td>ACCESS</td></tr><tr><td rowspan=\"6\">09h</td><td>7</td><td>1'b0</td><td>SWAP_EN: This field enables swapping the input main link lanes\n0 – Disable (default)\n1 – Enable\nNote: field is loaded from SWAP/POL pin; Writes ignored when I2C_EN/PIN = 0</td><td>RWU</td></tr><tr><td>6</td><td>1'b0</td><td>LANE_POLARITY: swaps the input data and clock lanes polarity.\n0 – Disabled:",
+      "content_length": 1995,
+      "score": 0.0105,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "d179a125e3f2bf65_p78",
+      "doc_id": "d179a125e3f2bf65",
+      "doc_title": "U10 KSZ9031RN QFN77-48LD-PL-1",
+      "content": "The typical MDC clock frequency is 2.5 MHz (400 ns clock period).\nThe KSZ9031RNX can operate with MDC clock frequencies generated from bit banging with GPIO pin in the 10s/100s of Hertz and have been tested up to a MDC clock frequency of 8.33 MHz (120 ns clock period). Test condition for 8.33 MHz is for one KSZ9031RNX PHY on the MDIO line with a $1 . 0 \\mathsf { k } \\Omega$ pull-up to the DVDDH supply rail.  \nFIGURE 7-5: POWER-UP/POWER-DOWN/RESET TIMING  \nNote 1: The recommended power-up sequenc",
+      "content_length": 2091,
+      "score": 0.0104,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "99b5cb5818e1f201_p28",
+      "doc_id": "99b5cb5818e1f201",
+      "doc_title": "No.02 分布式计算系统集成与测试方案-2024-0715A",
+      "content": "√\n√\n√\n√\n√\nM  \n太空分布式存储资源：存储空间30TB  \n√\n√\n√\n√\n√\nM  \n算力资源的调度管控能力，协同计算  \n√\n√\n√\n√\n√\nT  \n对智算机存储空间的统一管控和访问管理  \n√\n√\n√\n√\n√\nT  \n系统状态同步能力：星地状态数据同步、星间状态数据同步；  \n√\n√\n√\n√\n√\nT  \n实现对星间、星地数据的同步；  \n√\n√\n√\n√\n√\nT  \n星载任务的编排、任务调度迁移  \n√\n√\n√\n√\n√\nT  \n在卫星接入后支持分钟级算力资源调度  \n√\n√\n√\n√\n√\nT  \n星地断连情况下，集群自治时间不低于一个轨道周期  \n√\n√\n√\n√\n√\nT  \n支持不少于20个任务的并发调度  \n√\n√\n√\n√\n√\nT  \n多任务编排调度，星地、星间任务协同并发处理。  \n√\n√\n√\n√\n√\nT\n天地一体化网络\n支持802.1q VLAN\n√\n√\n√\n√  \n√  \nT  \n具备以太网单播传输方式\n√\n√\n√\n√  \n√  \nT  \n支持端口速率控制\n√\n√\n√\n√  \n√  \nT  \n支持TCP/IP、UDP等多种网络协议的传输、支持命令型数据、流式数据和突",
+      "content_length": 1893,
+      "score": 0.0026,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "99b5cb5818e1f201_p27",
+      "doc_id": "99b5cb5818e1f201",
+      "doc_title": "No.02 分布式计算系统集成与测试方案-2024-0715A",
+      "content": "测试日志成功下传到模拟PC，日志无异常，两台从星链路顺畅且通信带宽及性能满足要求  \n四星业务模式\n工作流程\n四星系统上电\nprompt数据从从星03传输至从星04\n从星04综电发送测控指令至智算机\n从星04智算机从综电获取L0数据并存入分布式文件系统\n从星04 大模型任务开始启动\n从星04智算机将计算结果数据发送至主星02智算机\n主星02智算机接收数据成功后将数据转发至主星01智算机\n主星01智算机接收数据成功后将数据转发至从星03智算机\n分布式上传任务指令至从星03\n从星03分布式文件系统将计算结果传回地面分布式文件系统\n测试内容\n分布式系统启动状态\n系统上电后分布式启动是否正常，通过遥测信息进行观察启动是否正常\n数据读取状态\n综电发送测控指令至智算机后，数据传输链路建立，观察L0数据是否接收成功\n星间传输状态\n星间传输完成后，观察数据是否正确地从从星传至主星\n分布式任务上传状态\n地面分布式系统任务上注完成后，观察分布式系统是否接收成功，并执行相应动作\n结果下传状态\n分布式文件系统结果下传完成后，观察下传链路及图像处理任务是否成功\n测试流程\n通过PC机将指令包上传至从星03和从星0",
+      "content_length": 1978,
+      "score": 0.0024,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "67f8cd08656c0a09_p9",
+      "doc_id": "67f8cd08656c0a09",
+      "doc_title": "（中文）三体计算星座画册 - 20260318-压缩",
+      "content": "# 智桥RH1  \n| 指标 | 参数 |\n| --- | --- |\n| 架构 | 2颗HJ817(主备双机冷备系统) |\n| 交换容量 | 最大2T(单颗HJ817) |\n| 尺寸 | 396x616x47.1mm±0.5mm |\n| 重量 | 10.5±1kg |\n| 功耗 | 140W,峰值功耗180W |\n| 工作温度 | -20℃~45℃ |\n| 储存温度 | -25℃~55℃ |\n| 输入电压 | 42V(供电范围36V至50V) |\n| 存储 | 64GB DDR4+1TGB SSD |\n| 接口 | 2路CAN、2路RS422(PPS)、4路AD模拟量;18路千兆以太网、8路万兆以太网光;10路100G以太网光、2路100G以太网电 |\n| 网络协议 | TCP/IP协议 |\n| 路由协议 | OSPF、BGP、ISIS等 |\n| 转发时延 | 660ns |\n\n# SPACE-BASED DISTRIBUTEDOPERATING SYSTEM\n\n# 天基分布式操作系统  \n天基分布式操作系统，基于容器、虚拟化、云原生、边缘计算技术，依托搭载高算力计算载荷的卫星星座，",
+      "content_length": 774,
+      "score": 0.0024,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "99b5cb5818e1f201_p1",
+      "doc_id": "99b5cb5818e1f201",
+      "doc_title": "No.02 分布式计算系统集成与测试方案-2024-0715A",
+      "content": "12颗星同轨分布，各卫星到达预定编队位置后调整至 500km 标称轨道高度定点，完成主链 4 星、高链 5 星和低链 3 星共三组编队，卫星标称间距保持约为1500km；\n01、02星为主星与后续03、04从星编为一组，组内配有强算力、高速激光通信、微波通信备份和遥感载荷，称为“主链 4 星”，作为在轨第一试验网络载体，验证高性能组网分布式太空计算能力；\n05 星 ~ 09 星编为一组，组内配有较强算力、较高速激光通信和遥感载荷，称为“高链 5 星”，作为在轨第二试验网络载体，验证较高性能组网分布式太空计算能力和激光长链互联能力；\n10 星 ~ 12 星编为一组，组内配有较强算力、窄带激光通信和遥感载荷，称为“低链 3 星”，作为在轨第三试验网络载体，验证较远距离下的组网分布式太空计算能力\n轨道要求：轨道高度：500km±10km；轨道类型：SSO轨道；降交点地方时：10:30 AM。\n主计算卫星要求与用户卫星要求\n此处省略\n建链通讯组网能力\n12颗星同轨通讯，500km~1500km星间间距通讯，调相编队距离采用由近及远渐增测试方式，500km 测试建链能力、1000km 测试跟踪能",
+      "content_length": 1989,
+      "score": 0.0023,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "3c044dc9d7f641d0_p12",
+      "doc_id": "3c044dc9d7f641d0",
+      "doc_title": "Z_之江星座首发星座系统方案设计报告_0519_1940",
+      "content": "计算任务调度分析\n按照之江星座一期建设规模，根据业务对算力需求的大小可分为以下三种计算任务调度模式：\n多星协同调用:该模式需要基于星间通信维持任务业务数据交互、任务状态数据同步等能力，需要基于星地通信保证任务结果数据回传、任务指令上行、资源/任务状态回传、应用镜像上注。\n星内多节点调用:该模式需要基于星内多节点通信维持任务数据交互，需要基于星地通信保证任务结果数据回传、任务指令上行、资源/任务状态回传、应用镜像上注。\n星内单节点调度:该模式需要基于星地通信保证任务结果数据回传、任务指令上行、资源/任务状态回传、应用镜像上注。\n太空云地面管控中心进行任务编排调度时会从当前计算卫星的任务运行、算力使用、卫星轨道位置等多个维度完成算力的预分配，按照卫星接入地面的时间节点依次进行镜像上注、任务部署，直至最终的任务运行。\n小结\n在链路畅通时，首发星座的整体计算能力不小于5POPS@INT8。星座通过太空云操作系统虚拟成统一的计算资源，具备任务协同、任务调度、任务迁移、负载均衡等能力。\n星座维持需求分析（国星赵总）\n星座维持概述\n简要介绍星座的最大容许漂移量、长期稳定性、性能台阶、容错性、可扩展性",
+      "content_length": 1704,
+      "score": 0.0023,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "0d35abc0f8949806_p70",
+      "doc_id": "0d35abc0f8949806",
+      "doc_title": "MT25QU256ABA",
+      "content": "Table 42: Operating Conditions  \n| Symbol | Parameter | Min | Max | Units |\n| --- | --- | --- | --- | --- |\n| VCC | Supply voltage | 1.7 | 2.0 | V |\n| TA | Ambient operating temperature (IT range) | -40 | 85 | °C |\n| TA | Ambient operating temperature (AT range) | -40 | 105 | °C |\n| TA | Ambient operating temperature (UT range) | -40 | 125 | °C |  \nTable 43: Input/Output Capacitance\nNote 1 applies to entire table  \n| Symbol | Description | Test Condition | Min | Max | Units |\n| --- | --- | --- |",
+      "content_length": 1880,
+      "score": 0.0121,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "12ed628c566e2bab_p0",
+      "doc_id": "12ed628c566e2bab",
+      "doc_title": "展品介绍260113",
+      "content": "# 展品介绍260113\n\n# 星载智能计算机  \n“之江智加”系列星载智能计算机，结合低成本的⼯业级器件和商业级操作系统，⾃研⾼通量推理优化、故障⾃感知以及软硬件⾃恢复、基于分区热流控制的⼤功率热控等创新技术，能够在复杂和恶劣的太空环境中，为“通信、导航、遥感、科学”卫星等各类航天器提供⾼可靠、⾼效能的在轨计算服务。  \n智加系列星载计算机有三个系列：采⽤寒武纪芯⽚的智加X、智加X、智加X等，采⽤天数智芯芯⽚的智加X，以及采⽤英伟达芯⽚的智加NX、智加G等。  \n截⽌⽬前，共进⾏了三次搭载验证：  \n（1）2024年2⽉3⽇，智加X搭载东⽅慧眼01号微信发射，⽀持在轨⽬标检测、云判与ROI压缩功能；\n（2）2024年9⽉24⽇，智加X随国星宇航“星时代-21”卫星发射，⽀持在轨⽬标检测、抗单粒⼦翻转可靠性实验与软件在轨重构功能；\n（3）2025年5⽉14⽇12时12分，智加NX与G搭载三体计算星座⾸次发射任务成功发射，实现单星最⾼算⼒744TOPS，整体算⼒5POPS，⽀持L-L级遥感图像在轨实时处理、天基遥感模型在轨推理、深空探测数据星间协同预处理等关键功能。  \n2026年1⽉，",
+      "content_length": 1475,
+      "score": 0.0119,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "0d35abc0f8949806_p52",
+      "doc_id": "0d35abc0f8949806",
+      "doc_title": "MT25QU256ABA",
+      "content": "Table 30: ERASE Operations  \n| Operation Name | Description/Conditions |\n| --- | --- |\n| SUBSECTOR ERASE (52h/20h) | Sets the selected subsector or sector bits to FFh. Any address within the subsector is valid for entry. Each address bit is latched in during the rising edge of the clock. The operation can be suspended and resumed by the PROGRAM/ERASE SUSPEND and PROGRAM/ERASE RESUME commands, respectively. |\n| SECTOR ERASE (D8h) |\n| BULK ERASE (C7h/60h) | Sets the device bits to FFh.\nThe command",
+      "content_length": 1117,
+      "score": 0.0112,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "3a89a3f6bdb4fa23_p17",
+      "doc_id": "3a89a3f6bdb4fa23",
+      "doc_title": "ug1085-zynq-ultrascale-trm",
+      "content": "# Chapter 5: Graphics Processing Unit  \nGraphics Processing Unit Introduction . 98\nGraphics Processing Unit Functional Description . 100\nGraphics Processing Unit Level 2 Cache Controller . . . 108\nGraphics Processing Unit Memory Management Unit . . 109\nGraphics Processing Unit Programming Model . . . 112\nGraphics Processing Unit Register Overview . . 114\n\n# Chapter 6: Platform Management Unit  \nPlatform Management Unit Introduction 119\nPlatform Management Unit Functional Description . . 124\nOper",
+      "content_length": 1045,
+      "score": 0.0111,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "96530ce75b7d0eb8_p55",
+      "doc_id": "96530ce75b7d0eb8",
+      "doc_title": "MT25QU512ABB",
+      "content": "Table 32: ERASE Operations  \n| Operation Name | Description/Conditions |\n| --- | --- |\n| SUBSECTOR ERASE (52h/20h) | Sets the selected subsector or sector bits to FFh. Any address within the subsector is valid for entry. Each address bit is latched in during the rising edge of the clock. The operation can be suspended and resumed by the PROGRAM/ERASE SUSPEND and PROGRAM/ERASE RESUME commands, respectively. |\n| SECTOR ERASE (D8h) |\n| BULK ERASE (C7h/60h) | Sets the device bits to FFh.\nThe command",
+      "content_length": 1117,
+      "score": 0.0109,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "fefac8d4a6890aa7_p49",
+      "doc_id": "fefac8d4a6890aa7",
+      "doc_title": "MT25QU512",
+      "content": "Table 32: ERASE Operations  \n| Operation Name | Description/Conditions |\n| --- | --- |\n| SUBSECTOR ERASE | Sets the selected subsector or sector bits to FFh. Any address within the subsector is valid for entry. Each address bit is latched in during the rising edge of the clock. The operation can be suspended and resumed by the PROGRAM/ERASE SUSPEND and PROGRAM/ERASE RESUME commands, respectively. |\n| SECTOR ERASE |\n| BULK ERASE | Sets the device bits to FFh.\nThe command is not executed if any se",
+      "content_length": 927,
+      "score": 0.0108,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "63baf9e0310a6bd1_p113",
+      "doc_id": "63baf9e0310a6bd1",
+      "doc_title": "88E1510 88E1518 88E1512 88E1514_20210603",
+      "content": "Table 102: Fiber Interrupt Status Register\n, Register 19  \n| Bits | Field | Mode | HW Rst | SW Rst | Description |\n| --- | --- | --- | --- | --- | --- |\n| 15 | Reserved | RO | Always 0 | Always 0 | 0 |\n| 14 | Speed Changed | RO,LH | 0x0 | 0x0 | 1 = Speed changed\n0 = Speed not changed |\n| 13 | Duplex Changed | RO,LH | 0x0 | 0x0 | 1 = Duplex changed\n0 = Duplex not changed |\n| 12 | Page Received | RO,LH | 0x0 | 0x0 | 1 = Page received\n0 = Page not received |\n| 11 | Auto-Negotiation Completed | RO,L",
+      "content_length": 1388,
+      "score": 0.0105,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "63baf9e0310a6bd1_p114",
+      "doc_id": "63baf9e0310a6bd1",
+      "doc_title": "88E1510 88E1518 88E1512 88E1514_20210603",
+      "content": "Table 103: PRBS Control\n, Register 23  \n| Bits | Field | Mode | HW Rst | SW Rst | Description |\n| --- | --- | --- | --- | --- | --- |\n| 15:8 | Reserved | R/W | 0x00 | Retain | Set to 0s |\n| 7 | Invert Checker Polarity | R/W | 0x0 | Retain | 0 = Normal\n1 = Invert |\n| 6 | Invert Generator Polarity | R/W | 0x0 | Retain | 0 = Normal1 = Invert |\n| 5 | PRBS Lock | R/W | 0x0 | Retain | 0 = Counter Free Runs1 = Do not start counting until PRBS locks first |\n| 4 | Clear Counter | R/W, SC | 0x0 | 0x0 | 0 ",
+      "content_length": 1462,
+      "score": 0.0104,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "60bf619bf0172961_p0",
+      "doc_id": "60bf619bf0172961",
+      "doc_title": "天基分布式操作系统介绍",
+      "content": "# 天基分布式操作系统介绍\n\n# 系统简介\n\n# 旧版：  \n天基分布式操作系统，基于容器、虚拟化、云原⽣、边缘计算技术，依托搭载⾼算⼒计算载荷的卫星星座，在太空构建分布式计算集群，对接⼊系统的算⼒、存储、⽹络等资源进⾏统⼀管理，将地⾯成熟的互联⽹、云计算技术延伸到太空，实现在轨计算任务的灵活编排调度、⾼效部署运⾏。  \n简写：对星座的算⼒、存储、⽹络等资源进⾏统⼀管理，进⾏任务编排调度，⽀撑天地⽤⼾业务在轨运⾏\n\n# 最新版：  \n天基分布式操作系统，实现对三体计算星座卫星组⽹和计算资源的统⼀管理，⽀持天基模型或应⽤的灵活部署和在轨实时更新。  \n提供在轨任务管理、数据协同、  \n具体来说，包括两个系统：  \n（1）天基分布式管理平台，负责对业务相关内容提供⼊⼝，提供任务部署、结果获取、在轨资源等内容的操作和查看能⼒；\n（2）天基监控平台，实现对各个系统组件、系统资源等信息的查看、分析等。  \n构建服务于开放科学的太空⼈⼯智能基础设施，\n\n# 系统功能  \n1.⾃定义应⽤上星：⽀持⽤⼾将⾃⾏开发、通过\n2.计算任务编排调度：基于容器化框架，将计算任务在卫星节点间智能调度编排。\n3.应",
+      "content_length": 1102,
+      "score": 0.003,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "60bf619bf0172961_p1",
+      "doc_id": "60bf619bf0172961",
+      "doc_title": "天基分布式操作系统介绍",
+      "content": "# 在轨运⾏  \n. 常管⼈员通过⽣产环境集群管理平台提交在轨任务；\n. 天基分布式操作系统⾃动获取在轨验证应⽤镜像，并提交到在轨卫星算⼒节点；\n. 在轨算⼒节点聚合⽣成在轨应⽤镜像，并按调度策略运⾏；\n. 应⽤运⾏完成，任务执⾏结束，地⾯常管⼈员下载获取任务结果。\n\n# 其他资料（留存）\n\n# 简写：  \n天基计算分布式系统软件针对动态星群协同调度难、星地星间易断联、天基⾼可靠计算难、算⼒利⽤率低等关键问题，突破任务驱动的动态调度、间歇性不稳定⽹络下的动态组云、动态拓扑感知的应⽤编排、虚拟星群⾃治、星载异构算⼒资源池化等关键技术。\n\n# 详细介绍：  \n天基分布式操作系统在研发过程中突破了以下关键技术：  \n星间/星间数据同步技术：在不改变传统遥控遥测链路的情况下，构建了星地⾮对称链路下的⽹络数据传输能⼒，⽀持星地数据断点续传；为了解决星间⽹络的⾼误码率、⾼度不确定性，实现了星间数据的可靠传输和恢复机制，确保了数据星间同步的准确性。\n在轨集群⾃治：星地断联情况下，确保了在轨任务的不中断或异常情况下的任务⾃主恢复。\n算⼒虚拟化技术：实现了在轨算⼒的⾼效使⽤，提供在轨算⼒的精细化使⽤。 ",
+      "content_length": 1092,
+      "score": 0.0029,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "60bf619bf0172961_p2",
+      "doc_id": "60bf619bf0172961",
+      "doc_title": "天基分布式操作系统介绍",
+      "content": "# 天基分布式操作系统组件分布图  \n地⾯段：星群资源管理与任务编排调度软件基于Kubernetes 的etcd、kube-api-server、scheduler、controller manager组件，KubeEdge的EdgeController、DeviceController、CloudHub组件实现，实现资源管理、任务编排调度以及提供⽤⼾⼊⼝。  \n空间段：太空虚拟星群⾃治软件基于KubeEdge的EdgeHub、MetaManager、NodeLevelDataStore组件实现，太空虚拟星群⾃治软件依据任务需要，基于KubeEdge的EdgeCore控制组件和EdgeMesh组件研制星地断连情况下⾃治组件；太空数据协同管理软件由客⼾端、数据存储、元数据引擎3部分构成，实现星内/星间数据同步、数据访问控制、太空数据分布式存储功能，提供星地/星间数据访问能⼒；太空服务引擎软件基于KubeEdge的EdgeCore组件Edged组件提供任务虚拟化运⾏环境；星载算⼒池化软件基于KubeEdge的EdgeCore部分的Edged组件提供任务虚拟化运⾏环境，并提供算⼒资源虚拟化和",
+      "content_length": 1016,
+      "score": 0.0027,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "0dbe98c1ddc15a0c_p0",
+      "doc_id": "0dbe98c1ddc15a0c",
+      "doc_title": "1.天基分布式智能计算系统任务书-1126更新",
+      "content": "# 1.天基分布式智能计算系统任务书-1126更新  \n浙江省科技计划项目\n备 案 书\n(重大科创平台项目)  \n项 目 编 号 ：\n2024SSYS0004\n项 目 名 称 ：\n天基分布式智能计算系统\n计 划 类 别 ：\n“尖兵领雁+X”研发攻关计划\n项目委托单位（甲方）：\n浙江省科学技术厅\n项目承担单位/下属部门（乙方）：\n之江实验室\n起 止 年 月 ：\n2024年5月至2025年6月  \n浙江省科学技术厅  \n2 0 2 3年制  \n填 写 说 明\n备案书内容应实事求是填写，表达要明确、严谨。单位名称，请按规范全称填写，并与单位公章一致。\n项目申报时填报的内容是本备案书填报的重要依据，不得自行对主要研发内容及研发目标作大的调整。\n备案书中的“项目主要研发内容及创新点/关键技术”， 应分条目阐述拟解决的关键科学、技术问题，以及主要创新点等。\n备案书中的“项目研发目标及主要技术经济指标”，主要技术经济指标区分约束性指标和预期性指标。约束性指标，包括项目完成时达到的关键技术参数及取得必要自主知识产权情况，技术、产品、工艺等除定量指标外还须有定性描述，示范工程、示范点等须明确示范范围和效",
+      "content_length": 1995,
+      "score": 0.0023,
+      "chunk_type": "parent",
+      "parent_id": null
+    }
+  ],
+  "token_usage": {
+    "prompt_tokens": 54582,
+    "completion_tokens": 1554,
+    "total_tokens": 56136
+  },
+  "timing": {
+    "total": 68.161
+  },
+  "error": null
+}

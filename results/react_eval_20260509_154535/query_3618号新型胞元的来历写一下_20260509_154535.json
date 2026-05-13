@@ -1,0 +1,479 @@
+{
+  "eval_id": "20260509_154535",
+  "timestamp": "2026-05-09T15:53:51.779368",
+  "query": "3618号新型胞元的来历写一下",
+  "answer": "# 3618号新型胞元的来历\n\n根据知识库检索到的信息，3618号新型胞元是之江实验室与浙江大学城市学院联合团队通过人工智能技术设计出来的创新性多孔金属材料基本构成单元，其来历如下：\n\n## 一、研发背景与团队组建\n\n**时间节点**：2024年初  \n**研发团队**：之江实验室新材料计算研究中心与浙江大学城市学院先进材料增材制造创新研究中心组建联合团队  \n**研发理念**：提出了\"人工智能设计 + 增材制造\"的全新思路，开展增材制造金属多孔材料的联合攻关[来源: 三体轻舟号3D打印卫星]\n\n## 二、技术挑战与创新方法\n\n### 1. 设计空间巨大\n多孔材料的胞元结构设计空间极其庞大，包含：\n- 杆状、管状、板状、曲面和混合型等特征结构\n- 空间布局千变万化\n- 超过亿级的求解自由度\n\n这种复杂性非常适合用人工智能求解[来源: 三体轻舟号3D打印卫星]\n\n### 2. AI逆向设计方法\n团队自研了多孔合金材料模型，采用逆向设计的思路，具备以下功能：\n- 意图理解\n- 智能调度与寻优\n- 报告生成\n\n**工作流程**：\n1. 将航天材料的设计参数输入模型\n2. 设定目标参数（如体积分数、约束条件等）\n3. 模型对用户需求进行意图识别\n4. 自动生成符合条件的胞元结构并找到最优解\n5. 最终生成技术报告[来源: 三体轻舟号3D打印卫星]\n\n## 三、大规模筛选过程\n\n### 1. 数据库构建\n- 利用多孔合金材料模型，将单个胞元生成和力学性能的仿真时间从15分钟缩短至几秒\n- 仅用不到三个月时间就构建了**百万数量级**的多孔合金材料数据库[来源: 三体轻舟号3D打印卫星]\n\n### 2. 最优解锁定\n经过严格的筛选与实验验证，团队从**200多万个**胞元中锁定了\"最优解\"——编号为**3618的胞元**[来源: 三体轻舟号3D打印卫星]\n\n## 四、技术特点与优势\n\n### 1. 材料特性\n- 既具备金属材料高强韧特性\n- 又具有比木头还要轻的密度\n- 是一种全新的构型[来源: 三体轻舟号3D打印卫星]\n\n### 2. 结构特征\n- 每个3618胞元有**120根杆状结构**\n- \"三体轻舟号\"卫星由**1.7万个3618胞元**构成[来源: 三体轻舟号3D打印卫星]\n\n### 3. 设计效率提升\n- 传统商用软件方法需要3-5天完成胞元填充\n- 之江实验室团队自研的并行分块填充算法，将胞元填充时间缩短到**40分钟**[来源: 三体轻舟号3D打印卫星]\n\n## 五、实际应用与验证\n\n### 1. 卫星制造应用\n3618号胞元被应用于全球首颗人工智能设计的卫星——\"三体轻舟号\"：\n- 卫星尺寸：1120mm × 620mm × 122mm\n- 卫星重量：12.7kg\n- 首次实现了大尺寸卫星主体的一体化成型[来源: 三体轻舟号3D打印卫星]\n\n### 2. 制造效益\n- 有效减少**80%**的组件数量\n- 相比传统卫星生产，制造周期缩短了**50%**\n- 成本更低，创造了更多可能性[来源: 三体轻舟号3D打印卫星]\n\n## 六、后续发展与优化\n\n目前，之江实验室正在进一步优化多孔合金模型及并行分块填充算法：\n1. **已找到性能比3618更强的胞元**，并仍在继续寻找更优解\n2. 利用人工智能优化填充算法，解决异构胞元按需填充的难题\n3. 进一步实现卫星的精准减重[来源: 三体轻舟号3D打印卫星]\n\n## 七、产业影响\n\n围绕3D打印技术体系化创新，3D打印卫星工厂及相关产业已在杭州市云栖小镇落户启动，将满足卫星轻量化、定制化、低成本、快速制造的迫切需求，变革卫星制造范式[来源: 三体轻舟号3D打印卫星]。\n\n**总结**：3618号新型胞元是通过人工智能逆向设计方法，从200多万个候选胞元中筛选出的最优解，代表了\"人工智能+材料\"技术创新的重要成果，已成功应用于\"三体轻舟号\"卫星，推动了卫星制造范式的变革。",
+  "terminated_reason": "finish",
+  "total_iterations": 3,
+  "steps": [
+    {
+      "iteration": 0,
+      "thought": "",
+      "action": "keyword_search",
+      "action_input": {
+        "queries": [
+          "3618号新型胞元",
+          "3618号胞元",
+          "3618胞元"
+        ],
+        "top_k": 10
+      },
+      "observation": "（纯关键词检索）\n找到 2 条匹配结果：\n\n[1] doc_id=78f29a05afb6480f | 标题=三体轻舟号3D打印卫星 | 分数=28.6865\n  内容: # 三体轻⾈号3D打印卫星\n\n# 新闻统稿（⾮最终发布版）\n\n# 全球⾸颗⼈⼯智能设计的卫星⸺“三体轻⾈号”成功发射  \n11⽉XX⽇X点X分，全球⾸颗⼈⼯智能设计的卫星⸺“三体轻⾈号”搭载⾕神星⼆号⽕箭在酒泉卫星发射中⼼成功发射。“三体轻⾈号”卫星是之江实验室、浙⼤城市学院、国星宇航共同研制的太空计算卫星，也是之江实验室协同全球伙伴共同建设的“三体计算星座”的第⼗三颗卫星。\n\n# /，AI创制胞元设计新范式  \n卫星减重是降低发射成本、提升运载效率的关键。现代⼈类建造的⼤型承载结构常采⽤钢、混凝⼟、玻璃等致密材料，⽽⾃然界却善⽤多孔构造，如⽊材内部的孔隙、⻣骼中的蜂窝构造，早已证明多孔结构承载与轻量化之间的精妙平衡。“三体轻⾈号”正是从⾃然界汲取了灵感，采⽤轻质⾼强多孔⾦属材料，构筑卫星主体结构，实现卫星减重。  \n“三体轻⾈号”采⽤的多孔⾦属材料，是⼀种全新的构型，其基本构成单元是编号为3618的胞元，既具备⾦属",
+      "duration": 3.69
+    },
+    {
+      "iteration": 1,
+      "thought": "",
+      "action": "semantic_search",
+      "action_input": {
+        "queries": [
+          "3618号胞元是如何被AI设计出来的",
+          "3618号胞元的设计过程和筛选方法",
+          "多孔合金材料模型如何生成3618号胞元"
+        ],
+        "top_k": 10
+      },
+      "observation": "（混合检索：BM25=0.67, Vector=0.33）\n找到 42 条匹配结果：\n\n[1] doc_id=78f29a05afb6480f | 标题=三体轻舟号3D打印卫星 | 分数=0.0166\n  内容: # 三体轻⾈号3D打印卫星\n\n# 新闻统稿（⾮最终发布版）\n\n# 全球⾸颗⼈⼯智能设计的卫星⸺“三体轻⾈号”成功发射  \n11⽉XX⽇X点X分，全球⾸颗⼈⼯智能设计的卫星⸺“三体轻⾈号”搭载⾕神星⼆号⽕箭在酒泉卫星发射中⼼成功发射。“三体轻⾈号”卫星是之江实验室、浙⼤城市学院、国星宇航共同研制的太空计算卫星，也是之江实验室协同全球伙伴共同建设的“三体计算星座”的第⼗三颗卫星。\n\n# /，AI创制胞元设计新范式  \n卫星减重是降低发射成本、提升运载效率的关键。现代⼈类建造的⼤型承载结构常采⽤钢、混凝⼟、玻璃等致密材料，⽽⾃然界却善⽤多孔构造，如⽊材内部的孔隙、⻣骼中的蜂窝构造，早已证明多孔结构承载与轻量化之间的精妙平衡。“三体轻⾈号”正是从⾃然界汲取了灵感，采⽤轻质⾼强多孔⾦属材料，构筑卫星主体结构，实现卫星减重。  \n“三体轻⾈号”采⽤的多孔⾦属材料，是⼀种全新的构型，其基本",
+      "duration": 5.678
+    },
+    {
+      "iteration": 2,
+      "thought": "",
+      "action": "finish",
+      "action_input": {},
+      "observation": "提交最终回答（1639 字）",
+      "duration": 36.445
+    }
+  ],
+  "accumulated_chunks": [
+    {
+      "chunk_id": "78f29a05afb6480f_p0",
+      "doc_id": "78f29a05afb6480f",
+      "doc_title": "三体轻舟号3D打印卫星",
+      "content": "# 三体轻⾈号3D打印卫星\n\n# 新闻统稿（⾮最终发布版）\n\n# 全球⾸颗⼈⼯智能设计的卫星⸺“三体轻⾈号”成功发射  \n11⽉XX⽇X点X分，全球⾸颗⼈⼯智能设计的卫星⸺“三体轻⾈号”搭载⾕神星⼆号⽕箭在酒泉卫星发射中⼼成功发射。“三体轻⾈号”卫星是之江实验室、浙⼤城市学院、国星宇航共同研制的太空计算卫星，也是之江实验室协同全球伙伴共同建设的“三体计算星座”的第⼗三颗卫星。\n\n# /，AI创制胞元设计新范式  \n卫星减重是降低发射成本、提升运载效率的关键。现代⼈类建造的⼤型承载结构常采⽤钢、混凝⼟、玻璃等致密材料，⽽⾃然界却善⽤多孔构造，如⽊材内部的孔隙、⻣骼中的蜂窝构造，早已证明多孔结构承载与轻量化之间的精妙平衡。“三体轻⾈号”正是从⾃然界汲取了灵感，采⽤轻质⾼强多孔⾦属材料，构筑卫星主体结构，实现卫星减重。  \n“三体轻⾈号”采⽤的多孔⾦属材料，是⼀种全新的构型，其基本构成单元是编号为3618的胞元，既具备⾦属材料⾼强韧特性，⼜具有⽐⽊头还要轻的密度。这⼀新型胞元是从200余万个胞元中⽤AI“算”出来的。  \n2024年初，之江实验室新材料计算研究中⼼与浙⼤城市学院先进材料增材制",
+      "content_length": 1576,
+      "score": 28.6865,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "78f29a05afb6480f_p1",
+      "doc_id": "78f29a05afb6480f",
+      "doc_title": "三体轻舟号3D打印卫星",
+      "content": "# 为卫星装上“⼤脑”，具⾝智能卫星模型变⾰卫星治理范式  \n随着“三体轻⾈号”的成功发射，之江实验室把⼈⼯智能送上太空的⽬标⼜往前迈进了⼀步。  \n“三体轻⾈号”搭载了之江实验室⾃研的具⾝智能卫星模型。该模型深度融合⼈⼯智能技术，致⼒于让每颗卫星都升级为具有资源感知、任务规划、智能决策与⾃主执⾏能⼒的智能航天器。简单说来，就是让每⼀颗卫星都变得更加聪明。  \n具⾝智能卫星模型可以⾃主⽣成卫星观测计划，⾃动完成能源与热控系统的健康管理，实时、定期评估卫星各分系统状态并⽣成优化建议，就像⼀个卫星健康管家，即时修正、按时体检、提前预防，让卫星实现⾃治。  \n在任务执⾏层⾯，模型能够将⾃然语⾔指令变为卫星的执⾏指令，就像现有的通⽤⼤语⾔模型⼀样，⽤⼾输⼊需求，模型即可将需求转化为复杂的执⾏链路并⾃动执⾏，最终将结果返回⽤⼾界⾯。遇到需要多星协同的任务，模型能够⾃主调度卫星，完成卫星轨道维持、姿态、状态的调整，实现任务全流程的精细化规划与动态调整。  \n此外，“三体轻⾈号”还搭载了之江实验室⾃研的“智加X”国产化计算载荷，单机算⼒192TOPS，存储4TB，是⽬前为⽌发射的拥有最⼤算⼒的国产G",
+      "content_length": 2458,
+      "score": 26.1259,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "6e88704138608298_p1",
+      "doc_id": "6e88704138608298",
+      "doc_title": "（科技日报版面约稿）为AI赋能千行百业打造创新能力底座",
+      "content": "# 从基因解码到材料设计AI模型赋能产业创新变⾰  \n随着DNA测序技术的不断发展，⼈类已具备低成本、⼤规模获取基因组数据的能⼒，但超过$9 0 \\%$ 的基因组区域的具体功能机制仍有待系统性解读。  \n“数据沉睡在磁盘⾥是没有价值的，但如果我们能够挖掘出数据背后隐藏的⽣命奥秘，对于⼈类健康将会产⽣巨⼤的意义。”华⼤⽣命科学研究院陈俊宏在采访中说道。作为之江实验室与华⼤⽣命科学研究院联合发起的“⼤模型种⼦班”学员，联合团队⽤6个⽉的集中攻关，完成了全球⾸个百亿级⼈类基因组基础模型Genos，为解读基因数据、“读懂”⽣命带来了全新可能。  \n据介绍，⽬前全球基因组学领域尚⽆⼀款能够被开发者和研究者直接部署、⽤于下游应⽤的百亿级⼈类基因组基础模型，⽽Genos则填补了这⼀空⽩。Genos实现了百万碱基（1Mb）超⻓上下⽂序列与单碱基的精准建模，基于021科学基础模型研发的多模态融合模型021-Genos更是打破了基因序列和领域知识之间的界限，有效提升了基因型疾病的诊断准确率。在罕⻅病诊断案例中，Genos模型展现了联合基因序列与临床⽂本表型进⾏推理的能⼒，其诊断精度已接近资深临床遗传学专家",
+      "content_length": 1759,
+      "score": 0.011,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "e1113ea9d5c91a91_p0",
+      "doc_id": "e1113ea9d5c91a91",
+      "doc_title": "2024.6.14主星和从星智算机方案设计报告（硬件）评审会会议纪要",
+      "content": "# 2024.6.14主星和从星智算机方案设计报告（硬件）评审会会议纪要  \n之江首发星座\n太空计算载荷系统方案评审会\n天基计算系统研究中心  \n评审材料：《主星和从星智算机方案设计报告（硬件）》\n会议时间：（周五）下午15:00-17:30\n会议地点：之江实验室新园区主楼B209会议室\n汇报人： 张亚兵\n评审专家：赵瑞峰 陈宏宇 李超 李旭 张宇宁 谢海军 郭涛 田东 刘凯俊 李建华 胡振贤 张朝杰 等  \n会议经过：\n会议正式开始前，专家先审阅评审材料；\n会议正式开始后主持人介绍会议议程与到场专家；\n评审组组长赵瑞峰老师介绍项目背景；\n星载智算机专项副总师张亚兵老师介绍评审材料；\n专家进行评审建议与提问；  \n专家意见：\n赵瑞峰\n1.23页小卡该技术点的概念需要进一步明确；需要确认采购过来的模组是否是这样的定义名称，需要从可靠性方面评估，直接把硬件做在板上是否可靠性更高。\n2.29页图上时序安排是OK的，关机是顺序是什么样的，需要着重明确。\n3.38页FPGA环境温度，一个是温度要求，一个是实际温度选型两者需要进一步明确。\n4.选DDR有地方是DDR5有地方是DDR4，需要指明分别",
+      "content_length": 2292,
+      "score": 0.0091,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "11fc627d67c5994e_p0",
+      "doc_id": "11fc627d67c5994e",
+      "doc_title": "主星和从星智算机_方案评审问题_闭环单_20240802",
+      "content": "# 主星和从星智算机_方案评审问题_闭环单_20240802  \n智算机方案评审问题_闭环单  \n序号\n问题记录\n回答\n整改\n1\n从相机到处理单元，图像处理的实时性如何优化\n一是合理规划总体工作模式，二是优化处理流程，目前设计已考虑上述2个因素，分别进行了详细设计。\n无需整改\n2\n在轨处理的寿命怎么和卫星总体做适配\n与卫星总体的适配，需要卫星总体综合考虑，对智能处理载荷提出具体定量指标要求。\n无需整改\n3\n智能载荷如何进行寿命评估  \n已按总体提供的方法和公式进行寿命预计  \n已按总体要求补充相关内容，详见方案设计报告10.1章节\n4\n在轨处理的模式 用硬盘做在轨处理的方式是否可以优化\n目前方案是综合考虑结果，数据先存入硬盘再进行处理的模式本次设计无法修改。\n无需整改\n5\n8G的cpu的DDR是否能支持32G的NPU运行\n目前设计已改为16GB的DDR，支持NPU运行没有问题，已验证。\n已改为16GB的DDR，验证正常。  \n设计方案补充力学仿真分析\n力学仿真目前不具备技术能力，基于前期开发经验，进行设计保证\n无需整改\n7\n单机故障处理是否需要整机配合\n需要，单机会上报自身的关键参数给",
+      "content_length": 1968,
+      "score": 0.0089,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "fef307cdbd84b0f8_p1",
+      "doc_id": "fef307cdbd84b0f8",
+      "doc_title": "2_环境试验大纲_签署版",
+      "content": "# 环境试验大纲\n\n# 1 主要内容和适用范围  \n本大纲规定了Fspace-300S-0102卫星AI超算模块环境试验的目的、试验项目、试验条件、试验程序、合格判据等基本内容和要求。  \n本大纲适用于AI超算模块的环境试验。\n\n# 2 依据文件  \n《Fspace-300S卫星AI超算模块研制技术要求（签字版)》  \n《智星空间卫星星上产品环境试验要求V1.5》\n\n# 3 试验性质及目的  \n试验性质：验收试验。  \n试验对象：正样产品，正样产品一般具有（金属）外壳，能够独立进行力学、热真空等试验。  \n试验目的：  \n1) 评定产品设计的正确性、合理性;\n2) 检验产品经受各种试验载荷的能力；\n3）验证产品设计、制造、组装是否符合设计、工艺要求；\n4) 暴露产品的材料和工艺缺陷。\n\n# 4 被试品、陪试品及技术状态\n\n# 4.1 被试品\n\n# 4.1.1 组成  \n被试品为AI超算模块，其基本信息如表1所示。  \n表 1 被试品基本信息  \n| 序号 | 名称 | 型号 | 数量 | 尺寸 | 重量 | 备注 |\n| --- | --- | --- | --- | --- | --",
+      "content_length": 1738,
+      "score": 0.0088,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "7635b92ec1ee66a1_p0",
+      "doc_id": "7635b92ec1ee66a1",
+      "doc_title": "1_Fspace-300S-0102卫星-AI超算模块_验收环境试验大纲1020",
+      "content": "# 1_Fspace-300S-0102卫星-AI超算模块_验收环境试验大纲1020  \nFspace-300S-0102卫星\nAI超算模块\n环境试验大纲  \n之江实验室  \n二零二五年十月  \nFspace-300S-0102卫星\nAI超算模块\n环境试验大纲  \n会签：\n标准化：\n2025.10.20  \n2025年10月  \nFspace-300S-0102卫星\nAI超算模块 环境试验大纲\n会签页  \n姓名\n单位（部门）\n日期\n会签  \n会签  \n会签  \n会签  \n会签  \n会签  \n会签  \n会签  \n会签  \n会签  \n会签  \n会签  \n会签  \nFspace-300S-0102卫星\nAI超算模块\n环境试验大纲\n主要内容和适用范围\n本大纲规定了Fspace-300S-0102卫星AI超算模块环境试验的目的、试验项目、试验条件、试验程序、合格判据等基本内容和要求。\n本大纲适用于AI超算模块的环境试验。\n依据文件\n《Fspace-300S卫星AI超算模块研制技术要求（签字版）》\n《智星空间卫星星上产品环境试验要求V1.5》\n试验性质及目的\n试验性质：验收试验。\n试验对象：正样产",
+      "content_length": 1995,
+      "score": 0.0087,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "0fcef5925afa5d32_p260",
+      "doc_id": "0fcef5925afa5d32",
+      "doc_title": "GJB548B-2005微电子器件试验方法和程序",
+      "content": "# A.1.6 CAD布线及布线后的模拟  \n承制方应提交一个能验证承制方进行布线及精确预计布线后性能能力的芯片或芯片组，并应得到  \na）在温度及电压范围内对每一种功能测得的实际性能数据；\nb）由计算机模拟给出的性能预计。  \n上述两项结果应以文件形式保存。测得的实际性能必须在模拟给出的极限值范围以内。\n\n# A.2 引用文件  \n本附录中未列入引用文件。\n\n# A.3 认证的问题\n\n# A.3.1 单元库  \na) 单元库的提供者：承制方自己编写的？工作站卖主？市场商业卖主？大学？\nb）对单元库(包括从外单位所得的)作了什么样的验证或认证？微电路中是否采用了宏单元？是否采用实际硬件测试验证宏单元的功能和性能极限，还是仅完成了软件模拟？\nc）如何控制单元库（如：文件档次、维护和修改、规范、添加）？\nd）提供已由公司认可的单元库。\ne）标注出那些已在微电路中使用的并经过测试的单元。\nf) 是否允许设计人员就某种应用修改宏单元或自行设计宏单元？如果是这样，如何对宏单元进行测试以保证结果没有问题？\n\n# A.3.2 设计过程  \na) 不同层次的设计是由谁去完成并且要谁  \n包括：确定要求",
+      "content_length": 1003,
+      "score": 0.0086,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "94f14662cbc2cc6e_p0",
+      "doc_id": "94f14662cbc2cc6e",
+      "doc_title": "2_Fspace-300S-0102卫星-AI超算模块_环境试验测试细则_20251031",
+      "content": "# 2_Fspace-300S-0102卫星-AI超算模块_环境试验测试细则_20251031  \nFspace-300S-0102卫星\nAI超算模块\n环境试验测试细则  \n签署科目\n签 名\n日 期\n编写\n戴文涛  \n校对\n靖伟  \n审核\n张亚兵  \n标审\n王宝慧  \n批准\n宫禄齐  \n之江实验室\n天基计算系统研究中心  \n目录\n1概述1\n2引用文件1\n3验收级环境试验项目和顺序1\n3.1试验项目1\n3.2试验顺序1\n4试验计划1\n5被试品与陪试品2\n5.1单机被试品2\n5.2陪试品3\n5.2.1冷板3\n5.2.2振动夹具4\n6测试项目及平台搭建6\n6.1上电测试项目6\n6.2单机试验平台搭建6\n7现场测试方法8\n7.1整体测试流程8\n7.2查看FPGA和GPU操作系统加载8\n7.3FPGA功能测试10\n7.3.1确认FPGA使用的测试程序10\n7.3.2执行功能测试10\n7.3.3功能测试过程和结果说明11\n7.4FPGA性能测试13\n7.4.1执行性能测试13\n7.4.2性能测试过程和结果说明14\n7.5FPGA硬件参数测试15\n7.5.1功耗测试15\n7.5.2热敏电阻阻值测试1",
+      "content_length": 1993,
+      "score": 0.0085,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "96b9e551dfd80bb1_p19",
+      "doc_id": "96b9e551dfd80bb1",
+      "doc_title": "20250819-智星空间_AI超算模块_方案设计报告",
+      "content": "# 6.2 AI超算模块内部结构组成\n\n# 6.2.1 整机组成  \nAI超算模块详细组成列表如下所示：  \n表 33 主星 AI 超算模块组成列表  \n| 模块代号 | 单机名称 | 数量/台 |\n| --- | --- | --- |\n| FS01/02-AV-HPC | AI超算模块 | 3 |  \nAI超算模块外形设计如下图所示。  \n图33单机外形图\n\n# 6.2.2 主星单机结构组成  \n该单机组成包括GPU模块电路板、FPGA模块电路板、冷板壳体、底板、上盖、FPGA盖板（前）、FPGA盖板（后）、GPU盖板（前）、GPU盖板（后）、紧固件、导热垫、硅橡胶等。其结构组成如下图所示。  \n图34AI超算模块单机结构组成示意图  \n其结构组成详细列表如下所示。  \n表 10AI 超算模块单机组成列表  \n| 零部件名称 | 模块代号 | 数量/台 |\n| --- | --- | --- |\n| GPU 模块电路板 | GPU-MODULE | 1 |\n| FPGA 模块电路板 | FPGA-MMODULE | 1 |\n| 冷板壳体 | ZX1 | 1 |\n| 底板 | ZX2",
+      "content_length": 732,
+      "score": 0.0053,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "96b9e551dfd80bb1_p0",
+      "doc_id": "96b9e551dfd80bb1",
+      "doc_title": "20250819-智星空间_AI超算模块_方案设计报告",
+      "content": "# AI 超算模块方案设计报告  \n| 签署科目 | 签 名 | 日 期 |\n| --- | --- | --- |\n| 编 写 | 请伟敏 | 2025.8.12 |\n| 校 对 | 张亚兵 | 2025.8.12 |\n| 审 核 | 官红宇 | 2025.8.13 |\n| 标 审 | 王宗慧 | 2025.8.13 |\n| 批 准 | # | 2025.8.19 |  \n之江  \n工程总体部  \n会签页  \n修订记录\n\n之江  \n工程总体部  \n会签页  \n修订记录  \n| 序号 | 章节名称 | 修订内容简述 | 修订日期 | 修订前版本号 | 修订后版本号 | 修订人 | 复核人 |\n| --- | --- | --- | --- | --- | --- | --- | --- |\n| 1 | 全部 | 修订 | 2025.3.28 |  | V1.0 | 戴文涛 | 张亚兵 |\n| 2 |  |  |  |  |  |  |  |\n| 3 |  |  |  |  |  |  |  |\n| 4 |  |  |  |  |  |  |  |\n| 5 |  |  |  |  |  ",
+      "content_length": 924,
+      "score": 0.0052,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "3a89a3f6bdb4fa23_p122",
+      "doc_id": "3a89a3f6bdb4fa23",
+      "doc_title": "ug1085-zynq-ultrascale-trm",
+      "content": "Table 6-6: GPI1 Bit Descriptions  \n| Bit(s) | Description |\n| --- | --- |\n| GPI1[3:0] | ACPU3-ACPU0 wake from APU GIC associated with ACPU3-ACPU0. |\n| GPI1[5:4] | R5_1 and R5_0 wake from RPU GIC associated with R5_1 and R5_0. |\n| GPI1[7:6] | USB1 and USB0 wake. |\n| GPI1[8] | DAP full-power domain wake-up request. |\n| GPI1[9] | DAP RPU wake-up request. |\n| GPI1[15:10] | General purpose wakes from MIO.MIO[26] -&gt; GPI1[10]MIO[27] -&gt; GPI1[11]...MIO[31] -&gt; GPI1[15] |\n| GPI1[16] | Full-power d",
+      "content_length": 1067,
+      "score": 0.005,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "44d4c8cb5c8a798c_p38",
+      "doc_id": "44d4c8cb5c8a798c",
+      "doc_title": "NX1-Z0203星7交付测试记录",
+      "content": "08 FPGA 系统信息采集ITEM DESCRIPTION:A06 08 FPGA 系统信息采集ITEM DESCRIPTION:A06 08 FPGA 系统信息采集ITEM Description:48.246</td><td>83.593</td><td>PASSED</td><td>1</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr><tr><td>AFTER_SUITE</td><td>CLOSE CAN 0ITEM DESCRIPTION:A06 08 FPGA 系统信息采集ITEM DESCRIPTION:A06 08 FPGA 系统信息采集ITEM DESCRIPTION:A06 08 FPGA 系统信息采集ITEM DESCRIPTION:A06 08 FPGA 系统信息采集ITEM DESCRIPTION:A06 08 FPGA 系统信息采集ITEM DESCRIPTION:A06 08 FPGA 系统信息采集ITEM DESCRIPTI",
+      "content_length": 2611,
+      "score": 0.0049,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "96b9e551dfd80bb1_p38",
+      "doc_id": "96b9e551dfd80bb1",
+      "doc_title": "20250819-智星空间_AI超算模块_方案设计报告",
+      "content": "# 9.1.6 元器件及原材料选用情况\n\n# 9.1.6.1 元器件选用要求  \n进口元器件不低于工业级，国产元器件不低于普军级，核心元器件优先采用宇航级。  \n元器件选择应尽量从宇航级或有飞行经验的元器件中选择。若非宇航级且未有飞行经验器件，需给出可靠性说明。\n\n# 9.1.6.2 元器件选用和控制\n\n# 9.1.6.2.1 元器件质量等级  \n元器件质量等级遵循以下总体原则：  \n1）按元器件质量等级要求进行选器件选用，国产元件优选工业级以上器件，进口器件必须至少为工业级器件；\n2）连接器、接口电路等重要器件，优选军工级器件；\n\n# 9.1.6.2.2 筛选与DPA  \n选用的部分核心元器件是在商业航天领域广泛应用的同系列产品，并在智能驾驶领域广泛应用。不单独对元器件进行包括高低温、温冲、冲击、振动、水汽、热真空、总剂量、静电、寿命、腐蚀等在内元器件的DPA试验。  \n元器件全部随板级完成常温测试、高温老练、高温测试、低温老练、低温测  \n试等。\n\n# 9.1.6.2.3 元器件选用情况  \nAI超算模块选用主要元器件如下表所示。  \n表 18 分系统核心元器件需求表  \n| 序号",
+      "content_length": 1004,
+      "score": 0.0048,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "e533ebf35412bd1a_p8",
+      "doc_id": "e533ebf35412bd1a",
+      "doc_title": "SCS-01-LY-JY-01之江首发星座星载路由器技术要求V1.0",
+      "content": "| 检查阶段 | 文档分类 | 序号 | 文档名称 |\n| --- | --- | --- | --- |\n| 设计阶段 | 二A.设计文档 | 4 | 设计文件目录 |\n| 设计阶段 | 二A.设计文档 | 5 | 单机设计报告(含技术流程) |\n| 设计阶段 | 二A.设计文档 | 6 | 热设计报告(内容可包括在单机设计报告中) |\n| 设计阶段 | 二A.设计文档 | 7 | 复核复算报告 |\n| 设计阶段 | 二A.设计文档 | 8 | 设计图纸(产品结构外形图、零件图、、电连接图、印制板) |\n| 设计阶段 | 二A.设计文档 | 9 | 产品可靠性、安全性及故障对策评估报告 |\n| 设计阶段 | 二A.设计文档 | 10 | 装机元器件汇总清单 |\n| 设计阶段 | 二A.设计文档 | 11 | 目录外元器件申请单 |\n| 设计阶段 | 二A.设计文档 | 12 | 材料清单 |\n| 设计阶段 | 二A.设计文档 | 13 | 原材料、紧固件装机配套表 |\n| 生产阶段 | 三A.制造文档 | 14 | 过程检验记录(包含所有单机、组件、结构) |\n| 生产阶段 | 三B",
+      "content_length": 1946,
+      "score": 0.0046,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "a49b2886f74c9422_p213",
+      "doc_id": "a49b2886f74c9422",
+      "doc_title": "ug583-ultrascale-pcb-design",
+      "content": "Figure 7-4: I/O Bank Migration for B1517  \n| GTY Quad 131\nX0Y16-X0Y19 | PCIE4\nX0Y4 | HP I/O Bank 71\nT | HD I/O Bank 91 | GTH Quad 231\nX0Y28-X0Y31 |\n| --- | --- | --- | --- | --- |\n| GTY Quad 130\nX0Y12-X0Y15 | CMAC\nX0Y1 | HP I/O Bank 70\nU | HD I/O Bank 90\nP | GTH Quad 230\nX0Y24-X0Y27 |\n| GTY Quad 129\nX0Y8-X0Y11\n(RCAL) | ILKN\nX0Y0 | HP I/O Bank 69\nV | HD I/O Bank 89\nO | GTH Quad 229\nX0Y20-X0Y23 |\n| GTY Quad 128\nX0Y4-X0Y7 | PCIE4\nX0Y2 | HP I/O Bank 68\nW | HD I/O Bank 88\nN | GTH Quad 228\nX0Y16-X0Y19",
+      "content_length": 2278,
+      "score": 0.0046,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "d0d16bb8c5fac5c5_p481",
+      "doc_id": "d0d16bb8c5fac5c5",
+      "doc_title": "pg150-ultrascale-memory-ip",
+      "content": "# How to Program Linear Address Seed  \nOne of the programmable traffic pattern address modes is Linear address mode. In Linear address mode, the Linear Address Seed can be programmed using the VIO input (vio_tg_glb_start_addr).  \nThe seed has a width of APP_ADDR_WIDTH and it is formed by a concatenation of N number of consecutive linear address seeds, where the number N is listed in Table 36-8 and Table 36-9.  \nTable 36-8: Linear Address Seed Look Up Table for 4:1 General Interconnect Cycle to M",
+      "content_length": 1784,
+      "score": 0.0045,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "7013d4982497eb42_p8",
+      "doc_id": "7013d4982497eb42",
+      "doc_title": "三体计算星座：把人工智能送入太空（王坚 雄安 2025年11...",
+      "content": "# AI不能因为算力的缺失而缺席太空\n\n# Put Al into Space  \n第四类卫星  \n通讯卫星、导航卫星、遥感卫星、计算卫星  \nCommunication,Navigation Oservation nd oming  \n三体计算星座：计算卫星+互联互通+机制创新  \n三体计算星座：计算卫星+互联互通+机制创新  \nThree-Body Computing Constellation Computing Satellite + Interconnections + Coopetati6n  \n⽬标：1000颗计算卫星或E规模算⼒  \nGoal： Compute at E scale  \n三体计算星座⾸发  \n三体计算星座首发  \n3-Body Computing Constellation: The first launch  \n12时12分  \n长征二号丁运载火箭  \n酒泉  \n12:12 a.m. May 14,2025, Long March 2D,Jiuquan  \n太空计算卫星星座  \n成功发射\n\n# China's three-body solution: ",
+      "content_length": 1862,
+      "score": 0.0043,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "3a89a3f6bdb4fa23_p156",
+      "doc_id": "3a89a3f6bdb4fa23",
+      "doc_title": "ug1085-zynq-ultrascale-trm",
+      "content": "Table 6-17: I/O Registers  \n| Register Name | Description |\n| --- | --- |\n| IRQ_MODE | Interrupt mode register. |\n| GPO0 | I/O module miscellaneous control register (GPO0). |\n| GPO1 | PMU to MIO signals (GPO1). |\n| GPO2 | PMU acknowledgments (GPO2). |\n| GPO3 | PMU to PL signals (GPO3). |\n| GPIO | Fault tolerance status register (GPIO). |\n| GPI1 | General purpose input register 1. |\n| GPI2 | General purpose input register 2. |\n| GPI3 | General purpose input register 3. |\n| IRQ_STATUS | Interrupt ",
+      "content_length": 949,
+      "score": 0.0042,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "3a89a3f6bdb4fa23_p1118",
+      "doc_id": "3a89a3f6bdb4fa23",
+      "doc_title": "ug1085-zynq-ultrascale-trm",
+      "content": "Table 37-5: Processors, DDR, and DMA Clock Control  \n| Control Register | Reset Value,Register Set,Address Offset | RegisterParameter | Reset State | Pre-FSBL | Comments |\n| --- | --- | --- | --- | --- | --- |\n| CPU_R5_CTRL(RPU MPCore) | 0200_0600 h,0x090 | [SRCSEL][DIVISOR0][CLKACT][CLKACT_CORE] | RPLL.06 h.Enabled.Enabled. |  |  |\n| ACPU_CTRL(APU MPCore) | 0300_0400 h,0x060 | [SRCSEL][DIVISOR0][CLKACT_FULL][CLKACT_HALF] | APLL.04 h.Enabled.Enabled. |  |  |\n| CSU_PLL_CTRL | 0100_1500 h,0x0A0 | ",
+      "content_length": 858,
+      "score": 0.0042,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "9dd60853eba05f14_p0",
+      "doc_id": "9dd60853eba05f14",
+      "doc_title": "[航天工业标准]QJ1991-1990真空-紫外辐照材料质量损失测试方法标准",
+      "content": "# 真空—紫外辐照材料质量损失测试方法  \n199001发布  \n199001实施\n\n# 1 主题内容与适用范围  \n本标准规定了有机高聚物及其复合材料在真空——紫外辐照下材料质量损失的原位测试方法。  \n本标准适用于卫星和其他航天器用材料的筛选。\n\n# 2 方法要点  \n模拟波长为 $200\\sim 400\\mathrm{nm}$ 范围内的太阳紫外线，通过真空测试室的石英玻璃窗口辐射到试样上（紫外光源设置在真空测试室外某一距离处）。在真空中，以原位法用微机控制卡恩型真空微量天平，连续测试材料质量损失。\n\n# 3 测试装置  \n测试装置由紫外光源、真空系统和测试系统组成。  \n3.1 紫外光源采用远紫外汞氙灯，经过反射镜、透镜聚光后形成准平行光束。\n3.2 真空系统如图1所示。\n3.3 测试系统由真空测试室、天平、传感器、温度自动控制仪及微机控制系统组成。\n3.3.1 真空测试室如图2所示。\n3.3.2 石英玻璃窗采用JGS远紫外光学石英玻璃。\n3.3.3 采用卡恩型真空微量天平。其灵敏度为 $10^{-5}\\mathrm{g} / \\mu \\mathrm{A}$ ，最大称量为 $10",
+      "content_length": 1053,
+      "score": 0.0091,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "9dd60853eba05f14_p1",
+      "doc_id": "9dd60853eba05f14",
+      "doc_title": "[航天工业标准]QJ1991-1990真空-紫外辐照材料质量损失测试方法标准",
+      "content": "# 4 测试条件  \n4.1 真空环境压力不高于 $10^{-3}\\mathrm{Pa}$ 。\n4.2 试验温度范围为 $45\\sim 125^{\\circ}C$ ，控温精度为 $\\pm 1^{\\circ}C$\n4.3 紫外辐照度范围为 $300\\sim 600W / m^2$\n\n# 5 试样制备  \n5.1 将试样切成边长为 $3 - 5\\mathrm{mm}$ 的六面体\n5.2 对于特殊材料应按下述方法处理：  \na．不能加工成形的材料可切成小碎片：\nb. 薄形材料切成 $10\\mathrm{mm} \\times 10\\mathrm{mm}$\nc．胶应预先固化成厚度为 $1\\mathrm{mm}$ 的薄片；\nd. 胶带预先贴在已称过质量的铝箔上。  \n5.3 试样的总质量控制在 $30\\sim 50\\mathrm{mg}$ ，用感量为万分之一克的精密天平称量。\n5.4 试样在室温下，相对湿度为 $43\\% - 45\\%$ 的环境中放置3天后称重。\n5.5 试样在制备过程中严防污染，避免裸手操作。\n5.6 试样被污染时，应用清洁的刀片切去试样的外表层。如不能去除试样的外表层时，  \n",
+      "content_length": 1778,
+      "score": 0.0087,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "653079c31c64cc01_p3",
+      "doc_id": "653079c31c64cc01",
+      "doc_title": "系统代号索引",
+      "content": "模型  \n| 产品 | 代号 | 备注 |\n| --- | --- | --- |\n| 天基遥感模型/之江天绘 | ZJTH |  |\n| 天基遥感模型/8B版本 | ZJTH-8B/ZJTH |  |\n| 天基遥感模型/1B版本 | ZJTH-1B |  |\n| 天基遥感模型/0.6B版本 | ZJTH-0.6B |  |\n| 天基遥感模型/SAR模型 | ZJTH-SAR |  |\n| 天基遥感模型/灾害模型 | ZJTH-ZH |  |\n| 天基遥感模型智能体-星策 | ZJTH-XC |  |\n| 具身智能卫星模型 | EISM |  |\n| 天基模型 | MX |  |\n| 遥感图像处理软件 | YG |  |\n| 天基天文时域模型 | SATM | Space-based Astronomical Time-domain Model |  \n地⾯系统  \n| 系统 | 代号 | 子系统 | 代号 |\n| --- | --- | --- | --- |\n| 地球站 | DQZ | 3M站 | ZJTL |\n| 7.3M站 | ZJYX |\n| 测运控系统 | CYK |  |",
+      "content_length": 569,
+      "score": 0.0052,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "63baf9e0310a6bd1_p123",
+      "doc_id": "63baf9e0310a6bd1",
+      "doc_title": "88E1510 88E1518 88E1512 88E1514_20210603",
+      "content": "10 = 340ms\n11 = 670ms</td></tr></table>  \nTable 115: 1000BASE-T Pair Skew Register , Register 20  \n| Bits | Field | Mode | HW Rst | SW Rst | Description |\n| --- | --- | --- | --- | --- | --- |\n| 15:12 | Pair 7,8 (MDI[3]±) | RO | 0x0 | Retain | Skew = Bit value x 8n s. Value is correct to within ± 8 ns. The contents of 20_5.15:0 are valid only if Register21_5.6=1 |\n| 11:8 | Pair 4,5 (MDI[2]±) | RO | 0x0 | Retain | Skew = bit value x 8 ns. Value is correct to within ± 8 ns. |\n| 7:4 | Pair 3,6 (MDI",
+      "content_length": 2000,
+      "score": 0.0051,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "9ca9ab87a30dc38a_p225",
+      "doc_id": "9ca9ab87a30dc38a",
+      "doc_title": "ug575-ultrascale-pkg-pinout",
+      "content": "# XCKU095 and XQKU095 Bank Diagrams  \nFigure 1-21: XCKU095 and XQKU095 Banks  \n| GTY Quad 131\nX0Y28-X0Y31 |  | HP I/O Bank 51 | HP I/O Bank 71 | PCIe\nX0Y3 | GTH Quad 231\nX0Y28-X0Y31 |\n| --- | --- | --- | --- | --- | --- |\n| GTY Quad 130\nX0Y24-X0Y27 | HP I/O Bank 50 | HP I/O Bank 70 | ILKN\nX0Y2 | GTH Quad 230\nX0Y24-X0Y27 |\n| GTY Quad 129\nX0Y20-X0Y23\n(RCAL) | CMAC\nX0Y1 | HP I/O Bank 49 | HP I/O Bank 69 | PCIe\nX0Y2 | GTH Quad 229\nX0Y20-X0Y23 |\n| GTY Quad 128\nX0Y16-X0Y19 |  | HP I/O Bank 48 | HP I/O",
+      "content_length": 1669,
+      "score": 0.005,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "9ca9ab87a30dc38a_p261",
+      "doc_id": "9ca9ab87a30dc38a",
+      "doc_title": "ug575-ultrascale-pkg-pinout",
+      "content": "X0Y20-X0Y23\nF [RS]</td></tr><tr><td>GTY Quad 128\nX0Y4-X0Y7\nM [LS]</td><td>PCIE4\nX0Y2</td><td>HP I/O Bank 68\nG</td><td>PCIE4\nX1Y2</td><td>GTH Quad 228\nX0Y16-X0Y19\nE [RS]</td></tr><tr><td>GTY Quad 127\nX0Y0-X0Y3\nL [LS]</td><td>CMAC\nX0Y0</td><td>HP I/O Bank 67\nF</td><td>PCIE4\nX1Y1</td><td>GTH Quad 227\nX0Y12-X0Y15\nD [RS]</td></tr><tr><td></td><td></td><td>HP I/O Bank 66\nE</td><td>SYSMON\nConfiguration</td><td>GTH Quad 226\nX0Y8-X0Y11\nC [RS] (RCAL)</td></tr><tr><td></td><td></td><td>HP I/O Bank 65\nC</td",
+      "content_length": 2015,
+      "score": 0.0049,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "9ca9ab87a30dc38a_p284",
+      "doc_id": "9ca9ab87a30dc38a",
+      "doc_title": "ug575-ultrascale-pkg-pinout",
+      "content": "X1Y12-X1Y15\nD [RS]</td></tr><tr><td>GTY Quad 126\nX0Y8-X0Y11\nM [LS]</td><td>CMAC\nX0Y1</td><td>HP I/O Bank 66\nD</td><td>SYSMON\nConfiguration</td><td>GTY Quad 226\nX1Y8-X1Y11\nC [RS]</td></tr><tr><td>GTY Quad 125\nX0Y4-X0Y7\nL [LS] (RCAL)</td><td>ILKN\nX0Y0</td><td>HP I/O Bank 65\nC</td><td>Configuration</td><td>GTY Quad 225\nX1Y4-X1Y7\nB [RS] (RCAL)</td></tr><tr><td>GTY Quad 124\nX0Y0-X0Y3\nK [LS]</td><td>CMAC\nX0Y0</td><td>HP I/O Bank 64\nB</td><td>PCIE4\nX0Y0\n(tandem)</td><td>GTY Quad 224\nX1Y0-X1Y3\nA [RS]</t",
+      "content_length": 2160,
+      "score": 0.0049,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "63baf9e0310a6bd1_p125",
+      "doc_id": "63baf9e0310a6bd1",
+      "doc_title": "88E1510 88E1518 88E1512 88E1514_20210603",
+      "content": "0xFF = 256 packets received (max count).\nBit 16_6.4 must be set to 1 in order for register to be valid.</td></tr><tr><td>7:0</td><td>CRC Error Count</td><td>RO</td><td>0x00</td><td>Retain</td><td>0x00 = No CRC errors detected in the packets received.\n0xFF = 256 CRC errors detected in the packets received (max count).\nBit 16_6.4 must be set to 1 in order for register to be valid.</td></tr></table>  \nTable 119: Checker Control\n, Register 18  \n| Bits | Field | Mode | HW Rst | SW Rst | Description |",
+      "content_length": 1208,
+      "score": 0.0048,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "6cde6b9a06c418c6_p91",
+      "doc_id": "6cde6b9a06c418c6",
+      "doc_title": "GJBZ25-1991电子设备和设施的接地、搭接和屏蔽设计指南",
+      "content": "续表 28  \n| 金 属 | 相对电导率\nσr | 相对磁导率\nμr | 吸收损耗\ndB |\n| --- | --- | --- | --- |\n| 蒙乃尔合金 | 0.04 | 1 | 10.24 |\n| μ-合金 | 0.03 | 80000¹⁾ | 2488.00¹⁾ |\n| 坡莫合金 | 0.03 | 80000¹⁾ | 2488.00¹⁾ |\n| 不锈钢 | 0.02 | 1,000 | 244.40 |  \n注：1)入射场未使金属磁饱。  \n表29 1mm厚金属板的吸收损耗A dB  \n| 频率 | 铁 | 铜 | 铝 |\n| --- | --- | --- | --- |\n| μr | A | μr | A | μr | A |\n| 50Hz | 1,000 | 12 | 1 | 0.9 | 1 | 0.7 |\n| 1.0kHz | 1,000 | 54 | 1 | 4 | 1 | 3 |\n| 10.0kHz | 1,000 | 171 | 1 | 13 | 1 | 10 |\n| 150.0kHz | 1,000 | 663 | 1 | 56 | 1 | 40 |\n| ",
+      "content_length": 1250,
+      "score": 0.0047,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "419bc4c45dbb155d_p56",
+      "doc_id": "419bc4c45dbb155d",
+      "doc_title": "SNx5DP159",
+      "content": "# 11.2 Layout Examples  \nFigure 36. Layout Example for the DP159RSB  \nLayout Examples (continued)\nFigure 37. Layout Example for the DP159RGZ\n\n# 11.3 Thermal Considerations  \nOn a high-K board: TI recommends to solder the PowerPAD™ onto the thermal land. A thermal land is the area of solder-tinned-copper underneath the PowerPAD package. On a high-K board, the SNx5DP159 device can operate over the full temperature range by soldering the PowerPAD onto the thermal land without vias.  \nOn a low-K boa",
+      "content_length": 1519,
+      "score": 0.0046,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "d179a125e3f2bf65_p71",
+      "doc_id": "d179a125e3f2bf65",
+      "doc_title": "U10 KSZ9031RN QFN77-48LD-PL-1",
+      "content": "TABLE 6-3: CMOS INPUTS  \n| Parameters | Symbol | Min. | Typ. | Max. | Units | Note |\n| --- | --- | --- | --- | --- | --- | --- |\n| Input High Voltage | VIH | 2.0 | — | — | V | DVDDH (digital I/O) = 3.3V |\n| 1.5 | — | — | DVDDH (digital I/O) = 2.5V |\n| 1.1 | — | — | DVDDH (digital I/O) = 1.8V |\n| Input Low Voltage | VIL | — | — | 1.3 | V | DVDDH (digital I/O) = 3.3V |\n| — | — | 1.0 | DVDDH (digital I/O) = 2.5V |\n| — | — | 0.7 | DVDDH (digital I/O) = 1.8V |\n| Input High Leakage Current | IHL | -2.",
+      "content_length": 1398,
+      "score": 0.0046,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "9ca9ab87a30dc38a_p226",
+      "doc_id": "9ca9ab87a30dc38a",
+      "doc_title": "ug575-ultrascale-pkg-pinout",
+      "content": "D</td><td>PCIe\nX0Y1</td><td>GTH Quad 228\nX0Y16-X0Y19\nE [R]</td></tr><tr><td>GTY Quad 127\nX0Y12-X0Y15</td><td>CMAC\nX0Y0</td><td>HP I/O Bank 47\nJ</td><td>HP I/O Bank 67\nF</td><td>ILKN\nX0Y0</td><td>GTH Quad 227\nX0Y12-X0Y15\nD [R]</td></tr><tr><td>GTY Quad 126\nX0Y8-X0Y11</td><td rowspan=\"3\"></td><td>HP I/O Bank 46\nI</td><td>HP I/O Bank 66\nD</td><td>SYSMON\nConfiguration</td><td>GTH Quad 226\nX0Y8-X0Y11\nC [R]</td></tr><tr><td>GTY Quad 125\nX0Y4-X0Y7</td><td>HP I/O Bank 45\nG</td><td>HP I/O Bank 65\nC</td><",
+      "content_length": 2143,
+      "score": 0.0045,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "653079c31c64cc01_p2",
+      "doc_id": "653079c31c64cc01",
+      "doc_title": "系统代号索引",
+      "content": "激光通信机型号代号  \n| 产品型号 | 产品代号 | 备注 |\n| --- | --- | --- |\n| 智光TD-10G-Z | ZGTD-10G-Z |  |\n| 智光TD-100G-Z | ZG TD-100G-Z |  |\n| 智光T2-10G-X | ZG T2-10G-X | 开运联合 |\n| 智光P1S-10G-X | ZGP1S-10G-X | 空间站 |\n| 智光T2-100G-Z | ZG T2-100G-Z |  |\n| 智光PS-10G-Z | ZG PS-10G-Z |  |\n| 智光PS-100G-Z | ZG PS-100G-Z |  |\n| 智光T2-100G-Z | ZG T2-100G-Z | 初样产品 |\n| 智光T2-10G-Z | ZG T2-10G-Z | 开运联合 |\n| 智光PS-10G-H | ZGPS-10G-H | 微纳星空 |\n| 智光PS-100G-H | ZGPS-100G-H | 蓝箭鸿擎 |\n| 智光TD-10G-J | ZGTD-10G-J | 地卫二 |\n| 智光TD-10G-J-A机光学头 | ZGTD-10G-",
+      "content_length": 1062,
+      "score": 0.0043,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "47f99929183ea374_p0",
+      "doc_id": "47f99929183ea374",
+      "doc_title": "QJ3065.4-1998元器件筛选与复验管理要求",
+      "content": "# 1 范围\n\n# 1.1 主题内容  \n本标准规定了航天型号用元器件(以下简称元器件)补充筛选（以下简称筛选）与复验的管理规定和要求。\n\n# 1.2 适用范围  \n本标准适用于航天型号用元器件的筛选与复验。\n\n# 2 引用文件  \nGJB 571—88 不合格品管理  \nQJ1511A—98 半导体分立器件验收规范  \nQJ1693—89 电子元器件防静电要求  \nQJ1995A—98 集成电路验收规范  \nQJ 2227—92 航天用电子元器件贮存和超期复验要求  \nQJ3065.5—98 元器件失效分析管理要求\n\n# 3 定义\n\n# 3.1 补充筛选  \n已采购的元器件在筛选试验没有满足使用方规定的项目、应力、时间或有其他特殊要求的技术条件时，由使用方进行的筛选。\n\n# 一般要求\n\n# 4.1 管理部门的职能  \n各院（基地）委托单位的主管部门应会同两师系统确定需要做筛选元器件的品种和可靠性水平，负责委托单位与可靠性分中心和指定单位之间的协调和组织工作，并向生产厂反馈质量信息。\n\n# 4.2 筛选与复验机构  \n元器件的筛选和复验及合格证的发放应由航天工业总公司授权的院(基地)可",
+      "content_length": 1006,
+      "score": 0.011,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "47f99929183ea374_p1",
+      "doc_id": "47f99929183ea374",
+      "doc_title": "QJ3065.4-1998元器件筛选与复验管理要求",
+      "content": "# 4.7 防静电要求  \n对静电敏感器件，在筛选、测试时应按QJ1693的防静电要求执行。\n\n# 4.8 筛选、复验表格  \n各院(基地)可靠性分中心或指定单位，筛选、复验以及任务委托书的表格应统一格式、统一项目内容、统一填写方法。\n\n# 4.9 信息管理  \n各院(基地)可靠性分中心和指定筛选、复验单位应建立筛选、复验数据库。并有责任向上级质量可靠性信息管理机构提供在筛选、复验过程中获得的质量信息。该信息经分析处理后提供各单位使用。\n\n# 4.10 元器件筛选与复验管理流程  \n元器件筛选与复验管理流程如图1所示。图中每一方框表示一个管理环节，方框上部为责任单位，方框下部为具体工作。  \n图1 元器件筛选与复验管理流程\n\n# 5 详细要求\n\n# 5.1 筛选\n\n# 5.1.1 筛选试验规范或条件的制订与管理  \n元器件筛选原则上执行总公司的有关标准。如总公司的标准不能满足型号特点的要求，各院（基地）可依据总公司标准制定相应的筛选技术条件。  \n筛选试验标准在执行过程中不能随意改动。如需改动，应经型号总师  \n本单位编写的“测试软件”和“测试方法”须经有关部门组织专家评审，并经正式\n",
+      "content_length": 1047,
+      "score": 0.0105,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "47f99929183ea374_p2",
+      "doc_id": "47f99929183ea374",
+      "doc_title": "QJ3065.4-1998元器件筛选与复验管理要求",
+      "content": "# 5.1.2.3.3 筛选试验人员的职责  \n筛选试验人员应负以下职责：  \na. 筛选试验人员应严格按标准规定进行试验，试验过程中，发现问题按操作规程暂停试验，并如实报告筛选试验负责人；\nb. 详细记录试验情况，并保证记录数据的完整性和准确无误，签署姓名及日期，对筛选结果负责。\n\n# 5.1.2.3.4 外协  \n可靠性分中心因设备和其他原因无法进行的筛选项目应负责到外单位协作。外单位无法协作的，应由可靠性分中心主管单位与委托主管单位协商后由委托单位型号总师确定。\n\n# 5.1.2.3.5 筛选试验中质量问题的处理  \n按以下两种情况处理：  \na. 筛选中元器件出现个别严重失效或筛选淘汰率超过PDA规范值，经分析不属于批次性质量问题的，可靠性分中心主管部门与委托单位主管部门协商后由委托单位型号总师确定能否使用；\nb. 筛选后出现严重失效或筛选淘汰率超过PDA规范值，经分析属于批次性质量问题，应整批淘汰；同时附有分析报告，报告一式两份，一份随元器件交委托单位，另一份留可靠性分中心存档。  \n失效元器件的失效分析按QJ3065.5执行。  \n对筛选中出现的不合格品应按GJB571进行",
+      "content_length": 1022,
+      "score": 0.01,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "47f99929183ea374_p3",
+      "doc_id": "47f99929183ea374",
+      "doc_title": "QJ3065.4-1998元器件筛选与复验管理要求",
+      "content": "# 5.2.5 元器件复验过程的质量管理\n\n# 5.2.5.1 元器件入库前复验  \n入库复验的元器件包括：  \na. 下厂验收合格的元器件；\nb. 生产厂代验后到货的元器件；\nc. 筛选后的元器件。\n\n# 5.2.5.1.1 下厂验收合格到货的元器件  \n下厂验收合格的元器件，入库前应根据总公司或院（基地）的有关验收标准做如下工作：  \na. 检查器件包装质量；\nb. 检查质量文件；\nc. 检查器件质量，可依据相应规范采取抽样办法进行。\n\n# 5.2.5.1.2 生产厂代验到货的元器件  \n生产厂代验的元器件入库前应依据有关规范进行全面质量检查。\n\n# 5.2.5.1.3 筛选合格的元器件  \n做过筛选的元器件经检验合格，由可靠性分中心或指定单位开具筛选合格证和入库检验合格证后可以入库。\n\n# 5.2.5.1.4 复验结论  \n入库复验结论及处理办法如下：  \na. 质量文件齐全并符合要求、质量检查合格，填写入库检验合格证，检验人员签名、盖章后可以入库；\nb. 若个别元器件参数超差，由委托单位向供方退换；\nc. 若超差参数比例较大，首先要校准核实测试仪器的精度，确认无疑时，由委托单位",
+      "content_length": 1254,
+      "score": 0.0096,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "28be1fcfd4c0a6b3_p6",
+      "doc_id": "28be1fcfd4c0a6b3",
+      "doc_title": "tmds181",
+      "content": "(1) (H) Logic high (pin strapped to VCC through 65 kΩ resistor); (L) Logic Low (pin strapped to GND through 65 kΩ resistor); (for mid-level $= { \\mathsf { N o } }$ connect)\n(2) $\\mathsf { G } =$ Ground, $| =$ Input, O = Output, P = Power  \nPin Functions(1) (continued)  \n| PIN | TYPE(2) | DESCRIPTION |\n| --- | --- | --- |\n| NAME | NO. |\n| SDA_CTL | 16 | I/0 | I²C data signal\nNote: When I2C_EN = Low Pin strapping takes priority and those functions cannot be changed by I²C |\n| VSadj | 22 | I | TMDS",
+      "content_length": 1485,
+      "score": 0.0052,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "75fe3885cc08fbb3_p4",
+      "doc_id": "75fe3885cc08fbb3",
+      "doc_title": "tmds181 (1)",
+      "content": "(1) (H) Logic high (pin strapped to VCC through 65 kΩ resistor); (L) Logic Low (pin strapped to GND through 65 kΩ resistor); (for mid-level $= { \\mathsf { N o } }$ connect)\n(2) $\\mathsf { G } =$ Ground, $| =$ Input, O = Output, P = Power  \nPin Functions(1) (continued)  \n| PIN | TYPE(2) | DESCRIPTION |\n| --- | --- | --- |\n| NAME | NO. |\n| SDA_CTL | 16 | I/0 | I²C data signal\nNote: When I2C_EN = Low Pin strapping takes priority and those functions cannot be changed by I²C |\n| VSadj | 22 | I | TMDS",
+      "content_length": 1485,
+      "score": 0.0052,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "7548668f47036671_p23",
+      "doc_id": "7548668f47036671",
+      "doc_title": "GJB1027A-2005运载器、上面级和航天器试验要求",
+      "content": "# 6.2.1 概述  \n飞行器鉴定试验的基本要求见表6中规定的全部“要求的”和“经评价要求的”试验。对于具体的型号，宜对这些试验要求进行剪裁，但应得到合同采购方  \n验收试验中的一些特殊试验(如准直度调整和测量、天线方向图和质量特性等)在鉴定试验时也应进  \n行这些试验。如果飞行器是由机载数据处理装置来控制，在做鉴定试验时应将飞行用的计算机软件驻留在机载计算机内，并尽最大可能来验证软件的运行。  \n表 5 热循环试验 (TC) 和热真空 (TV) 试验的循环次数 ${}^{\\mathrm{a}}$  \n| 要求的试验 | 组件 | 飞行器 |\n| --- | --- | --- |\n| 验收 | 鉴定 | 验收 | 鉴定 |\n| \\(N_{\\text{A}}^{\\text{f}}\\) | \\(N_{\\text{AMAX}}^{\\text{g}}\\) | \\(N_{\\text{Q}}^{\\text{h}}\\) | \\(N_{\\text{A}}^{\\text{i}}\\) | \\(N_{\\text{Q}}\\) |\n| 热真空+热循环c | - | - | - | - | - |\n| 热循环",
+      "content_length": 1155,
+      "score": 0.005,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "7548668f47036671_p24",
+      "doc_id": "7548668f47036671",
+      "doc_title": "GJB1027A-2005运载器、上面级和航天器试验要求",
+      "content": "表 6 飞行器鉴定试验基线  \n| 试验 | 参考章条 | 建议试验顺序 | 运载器 | 上面级 | 航天器 |\n| --- | --- | --- | --- | --- | --- |\n| \\( 检查^a \\) | 4.5 | 1 | R | R | R |\n| \\( 功能^a \\) | 6.2.2 | 2 | R | R | R |\n| 压力/检漏 | 6.2.7 | 3,9,12 | R | R | R |\n| 电磁兼容 | 6.2.3 | 4 | R | R | R |\n| 冲击 | 6.2.4 | 6 | ER | R | R |\n| \\( 声^b \\)或随机振动 | 6.2.5 或 6.2.6 | 7 | ER | R | R |\n| 正弦振动 | 6.2.6 | 8 | ER | ER | R |\n| \\( 热平衡^c \\) | 6.2.8 | 10 | - | R | R |\n| 热真空 | 6.2.9 | 11 | ER | R | R |\n| 模态观测 | 6.2.10 | 5 | R | R | R |\n| 磁 | 6.2.11 | 13 | - | - | E",
+      "content_length": 842,
+      "score": 0.0049,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "74e9ce255bb1392d_p110",
+      "doc_id": "74e9ce255bb1392d",
+      "doc_title": "tps650864",
+      "content": "Table 6-68. GPO4PG_CTRL1 Register Descriptions  \n| Bit | Field | Type | Reset | Description |\n| --- | --- | --- | --- | --- |\n| 7 | LDOA2_MSB | R/W | X | 0: LDOA2 PG is part of Power Good tree of GPO4 pin.1: LDOA2 PG is NOT part of Power Good tree of GPO4 pin and is ignored. |\n| 6 | SWA1_MSB | R/W | X | 0: SWA1 PG is part of Power Good tree of GPO4 pin.1: SWA1 PG is NOT part of Power Good tree of GPO4 pin and is ignored. |\n| 5 | BUCK6_MSB | R/W | X | 0: BUCK6 PG is part of Power Good tree of GPO",
+      "content_length": 1338,
+      "score": 0.0046,
+      "chunk_type": "parent",
+      "parent_id": null
+    }
+  ],
+  "token_usage": {
+    "prompt_tokens": 20895,
+    "completion_tokens": 1331,
+    "total_tokens": 22226
+  },
+  "timing": {
+    "total": 45.814
+  },
+  "error": null
+}

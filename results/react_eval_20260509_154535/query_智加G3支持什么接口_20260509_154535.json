@@ -1,0 +1,55 @@
+{
+  "eval_id": "20260509_154535",
+  "timestamp": "2026-05-09T16:01:37.559816",
+  "query": "智加G3支持什么接口",
+  "answer": "根据知识库检索结果，**智加G3**支持的对外接口如下：\n\n## 智加G3接口配置\n\n| 接口类型 | 数量 | 说明 |\n|---------|------|------|\n| **CAN总线** | 2个 | 用于设备间通信和控制 |\n| **PPS（秒脉冲）** | 1个 | 用于时间同步 |\n| **100G以太网** | 1个 | 高速数据传输接口 |\n| **千兆以太网** | 2个 | 常规网络通信接口 |\n\n**其他相关参数：**\n- **输入电压**：36V-46.2V\n- **内存**：128GB+ECC\n- **存储**：4TB\n- **操作系统**：Ubuntu 24.04.3 LTS\n\n[来源: 智加G系列产品参数文档]\n\n智加G3是一款星载智能计算机，采用英伟达GPU-SOC架构，算力为2070TFLOPS@FP4，重量1.6kg，支持千问、DEEPSEEK等32B参数量模型在轨推理。",
+  "terminated_reason": "finish",
+  "total_iterations": 3,
+  "steps": [
+    {
+      "iteration": 0,
+      "thought": "",
+      "action": "resolve_entities",
+      "action_input": {
+        "entities": [
+          "智加G3"
+        ]
+      },
+      "observation": "【实体解析结果】\n\n输入: 智加G3\n  类型: 型号\n  标准名: 智加G3\n  所属大类: 星载智能计算机\n  所属系列: 智加G系列",
+      "duration": 3.055
+    },
+    {
+      "iteration": 1,
+      "thought": "",
+      "action": "spec_query",
+      "action_input": {
+        "entities": [
+          "智加G3"
+        ],
+        "fields": [
+          "接口"
+        ]
+      },
+      "observation": "【产品参数表查询结果】\n\n## 系列：智加G系列\n\n### 1. 智加G3\n   分类: 星载智能计算机\n   合作单位: 地卫二\n   架构: 英伟达GPU-SOC\n   算力: 2070TFLOPS@FP4\n   重量: 1.6kg\n   功耗: 开机静置35W / 普通业务102W / 峰值150W\n   尺寸: 235.2mm×161mm×40.5mm\n   内存: 128GB+ECC\n   存储: 4TB\n   对外接口: CAN×2、PPS×1、100G以太网×1、千兆以太网×2\n   核心芯片: (非国产) ORIN\n   输入电压: 36V-46.2V\n   工作温度: -20℃~40℃\n   储存温度: -25℃~55℃\n   操作系统: Ubuntu 24.04.3 LTS\n   设计寿命: 5年（推荐使用3年）\n   功能: 支持千问、DEEPSEEK等32B参数量模型在轨推理",
+      "duration": 3.4
+    },
+    {
+      "iteration": 2,
+      "thought": "",
+      "action": "finish",
+      "action_input": {},
+      "observation": "提交最终回答（412 字）",
+      "duration": 9.463
+    }
+  ],
+  "accumulated_chunks": [],
+  "token_usage": {
+    "prompt_tokens": 9513,
+    "completion_tokens": 489,
+    "total_tokens": 10002
+  },
+  "timing": {
+    "total": 15.918
+  },
+  "error": null
+}

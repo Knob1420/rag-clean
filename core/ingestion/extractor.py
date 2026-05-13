@@ -30,17 +30,22 @@ from core.model.models import Document
 
 # ── MinerU 初始化 ──────────────────────────────────────────
 
-
 MINERU_PATH = Path("/home/zjlab/Documents/build_LLMs/NLP_course_hf/MinerU")
-if str(MINERU_PATH) not in sys.path:
-    sys.path.insert(0, str(MINERU_PATH))
+MINERU_AVAILABLE = False
 
-try:
-    from mineru.cli.client import do_parse
-
-    MINERU_AVAILABLE = True
-except ImportError:
-    MINERU_AVAILABLE = False
+def _ensure_mineru():
+    """延迟导入 MinerU（避免模块加载时就修改 sys.path）"""
+    global MINERU_AVAILABLE, do_parse
+    if MINERU_AVAILABLE:
+        return
+    if str(MINERU_PATH) not in sys.path:
+        sys.path.insert(0, str(MINERU_PATH))
+    try:
+        from mineru.cli.client import do_parse as _do_parse
+        do_parse = _do_parse
+        MINERU_AVAILABLE = True
+    except ImportError:
+        MINERU_AVAILABLE = False
 
 
 # ── 支持的格式 ─────────────────────────────────────────────
@@ -108,52 +113,52 @@ def _save_cache(path: Path, content: str) -> None:
 
 def _convert_pdf(path: Path) -> str:
     """PDF → Markdown（使用 MinerU）"""
+    _ensure_mineru()
     if not MINERU_AVAILABLE:
         raise RuntimeError("MinerU 不可用，请先安装 MinerU")
 
     # 检查缓存
-    cache = _cache_path(path)
-    if cache.exists():
-        logger.info(f"[Extractor] PDF 缓存命中: {cache}")
-        return cache.read_text(encoding="utf-8")
+    cached = _load_cache(path)
+    if cached:
+        return cached
 
     backend = "hybrid-auto-engine"
-    output_dir = str(path.parent / "output")
-    pdf_file_name = path.stem
 
-    do_parse(
-        output_dir=output_dir,
-        pdf_file_names=[pdf_file_name],
-        pdf_bytes_list=[path.read_bytes()],
-        p_lang_list=["ch"],
-        backend=backend,
-        parse_method="auto",
-        formula_enable=True,
-        table_enable=True,
-        f_draw_layout_bbox=False,
-        f_draw_span_bbox=False,
-        f_dump_md=True,
-        f_dump_middle_json=True,
-        f_dump_model_output=False,
-        f_dump_orig_pdf=False,
-        f_dump_content_list=False,
-        f_make_md_mode="mm_markdown",
-        start_page_id=0,
-        end_page_id=None,
-    )
+    with tempfile.TemporaryDirectory() as tmpdir:
+        do_parse(
+            output_dir=tmpdir,
+            pdf_file_names=[path.stem],
+            pdf_bytes_list=[path.read_bytes()],
+            p_lang_list=["ch"],
+            backend=backend,
+            parse_method="auto",
+            formula_enable=True,
+            table_enable=True,
+            f_draw_layout_bbox=False,
+            f_draw_span_bbox=False,
+            f_dump_md=True,
+            f_dump_middle_json=True,
+            f_dump_model_output=False,
+            f_dump_orig_pdf=False,
+            f_dump_content_list=False,
+            f_make_md_mode="mm_markdown",
+            start_page_id=0,
+            end_page_id=None,
+        )
 
-    # 查找生成的 Markdown 文件
-    backend_dir = backend.replace("-", "_").replace("_engine", "")
-    md_file = Path(output_dir) / pdf_file_name / backend_dir / f"{pdf_file_name}.md"
+        # 查找生成的 Markdown 文件
+        backend_dir = backend.replace("-", "_").replace("_engine", "")
+        md_file = Path(tmpdir) / path.stem / backend_dir / f"{path.stem}.md"
 
-    if not md_file.exists():
-        md_files = list(Path(output_dir).rglob("*.md"))
-        if md_files:
-            md_file = md_files[0]
-        else:
-            raise RuntimeError("未找到生成的 Markdown 文件")
+        if not md_file.exists():
+            md_files = list(Path(tmpdir).rglob("*.md"))
+            if md_files:
+                md_file = md_files[0]
+            else:
+                raise RuntimeError("未找到生成的 Markdown 文件")
 
-    md_content = md_file.read_text(encoding="utf-8")
+        md_content = md_file.read_text(encoding="utf-8")
+
     _save_cache(path, md_content)
     return md_content
 
@@ -507,6 +512,7 @@ class MinerUPDFProcessor:
         gpu_device: Optional[int] = None,
         parse_method: str = "auto",
     ):
+        _ensure_mineru()
         if not MINERU_AVAILABLE:
             raise RuntimeError("MinerU 不可用，请先安装 MinerU")
 

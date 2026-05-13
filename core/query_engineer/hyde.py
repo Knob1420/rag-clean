@@ -10,14 +10,18 @@ HyDE (Hypothetical Document Embeddings) 查询引擎
 - 用户查询过短、口语化，与文档语体差距大
 - 交叉语言检索（中文 query → 英文文档）
 - 需要提升语义检索召回率的场景
+
+优化：
+- 多假设性文档并发生成（asyncio + semaphore）
+- embedding 批量调用
 """
 
+import asyncio
 from dataclasses import dataclass, field
 from typing import List, Optional
 
 from loguru import logger
 
-from core.generation.llm import LLMClient, get_llm_client
 from core.client.embedder import EmbeddingClient, get_embedder
 from prompt import HYDE_SYSTEM_PROMPT, HYDE_USER_TEMPLATE
 
@@ -43,7 +47,7 @@ class HyDEQueryEngine:
 
     def __init__(
         self,
-        llm_client: Optional[LLMClient] = None,
+        llm_client=None,
         embedder: Optional[EmbeddingClient] = None,
         num_hypotheses: int = 1,
         temperature: float = 0.7,
@@ -55,7 +59,10 @@ class HyDEQueryEngine:
             num_hypotheses: 生成假设性文档的数量（1-3，越多召回越广但越慢）
             temperature: 生成温度（越高假设性文档越多样）
         """
-        self.llm = llm_client or get_llm_client()
+        if llm_client is None:
+            from core.generation.llm import get_llm_client
+            llm_client = get_llm_client()
+        self.llm = llm_client
         self.embedder = embedder or get_embedder()
         self.num_hypotheses = max(1, min(num_hypotheses, 3))
         self.temperature = temperature
@@ -63,6 +70,7 @@ class HyDEQueryEngine:
     def generate_hypothetical_docs(self, query: str) -> List[str]:
         """
         根据用户查询生成假设性文档。
+        多篇假设性文档并发生成以减少延迟。
 
         Args:
             query: 用户原始查询
@@ -70,33 +78,76 @@ class HyDEQueryEngine:
         Returns:
             假设性文档列表
         """
-        docs = []
-        for i in range(self.num_hypotheses):
-            prompt = HYDE_USER_TEMPLATE.format(query=query)
-            try:
-                doc = self.llm.call(
-                    messages=[
+        if self.num_hypotheses == 1:
+            # 单篇直接同步调用，避免 asyncio 开销
+            return self._generate_single(query, 0)
+
+        # 多篇并发生成
+        return self._generate_concurrent(query)
+
+    def _generate_single(self, query: str, index: int) -> List[str]:
+        """同步生成单篇假设性文档"""
+        prompt = HYDE_USER_TEMPLATE.format(query=query)
+        try:
+            doc = self.llm.call(
+                messages=[
+                    {"role": "system", "content": HYDE_SYSTEM_PROMPT},
+                    {"role": "user", "content": prompt},
+                ],
+                temperature=self.temperature,
+                max_tokens=128,
+            )
+            doc = doc.strip()
+            if doc:
+                logger.debug(f"HyDE 生成假设性文档 #{index + 1}: {doc[:80]}...")
+                return [doc]
+        except Exception as e:
+            logger.warning(f"HyDE 生成假设性文档 #{index + 1} 失败: {e}")
+
+        # 失败回退到原始查询
+        logger.warning("HyDE 假设性文档生成失败，回退到原始查询")
+        return [query]
+
+    def _generate_concurrent(self, query: str) -> List[str]:
+        """并发生成多篇假设性文档（asyncio + httpx）"""
+        async def _run():
+            semaphore = asyncio.Semaphore(self.num_hypotheses)
+
+            async def _call_one(idx: int) -> tuple[int, Optional[str]]:
+                async with semaphore:
+                    prompt = HYDE_USER_TEMPLATE.format(query=query)
+                    messages = [
                         {"role": "system", "content": HYDE_SYSTEM_PROMPT},
                         {"role": "user", "content": prompt},
-                    ],
-                    temperature=self.temperature,
-                )
-                doc = doc.strip()
-                if doc:
+                    ]
+                    try:
+                        response = await self.llm._call_async(messages, max_tokens=128)
+                        doc = response.strip()
+                        if doc:
+                            logger.debug(f"HyDE 生成假设性文档 #{idx + 1}: {doc[:80]}...")
+                            return idx, doc
+                    except Exception as e:
+                        logger.warning(f"HyDE 生成假设性文档 #{idx + 1} 失败: {e}")
+                    return idx, None
+
+            tasks = [_call_one(i) for i in range(self.num_hypotheses)]
+            results = await asyncio.gather(*tasks)
+            # 按原始顺序排列
+            docs = []
+            for _, doc in sorted(results, key=lambda x: x[0]):
+                if doc is not None:
                     docs.append(doc)
-                    logger.debug(f"HyDE 生成假设性文档 #{i + 1}: {doc[:80]}...")
-            except Exception as e:
-                logger.warning(f"HyDE 生成假设性文档 #{i + 1} 失败: {e}")
 
-        if not docs:
-            logger.warning("HyDE 所有假设性文档均生成失败，回退到原始查询")
-            docs = [query]
+            if not docs:
+                logger.warning("HyDE 所有假设性文档均生成失败，回退到原始查询")
+                docs = [query]
+            return docs
 
-        return docs
+        return asyncio.run(_run())
 
     def embed_docs(self, docs: List[str]) -> List[Optional[list]]:
         """
-        对假设性文档做 embedding。
+        对假设性文档做 embedding（批量）。
 
         Args:
             docs: 假设性文档列表
@@ -104,14 +155,10 @@ class HyDEQueryEngine:
         Returns:
             embedding 列表（numpy array → list）
         """
-        if len(docs) == 1:
-            emb = self.embedder.encode(docs[0])
-            return [emb.tolist() if emb is not None else None]
-        else:
-            embeddings = self.embedder.encode_batch(docs)
-            return [
-                emb.tolist() if emb is not None else None for emb in embeddings
-            ]
+        embeddings = self.embedder.encode_batch(docs)
+        return [
+            emb.tolist() if emb is not None else None for emb in embeddings
+        ]
 
     @staticmethod
     def fuse_embeddings(embeddings: List[list]) -> list:
@@ -150,10 +197,10 @@ class HyDEQueryEngine:
         """
         logger.info(f"HyDE 变换: query='{query}', num_hypotheses={self.num_hypotheses}")
 
-        # 1. 生成假设性文档
+        # 1. 生成假设性文档（并发）
         docs = self.generate_hypothetical_docs(query)
 
-        # 2. 向量化
+        # 2. 批量向量化
         raw_embeddings = self.embed_docs(docs)
 
         # 3. 融合

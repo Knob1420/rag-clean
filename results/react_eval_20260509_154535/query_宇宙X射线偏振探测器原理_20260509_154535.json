@@ -1,0 +1,906 @@
+{
+  "eval_id": "20260509_154535",
+  "timestamp": "2026-05-09T15:50:11.474787",
+  "query": "宇宙X射线偏振探测器原理",
+  "answer": "# 宇宙X射线偏振探测器原理\n\n基于知识库检索结果，宇宙X射线偏振探测器的工作原理主要基于**光电电子径迹分析**技术，用于观测宇宙X射线的偏振特性。以下是其核心原理：\n\n## 一、物理基础\n\nX射线偏振探测器的科学目标是观测宇宙X射线的偏振，其**物理基础是分析光电子径迹的方向**[来源: X射线偏振探测器]。当X射线光子与探测器材料相互作用时，会产生光电子，这些光电子的发射方向与入射X射线的偏振方向存在特定的相关性。\n\n## 二、探测原理\n\n### 1. 径迹探测\n探测器采集两种主要径迹数据：\n- **光电子径迹**：由X射线光子产生的信号径迹\n- **高能宇宙线径迹**：作为背景噪声的干扰径迹[来源: X射线偏振探测器]\n\n### 2. 偏振信息提取\n通过分析光电子径迹的方向分布，可以推导出：\n- **偏振度**：描述X射线偏振程度的物理量\n- **偏振角**：描述偏振方向的物理量[来源: X射线偏振探测器]\n\n## 三、数据处理流程\n\n### 1. 原始数据采集\n探测器记录包含信号与噪声的径迹数据，原始数据量约为几百MB/天级别[来源: X射线偏振探测器]。\n\n### 2. 在轨实时处理\n在三体计算星座中，探测器部署了**天基天文时域模型**，实现：\n- **实时鉴别与筛选**：从径迹数据中区分信号与噪声\n- **计数能谱图生成**：统计在特定能量区间内探测器记录到的粒子或光子事件数目\n- **伽马射线暴（GRB）分析**：识别瞬变源信号[来源: X射线偏振探测器]\n\n### 3. 数据压缩\n经过处理后，一个典型的净计数能谱图文件（如一个GRB在某时间段的能谱）：\n- 包含几十到几百个能量通道的计数和误差\n- 大小仅为几KB到几十KB\n- **数据量压缩为原来的十万分之一到万分之一**[来源: X射线偏振探测器]\n\n## 四、技术优势\n\n### 1. 双星协同观测\n在三体计算星座中，01-02两颗计算卫星搭载了X射线偏振探测器，构成\"双星观测\"系统：\n- **视场互补**：当一颗星观测到瞬变源，通过星间通信触发另一颗星同步转向\n- **数据比对**：双向比对偏振度、偏振角等数据，减少单星检测误差\n- **提升捕获率**：共同观测提升瞬变源的捕获率[来源: X射线偏振探测器]\n\n### 2. 性能指标\n- **最长持续开机时间**：达72小时\n- **累计数据下载**：2GB\n- **识别准确率**：高达99%\n- **数据处理时间**：从数小时缩短至数秒[来源: X射线偏振探测器]\n\n## 五、应用场景\n\n### 1. 伽马射线暴（GRB）探测\nGRB在能谱图上表现为\"持续一段时间、覆盖宽能段、剧烈变化的流量增强信号\"。当在多个相邻能量通道中，计数率在毫秒到秒量级内突然急剧上升，并超过背景噪声的统计涨落阈值（例如5-10个标准差）时，可判定为一次GRB[来源: X射线偏振探测器]。\n\n### 2. 瞬变源观测\nX射线瞬变源（如伽马暴）具有突发性、空间随机性特点，双星协同观测能够实现对瞬变源的秒级判断和99%的识别准确率[来源: X射线偏振探测器]。\n\n## 六、创新意义\n\n这种新型观测模式以\"人工智能+\"推动太空科学研究范式变革：\n- **从\"地球看宇宙\"到\"太空看宇宙\"**：实现在轨实时处理，无需将原始数据下传地面\n- **数据处理革命**：将下传数据量从每天几百MB缩小至几十KB\n- **响应速度提升**：从数小时缩短至数秒，实现秒级在轨探测、认证、分类的观测闭环[来源: X射线偏振探测器]\n\n## 总结\n\n宇宙X射线偏振探测器通过分析光电子径迹方向来探测X射线的偏振特性，结合人工智能模型实现实时在轨处理，大幅提升了观测效率和准确性，为研究宇宙高能天体物理现象提供了重要工具。",
+  "terminated_reason": "finish",
+  "total_iterations": 4,
+  "steps": [
+    {
+      "iteration": 0,
+      "thought": "",
+      "action": "semantic_search",
+      "action_input": {
+        "queries": [
+          "宇宙X射线偏振探测器的工作原理是什么",
+          "X射线偏振探测器的探测原理"
+        ],
+        "top_k": 10
+      },
+      "observation": "（混合检索：BM25=0.18, Vector=0.82）\n找到 39 条匹配结果：\n\n[1] doc_id=61d6f63ecab2cf36 | 标题=X射线偏振探测器 | 分数=0.0167\n  内容: # X射线偏振探测器\n\n# ⼈⺠⽇报：  \n科学载荷在轨验证能⼒⽅⾯，X射线偏振探测器最⻓持续开机时间达72⼩时，累计下载2GB数据，经地⾯验证，载荷能够正常进⾏X射线观测。同时，天⽂模型已在轨执⾏9次任务⸺基于载荷采集的光电⼦径迹与⾼能宇宙线径迹，成功⽣成计数能谱图，并进⾏GRB分析和判别。相较于传统观测⽅式，这种新型观测模式，可将下传数据量从每天⼏百MB缩⼩⾄⼏⼗KB（万分之⼀），数据处理时间从数⼩时缩短⾄数秒，同时保持⾼达 $9 9 \\%$ 的事件识别准确率。  \n三体计算星座⾸发任务中的2颗卫星搭载了⼴西⼤学研制的宇宙X射线偏振探测器，部署了中国科学院国家天⽂台与之江实验室联合研发的天基天⽂时域模型，该模型对探测器采集数据进⾏在轨实时处理，实现对伽⻢射线暴（GRB）的在轨快速判定和分类，并触发双星协同观测。  \nX射线瞬变源（如伽⻢暴）具有突发性、空间随机性特点，双星协同观",
+      "duration": 3.724
+    },
+    {
+      "iteration": 1,
+      "thought": "",
+      "action": "keyword_search",
+      "action_input": {
+        "queries": [
+          "X射线偏振",
+          "光电电子径迹",
+          "偏振度",
+          "偏振角",
+          "康普顿散射",
+          "布拉格衍射"
+        ],
+        "top_k": 10
+      },
+      "observation": "（纯关键词检索）\n找到 3 条匹配结果：\n\n[1] doc_id=61d6f63ecab2cf36 | 标题=X射线偏振探测器 | 分数=31.9205\n  内容: # X射线偏振探测器\n\n# ⼈⺠⽇报：  \n科学载荷在轨验证能⼒⽅⾯，X射线偏振探测器最⻓持续开机时间达72⼩时，累计下载2GB数据，经地⾯验证，载荷能够正常进⾏X射线观测。同时，天⽂模型已在轨执⾏9次任务⸺基于载荷采集的光电⼦径迹与⾼能宇宙线径迹，成功⽣成计数能谱图，并进⾏GRB分析和判别。相较于传统观测⽅式，这种新型观测模式，可将下传数据量从每天⼏百MB缩⼩⾄⼏⼗KB（万分之⼀），数据处理时间从数⼩时缩短⾄数秒，同时保持⾼达 $9 9 \\%$ 的事件识别准确率。  \n三体计算星座⾸发任务中的2颗卫星搭载了⼴西⼤学研制的宇宙X射线偏振探测器，部署了中国科学院国家天⽂台与之江实验室联合研发的天基天⽂时域模型，该模型对探测器采集数据进⾏在轨实时处理，实现对伽⻢射线暴（GRB）的在轨快速判定和分类，并触发双星协同观测。  \nX射线瞬变源（如伽⻢暴）具有突发性、空间随机性特点，双星协同观测能够实现视场互补。当⼀颗星观测到瞬变源，",
+      "duration": 5.248
+    },
+    {
+      "iteration": 2,
+      "thought": "",
+      "action": "semantic_search",
+      "action_input": {
+        "queries": [
+          "X射线偏振探测的物理基础是什么",
+          "如何通过光电电子径迹分析偏振信息",
+          "偏振度和偏振角的测量原理"
+        ],
+        "top_k": 10
+      },
+      "observation": "（混合检索：BM25=0.18, Vector=0.82）\n找到 65 条匹配结果：\n\n[1] doc_id=c0decfca74955d2a | 标题=VRF24_VRF2412DD-50WR4-模块电源50w | 分数=0.0137\n  内容: 通用特性  \n| 项目 | 工作条件 | Min. | Typ. | Max. | 单位 |\n| --- | --- | --- | --- | --- | --- |\n| 隔离电压 | 输入-输出,测试时间1分钟,漏电流小于1mA | 3000 | -- | -- | VDC |\n| 绝缘电阻 | 输入-输出,绝缘电压500VDC | 1000 | -- | -- | MΩ |\n| 隔离电容 | 输入-输出,100kHz/0.1V | -- | 100 | -- | pF |\n| 工作温度(壳温) | 见温度降额曲线 | -40 | -- | +105 | °C |\n| 存储湿度 | 无凝结 | 5 | -- | 95 | %RH |\n| 存储温度 |  | -55 | -- | +125 | °C |\n| 引脚耐焊接温度 | 波峰焊焊接",
+      "duration": 5.905
+    },
+    {
+      "iteration": 3,
+      "thought": "",
+      "action": "finish",
+      "action_input": {},
+      "observation": "提交最终回答（1572 字）",
+      "duration": 41.834
+    }
+  ],
+  "accumulated_chunks": [
+    {
+      "chunk_id": "61d6f63ecab2cf36_p0",
+      "doc_id": "61d6f63ecab2cf36",
+      "doc_title": "X射线偏振探测器",
+      "content": "# X射线偏振探测器\n\n# ⼈⺠⽇报：  \n科学载荷在轨验证能⼒⽅⾯，X射线偏振探测器最⻓持续开机时间达72⼩时，累计下载2GB数据，经地⾯验证，载荷能够正常进⾏X射线观测。同时，天⽂模型已在轨执⾏9次任务⸺基于载荷采集的光电⼦径迹与⾼能宇宙线径迹，成功⽣成计数能谱图，并进⾏GRB分析和判别。相较于传统观测⽅式，这种新型观测模式，可将下传数据量从每天⼏百MB缩⼩⾄⼏⼗KB（万分之⼀），数据处理时间从数⼩时缩短⾄数秒，同时保持⾼达 $9 9 \\%$ 的事件识别准确率。  \n三体计算星座⾸发任务中的2颗卫星搭载了⼴西⼤学研制的宇宙X射线偏振探测器，部署了中国科学院国家天⽂台与之江实验室联合研发的天基天⽂时域模型，该模型对探测器采集数据进⾏在轨实时处理，实现对伽⻢射线暴（GRB）的在轨快速判定和分类，并触发双星协同观测。  \nX射线瞬变源（如伽⻢暴）具有突发性、空间随机性特点，双星协同观测能够实现视场互补。当⼀颗星观测到瞬变源，可以通过星间通信，触发另⼀颗星同步转向，共同观测，提升瞬变源的捕获率。此外，双星协同观测，可以双向⽐对偏振度、偏振⻆等数据，减少单星检测误差。依托三体计算星座的算⼒与",
+      "content_length": 1454,
+      "score": 0.0167,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "adffbf8e05034ba3_p0",
+      "doc_id": "adffbf8e05034ba3",
+      "doc_title": "在轨测试-三体计算星座项目进展（AI版）",
+      "content": "# 在轨测试-三体计算星座项⽬进展（AI版）  \n三体计算星座是之江实验室落实“共商共建共享共发展”⾏动，协同全球合作伙伴共同打造千星规模的太空计算星座，通过“计算上天、星间互联、模型上天”，建设以卫星组⽹和在轨计算为核⼼、以模型在轨服务为⽬标的太空计算基础设施，打造⾯向全球开放的太空⼈⼯智能科技创新合作平台，推动“⼈⼯智能+”科学、“⼈⼯智能+”全球合作快速发展，推进太空科研范式变⾰，⽀撑国家战略科技⼒量，助⼒“航天 $^ { \\cdot + }$ ⼈⼯智能”创新发展。  \n⾃2025年5⽉14⽇三体计算星座⾸发12颗计算卫星成功发射并进⼊预定轨道以来，之江实验室联合国星宇航、氦星光联等合作伙伴协同攻关，经过九个⽉的在轨测试，在星间组⽹、模型在轨部署、太空计算应⽤⽅⾯取得了重⼤突破。已成功实现10个⼈⼯智能模型与应⽤的在轨部署与验证，并初步探索了在深空探测、灾害应急、智慧城市、环境监测等场景下的创新应⽤，向着“让⼈⼯智能在太空不缺席”的⽬标迈出坚实⼀步。  \n图1三体计算星座⾸发任务⽰意图\n\n# ⼀、模型在轨部署与更新能⼒：让AI快速“上天”  \n三体计算星座已具备将模型和算法从地⾯",
+      "content_length": 1250,
+      "score": 0.0154,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "0fcef5925afa5d32_p141",
+      "doc_id": "0fcef5925afa5d32",
+      "doc_title": "GJB548B-2005微电子器件试验方法和程序",
+      "content": "# 4 说明  \n有关的订购文件应规定以下内容：  \na) 试验条件类别的字母代号（见第3章）；\nb）如果不按3.2规定，应规定最小键合强度或规定所需强度分布的细节（需要时）；\nc）采用的样本数、接收数或对每一个器件规定拉力试验的数目和选取方法。如果被试器件不是4个，还应规定器件数目；\nd) 对于试验条件 A，如果施加于键合上使其脱落的应力角度不是 $90^{\\circ}$ ，应规定其角度和键合强度极限值（见 3.2）；\ne) 需要时，给出分离力和失效类别报告的要求（见3.2.1）。  \n图1最小键合拉力极限值  \n注：最小键合强度应取表1中的值。图1可用于未列于表1中的引线直径。  \n图2 引线弯曲角度  \n图3 键合点在同一水平面的引线键合拉力试验\n\n# 方法2012.1 X射线照相\n\n# 1 目的  \n本检查的目的是用非破坏性的方法检测封装内的缺陷，特别是密封工艺引起的缺陷和诸如多余物、错误的内引线连接、芯片附着材料中的或采用玻璃密封时玻璃中的空洞等内部缺陷。本方法为半导体器件和混合集成电路的X射线照相检查确立了适用的方法、判据和标准。  \n注：对于某些类型的封装，由于结构材料(",
+      "content_length": 1016,
+      "score": 0.0132,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "6cde6b9a06c418c6_p124",
+      "doc_id": "6cde6b9a06c418c6",
+      "doc_title": "GJBZ25-1991电子设备和设施的接地、搭接和屏蔽设计指南",
+      "content": "# 13.5 X射线的辐射  \nX射线是在电子被加速至足够高的速度后与一个适当的靶子碰撞时产生的。X射线除了由专门的设备产生外，还可以由其它用途的高压(大于 $15\\mathrm{kV}$ )电子管产生。因此，在设备中必须对所有X射线辐射源进行鉴别和屏蔽，使其不致对人体构成危害，这一点是重要的。  \n在GB8279《医用诊断X线卫生防护标准》中，规定了不同用途的X射线机的工作人员操作处的空气照射量率为：  \na.普通X射线机在立位透视时不大于 $5\\mathrm{mR / h}$ ；卧位透视时，不大于 $15\\mathrm{mR / h}$\nb. 摄片 X 射线机不大于 $2.5 \\mathrm{mR} / \\mathrm{h}$ ;\nc. 骨科专用 X 射线机, 立位透视时不大于 $5 \\mathrm{mR} / \\mathrm{h}$ , 卧位透视时不大于 $15 \\mathrm{mR} / \\mathrm{h}$ ;  \nd. 带影像增强器全遥控X射线机(包括CT)不大于 $2.5\\mathrm{mR} / \\mathrm{h}$ 。  \n受检者候诊处和机房周围环境照射量率不应大",
+      "content_length": 1427,
+      "score": 0.013,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "9ca9ab87a30dc38a_p225",
+      "doc_id": "9ca9ab87a30dc38a",
+      "doc_title": "ug575-ultrascale-pkg-pinout",
+      "content": "# XCKU095 and XQKU095 Bank Diagrams  \nFigure 1-21: XCKU095 and XQKU095 Banks  \n| GTY Quad 131\nX0Y28-X0Y31 |  | HP I/O Bank 51 | HP I/O Bank 71 | PCIe\nX0Y3 | GTH Quad 231\nX0Y28-X0Y31 |\n| --- | --- | --- | --- | --- | --- |\n| GTY Quad 130\nX0Y24-X0Y27 | HP I/O Bank 50 | HP I/O Bank 70 | ILKN\nX0Y2 | GTH Quad 230\nX0Y24-X0Y27 |\n| GTY Quad 129\nX0Y20-X0Y23\n(RCAL) | CMAC\nX0Y1 | HP I/O Bank 49 | HP I/O Bank 69 | PCIe\nX0Y2 | GTH Quad 229\nX0Y20-X0Y23 |\n| GTY Quad 128\nX0Y16-X0Y19 |  | HP I/O Bank 48 | HP I/O",
+      "content_length": 1669,
+      "score": 0.0128,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "9ca9ab87a30dc38a_p226",
+      "doc_id": "9ca9ab87a30dc38a",
+      "doc_title": "ug575-ultrascale-pkg-pinout",
+      "content": "D</td><td>PCIe\nX0Y1</td><td>GTH Quad 228\nX0Y16-X0Y19\nE [R]</td></tr><tr><td>GTY Quad 127\nX0Y12-X0Y15</td><td>CMAC\nX0Y0</td><td>HP I/O Bank 47\nJ</td><td>HP I/O Bank 67\nF</td><td>ILKN\nX0Y0</td><td>GTH Quad 227\nX0Y12-X0Y15\nD [R]</td></tr><tr><td>GTY Quad 126\nX0Y8-X0Y11</td><td rowspan=\"3\"></td><td>HP I/O Bank 46\nI</td><td>HP I/O Bank 66\nD</td><td>SYSMON\nConfiguration</td><td>GTH Quad 226\nX0Y8-X0Y11\nC [R]</td></tr><tr><td>GTY Quad 125\nX0Y4-X0Y7</td><td>HP I/O Bank 45\nG</td><td>HP I/O Bank 65\nC</td><",
+      "content_length": 2143,
+      "score": 0.0124,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "a49b2886f74c9422_p213",
+      "doc_id": "a49b2886f74c9422",
+      "doc_title": "ug583-ultrascale-pcb-design",
+      "content": "Figure 7-4: I/O Bank Migration for B1517  \n| GTY Quad 131\nX0Y16-X0Y19 | PCIE4\nX0Y4 | HP I/O Bank 71\nT | HD I/O Bank 91 | GTH Quad 231\nX0Y28-X0Y31 |\n| --- | --- | --- | --- | --- |\n| GTY Quad 130\nX0Y12-X0Y15 | CMAC\nX0Y1 | HP I/O Bank 70\nU | HD I/O Bank 90\nP | GTH Quad 230\nX0Y24-X0Y27 |\n| GTY Quad 129\nX0Y8-X0Y11\n(RCAL) | ILKN\nX0Y0 | HP I/O Bank 69\nV | HD I/O Bank 89\nO | GTH Quad 229\nX0Y20-X0Y23 |\n| GTY Quad 128\nX0Y4-X0Y7 | PCIE4\nX0Y2 | HP I/O Bank 68\nW | HD I/O Bank 88\nN | GTH Quad 228\nX0Y16-X0Y19",
+      "content_length": 2278,
+      "score": 0.0122,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "d287c013354c639a_p0",
+      "doc_id": "d287c013354c639a",
+      "doc_title": "zs-nx1-0-9",
+      "content": "ZS-NX19  \n| 线性尺寸公差 | 尺寸范围 | 0.5~3 | &gt;3~6 | &gt;6~30 | &gt;30~120 | &gt;120~400 | &gt;400~1000 | &gt;1000~2000 | &gt;2000~4000 |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n| 公差等级f | ±0.05 | ±0.05 | ±0.1 | ±0.15 | ±0.2 | ±0.3 | ±0.5 | ±1 |\n| 倒/圆角尺寸公差 | 尺寸范围 | 0.5~3 | &gt;3~6 | &gt;6~30 | &gt;30 | 角度尺寸公差 | ≤10 | &gt;10~50 | &gt;50~120 | &gt;120~400 | &gt;400 |\n| 公差等级f | ±0.2 | ±0.5 | ±1 | ±2 | ±1° | ±30` | ±20` | ±10` | ±5` |\n| 直线度平面度 | 尺寸范围 | ≤10 | &gt;10~30 | &gt;30~100 | &g",
+      "content_length": 1414,
+      "score": 0.0121,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "0def626528294693_p11",
+      "doc_id": "0def626528294693",
+      "doc_title": "zs-nx1-0-1",
+      "content": "ZS-NX11  \n| 线性尺寸公差 | 尺寸范围 | 0.5~3 | &gt;3~6 | &gt;6~30 | &gt;30~120 | &gt;120~400 | &gt;400~1000 | &gt;1000~2000 | &gt;2000~4000 |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n| 公差等级f | ±0.05 | ±0.05 | ±0.1 | ±0.15 | ±0.2 | ±0.3 | ±0.5 | ±1 |\n| 倒/圆角尺寸公差 | 尺寸范围 | 0.5~3 | &gt;3~6 | &gt;6~30 | &gt;30 | 角度尺寸公差 | ≤10 | &gt;10~50 | &gt;50~120 | &gt;120~400 | &gt;400 |\n| 公差等级f | ±0.2 | ±0.5 | ±1 | ±2 | ±1° | ±30° | ±20° | ±10° | ±5° |\n| 直线度平面度 | 尺寸范围 | ≤10 | &gt;10~30 | &gt;30~100 | &g",
+      "content_length": 1265,
+      "score": 0.0119,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "0fcef5925afa5d32_p142",
+      "doc_id": "0fcef5925afa5d32",
+      "doc_title": "GJB548B-2005微电子器件试验方法和程序",
+      "content": "# 3.1 安装和观察  \n器件应安装在夹具中以使其不受损坏或沾污，并在规定的适当平面上。夹具可是多种类型的带有铅隔膜或钡土的挡板，可用来隔开多个样品，但要求夹具或挡板材料不妨碍从X射线源到器件本体任何部位的观察。\n\n# 3.1.1 观察\n\n# 3.1.1.1 对扁平封装、双列直插封装以及单端圆柱形器件的观察  \n除另有规定外，对扁平封装、双列直插封装以及单端圆柱形器件，在本标准“一般要求”的图1和图2所规定的Y方向上，用X射线穿透视察一次。在需要一次以上的观察时(适用时)，用X射线分别在Z方向和X方向进行第二次、第三次(适用时)穿透视察。对于扁平封装，Z方向或者X方向均可。把芯片与腔体的界面尽可能放在靠近底片处，以避免影像失真。\n\n# 3.1.1.2 对双端螺栓安装的器件和圆柱形轴向引线器件的观察  \n除另有规定外，将双端螺栓安装的器件和圆柱形轴向引线器件，在本标准“一般要求”的图1和图2中规定的X方向上，用X射线穿透观察一次。在需要一次以上的观察时(适用时)，在Z方向和在X及Z方向之间的 $45^{\\circ}$ 方向上，用X射线穿透进行第二次和第三次观察。把芯片与腔体的界面放在尽",
+      "content_length": 1179,
+      "score": 0.0115,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "0fcef5925afa5d32_p146",
+      "doc_id": "0fcef5925afa5d32",
+      "doc_title": "GJB548B-2005微电子器件试验方法和程序",
+      "content": "# 3.11.1 器件结构  \n根据X射线特征识别检查，可接收的器件应具有规定的设计和结构。明显违背规定结构的器件应拒收。\n\n# 3.11.2 单个器件的缺陷  \n单个器件检查应包括但又不限于检查以下项目：外来颗粒、元件的位置和取向、基板裂纹长度超过 $0.127\\mathrm{mm}$ 或指向有源金属化区、粘合剂积聚、焊料飞溅、引线布局、端盖密封有空洞(这可能不适用于功率混合电路)、以及基板和外壳之间的不良浸润等。由X射线照片检查暴露出以下缺陷的任何器件应  \n拒收。\n\n# 3.11.2.1 外来物  \na) 存在于芯片表面、元件、基板和封装内的大于 $0.025\\mathrm{mm}$ 的任何游离颗粒，或虽然尺寸较小但足以跨接器件中互相不连接的导电部分的任何游离颗粒；\nb）附着的多余物桥接了金属化通道、外壳引线、引线与外壳金属化区、电路功能元件、接头或任一组合；  \n注：附着或游离多余物可以通过比较两个相同观察条件下的轻微机械振动(如PIND试验)加以验证。  \nc) 内引线尾丝与不应相连的金属相连，内引线尾丝在基板或外壳接线端的长度超过引线直径的4倍，或在芯片、元件上超过内引线直",
+      "content_length": 1617,
+      "score": 0.0114,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "6cde6b9a06c418c6_p1",
+      "doc_id": "6cde6b9a06c418c6",
+      "doc_title": "GJBZ25-1991电子设备和设施的接地、搭接和屏蔽设计指南",
+      "content": "12.5 屏蔽体不连续(孔眼)的影响 ………………………………………… (149)\n12.6 屏蔽材料的选择 ………………………………………… (155)\n12.7 常规建筑材料的使用 ………………………………………… (156)\n12.8 电缆和连接器的屏蔽 ………………………………………… (158)\n12.9 屏蔽室 ………………………………………… (163)\n12.10 屏蔽测试 (167)\n12.11 人体的保护屏蔽 (169)\n12.12 屏蔽要求的确定 ………………………………………… (169)\n12.13 屏蔽系统设计的要点考虑 ………………………………………… (171)\n13 人体保护 ………………………………………… (172)\n13.1 电击 (172)\n13.2 静电 (174)\n13.3 射频辐射的危害 ………………………………………… (174)\n13.4 激光的危害 ………………………………………… (175)\n13.5 X射线的辐射 (175)\n14 核电磁脉冲效应 ………………………………………… (176)\n14.1 概述 (176)\n14.2",
+      "content_length": 1354,
+      "score": 0.0112,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "9ca9ab87a30dc38a_p284",
+      "doc_id": "9ca9ab87a30dc38a",
+      "doc_title": "ug575-ultrascale-pkg-pinout",
+      "content": "X1Y12-X1Y15\nD [RS]</td></tr><tr><td>GTY Quad 126\nX0Y8-X0Y11\nM [LS]</td><td>CMAC\nX0Y1</td><td>HP I/O Bank 66\nD</td><td>SYSMON\nConfiguration</td><td>GTY Quad 226\nX1Y8-X1Y11\nC [RS]</td></tr><tr><td>GTY Quad 125\nX0Y4-X0Y7\nL [LS] (RCAL)</td><td>ILKN\nX0Y0</td><td>HP I/O Bank 65\nC</td><td>Configuration</td><td>GTY Quad 225\nX1Y4-X1Y7\nB [RS] (RCAL)</td></tr><tr><td>GTY Quad 124\nX0Y0-X0Y3\nK [LS]</td><td>CMAC\nX0Y0</td><td>HP I/O Bank 64\nB</td><td>PCIE4\nX0Y0\n(tandem)</td><td>GTY Quad 224\nX1Y0-X1Y3\nA [RS]</t",
+      "content_length": 2160,
+      "score": 0.0111,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "eb733935110cdd1c_p7",
+      "doc_id": "eb733935110cdd1c",
+      "doc_title": "F300S卫星平台与超算联试大纲&细则-20260305（发之江）(1)",
+      "content": "12附表 测试记录表\n附表1-1：电特性检查记录表\n序号\n测试项目\n测试结果\n备注  \n导通测试\n电连接器编号  \nOBC-X07\nGPS-X05  \nJ30J-100TJL-A3\nJ30JA-51TJ  \n70,94\n40,41\nCAN5A_H(星务计算机-超算GPU)  \n71,95\n36,37\nCAN5A_L(星务计算机-超算GPU)  \n72,96\n48,49\nCAN5B_H星务计算机-超算GPU)  \n73,97\n44,45\nCAN5B_L(星务计算机-超算GPU)  \n电连接器编号  \nHPC-X02\nHPC-X07  \nJ30J-21TJL-A3\nJ30J-21TJL-A3  \n6,17\n1,12\nCAN5A_H(超算GPU -超算FPGA)  \n7,18\n2,13\nCAN5A_L(超算GPU -超算FPGA)  \n8,19\n3,14\nCAN5B_H(超算GPU -超算FPGA)  \n9,20\n4,15\nCAN5B_L(超算GPU -超算FPGA)  \n电连接器编号  \nEPS-X07\nHPC-X01  \nJ30J-100ZKL-A3\nJ30J-9TJL-A3  \n61,",
+      "content_length": 1996,
+      "score": 0.0109,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "9ca9ab87a30dc38a_p261",
+      "doc_id": "9ca9ab87a30dc38a",
+      "doc_title": "ug575-ultrascale-pkg-pinout",
+      "content": "X0Y20-X0Y23\nF [RS]</td></tr><tr><td>GTY Quad 128\nX0Y4-X0Y7\nM [LS]</td><td>PCIE4\nX0Y2</td><td>HP I/O Bank 68\nG</td><td>PCIE4\nX1Y2</td><td>GTH Quad 228\nX0Y16-X0Y19\nE [RS]</td></tr><tr><td>GTY Quad 127\nX0Y0-X0Y3\nL [LS]</td><td>CMAC\nX0Y0</td><td>HP I/O Bank 67\nF</td><td>PCIE4\nX1Y1</td><td>GTH Quad 227\nX0Y12-X0Y15\nD [RS]</td></tr><tr><td></td><td></td><td>HP I/O Bank 66\nE</td><td>SYSMON\nConfiguration</td><td>GTH Quad 226\nX0Y8-X0Y11\nC [RS] (RCAL)</td></tr><tr><td></td><td></td><td>HP I/O Bank 65\nC</td",
+      "content_length": 2015,
+      "score": 0.0108,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "eb733935110cdd1c_p8",
+      "doc_id": "eb733935110cdd1c",
+      "doc_title": "F300S卫星平台与超算联试大纲&细则-20260305（发之江）(1)",
+      "content": "63,87\n12,24\n星务计算机接收X测控遥控2数据+/TCD2+  \n64,88\n13,25\n星务计算机接收X测控遥控2数据-/TCD2-  \n65,89\n18,19\nGND  \n71,95\n3,16\n星务计算机向测控串口2发送数据+/TX16+  \n72,96\n4,17\n星务计算机向测控串口2发送数据-/TX16-  \n电连接器编号  \nXB\nOBC-X08  \nJ599/20FH35SN\nJ30J-100TJL-A3  \n20\n16\n从地测串口接收+/RX17+  \n21\n17\n从地测串口接收-/RX17-  \n22\n18\n向地测串口发送+/TX17+  \n23\n19\n向地测串口发送-/TX17-  \n24\n20\n数字地/GND  \n77\n21\n从姿控地测串口接收+/RX18+  \n78\n22\n从姿控地测串口接收-/RX18-  \n79\n23\n从姿控地测串口发送+/TX18+  \n80\n24\n从姿控地测串口发送-/TX18-  \n81\n25\n数字地/GND  \n电连接器编号  \nXB\nEPS-X02  \nJ599/20FH35SN\nJ6W-25B01KNMB  \n56,57,5",
+      "content_length": 1994,
+      "score": 0.0106,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "86666016195200f2_p63",
+      "doc_id": "86666016195200f2",
+      "doc_title": "ug1075-zynq-ultrascale-pkg-pinout",
+      "content": "# XCZU7 Bank Diagram Overview  \nFigure 1-9: XCZU7 Banks\n\n# Bank Diagram by Package for XCZU7  \nFigure 1-10: XCZU7 Banks in FBVB900 Package  \nX15127-111316  \nFigure 1-11: XCZU7 Banks in FFVC1156 Package  \nFigure 1-12: XCZU7 Banks in FFVF1517 Package  \nX15128-111316\n\n# XCZU6 and XCZU9 Bank Diagram Overview  \nX15129-071417\nFigure 1-13: XCZU6 and XCZU9 Banks\n\n# Bank Diagram by Package for XCZU6 and XCZU9  \nX15130-071417\nFigure 1-14: XCZU6 and XCZU9 Banks in FFVC900 Package  \nX15131-071417\nFigure 1-1",
+      "content_length": 1446,
+      "score": 0.0104,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "14d4c71c391db385_p1",
+      "doc_id": "14d4c71c391db385",
+      "doc_title": "在轨测试-三体计算星座项目进展（顺序版）",
+      "content": "# 计算能⼒：全球最⼤算⼒太空计算星座  \n⾸发任务12颗计算卫星均搭载了实验室⾃研的星载计算单元，单星最⾼算⼒744TOPS，整体在轨算⼒达5POPS，最⼤可⽀持1400亿参数模型在轨部署与推理，是⽬前全球算⼒规模最⼤的太空计算星座。\n\n# 模型部署和更新能⼒：2天内完成模型在轨部署与更新  \n基于⾸发任务12星的组⽹和计算能⼒，⽤⼾⾃定义的模型和算法经三体计算星座地⾯数字孪⽣系统验证，可通过天基分布式操作系统进⾏在轨部署与更新，全流程完成周期不⻓于2天。  \n截⽌⽬前，共有10个模型与算法在轨运⾏,其中80亿参数天基遥感模型和80亿参数天基天⽂时域模型，是全球在轨运⾏的参数量最⼤模型。更值得⼀提的是，其中6个模型与算法通过地⾯上注实现了在轨更新部署，包括6亿参数千问⼤语⾔模型（全球通过上注部署参数量最⼤的模型）、1.5亿参数“伏羲”⽓象模型、3亿参数航天多模态模型、地表要素提取模型等。  \n此外，实验室与⾹港⼤学、北师⼤、北航、地卫⼆等合作伙伴联合研发的模型正在地⾯进⾏验证，后期将陆续完成在轨部署。\n\n# 科学载荷在轨验证能⼒：在太空变⾰科学研究范式  \n⾸发任务中的两颗卫星搭载了",
+      "content_length": 1487,
+      "score": 0.0028,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "621069f2db2eb376_p3",
+      "doc_id": "621069f2db2eb376",
+      "doc_title": "三体计算星座介绍",
+      "content": "# 第⼆阶段（2028年—）：101-1000颗  \n之江实验室与星⽹集团、国家航天科技集团联合，按照“三体计算星座”标准继续推进星座建设。星⽹集团、国家航天科技集团等相关国家战略科技⼒量为该阶段的建设主体，推动“三体计算星座”融⼊GW星座。新建星座的算⼒所有权归星⽹集团等单位所有，之江实验室可通过合作或采购⽅式，获取星上算⼒使⽤权。  \n该阶段，之江实验室作为技术输出⽅，聚焦“三件套”、天基分布式操作系统与天基模型等太空计算关键核⼼技术创新与引领，协同参与技术体系与标准制定，持续提供核⼼技术赋能。在此过程中，之江实验室将通过相关知识产权授权或转让，享有相应成果转化收益。\n\n# 三体计算星座已形成的能⼒\n\n# （⼀）计算能⼒  \n⾸发任务搭载16台星载智能计算机，16个计算节点之间可通过天基分布式操作系统实现协同计算，在轨整体算⼒达5POPS，是全球⽬前算⼒最⼤的太空计算基础设施。\n\n# （⼆）组⽹能⼒  \n⾸发任务星内、星间、星地全链路均采⽤以太⽹通信协议。星内通过星载⾼速路由器实现星内⽹络互联，最⼤交换容量为184Gbps；星间通过激光通信机实现互联，最⼤速率可达100Gbps；星",
+      "content_length": 1243,
+      "score": 0.0027,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "55d4b46aa36bf822_p0",
+      "doc_id": "55d4b46aa36bf822",
+      "doc_title": "首发任务介绍",
+      "content": "# ⾸发任务介绍\n\n# 在轨测试情况总结（10-27）  \n截⾄⽬前，12颗卫星在轨测试⼯作进展顺利，已圆满完成包括卫星平台在轨功能检查、星座变轨、载荷测试、星间组⽹及业务验证在内的各项关键任务。  \n12颗卫星已成功调整⾄505km轨道，所有卫星平台及各类载荷功能正常，星地互联稳定可靠，并全部接⼊分布式机系统。  \n在星间互联⽅⾯，成功实现了01、02、03星的三星微波组⽹，以及05、06、08星之间的10Gbps激光建链组⽹。  \n在业务测试上，于03星上完成了图像处理、8B参数天基模型、及量⼦加密等等单星业务验证，并成功完成了基于微波链路（01、02、03星）和激光链路（05、06、08星）的多星分布式业务测试。  \n此外，01、02星搭载的宇宙X射线偏振探测器已经完成在轨测试并转⼊⻓开机模式，正式开启科学观测任务。  \n⾸发任务于2025年5⽉14⽇12时12分在酒泉成功发射⼊轨，⽬前12颗卫星在轨运⾏情况良好，已成功完成三星星间10G激光组⽹、三星星间微波组⽹、12颗星星地组⽹、三星星间与地⾯协同业务、8B天基遥感模型、天基天⽂时域模型等关键任务的在轨验证。下⼀步计划开展6星",
+      "content_length": 1007,
+      "score": 0.0026,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "621069f2db2eb376_p9",
+      "doc_id": "621069f2db2eb376",
+      "doc_title": "三体计算星座介绍",
+      "content": "# 三、太空计算的发展趋势如何？  \n太空科技是⼤国间的博弈，⽬前也只有中美两国有能⼒和实⼒在太空计算领域进⾏竞争。  \n美国积极推动太空计算发展，NASA、微软、SpaceX、Palantir等机构与企业率先布局，但⽬前均未实现规模化在轨部署验证。微软联合多家企业计划在国际空间站建设⾸个太空计算中⼼；SpaceX通过“星盾”计划搭载传感器与算⼒单元； Lumen Orbit提出部署“算⼒星座”，构建轨道AI矩阵；AWS则提供太空云计算服务，⽀持在轨数据处理与边缘计算。Palantir推出MetaConstellation平台，致⼒于将⼈⼯智能应⽤于太空领域，该系统可接⼊现有卫星⽹络，⽀持⽤⼾对全球任意区域发起实时分析请求。  \n我国在太空计算已形成先发优势，全球⾸个整轨互联的太空计算星座正式进⼊组⽹阶段。“⼗四五”期间，国家重点研发计划“地球观测与导航”重点专项、GJ专项等国家重⼤任务中，均提出了建设太空计算基础设施任务。2024年11⽉，之江实验室在世界互联⽹⼤会上发布“三体计算星座”计划，坚持开放、共享、互联、共享的原则，联合全球合作伙伴构建千星规模的太空计算星座，总算⼒将达到1",
+      "content_length": 1869,
+      "score": 0.0026,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "e425c6fbb4e76805_p2",
+      "doc_id": "e425c6fbb4e76805",
+      "doc_title": "7B展厅参考解说词（2026年1月29日）",
+      "content": "# 三、太空计算关键技术  \n现在看到的⼀个卫星模型，就是我们⾸发的12颗卫星中的01星、02星的模型。  \n【补充科普：卫星构成】卫星可以分为卫星平台和有效载荷两个部分。卫星平台就是保证卫星正常运⾏的必要系统，包括结构、电⼒、姿态确定和控制系统、推进系统、通信系统、热控制系  \n统、综合电⼦系统。有效载荷，就是执⾏卫星任务的设备，⽐如执⾏地球观测任务的相机、雷达。⽽我们⾃⼰要做的，就是完成计算任务的载荷⸺计算载荷。  \n旁边的，是我们实验室主要聚焦的太空计算关键技术硬件技术，就是我们刚刚提到的 $3 + 2$ 。  \n星载计算机负责提供算⼒和存储资源，激光通信机负责卫星之间的通信，星载路由器是星间（激光/微波）、星地（测控）及星内（算⼒设备）通信的统⼀互联枢纽。我们可以看到，卫星上边标注了星载计算机、路由器和激光的位置。  \n计算机是我们研制的1POPS算⼒的星载计算机，常⻅的计算机⼤多是⼗⼏TOPS，正在研发10POPS算⼒。路由器是单⼝10G，总容量440G，正在研发100G的，总容量1T的路由器。激光是100Gbps通信速率，轻⼩型激光通信机，⽬前已经在中国的互联⽹星座上应⽤。",
+      "content_length": 1835,
+      "score": 0.0026,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "cc0ea7c7c43a919c_p0",
+      "doc_id": "cc0ea7c7c43a919c",
+      "doc_title": "在轨测试成果发文-新华社",
+      "content": "# 在轨测试成果发⽂-新华社\n\n# “三体计算星座”实现星间组⽹突破  \n新华社杭州2⽉XX⽇电（记者朱涵）记者12⽇从浙江新型研发机构之江实验室了解到，“三体计算星座”已实现星间组⽹突破，通过在轨协同完成了10个⼈⼯智能模型与应⽤的部署与验证，探索了深空探测、智慧城市建设、⾃然资源普查等场景的太空计算创新应⽤。\n\n# 三体计算星座指挥⼤厅  \n“三体计算星座”是之江实验室协同全球合作伙伴共同打造的千星规模太空计算基础设施，通过“计算上天、星间互联、模型上天”，推动太空科研范式变⾰。2025年5⽉14⽇，三体计算星座⾸发12颗计算卫星成功发射⼊轨。  \n据了解，经过九个⽉的在轨测试，⾸发任务已形成组⽹、计算、模型部署以及科学载荷在轨验证等四⼤核⼼能⼒。  \n专家表⽰，把模型送上天，是推动⼈⼯智能在太空应⽤与发展的关键。截⾄⽬前，团队已实现10个⼈⼯智能模型和应⽤的在轨部署。其中，80亿参数天基遥感模型和80亿参数天基天⽂时域模型，是全球在轨运⾏的参数规模最⼤的模型之⼀，有6个模型与算法通过地⾯上注实现了在轨更新部署。  \n已部署的各模型已成功执⾏多次在轨任务。在2025年11⽉10⽇，",
+      "content_length": 907,
+      "score": 0.0025,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "67f8cd08656c0a09_p2",
+      "doc_id": "67f8cd08656c0a09",
+      "doc_title": "（中文）三体计算星座画册 - 20260318-压缩",
+      "content": "# 模型部署及在轨更新能力  \n2天内完成模型在轨更新\n已实现10余个模型部署\n\n# 科学载荷在轨验证能力  \n两颗卫星搭载X射线偏振探测器 $^ { + }$ 天基天文时域模型\nX射线偏振探测器长开机进行X射线观测\n天基天文时域模型在轨处理探测数据\n成功实现伽马射线暴在轨判定和分析\n\n#  \nKEY TECHNOLOGIES FOR  \nSPACE COMPUTING  \n太空计算关键技术\n\n# 天基系统  \n天基分布式操作系统  \n具身智能卫星模型  \n星载智能计算机  \n星间激光通信机  \n星载高速路由器\n\n# 太空数字孪生平台\n\n# SPACEBORNE INTELLIGENT COMPUTER\n\n# 星载智能计算机  \n“之江智加”系列星载智能计算机，结合低成本的工业级器件和商业级操作系统，自研高通量推理优化、故障自感知以及软硬件自恢复、基于分区热流控制的大功率热控等创新技术，能够在复杂和恶劣的太空环境中，为“通信、导航、遥感、科学”卫星等各类航天器提供高可靠、高效能的在轨计算服务。\n\n# 应用场景  \n空间科学卫星  \n对地遥感卫星  \n太阳探测卫星  \n通信卫星\n\n# 产",
+      "content_length": 1195,
+      "score": 0.0025,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "55d4b46aa36bf822_p3",
+      "doc_id": "55d4b46aa36bf822",
+      "doc_title": "首发任务介绍",
+      "content": "# 星座能⼒  \n星载计算能⼒：12颗计算卫星包含2颗计算卫星（01-02星）和10颗感算卫星（03-12星），单.星算⼒分别为744TOPS和248TOPS。\n. 星间建链通信：每颗卫星装配激光/微波通信载荷实现12颗卫星通信互联。\n信息组⽹交换：星载路由器实现星间激光/微波通信，星地测控传输⼀体化设备，星内计算载.荷、激光、综合电⼦、数传等多种载荷的路由交换。星载路由器⽀持单端⼝通信速率为10G、总容量为440G、转发时延为660ns。  \n太空分布式计算：在建链组⽹的基础上，通过天基分布式操作系统将星座中的. $2 \\sim 1 2$ 颗卫星算⼒池化，实现计算资源整合统⼀，能够提供分布式计算服务并返回服务结果。\n遥感数据在轨处理：系统接⼊⽤⼾卫星的遥感数据，并将其处理为L-L等⾼级产品，或根据.地⾯上注算法实现遥感图像实时解译处理。\n. 天基模型在轨推理：8B天基遥感模型、1B天基填完呢模型在轨推理。\n. 太空计算业务基础能⼒：具备接⼊1500km距离内异轨⾯⽤⼾卫星并提供计算服务的能⼒。\n\n# 在轨任务\n\n# ⾸次发射完成如下⼏项在轨任务：  \n第⼀，天基数据在轨实时分析。对重",
+      "content_length": 1473,
+      "score": 0.0025,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "6e88704138608298_p0",
+      "doc_id": "6e88704138608298",
+      "doc_title": "（科技日报版面约稿）为AI赋能千行百业打造创新能力底座",
+      "content": "# （科技⽇报版⾯约稿）为AI赋能千⾏百业打造创新能⼒底座  \n“科技发展⾃⾝⾯临的巨⼤挑战将计算推到了科技创新能⼒建设的核⼼位置。”这是写进《之江实验室发展总体规划（2023-2027年）》的关键句。之江实验室作为浙江举全省之⼒打造的⾼能级科创平台，将推动“科技创新变⾰”置于其战略⾼位，聚焦智能计算⼀件事，以算⼒、数据、模型体系化创新，突破“⼈⼯智能 $^ { \\dag }$ 科学”，从⽽推动⼈⼯智能赋能千⾏百业。  \n⽇前，科技⽇报记者⾛进这家年轻有活⼒的新型研发机构，探寻⼈⼯智能的创新变⾰之⼒。\n\n# ⽤⼈⼯智能拓展卫星能⼒边界  \n2025年11⽉12⽇中午，“三体计算星座”在常规任务拍摄地表影像时，通过“地表异常检测模型”发现我国西北某地发⽣⼀起⽕情，模型判定为疑似燃烧秸秆。之江实验室天基计算系统研究中⼼研究专家姚柯璐向记者展⽰了这张遥感影像，解释道，“这是卫星在执⾏⼀次常规任务时⾃主识别的，我们并未预先发送任何相关指令。”作为三体计算星座模型研发与部署的负责⼈，他进⼀步表⽰，本次⽕情提醒有效验证了模型能⼒，“它不仅准确判别了⽕情，还⾃动对⽕点、烟雾范围进⾏了有效识别与分割”",
+      "content_length": 1285,
+      "score": 0.0024,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "67930e85eaec29c8_p0",
+      "doc_id": "67930e85eaec29c8",
+      "doc_title": "在轨测试-党群新闻通稿",
+      "content": "# 在轨测试-党群新闻通稿\n\n# 三体计算星座实现星间组⽹突破\n\n# ⼗个AI模型完成在轨验证  \n2⽉初，三体计算星座开展了⾯向⽔环境监测的三星协同在轨智能处理试验，通过地表要素提取模型在⽔⾯结冰的情况下提取出了关键⽔体，验证了“卫星载荷⼯作—在轨数据处理—星间协同传输—在轨模型计算—任务结果下传”的全链路能⼒。12⽇，记者从浙江的之江实验室获悉，三体计算星座实现了星间组⽹突破，通过在轨协同完成了10个⼈⼯智能模型与应⽤的部署与验证，探索了深空探测、智慧城市建设、⾃然资源普查等场景的太空计算创新应⽤。  \n三体计算星座指挥⼤厅  \n三体计算星座是之江实验室协同全球合作伙伴共同打造的千星规模太空计算基础设施，通过“计算上天、星间互联、模型上天”，推动太空科研范式变⾰，助⼒“航天 $^ { \\cdot + }$ ⼈⼯智能”创新发展。2025年5⽉14⽇，三体计算星座⾸发12颗计算卫星成功发射⼊轨。  \n之江实验室计算星座总体部技术总师李超介绍，经过九个⽉的在轨测试，三体计算星座⾸发任务已形成组⽹、计算、模型部署以及科学载荷在轨验证等四⼤核⼼能⼒。  \n把模型送上天，是推动⼈⼯智能在太空应",
+      "content_length": 1382,
+      "score": 0.0024,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "e425c6fbb4e76805_p1",
+      "doc_id": "e425c6fbb4e76805",
+      "doc_title": "7B展厅参考解说词（2026年1月29日）",
+      "content": "# ⼆、三体计算星座⾸发任务  \n在2025年5⽉14⽇，我们成功发射了⾸批12颗计算卫星。摆在我们⾯前的，就是星座的模型，可以看这个星座模型，有颜⾊的卫星，代表的就是我们⾸发的12颗计算卫星。  \n⾸发任务，完成了“计算上天、星间组⽹、模型上天”的实践，形成了四⼤能⼒：  \n第⼀，组⽹能⼒。所有的载荷、地⾯站全部IP化（解释：在过去，卫星⽹络是提供特定服务的⼀个⼀个“专⽹”，与我们平时⽤的互联⽹并不相同，全IP化改造后，融合互通：任何⽀持IP协议  \n的终端设备（⼿机、电脑、物联⽹传感器）均可通过卫星直接接⼊互联⽹，彻底打破了卫星⽹与互联⽹的壁垒。⾼效灵活：⽹络资源（如带宽）可根据IP数据流的优先级和需求进⾏动态、智能分配，利⽤率极⼤提升。简化与创新：应⽤开发者只需开发标准的互联⽹应⽤，即可在卫星⽹络上运⾏。⽤⼾使⽤体验与使⽤地⾯宽带⽹络完全⼀致。）。  \n星间激光通信最⼤速率达到100Gbps、星内星间最⼤交换容量184Gbps。星地每天可上注60MB⽂件，⽬前我们最⼤上传了超过800MB的⽂件。⽬前，我们已经实现了两组三星组⽹和分布式业务测试，正在进⾏六星组⽹的测试⼯作。这个在国",
+      "content_length": 1334,
+      "score": 0.0023,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "55d4b46aa36bf822_p2",
+      "doc_id": "55d4b46aa36bf822",
+      "doc_title": "首发任务介绍",
+      "content": "# ⾸发任务简介  \n“三体计算星座”是之江实验室通过“共商共建共享共发展”的新机制，联合全球创新主体构建的，开放共享的天基智能计算基础设施。通过“计算上天、星间组⽹、模型上天”构建千星规模的计算星座（或算⼒达1EOPS），为空间各类航天器提供天基计算服务。  \n“三体计算星座”⾸发12星于2025年5⽉14⽇搭载⻓征⼆号丁运载⽕箭在酒泉卫星发射中⼼成功发射，标志着我国⾸个整轨互联的太空计算星座正式进⼊组⽹阶段。  \n⾸发任务由同⼀轨道⾯的12颗计算卫星组成，每颗卫星均配备星载计算机、激光/微波通信机、星载路由器、天基分布式操作系统、天基模型等太空计算软硬件，通过星间通信链路组⽹，实现星间数据和算⼒互联，形成太空分布式计算系统，⽀持⽤⼾⾃定义太空计算应⽤。  \n⾸发的12颗计算卫星将在太空实现全互联组⽹，单星最⾼算⼒达744TOPS，互联后具备5POPS在轨计算能⼒和30TB存储容量，激光通信速率最⼤可达100Gbps，路由器单端⼝交换速率达10Gbps，所有卫星均部署了80亿参数天基模型，⽀持遥感数据实时处理、海量图像智能分析、智能协同观测控制等场景，实现了“计算上天、星间互联和模型",
+      "content_length": 1568,
+      "score": 0.0024,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "5eece6ea787fbac5_p150",
+      "doc_id": "5eece6ea787fbac5",
+      "doc_title": "ug576-ultrascale-gth-transceivers",
+      "content": "# Ports and Attributes  \nTable 3-37 describes the TX receiver detection ports.  \nTable 3-37: TX Receiver Detection Ports  \n| Port | Dir | Clock Domain | Description |\n| --- | --- | --- | --- |\n| TXDETECTORX | In | TXUSRCLK2 | Used to tell the GTH transceiver to begin a receiver detection operation.\n0: Normal operation.\n1: Receiver detection. |\n| TXPD[1:0] | In | TXUSRCLK2 (TXPDELECIDLEMODE makes this port asynchronous) | Power up or down the TX and RX of the GTH transceiver. In PCI Express mode,",
+      "content_length": 1735,
+      "score": 0.0128,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "a06c70fa9b490659_p1",
+      "doc_id": "a06c70fa9b490659",
+      "doc_title": "GJB1307A-2004航天火工装置通用规范",
+      "content": "# 航天火工装置通用规范\n\n# 1 范围  \n本规范规定了航天火工装置(以下简称火工装置)的通用要求、质量保证规定和交货准备。  \n本规范适用于火工装置的设计、制造、试验、检验和交货准备。\n\n# 2 规范性引用文件  \n下列文件中的条款通过本规范的引用而成为本规范的条款。凡是注日期的引用文件，其随后所有的修改单(不包含勘误的内容)或修订版均不适用于本规范，然而，鼓励根据本规范达成协议的各方研究是否可使用这些文件的最新版本。凡是不注日期的引用文件，其最新版本适用于本规范。  \nGJB 102A-1998 弹药系统术语  \nGJB344-1987 钝感电起爆器通用设计规范  \nGJB376-1987 火工品可靠性评估方法  \nGJB736.6-1989 火工品试验方法 电火工品绝缘电阻测定  \nGJB736.7-1989 火工品试验方法 电火工品桥路直流电阻测定  \nGJB736.8-1990 火工品试验方法 $71^{\\circ}C$ 试验法  \nGJB736.11-1990 火工品试验方法 电火工品静电感度试验  \nGJB2034-1994航天飞行器系统电爆分系统的安全要求和试验方法 ",
+      "content_length": 1297,
+      "score": 0.0119,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "6cde6b9a06c418c6_p113",
+      "doc_id": "6cde6b9a06c418c6",
+      "doc_title": "GJBZ25-1991电子设备和设施的接地、搭接和屏蔽设计指南",
+      "content": "表 45 射频连接器应用概要  \n| 连接器型号 | 配用电缆 | 拆卸方式 | 额定电压V | 特性阻抗Ω | 频率范围GHz | 国外参考型 号 |\n| --- | --- | --- | --- | --- | --- | --- |\n| Q9 | SYV2-1,SYV2-2SYV3, SDY-4SYV3 | 卡口 | 300,500 | 5075 | 0~4 | BNC |\n| L6 | SYV1,SYV2-1 | 螺纹 | 150 | 50 | 0~12 | SMA |\n| L8 | SYV2-1,SYV2-1SYV3 | 螺纹 | 250 | 50 | 0~12 | - |\n| L10 | SYV2-2,SYV3SDY-4 | 螺纹 | 500 | 50 | 0~4 | - |\n| L12 | SYV2-2,SYV3SDY-4 | 螺纹 |  | 50 | 0~10 | TNC |\n| L12F | SRR3 | 螺纹 |  | 50 | 0~6 | - |\n| L16 | SYV3,SYV5SYV7-1,SYV7-2SYV5-1,SYV5-2 | 螺纹 | 1000 | ",
+      "content_length": 1730,
+      "score": 0.0117,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "5eece6ea787fbac5_p149",
+      "doc_id": "5eece6ea787fbac5",
+      "doc_title": "ug576-ultrascale-gth-transceivers",
+      "content": "# TX Receiver Detect Support for PCI Express Designs\n\n# Functional Description  \nThe PCI Express specification includes a feature that allows the transmitter on a given link to detect if a receiver is present. The decision if a receiver is present is based on the rise time of TXP/TXN. Figure 3-32 shows the circuit model used for receive detection. The GTH transceiver must be in the P1 power down state to perform receiver detection. Receiver detection requires an external coupling capacitor betwe",
+      "content_length": 1397,
+      "score": 0.0115,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "9ca9ab87a30dc38a_p241",
+      "doc_id": "9ca9ab87a30dc38a",
+      "doc_title": "ug575-ultrascale-pkg-pinout",
+      "content": "# XCVU125 Bank Diagrams  \nFigure 1-49: XCVU125 Banks  \n| GTY Quad 133\nX0Y36-X0Y39 | CMAC\nX0Y5 | HP I/O Bank 53 | HP I/O Bank 73 | PCIe\nX0Y3 | GTH Quad 233\nX0Y36-X0Y39 |\n| --- | --- | --- | --- | --- | --- |\n| GTY Quad 132\nX0Y32-X0Y35 | CMAC\nX0Y4 | HP I/O Bank 52 | HP I/O Bank 72 | ILKN\nX1Y5 | GTH Quad 232\nX0Y32-X0Y35 |\n| GTY Quad 131\nX0Y28-X0Y31 | ILKN\nX0Y4 | HP I/O Bank 51 | HP I/O Bank 71 | SYSMON\nConfiguration | GTH Quad 231\nX0Y28-X0Y31\n(RCAL) |\n| GTY Quad 130\nX0Y24-X0Y27\n(RCAL) | CMAC\nX0Y3 |",
+      "content_length": 1564,
+      "score": 0.0111,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "9ca9ab87a30dc38a_p267",
+      "doc_id": "9ca9ab87a30dc38a",
+      "doc_title": "ug575-ultrascale-pkg-pinout",
+      "content": "# XCVU7P Bank Diagrams  \nFigure 1-94: XCVU7P Banks  \n| GTY Quad 133\nX0Y36-X0Y39 | CMAC\nX0Y5 | HP I/O Bank 53 | HP I/O Bank 73 | ILKN\nX1Y5 | GTY Quad 233\nX1Y36-X1Y39 |\n| --- | --- | --- | --- | --- | --- |\n| GTY Quad 132\nX0Y32-X0Y35 | PCIE4\nX0Y3 | HP I/O Bank 52 | HP I/O Bank 72 | ILKN\nX1Y4 | GTY Quad 232\nX1Y32-X1Y35 |\n| GTY Quad 131\nX0Y28-X0Y31\n(RCAL) | CMAC\nX0Y4 | HP I/O Bank 51 | HP I/O Bank 71 | SYSMON\nConfiguration | GTY Quad 231\nX1Y28-X1Y31\n(RCAL) |\n| GTY Quad 130\nX0Y24-X0Y27 | ILKN\nX0Y3 | ",
+      "content_length": 1533,
+      "score": 0.0109,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "9ca9ab87a30dc38a_p356",
+      "doc_id": "9ca9ab87a30dc38a",
+      "doc_title": "ug575-ultrascale-pkg-pinout",
+      "content": "# FLGC2104 (XCVU11P)  \nFigure 3-125: FLGC2104 Package—XCVU11P I/O Bank Diagram  \n| Bank 64 | Quad 124 | Quad 132 | Quad 228 |\n| --- | --- | --- | --- |\n| Bank 65 | Quad 125 | Quad 133 | Quad 229 |\n| Bank 66 | Quad 126 | Quad 134 | Quad 230 |\n| Bank 67 | Quad 127 | Quad 135 | Quad 231 |\n| Bank 68 | Quad 128 | Quad 224 | Quad 232 |\n| Bank 69 | Quad 129 | Quad 225 | Quad 233 |\n| Bank 70 | Quad 130 | Quad 226 | Quad 234 |\n| Bank 71 | Quad 131 | Quad 227 | Quad 235 |  \n| SelectIO Pins | Dedicated Pin",
+      "content_length": 878,
+      "score": 0.0106,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "5eece6ea787fbac5_p216",
+      "doc_id": "5eece6ea787fbac5",
+      "doc_title": "ug576-ultrascale-gth-transceivers",
+      "content": "Table 4-28: RX 8B/10B Decoder Attributes  \n| Attribute | Type | Description |\n| --- | --- | --- |\n| RX_DISPERR_SEQ_MATCH | String | Specifies whether the disparity error status of a decoded byte must match the indicator in the channel bonding and clock correction sequence.\nWhen TRUE, indicates the disparity error status must be matched.\nWhen FALSE, ignores the disparity error status. |\n| DEC_MCOMMA_MATCH | String | When set to TRUE, drives the per byte flag RXCTRL2 High when an MCOMMA is detecte",
+      "content_length": 1775,
+      "score": 0.0105,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "9ca9ab87a30dc38a_p224",
+      "doc_id": "9ca9ab87a30dc38a",
+      "doc_title": "ug575-ultrascale-pkg-pinout",
+      "content": "# XCKU085 Bank Diagrams  \nFigure 1-17: XCKU085 Banks  \nX16443-012917  \n| GTH Quad 132\nX0Y32-X0Y35 | HP I/O Bank 52 | HP I/O Bank 72 | PCIe\nX0Y4 | GTH Quad 232\nX1Y32-X1Y35\nI [RN] |\n| --- | --- | --- | --- | --- |\n| GTH Quad 131\nX0Y28-X0Y31 | HP I/O Bank 51 | HP I/O Bank 71 | SYSMON\nConfiguration | GTH Quad 231\nX1Y28-X1Y31\nH [RN] (RCAL) |\n| HP I/O Bank 30 | HP I/O Bank 50 | HR I/O Bank 70 | Configuration | GTH Quad 230\nX1Y24-X1Y27\nG [RN] |\n| HP I/O Bank 29 | HP I/O Bank 49 | HR I/O Bank 69 | PCIe\n",
+      "content_length": 1347,
+      "score": 0.0104,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "0fcef5925afa5d32_p144",
+      "doc_id": "0fcef5925afa5d32",
+      "doc_title": "GJB548B-2005微电子器件试验方法和程序",
+      "content": "# 3.9 人员安全预防措施  \n应按照国家有关规定采取适宜的安全预防措施。\n\n# 3.10 单片器件检查和接收器件\n\n# 3.10.1 器件结构  \n可接收的器件应是经X射线特征识别检查，表明具有规定的设计和结构。明显违背规定结构的器件应拒收。\n\n# 3.10.2 单个器件的缺陷  \n单个器件检查应包括但又不限于检查以下项目：多余物、由键合材料构成的低温焊或熔焊的溅沫、引线或触丝的合适形状和位置、引线或触丝线分别与半导体元件及外引线键合区的键合、半导体金属化图形和半导体元件的装架。由X射线照片检查暴露出以下缺陷的任何器件应拒收。\n\n# 3.10.2.1 外来物的存在  \n多余物应包括但又不限于以下内容：  \na) 大于 $0.025 \\mathrm{~mm}$ 的游离或附着的任何颗粒(见图 1), 或虽然尺寸较小但足以跨接器件中互相不连接的导电部分的任何外来颗粒。\nb) 内引线尾部的延伸，在半导体芯片焊盘上超过引线直径的两倍，或在封装外引线键合区上超过内引线直径的四倍（见图1）。\nc) 在封帽内部外引线端头上的主要尺寸大于 $0.08\\mathrm{mm}$ 或从形状来看会断开的任何",
+      "content_length": 2292,
+      "score": 0.0024,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "4b1be4f812af0219_p0",
+      "doc_id": "4b1be4f812af0219",
+      "doc_title": "USB3.0 AF90度",
+      "content": "·白  \n1. 4 困 碰 斜  \n￥曾 冽毫 0ε  \n华影影  \n华普网00I  \n·玉器  \n特一OVAOSCE  \n：  \nD. ${2x} - \\frac{\\pi }{6} = {2x} + \\frac{\\pi }{3}$  \n罪L8d  \n：  \n罪Ld  \n$\\therefore \\frac{y}{2} = \\frac{x}{2}$  \n08920 鸽巢  \n华  \n08923  \n：  \n·  \n：  \nnS1等鹤新区聘  \nn002-001I蜀寧区  \n：笔业  \n08-05韩韵斜  \nn08-0S  \nXXX-IOS1-I6  \nnI 末翁 翟 呵 阜d:ZIG  \nngI李未鹤 罗鹏Ld:819  \n11 考末戴 毫鹦 另葬Ld·c19  \nngI李未巍、吴峻、吴票L8d:εIG  \n31.31.045 31.31.086000 SSTIN 31.31.087001  \n| C | SEE TEXT | :ON LYND\n告林 |\n| --- | --- | --- |\n| #06 HV 0.35S#N | :BRWV N LYNd\n#字吗# |  \n| D | ",
+      "content_length": 780,
+      "score": 14.3963,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "9abbebe334000209_p0",
+      "doc_id": "9abbebe334000209",
+      "doc_title": "GJB5000A-2008军用软件研制能力成熟度模型",
+      "content": "# 军用软件研制能力成熟度模型\n\n# Capability maturity model for military software development  \n200830 发布  \n200801 实施\n\n# 目次\n\n# 前言 VI  \n1 范围· 1\n2 引用文件\n3 术语、定义和缩略语 ………………………………………… 1\n3.1 术语和定义\n3.2 缩略语\n4 概述· 2\n4.1 军用软件研制能力成熟度模型框架\n4.2 部件间的关系\n4.2.1 等级\n4.2.2 理解成熟度等级\n4.2.2.1 成熟度等级概述\n4.2.2.2 成熟度等级1：初始级\n4.2.2.3 成熟度等级2：已管理级\n4.2.2.4 成熟度等级3：已定义级\n4.2.2.5 成熟度等级4：已定量管理级\n4.2.2.6 成熟度等级5：优化级\n4.2.2.7 成熟度等级的提升\n4.2.3 过程域(PA) … 5\n4.2.4 共用目标和共用实践\n4.3 过程域部件\n4.3.1 必需的、期望的和资料性的部件\n4.3.2 过程域的组成\n4.3.2.1 概述\n4.3.2.2 过程域\n4.3.2.3 目的· 8\n4.3.2.",
+      "content_length": 2094,
+      "score": 11.5614,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "c0decfca74955d2a_p3",
+      "doc_id": "c0decfca74955d2a",
+      "doc_title": "VRF24_VRF2412DD-50WR4-模块电源50w",
+      "content": "通用特性  \n| 项目 | 工作条件 | Min. | Typ. | Max. | 单位 |\n| --- | --- | --- | --- | --- | --- |\n| 隔离电压 | 输入-输出,测试时间1分钟,漏电流小于1mA | 3000 | -- | -- | VDC |\n| 绝缘电阻 | 输入-输出,绝缘电压500VDC | 1000 | -- | -- | MΩ |\n| 隔离电容 | 输入-输出,100kHz/0.1V | -- | 100 | -- | pF |\n| 工作温度(壳温) | 见温度降额曲线 | -40 | -- | +105 | °C |\n| 存储湿度 | 无凝结 | 5 | -- | 95 | %RH |\n| 存储温度 |  | -55 | -- | +125 | °C |\n| 引脚耐焊接温度 | 波峰焊焊接(焊接时间:10s) | -- | -- | 260 |\n| 海拔高度 |  | 海拔高度:≤2000m(大气压:80~110kPa) |\n| 振动 |  | ①JESD22-b103等级1:10-1000hz,10g,1mmxyz各4循环;②JES",
+      "content_length": 1395,
+      "score": 0.0137,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "0fcef5925afa5d32_p143",
+      "doc_id": "0fcef5925afa5d32",
+      "doc_title": "GJB548B-2005微电子器件试验方法和程序",
+      "content": "# 3.3.3 特定的器件标记  \n在有规定时（见4c），作过X射线检查并已通过试验的器件，应在外壳上打上蓝点以示辨认。蓝点的直径大小约为 $1.6\\mathrm{mm}$ ，蓝点所在的位置既要易于辨认，又不至于覆盖器件上的其他标志。\n\n# 3.4 试验  \n选择X射线曝光系数以达到主尺寸分辨率为 $0.0254\\mathrm{mm}$ ，失真小于 $10\\%$ ，应对每一需要的观察角度拍摄X射线照片(见第4章）。\n\n# 3.5 操作  \n采用X射线胶片厂推荐的程序，将曝光的底片显影。底片加工中，应注意不要产生指印、划痕、模糊、化学斑点、污点等工艺缺陷。\n\n# 3.6 操作人员  \n进行X射线检查的人员应经过在X射线操作程序和技术方面的训练，能对由本方法暴露出来的缺陷给予正确的解释，并能与相应的标准比较。底片检查人的最低视力要求如下：  \na）双眼的远距离视力按国际标准视力表至少为1.0（矫正的或未矫正的视力）；\nb）近距离视力方面要求操作人员能在相距 $30\\mathrm{cm}$ 时，读出国际标准近视力表1.2的符号（矫正或未矫正的视力）；\nc) 由眼科医生、验光技师或者其他得到认",
+      "content_length": 1021,
+      "score": 0.0121,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "0fcef5925afa5d32_p223",
+      "doc_id": "0fcef5925afa5d32",
+      "doc_title": "GJB548B-2005微电子器件试验方法和程序",
+      "content": "# 3.4 自选测量  \n3.4 自选测量失效分析的目的是获得足够的信息，以便在器件的设计、生产、试验或应用中采取纠正措施。在试验条件A、B或C中，虽然可以取得关于沾污种类或观察到的状态、浓度、亚微观特征尺寸等特性，但有时还需要获得比之更详细的信息。由专业人员选择和采用的一些平时不常用的分析技术，可以提供但有时还需要获得比之更详细的信息。由专业人员选择和采用的一些平时不常用的分析技术，可以提供有关失效机理的确切的化学、物理或电气方面更广泛或更深入的知识。采用哪种技术合适，以及在试验有关失效机理的确切的化学、物理或电气方面更广泛或更深入的知识。  \n条件A、B或C中分析顺序的哪一点上使用，则应根据所需信息的特征，以及预先从规定的分析程序中所得到的结果来决定，并且应由分析人员作出判断。下面的一些分析技术，可以在适当处引入失效分析顺序中，但应采取措施以免破坏在随后的分析程序中可能观察到的失效证据。如果有多个同型号器件或失效器件，所有试样在进行自选测量之前都经过了电气检验和内部检查（见3.1.1～3.1.3和3.2.1～3.2.5），那么就可以分出一定数量的器件，在进行规定试验的同时，并行采用",
+      "content_length": 2618,
+      "score": 0.0117,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "7548668f47036671_p23",
+      "doc_id": "7548668f47036671",
+      "doc_title": "GJB1027A-2005运载器、上面级和航天器试验要求",
+      "content": "# 6.2.1 概述  \n飞行器鉴定试验的基本要求见表6中规定的全部“要求的”和“经评价要求的”试验。对于具体的型号，宜对这些试验要求进行剪裁，但应得到合同采购方  \n验收试验中的一些特殊试验(如准直度调整和测量、天线方向图和质量特性等)在鉴定试验时也应进  \n行这些试验。如果飞行器是由机载数据处理装置来控制，在做鉴定试验时应将飞行用的计算机软件驻留在机载计算机内，并尽最大可能来验证软件的运行。  \n表 5 热循环试验 (TC) 和热真空 (TV) 试验的循环次数 ${}^{\\mathrm{a}}$  \n| 要求的试验 | 组件 | 飞行器 |\n| --- | --- | --- |\n| 验收 | 鉴定 | 验收 | 鉴定 |\n| \\(N_{\\text{A}}^{\\text{f}}\\) | \\(N_{\\text{AMAX}}^{\\text{g}}\\) | \\(N_{\\text{Q}}^{\\text{h}}\\) | \\(N_{\\text{A}}^{\\text{i}}\\) | \\(N_{\\text{Q}}\\) |\n| 热真空+热循环c | - | - | - | - | - |\n| 热循环",
+      "content_length": 1155,
+      "score": 0.0114,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "7548668f47036671_p24",
+      "doc_id": "7548668f47036671",
+      "doc_title": "GJB1027A-2005运载器、上面级和航天器试验要求",
+      "content": "表 6 飞行器鉴定试验基线  \n| 试验 | 参考章条 | 建议试验顺序 | 运载器 | 上面级 | 航天器 |\n| --- | --- | --- | --- | --- | --- |\n| \\( 检查^a \\) | 4.5 | 1 | R | R | R |\n| \\( 功能^a \\) | 6.2.2 | 2 | R | R | R |\n| 压力/检漏 | 6.2.7 | 3,9,12 | R | R | R |\n| 电磁兼容 | 6.2.3 | 4 | R | R | R |\n| 冲击 | 6.2.4 | 6 | ER | R | R |\n| \\( 声^b \\)或随机振动 | 6.2.5 或 6.2.6 | 7 | ER | R | R |\n| 正弦振动 | 6.2.6 | 8 | ER | ER | R |\n| \\( 热平衡^c \\) | 6.2.8 | 10 | - | R | R |\n| 热真空 | 6.2.9 | 11 | ER | R | R |\n| 模态观测 | 6.2.10 | 5 | R | R | R |\n| 磁 | 6.2.11 | 13 | - | - | E",
+      "content_length": 842,
+      "score": 0.0112,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "99bc15460392c2e0_p1",
+      "doc_id": "99bc15460392c2e0",
+      "doc_title": "NX1-Z0109星9交付测试记录",
+      "content": "# 附件2 物理特性检查表  \n| 附表2 物理特性检查表 |\n| --- |\n| 检查时间: 2015.2.11 |\n| 检查人员: 袁晓 |\n| 质量人员: |\n| 序号 | 测试项目 | 判据 | 测试结果 | 符合性 |\n| 1 | 外观检查 | 1) 表面完整无损伤;2) 表面平整、无毛刺;3) 表面覆盖涂层无划伤、脱落、锈蚀;4) 电连接器插针无弯曲,插孔无堵塞;5) 表面应洁净、无污迹和绝缘黏着物;6) 产品电连接器都要有保护罩或保护盖; | OK | ✓ |\n| 2 | 标识检测 | 1) 产品标识、编号及其格式检查;2) 各电连接器编号的正确性检查;3) 光接口MT窗口方向标识检查; | OK | ✓ |\n| 3 | 多余物检查 | 1) 检测产品外表面无多余物;2) 产品的螺钉锁紧无松动;3) 产品内部耳听无多余物; | OK | ✓ |\n| 4 | 机械尺寸检查 | 1) 产品外包络尺寸为: 主星:(231±1)* (160±1)* (45.5±1) mm;从星:(231±1)* (160±1)* (52.5±1) mm;2) 产品对外连接器位置3) 产品安装孔位",
+      "content_length": 638,
+      "score": 0.0106,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "f330ad2f2f2103da_p1",
+      "doc_id": "f330ad2f2f2103da",
+      "doc_title": "NX1-Z0105星10交付测试记录",
+      "content": "附件2 物理特性检查表  \n| 附表2 物理特性检查表 |\n| --- |\n| 检查时间: 2015.01.15 |\n| 检查人员: 费中 |\n| 质量人员: |\n| 序号 | 测试项目 | 判据 | 测试结果 | 符合性 |\n| 1 | 外观检查 | 1) 表面完整无损伤;2) 表面平整、无毛刺;3) 表面覆盖涂层无划伤、脱落、锈蚀;4) 电连接器插针无弯曲,插孔无堵塞;5) 表面应洁净、无污迹和绝缘黏着物;6) 产品电连接器都要有保护罩或保护盖; | OK | ✓ |\n| 2 | 标识检测 | 1) 产品标识、编号及其格式检查;2) 各电连接器编号的正确性检查;3) 光接口MT窗口方向标识检查; | OK | ✓ |\n| 3 | 多余物检查 | 1) 检测产品外表面无多余物;2) 产品的螺钉锁紧无松动;3) 产品内部耳听无多余物; | OK | ✓ |\n| 4 | 机械尺寸检查 | 1) 产品外包络尺寸为: 主星:(231±1)* (160±1)* (45.5±1) mm;从星:(231±1)* (160±1)* (52.5±1) mm;2) 产品对外连接器位置3) 产品安装孔位置",
+      "content_length": 634,
+      "score": 0.0105,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "beb5128da4b182e3_p1",
+      "doc_id": "beb5128da4b182e3",
+      "doc_title": "NX1-Z0102",
+      "content": "附件2 物理特性检查表  \n| 附表2 物理特性检查表 |\n| --- |\n| 检查时间: 24.12.07 |\n| 检查人员: 贾伟 |\n| 质量人员: |\n| 序号 | 测试项目 | 判据 | 测试结果 | 符合性 |\n| 1 | 外观检查 | 1)表面完整无损伤;2)表面平整、无毛刺;3)表面覆盖涂层无划伤、脱落、锈蚀;4)电连接器插针无弯曲,插孔无堵塞;5)表面应洁净、无污迹和绝缘黏着物;6)产品电连接器都要有保护罩或保护盖; | ok | ✓ |\n| 2 | 标识检测 | 1)产品标识、编号及其格式检查;2)各电连接器编号的正确性检查;3)光接口MT窗口方向标识检查; | ok | ✓ |\n| 3 | 多余物检查 | 1)检测产品外表面无多余物;2)产品的螺钉锁紧无松动;3)产品内部耳听无多余物; | ok | ✓ |\n| 4 | 机械尺寸检查 | 1)产品外包络尺寸为:主星:(231±1)*(160±1)*(45.5±1)mm;从星:(231±1)*(160±1)*(52.5±1)mm;2)产品对外连接器位置3)产品安装孔位置及尺寸 | ok | ✓ |\n| 5 | 质量检",
+      "content_length": 1117,
+      "score": 0.0104,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "90fac7d94e4702ef_p0",
+      "doc_id": "90fac7d94e4702ef",
+      "doc_title": "三体计算星座在轨应用介绍-260226",
+      "content": "# 三体计算星座在轨应⽤介绍-260226\n\n# ⼀、天基遥感模型  \n合作单位：之江实验室、北京师范⼤学、⾹港⼤学、航天体系院  \n天基遥感模型由之江实验室⾃研，参数量达8B，融合RGB、SAR、红外、多光谱等多源遥感数据，可统⼀完成图像级、区域级与像素级14类任务处理，具备300余种⽬标识别、300余种图像分类及60余种场景分割能⼒，是当前遥感领域综合性能领先的视觉语⾔模型。该模型已于三体计算星座⾸发任务中部署⼊轨，⽬前已完成参数统计、场景分类、图像解译、⽬标检测等在轨推理任务验证。\n\n# ⼆、L-L遥感图像处理算法  \n合作单位：之江实验室  \nL-L遥感图像处理算法由之江实验室⾃研，已部署于三体计算星座⾸发任务12星，构成⼀个在轨实时处理流⽔线，能将原始遥感影像逐级转化为可供⼤模型使⽤的多级数据产品。具体流程为：原始影像（L级）经过辐射校正、波段配准、去噪及筛选（L-L）后，进⾏系统⼏何校正（L-L），再经影像融合（L-L），最终完成⽬标识别、场景分割与图像压缩（L-L）。\n\n# 三、天基天⽂时域模型  \n合作单位：国家天⽂台、⼴西⼤学、之江实验室  \n天基天⽂时域模型由国家天",
+      "content_length": 1131,
+      "score": 0.0023,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "f4d7d407bae1cbfb_p0",
+      "doc_id": "f4d7d407bae1cbfb",
+      "doc_title": "Q NI XYK2122-2024 信息层自主管理软件要求V1.6（普通商密）",
+      "content": "# 中国星网网络创新研究院有限公司企业标准  \nQ/NI XYK2122-2024 V1.6  \n替代 Q/NI XYK2122-2024 V1.2\n\n# 信息层自主管理软件要求\n\n# Software Requirements for Self Management Component  \n（V1.6）  \n2024－10－20 发布  \n2024－10－30 实施\n\n# 目 次  \n1 范围.\n2 引言文件..\n3 术语、定义和缩略语.\n4 通用要求..\n4.1 功能要求 ..\n4.2 安全性要求..\n4.3 信息接口及注册.\n5 软件架构.\n6 设备中间统一层要求..\n6.1 tty 串口设备 .. /\n6.2 存储设备 ... 4\n6.3 socket 接口 .. /\n7 应用层通用底层协议帧格式..\n7.1 协议类型.\n7.2 参考示例 ..\n8 网管接口协议.. 9\n8.1 OSS 数据库.\n8.2 Restful 接口 .. .. 10\n9 软件应用层. .12\n9.1 遥控遥测. .12\n9.2 重构 .. . 13\n9.3 波位规划 .. .14\n9.4 本星和相邻卫",
+      "content_length": 1585,
+      "score": 0.0137,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "27e26c7179930c0f_p7",
+      "doc_id": "27e26c7179930c0f",
+      "doc_title": "商星星云G2_EMC试验报告",
+      "content": "# GJB151B-2013 CE107检测波形  \n图3.2-2 智能计算模块W1-42V正线CE107检测波形（工作状态②）  \n| 产生尖峰时的开关操作状态 | 开→关 |\n| --- | --- |\n| 检测(签字): 许君超 | 校对(签字): 朱亮 |  \n# GJB151B-2013 CE107检测波形  \n图3.2-3 智能计算模块W1-42V回线CE107检测波形（工作状态②）  \n| 产生尖峰时的开关操作状态 | 关→开 |\n| --- | --- |\n| 检测(签字): 许君超 | 校对(签字): 朱亮 |  \n# GJB151B-2013 CE107检测波形  \n图3.2-4 智能计算模块W1-42V回线CE107检测波形（工作状态②）  \n| 产生尖峰时的开关操作状态 | 开→关 |\n| --- | --- |\n| 检测(签字): 许君超 | 校对(签字): 朱亮 |  \n# GJB151B-2013 CE107检测波形  \n图3.2-5 智能计算模块W2-28V正线CE107检测波形（工作状态③）  \n| 产生尖峰时的开关操作状态 | 关→开 |\n| ---",
+      "content_length": 2117,
+      "score": 0.0134,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "b559ea5c5831ab41_p2",
+      "doc_id": "b559ea5c5831ab41",
+      "doc_title": "U23 HT850M10G4T4R-80mm-A气密蝶形封装4路并行光收发一体模块使用说明书(1)(1)",
+      "content": "# 4.3. 产品光电性能  \n表 4 光电性能指标  \n| 描述 | 符号 | 数值 | 单位 | 备注 |\n| --- | --- | --- | --- | --- |\n| 最小值 | 典型值 | 最大值 |\n| 功耗 | P | - | - | 1.50 | W | 3.3V |\n| 发射光电特性(-40℃~85℃,10.3125Gbps,PRBS 231-1, Vcc=3.30V) |\n| 描述 | 符号 | 数值 | 单位 | 备注 |\n| 最小值 | 典型值 | 最大值 |\n| 平均发送光功率 | Po | -3 | - | 3 | dBm | 单通道 |\n| 发射中心波长 | λ | 840 | 850 | 860 | nm | - |\n| 消光比 | ER | 3 | - | - | dB | - |\n| 接收光电特性(-40℃~85℃,10.3125Gbps,PRBS 231-1, Vcc=3.30V) |\n| 描述 | 符号 | 数值 | 单位 | 备注 |\n| 最小值 | 最小值 | 最小值 |\n| 接收灵敏度 | Pin | - | - | -11 | dBm",
+      "content_length": 708,
+      "score": 0.0124,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "630dd2812eedb477_p2",
+      "doc_id": "630dd2812eedb477",
+      "doc_title": "光模块 HT850M10G4T4R-80mm-A气密蝶形封装4路并行光收发一体模块使用说明书",
+      "content": "# 4.3. 产品光电性能  \n表 4 光电性能指标  \n| 描述 | 符号 | 数值 | 单位 | 备注 |\n| --- | --- | --- | --- | --- |\n| 最小值 | 典型值 | 最大值 |\n| 功耗 | P | - | - | 1.50 | W | 3.3V |\n| 发射光电特性(-40℃~85℃,10.3125Gbps,PRBS 231-1, Vcc=3.30V) |\n| 描述 | 符号 | 数值 | 单位 | 备注 |\n| 最小值 | 典型值 | 最大值 |\n| 平均发送光功率 | Po | -3 | - | 3 | dBm | 单通道 |\n| 发射中心波长 | λ | 840 | 850 | 860 | nm | - |\n| 消光比 | ER | 3 | - | - | dB | - |\n| 接收光电特性(-40℃~85℃,10.3125Gbps,PRBS 231-1, Vcc=3.30V) |\n| 描述 | 符号 | 数值 | 单位 | 备注 |\n| 最小值 | 最小值 | 最小值 |\n| 接收灵敏度 | Pin | - | - | -11 | dBm",
+      "content_length": 708,
+      "score": 0.0122,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "d2e62b353e176b51_p2",
+      "doc_id": "d2e62b353e176b51",
+      "doc_title": "HT850M10G4T4R-80mm-A气密蝶形封装4路并行光收发一体模块使用说明书(1)",
+      "content": "# 4.3. 产品光电性能  \n表 4 光电性能指标  \n| 描述 | 符号 | 数值 | 单位 | 备注 |\n| --- | --- | --- | --- | --- |\n| 最小值 | 典型值 | 最大值 |\n| 功耗 | P | - | - | 1.50 | W | 3.3V |\n| 发射光电特性(-40℃~85℃,10.3125Gbps,PRBS 231-1, Vcc=3.30V) |\n| 描述 | 符号 | 数值 | 单位 | 备注 |\n| 最小值 | 典型值 | 最大值 |\n| 平均发送光功率 | Po | -3 | - | 3 | dBm | 单通道 |\n| 发射中心波长 | λ | 840 | 850 | 860 | nm | - |\n| 消光比 | ER | 3 | - | - | dB | - |\n| 接收光电特性(-40℃~85℃,10.3125Gbps,PRBS 231-1, Vcc=3.30V) |\n| 描述 | 符号 | 数值 | 单位 | 备注 |\n| 最小值 | 最小值 | 最小值 |\n| 接收灵敏度 | Pin | - | - | -11 | dBm",
+      "content_length": 708,
+      "score": 0.0121,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "9fbb11f729bb323a_p1",
+      "doc_id": "9fbb11f729bb323a",
+      "doc_title": "V7 12-21SURC-S530-A3-TR8",
+      "content": "# 12-21SURC/S530-XX/TR8  \nElectro-Optical Characteristics $( \\mathbf { T } \\mathbf { a } { = } 2 5 ^ { \\circ } \\mathrm { C }$ )  \n| Parameter | Symbol | *Chip Rank | Min. | Typ. | Max. | Unit | Condition |\n| --- | --- | --- | --- | --- | --- | --- | --- |\n| Luminous Intensity | Iv | A2 | 19 | 47 | ----- | mcd | IF=20 mA |\n| A3 | 45 | 68 | ----- |\n| A4 | 62 | 92 | ----- |\n| A5 | 75 | 115 | ----- |\n| A6 | 90 | 139 | ----- |\n| Viewing Angle | 2θ1/2 | ----- | ----- | 120 | ----- | deg | IF=20mA |\n| ",
+      "content_length": 1389,
+      "score": 0.0112,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "1b9c2e2da89f7464_p12",
+      "doc_id": "1b9c2e2da89f7464",
+      "doc_title": "SCS-01-GF-08之江首发星座卫星星上产品环境试验条件",
+      "content": "试验时电池的平均放电深度、放电倍率按其设计最大值进行模拟，电池的温度应控制在设计的工作温度范围内。\n星上单机试验矩阵\n鉴定星上单机试验项目见附表1，发射件星上单机试验项目见附表2。\n说明：表中★号表示必做试验，☆表示选做试验，▲表示可随整星参加的必做试验。\n有鉴定单机按照表格执行，无鉴定单机提供书面材料证明是否满足鉴定级试验要求。\n条件执行说明\n本文件所要求的各项试验，若要减少某些试验项目或改变试验条件，须经总体同意后执行；\n在类似轨道条件下的卫星上已经飞行考验过的单机可以省略某些试验项目，但要报请总体同意并备案；\n各单机如果没有类似飞行经历，建议单机整体或局部鉴定试验；\n各单机对上述环境试验条件具体实施有困难时需另行商定；\n本文没有具体规定特殊器件的试验，需有关单机方面自行考虑增加其试验项目和内容。  \n附表1星上单机鉴定级试验项目\n序号\n分系统\n名称\n试验项目  \nESS单板温度循环\nESS随机振动\n正弦振动\n随机振动\n寿命试验(TBD)\n冲击\n热真空\n热循环\n热冲击\n压力\n检漏\n真空放电\n微放电\n磁试验\nEMC  \n姿控\n星敏感器\n★\n★\n★\n★\n-\n★\n★\n★\n-\n-\n-\n★\n",
+      "content_length": 2962,
+      "score": 0.0111,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "302748aca14182ad_p4",
+      "doc_id": "302748aca14182ad",
+      "doc_title": "NX1-Z0105",
+      "content": "# 附件5 浪涌功耗拉偏测试记录表  \n| 附表5 浪涌功耗拉偏测试记录表 |\n| --- |\n| 检查时间:2024.11.26 |\n| 检查人员:邓学钊 |\n| 质量人员: |\n| 序号 | 测试内容 | 判据 | 测试结果 | 符合性 |\n| 1 | 浪涌电流--GPU | (1)单板浪涌持续时间:&lt;10ms;(2)单板浪涌电流值&lt;6A; | 2μ/8m/200μ/8m2.5 1.2 1.3 0.6 | ✓ |\n| 浪涌电流--FPGA | 2u/8m/8sau/17m2.8 1.2 2.2 0.6 | ✓ |\n| 2 | 反射纹波电压--GPU | 反射纹波应不大于300mVp-p; | 252m | ✓ |\n| 反射纹波电压--FPGA | 228m | ✓ |\n| 3 | 功耗测试 | (1)开机时单单机功耗&lt;70W; | GPU板 | FPGA板 | 总功耗 | #✓ |\n| 31.27 | 23.99 | 53.26 |\n| (2)各工作状态下单机峰值功&lt;128W; | GPU板 | FPGA板 | 总功耗 | ✓ |\n| 58w | 36.02",
+      "content_length": 605,
+      "score": 0.0109,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "c05d010b3f5aa563_p12",
+      "doc_id": "c05d010b3f5aa563",
+      "doc_title": "gjb152a-97军用设备和分系统电磁发射和敏感度测量",
+      "content": "# 4.1.2 EUT测试  \na. EUT 通电预热, 使其达到稳定工作状态;\nb. 将 EUT 调到所需的测试频率并使用测量路径进行测试；\nc. 采用本标准一般要求中规定的带宽和最小测量时间，使测量接收机在适用的频率范围内扫描；  \nd. 按设备规范中规定对 EUT 施加相应的调制；\ne. 记录基频 $(f_{0})$ 的功率电平和测量接收机带宽；\nf. 当必要时, 可插入基频抑制网络;\ng. 扫描关心的频率范围并记录所有谐波和乱真发射电平。该电平应加上电缆损耗、衰减器及抑制网络所有修正系数。仍保持使用 4.1.2e 条中进行基频 $(f_{0})$ 功率电平测量时使用的测量接收机带宽；\nh. 鉴别并确认乱真输出是来自 EUT 而不是测量系统的乱真响应；\ni. 对EUT的其它基频 $(f_{0})$ ，重复 $4.1.2\\mathrm{e}\\sim 4.1.2\\mathrm{h}$ 测试；\nj. 按下列步骤确定每一谐波和乱真频率的测量路径损耗：  \n（1）用信号发生器代替EUT；\n（2）保持测量路径中所有耦合器和抑制网络不变；\n（3）通过测量路径确定其损耗。为便于用低电平信号发生器",
+      "content_length": 1007,
+      "score": 0.0108,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "e098e9e3e04d5df0_p5",
+      "doc_id": "e098e9e3e04d5df0",
+      "doc_title": "NX1-Z0108星8交付测试记录",
+      "content": "附件5 浪涌功耗拉偏测试记录表  \n| 附表5 浪涌功耗拉偏测试记录表 |\n| --- |\n| 检查时间: 2015.02-11 |\n| 检查人员: 贾敏 |\n| 质量人员: |\n| 序号 | 测试内容 | 判据 | 测试结果 | 符合性 |\n| 1 | 浪涌电流--GPU | (1)单板浪涌持续时间: &lt;10ms;(2)单板浪涌电流值&lt;6A; | 2PS 7ms 200ps 8ms1.8 1.3 1.3 0.5 | ✓ |\n| 浪涌电流--FPGA | 2PS 7ms 250ps 7ms2.3 1.1 2.1 1.6 | ✓ |\n| 2 | 反射纹波电压--GPU | 反射纹波应不大于300mVp-p; | 272 | ✓ |\n| 反射纹波电压--FPGA | 212 | ✓ |\n| 3 | 功耗测试 | (1)开机时单单机功耗&lt;70W; | GPU板 | FPGA板 | 总功耗 |  |\n|  |  |  | 35.8 | 23.3 | 59.1 | ✓ |\n| (2)各工作状态下单机峰值功&lt;128W; | GPU板 | FPGA板 | 总功耗 | ✓ |\n",
+      "content_length": 889,
+      "score": 0.0104,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "78d030bf36d71a72_p0",
+      "doc_id": "78d030bf36d71a72",
+      "doc_title": "SMA-KYWHD48_中航光电",
+      "content": "# 技术要求  \n名 称： 高频插座  \n使用单位(甲方)： 之江实验室  \n研制单位（乙方）： 中航光电科技股份有限公司  \n中航光电科技股份有限公司  \n2025 年 7 月  \n更改记录  \n| 版本 | 章条编号 | 改前内容 | 改后内容 |\n| --- | --- | --- | --- |\n\n# SMA-KYWHD48 高频插座\n\n# 技术要求\n\n# 1．订货型号  \nSMA-KYWHD48\n\n# 2．产品描述  \nSMA-KYWHD48 为标准 SMA-K 界面，可与 $5 0 \\Omega$ 标准 SMA-J 型高频插头对插。无需质保及验收流程。\n\n# 3．执行标准  \n详细规范：Q/FD 22027C\n\n# 4．产品性能\n\n# 4.1 电气特性  \n特性阻抗： $5 0 \\Omega$ （设计保证）。  \n使用频率： $0 . 0 1 { \\sim } 1 2 . 4 \\mathrm { G H z }$ 。  \n电压驻波比： ${ \\leqslant } 1 . 3 5$ （随整机评测)。  \n射频插入损耗： ${ \\leqslant } 0 . 0 5 ~ \\s",
+      "content_length": 1014,
+      "score": 0.0027,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "4198c346e9bc1013_p0",
+      "doc_id": "4198c346e9bc1013",
+      "doc_title": "SSMA-JB2-1中航光电",
+      "content": "# 技术要求  \n名 称： 高频插头  \n使用单位(甲方)： 之江实验室  \n研制单位（乙方）： 中航光电科技股份有限公司  \n中航光电科技股份有限公司  \n2025 年 7 月  \n更改记录  \n| 版本 | 章条编号 | 改前内容 | 改后内容 |\n| --- | --- | --- | --- |\n\n# SSMA-JB2-1 高频插头\n\n# 技术要求\n\n# 1．订货型号  \nSSMA-JB2-1\n\n# 2．产品描述  \nSSMA-JB2-1 为标准 SSMA-J 界面，可与 $5 0 \\Omega$ 标准 SSMA-K 型高频插座对插。适配电缆：SFT2或同规格电缆。无需质保及验收流程。\n\n# 3．执行标准  \n详细规范：Q/FD 22057C\n\n# 4．产品性能\n\n# 4.1 电气特性  \n特性阻抗： $5 0 \\Omega$ （设计保证）。  \n使用频率： $0 . 0 1 { \\sim } 1 2 . 4 \\mathrm { G H z } .$ 。  \n电压驻波比： ${ \\leqslant } 1 . 2 @$ （ ${ 0 . 0 1 } \\mathrm { \\sim",
+      "content_length": 1126,
+      "score": 0.0025,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "0c720a1371f347ad_p0",
+      "doc_id": "0c720a1371f347ad",
+      "doc_title": "QJ3129-2001航天型号软件需求分析规范",
+      "content": "# 航天型号软件需求分析规范\n\n# Specification of software requirements analysis for space products  \n200115发布  \n200201实施\n\n# 前言  \n本规范是航天型号软件工程标准系列中一项技术标准，是对QJ3128—2001《航天型号软件开发规范》中有关要求的细化和补充。  \n本规范由中国航天科技集团公司提出。  \n本规范由中国航天标准化研究所归口。  \n本规范起草单位：中国航天标准化研究所。  \n本规范主要起草人：程华彦。\n\n# 航天型号软件需求分析规范\n\n# 1 范围  \n本规范规定了航天型号软件需求分析阶段的工作内容、方法、结果和评审。  \n本规范适用于航天型号软件开发的需求分析阶段。  \n航天型号软件的承制方和分承制方都必须遵守本规范。\n\n# 2 规范性引用文件  \n下列文件中的条款通过本规范的引用而成为本规范的条款。凡是注日期的引用文件，其随后所有的修改单（不包含勘误的内容）或修订版均不适用于本规范，然而，鼓励根据本规范达成协议的各方研究是否可使用这些文件的最新版本。凡是不注日期的引用文件，其最新",
+      "content_length": 1148,
+      "score": 0.0024,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "7060039b21e2b3b0_p1",
+      "doc_id": "7060039b21e2b3b0",
+      "doc_title": "商星星云G2环境试验报告-20260320",
+      "content": "如果试验异常是由试验设备配置、试验设备或试验软件引起的，只要试验异常没有对产品产生过应力试验条件，故障排除后可继续发生异常时的试验。如果试验对产品产生了过应力试验条件，则应分析过试验应力对产品的影响，然后决定是否需要对产品修复或重新投产后再试验。\n鉴定后再试验\n如果已通过鉴定试验的组件发生设计更改，影响了以前鉴定试验的有效性时，则需重新再鉴定，否则需对更改的部分再鉴定。\n如果产品的制造过程改变，包括加工程序、制造方法和生产厂家改变则需再鉴定。\n如果组件使用的型号变化，而且规定的鉴定环境比以前已鉴定的环境更严酷，使鉴定余量减少到不足原来鉴定余量的一半时，或虽然环境不比以前严酷但产品的性能要求比以前要求高，要考虑再鉴定试验。继承以前通过鉴定试验的产品但有适应性修改时，需要考虑准鉴定的再鉴定试验。\n单机完成鉴定试验后，如果开盖换器件或线路板，补充试验的项目和内容报总体审批后执行。\n环境试验\n正弦和随机振动试验\n试验时间及地点\n试验时间：\n试验地点：之江实验室2#号楼A栋101环境实验室\n试验陪试品\n试验陪试品有工装治具、加速度传感器、振动台、测试电脑等。\n试验条件\n（1）正弦振动试验条件\n一",
+      "content_length": 1980,
+      "score": 0.0137,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "7060039b21e2b3b0_p2",
+      "doc_id": "7060039b21e2b3b0",
+      "doc_title": "商星星云G2环境试验报告-20260320",
+      "content": "图 9智加G2（Z0101 ZS-ZJG2）\nZ向正样件正弦控制曲线及测点响应曲线  \n图 10智加G2（Z0102 ZS-ZJG2）\nZ向正样件正弦控制曲线及测点响应曲线  \n（4）随机振动X向振动分析\nX方向的验收级随机的控制及响应曲线如下图所示，该方向的振动曲线均控制在误差范围内。  \n图 11智加 G2（Z0101 ZS-ZJG2）\nG2 X向正样件随机控制曲线及测点响应曲线  \n图 12智加 G2（Z0102 ZS-ZJG2）\nG2 X向正样件随机控制曲线及测点响应曲线  \n（5）随机振动Y向振动分析\nY方向的验收级随机的控制及响应曲线如下图所示，该方向的振动曲线均控制在误差范围内。  \n图 13智加 G2（Z0101 ZS-ZJG2）\nG2Y向正样件随机控制曲线及测点响应曲线  \n图 14智加 G2（Z0102 ZS-ZJG2）\nG2 Y向正样件随机控制曲线及测点响应曲线  \n（6）随机振动Z向振动分析\nZ方向的验收级随机的控制及响应曲线如下图所示，该方向的振动曲线均控制在误差范围内。  \n图 15智加 G2（Z0101 ZS-ZJG2）\nG2 Z向正样件随机控制曲线及测点",
+      "content_length": 1975,
+      "score": 0.0134,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "77a098ae064b2e88_p9",
+      "doc_id": "77a098ae064b2e88",
+      "doc_title": "之江实验室智算机分系统环境试验大纲V2（20260410）-带鉴定件试验-黄总批注",
+      "content": "# 8.2.3试验条件  \n通用单机产品的正弦振动试验条件见表 10。  \n表 10 通用单机正弦振动试验条件  \n| 试验类别 | 频率范围（Hz） | 振动量级 | 振动轴向 | 扫描速率 |\n| --- | --- | --- | --- | --- |\n| 验收试验 | 7-20 | 6.25mm（O-P） | X、Y、Z向 | 4 oct/min 各轴对数从低到高扫描1次 |\n| 20-100 | 10g |\n| 鉴定试验 | 7-20 | 9.375mm（O-P） | X、Y、Z向 | 2 oct/min 各轴对数从低到高扫描1次 |\n| 20-100 | 15g |\n\n# 8.3 随机振动试验\n\n# 8.3.1 试验目的  \n验证产品承受随机振动环境并能正常工作的能力，暴露组件材料和工艺制造质量潜在缺陷。\n\n# 8.3.2 试验要求  \na. 同正弦振动试验要求。\nb. 试验前、后检查外观（无结构变形、松动异响、接口松动、元器件脱落），进行功能测试，无性能下降。\n\n# 8.3.3 试验条件  \n通用单机产品的随机振动试验条件如表 11。  \n表 11 通用单机随机振动试验",
+      "content_length": 803,
+      "score": 0.0132,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "ee8d2d58ee6bcb95_p4",
+      "doc_id": "ee8d2d58ee6bcb95",
+      "doc_title": "19_智加NX1和G1智算机验收级环境试验报告SCS-01-ZS-JB-01",
+      "content": "12\nNX1-Z0113  \nY向振动分析\nY方向的验收级ESS随机振动试验控制及响应曲线如下表所示，该方向的振动曲线均控制在误差范围内。  \n试验情况记录\n序号\n产品编号\n试验照片\n响应曲线\n1\nG1-Z0101G1-Z0102G1-Z0103\nG1-Z0104G1-Z0105G1-Z0106  \n2\nG1-Z0107  \n3\nG1-Z0108  \n4\nNX1-Z0101\nNX1-Z0107  \n5\nNX1-Z0102\nNX1-Z0113  \n6\nNX1-Z0103\nNX1-Z0104\nNX1-Z0107\nNX1-Z0110  \n7\nNX1-Z0105\nNX1-Z0106  \n8\nNX1-Z0108\nNX1-Z0111  \n9\nNX1-Z0109  \nZ向振动分析\nZ方向的验收级ESS随机振动试验控制及响应曲线如下表所示，该方向的振动曲线均控制在误差范围内。  \n试验情况记录\n序号\n产品编号\n试验照片\n响应曲线\n1\nG1-Z0101G1-Z0102G1-Z0104\nG1-Z0105  \n2\nG1-Z0103G1-Z0106  \n3\nG1-Z0107  \n4\nG1-Z0108  \n5\n",
+      "content_length": 1990,
+      "score": 0.013,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "876b705e965abd8f_p6",
+      "doc_id": "876b705e965abd8f",
+      "doc_title": "灵犀11A卫星环境与可靠性试验规范_A01_会签归档版",
+      "content": "# (2) 试验要求  \n➢ 整机温度循环试验要否开盖由各研制单位自定，试验时应采取措施，防止产品受潮（避免使用两箱法）。\n➢ 对于有恒温槽功能的晶振电路的电路板或整机，在不损伤电路板或整机的情况下应进行该项试验。\n➢ 整机（含单板）温度循环时原则上应通电，通电的具体要求为：在升温及高温保持阶段（通断测试除外），受试产品应通电；在降温阶段及低温保持阶段，研制方可根据受试产品特性和试验环境判断是否断电。  \n产品在通电过程中应进行动态监测；所有温度循环中，在上、下限时电源通断累积至少三次（如条件不允许可免做电源通断三次的试验）。  \n➢ 试验的前 n次(可停止次数)循环中出现故障应在排除故障后继续试验，故障前的循环次数应累计。在完成 n次(可停止次数)循环后，降温至室温状态进行性能测试，若性能检测正常，且在试验中止前2个循环中没有出现过故障，则最后2次循环可免做；否则须继续完成最后2次循环的无故障试验。如果仍然出现故障，则须根据具体情况进行分析并做出处理意见。\n\n# 4.2应力筛选随机振动\n\n# 4.2.1 试验量级  \n表 4-2 环境应力筛选随机振动试验条件  \n| 频率范围（Hz）",
+      "content_length": 1005,
+      "score": 0.0128,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "ee8d2d58ee6bcb95_p3",
+      "doc_id": "ee8d2d58ee6bcb95",
+      "doc_title": "19_智加NX1和G1智算机验收级环境试验报告SCS-01-ZS-JB-01",
+      "content": "（3）每台NX1测试均需要一台陪测PC机；\n（4）FPGA CAN和GPU CAN测试，均为CANA和CANB互测，因此不需要CAN盒等陪测设备。\nNX1单机试验平台搭建\n常压条件下，智加NX1试验平台搭建如下图所示。\n图 12 温箱平台示意图\n试验平台搭建总体框图如上所示。当需要温度试验时，需要部署液冷板和液冷源。\n智加NX1试验平台线缆连接图如下所示。  \n图 13 NX1连接图\n电源连接\n将NX1智算机的电源接口X01和X04通过电源调试线缆连接到直流电源。\n调试串口连接\n将NX1智算机的FPGA板调试接口X10和GPU板调试接口X09，分别通过Debug-FPGA线缆和Debug-GPU线缆的调试串口，经商用USB转串口线和USB HUB连接到调试PC机。\n千兆网接口连接\n将NX1智算机的X06和X03接口分别通过千兆-FPGA线缆和千兆-GPU线缆的千兆网接头，连接到千兆交换机。\n万兆网口连接\n将NX1智算机的G01接口通过万兆调试线缆连接到万兆交换机。\n万兆调试线缆，一端连接智算机G01接口，另一端标号01（TX1）和标号02（TX2）的LC头接万兆交换机的RX端；标号12",
+      "content_length": 1976,
+      "score": 0.0126,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "b866bb052f6cc9ff_p113",
+      "doc_id": "b866bb052f6cc9ff",
+      "doc_title": "U2 A3P250-FG144",
+      "content": "Table 2-93 • Minimum and Maximum DC Input and Output Levels  \n| DC Parameter | Description | Min. | Max. | Min. | Max. | Min. | Max. | Units |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- |\n| VCCI | Supply Voltage | 3.0 | 3.3 | 3.6 | V |\n| VOL | Output Low Voltage | 0.96 | 1.27 | 1.06 | 1.43 | 1.30 | 1.57 | V |\n| VOH | Output High Voltage | 1.8 | 2.11 | 1.92 | 2.28 | 2.13 | 2.41 | V |\n| VIL, VIH | Input Low, Input High Voltages | 0 | 3.6 | 0 | 3.6 | 0 | 3.6 | V |\n| VODIFF | Differential",
+      "content_length": 1904,
+      "score": 0.0124,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "902b25677176d5cd_p112",
+      "doc_id": "902b25677176d5cd",
+      "doc_title": "A3P1000-FG256I",
+      "content": "Table 2-93 • Minimum and Maximum DC Input and Output Levels  \n| DC Parameter | Description | Min. | Max. | Min. | Max. | Min. | Max. | Units |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- |\n| VCCI | Supply Voltage | 3.0 | 3.3 | 3.6 | V |\n| VOL | Output Low Voltage | 0.96 | 1.27 | 1.06 | 1.43 | 1.30 | 1.57 | V |\n| VOH | Output High Voltage | 1.8 | 2.11 | 1.92 | 2.28 | 2.13 | 2.41 | V |\n| VIL, VIH | Input Low, Input High Voltages | 0 | 3.6 | 0 | 3.6 | 0 | 3.6 | V |\n| VODIFF | Differential",
+      "content_length": 1904,
+      "score": 0.0122,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "b866bb052f6cc9ff_p111",
+      "doc_id": "b866bb052f6cc9ff",
+      "doc_title": "U2 A3P250-FG144",
+      "content": "Table 2-90 • LVDS Minimum and Maximum DC Input and Output Levels  \n| DC Parameter | Description | Min. | Typ. | Max. | Units |\n| --- | --- | --- | --- | --- | --- |\n| VCCI | Supply Voltage | 2.375 | 2.5 | 2.625 | V |\n| VOL | Output Low Voltage | 0.9 | 1.075 | 1.25 | V |\n| VOH | Output High Voltage | 1.25 | 1.425 | 1.6 | V |\n| IOL1 | Output Lower Current | 0.65 | 0.91 | 1.16 | mA |\n| IOH1 | Output High Current | 0.65 | 0.91 | 1.16 | mA |\n| VI | Input Voltage | 0 |  | 2.925 | V |\n| IIH2,3 | Input ",
+      "content_length": 2168,
+      "score": 0.0121,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "902b25677176d5cd_p110",
+      "doc_id": "902b25677176d5cd",
+      "doc_title": "A3P1000-FG256I",
+      "content": "Table 2-90 • LVDS Minimum and Maximum DC Input and Output Levels  \n| DC Parameter | Description | Min. | Typ. | Max. | Units |\n| --- | --- | --- | --- | --- | --- |\n| VCCI | Supply Voltage | 2.375 | 2.5 | 2.625 | V |\n| VOL | Output Low Voltage | 0.9 | 1.075 | 1.25 | V |\n| VOH | Output High Voltage | 1.25 | 1.425 | 1.6 | V |\n| IOL 1 | Output Lower Current | 0.65 | 0.91 | 1.16 | mA |\n| IOH 1 | Output High Current | 0.65 | 0.91 | 1.16 | mA |\n| VI | Input Voltage | 0 |  | 2.925 | V |\n| IIH 2,3 | Inp",
+      "content_length": 2172,
+      "score": 0.0117,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "8606ab88e304532e_p2",
+      "doc_id": "8606ab88e304532e",
+      "doc_title": "ds_LCCA30728-BK-FT1",
+      "content": "Mechanical Specifications  \n| Cable Assembly |\n| --- |\n| Length | 12 in [304.8 mm] |\n| Diameter | 0.5 in [12.7 mm] |\n| Weight | 0.1 lbs [45.36 g] |\n| Cable |\n| Cable Type | Belden 4694R-BK |\n| Impedance | 75 Ohms |\n| Inner Conductor Type | Solid |\n| Inner Conductor Material and Plating | Copper, Silver |\n| Dielectric Type | HDPE |\n| Number of Shields | 1 |\n| Shield Layer 1 | Aluminum Polyester |\n| Shield Layer 2 | Tinned Copper |\n| Jacket Material | PVC, Black |\n| Jacket Diameter | 0.274 in [6.9",
+      "content_length": 1608,
+      "score": 0.0114,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "67f0e1d450064ed4_p261",
+      "doc_id": "67f0e1d450064ed4",
+      "doc_title": "8gb_auto_ddr4_dram",
+      "content": "Figure 211: CT Type-B Input Slew Rate Definition  \nTable 96: CT Type-C Input Levels (CMOS)  \n| Parameter | Symbol | Min | Max | Unit | Note |\n| --- | --- | --- | --- | --- | --- |\n| CTipC AC input high voltage | VIH(AC)_CTipC | 0.8 × VDD | VDD1 | V | 2 |\n| CTipC DC input high voltage | VIH(DC)_CTipC | 0.7 × VDD | VDD | V | 2 |\n| CTipC DC input low voltage | VIL(DC)_CTipC | VSS | 0.3 × VDD | V | 2 |\n| CTipC AC input low voltage | VIL(AC)_CTipC | VSS1 | 0.2 × VDD | V | 2 |\n| CTipC falling time | t",
+      "content_length": 2210,
+      "score": 0.0112,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "39fadb7909f4b731_p259",
+      "doc_id": "39fadb7909f4b731",
+      "doc_title": "MT40A256M16GE-075E",
+      "content": "Figure 214: CT Type-B Input Slew Rate Definition  \nTable 96: CT Type-C Input Levels (CMOS)  \n| Parameter | Symbol | Min | Max | Unit | Note |\n| --- | --- | --- | --- | --- | --- |\n| CTipC AC input high voltage | VIH(AC)CTipC | 0.8 × VDD | VDD1 | V | 2 |\n| CTipC DC input high voltage | VIH(DC)CTipC | 0.7 × VDD | VDD | V | 2 |\n| CTipC DC input low voltage | VIL(DC)CTipC | VSS | 0.3 × VDD | V | 2 |\n| CTipC AC input low voltage | VIL(AC)CTipC | VSS1 | 0.2 × VDD | V | 2 |\n| CTipC falling time | tF_CT",
+      "content_length": 2206,
+      "score": 0.0111,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "7548668f47036671_p15",
+      "doc_id": "7548668f47036671",
+      "doc_title": "GJB1027A-2005运载器、上面级和航天器试验要求",
+      "content": "表 2 试验条件允许偏差  \n| 序号 | 试验参数 | 试验条件允许偏差 |\n| --- | --- | --- |\n| 1 | 温度 | 低温高温 | (T+0)°C(T-4)°C |\n| 2 | 相对湿度 | ±5% |\n| 3 | 加速度 | 0%~10% |\n| 4 | 静载荷和工作压力 | 0%~5% |\n| 5 | 热平衡、热真空试验压力 | &gt;133Pa133Pa~0.133Pa&lt;0.133Pa | ±10%±25%±80% |\n| 6 | 试验持续时间 | 0%~10% |\n| 7 | 振动频率 | ±2% |\n| 8 | 正弦振动加速度幅值 | ±10% |\n| 9 | 随机振动功率谱密度 | 频率范围 | 最大控制带宽 |  |\n| 20Hz~100Hz | 10Hz或者更窄中心频率的10% | ±1.5dB±1.5dB±3.0dB±1.0dB |\n| 100Hz~1000Hz |\n| 1000Hz~2000Hz | 100Hz |\n| 随机振动总均方根加速度值 |\n| 为了估计允许偏差,可以将控制带宽合并,统计自由度至少为100 |\n| 10 | 声",
+      "content_length": 738,
+      "score": 0.0108,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "54889c383347a3b6_p7",
+      "doc_id": "54889c383347a3b6",
+      "doc_title": "【合同】20240422_之江实验室 成都国星宇航科技股份有限公司 智加X2载荷在轨测试服务合同",
+      "content": "# 智加X2载荷搭载技术要求  \n项目名称：智加X2载荷在轨验证项目  \n之江实验室  \n会签单位： 成都国星宇航科技股份有限公司  \n日期：2024年4月\n\n# 1 前言  \n本文针对搭载智加X2载荷的卫星平台提出技术要求，用于明确双方产品研制、接口协调及工作界面的分工，作为搭载卫星研制的依据文件。\n\n# 2 任务及总体指标\n\n# 2.1 卫星总体技术指标\n\n# 2.1.1 研制任务  \n由成都国星宇航科技股份有限公司（以下简称“国星宇航”）负责研制并发射1颗在轨试验卫星，卫星搭载之江实验室研制的智加载荷产品，并完成在轨技术验证。该项目主要研制任务包括：  \n国星宇航与之江实验室明确搭载载荷产品接口约束条件，并按接口约束完成双方产品接口开发工作；\n由之江实验室负责完成载荷产品研制，并通过国星宇航验收确认；\n由国星宇航负责完成卫星平台研制，并完成与搭载载荷产品接口验证测试；\n由国星宇航负责完成卫星发射，并组织之江实验室完成载荷在轨技术验证。\n\n# 2.1.2 卫星轨道  \n卫星搭载发射轨道要求为 $500 \\sim 600 \\mathrm{~km}$ 太阳同步轨道。历元为星箭分离时刻的",
+      "content_length": 930,
+      "score": 0.0106,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "0fcef5925afa5d32_p0",
+      "doc_id": "0fcef5925afa5d32",
+      "doc_title": "GJB548B-2005微电子器件试验方法和程序",
+      "content": "# 微电子器件试验方法和程序\n\n# Test methods and procedures for microelectronic device  \n200502 发布  \n200601 实施\n\n# 目次\n\n# 前言 IV  \n1 范围  \n2 引用文件  \n3 术语和定义  \n4一般要求 2  \n4.1 试验方法的编号·  \n4.2 试验结果·  \n4.3 试验样品的处理  \n4.4 器件的取向  \n4.5 试验条件·  \n4.6 一般注意事项·\n\n# 5 详细要求·  \n方法1001 低气压(高空工作) …………………………………………8  \n方法1002. 浸液  \n方法1003绝缘电阻· 11  \n方法1004.1 耐湿  \n方法1005.1 稳态寿命· 16  \n方法1006 间歇寿命· 22  \n方法1007 模拟寿命· 23  \n方法1008.1 稳定性烘焙· 24  \n方法1009.2 盐雾(盐汽) 26  \n方法1010.1 温度循环 31  \n方法1011.1 热冲击· 33  \n方法1012 热性能· 35  \n方法1013.1 露点 44  \n方法1014.2 ",
+      "content_length": 1961,
+      "score": 0.0105,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "c05d010b3f5aa563_p0",
+      "doc_id": "c05d010b3f5aa563",
+      "doc_title": "gjb152a-97军用设备和分系统电磁发射和敏感度测量",
+      "content": "# 中华人民共和国国家军用标准  \nFL 0122  \nGJB 152A-97\n\n# 军用设备和分系统电磁发射和敏感度测量\n\n# Measurement of electromagnetic emission and susceptibility for military equipment and subsystems  \n199723 发布  \n199701 实施\n\n# 目次  \n1 范围 (1)  \n1.1 主题内容 (1)\n1.2 适用范围 (1)\n2 引用文件 (1)\n3 定义 (1)\n3.1 术语 (1)\n3.2 缩写词 (1)\n3.3符号、代号 (2)\n4一般要求 (2)\n4.1 测量容差 (2)\n4.2 电磁环境电平 (2)\n4.3 屏蔽室 (2)\n4.4 接地平板 (3)\n4.5 电源阻抗 (3)\n4.6 测试注意事项 (3)\n4.7 EUT测试配置 (4)\n4.8 EUT 的工作 ………………………………………… (5)\n4.9 测试设备的使用 (6)\n4.10 测试设备和天线校准 ………………………………………… (8)\n4.11 天线系数 (8)\n5 详细要求 ",
+      "content_length": 1562,
+      "score": 0.0028,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "c05d010b3f5aa563_p1",
+      "doc_id": "c05d010b3f5aa563",
+      "doc_title": "gjb152a-97军用设备和分系统电磁发射和敏感度测量",
+      "content": "# 军用设备和分系统电磁发射\n\n# 和敏感度测量  \nMeasurement of electromagnetic emission and susceptibility  \nfor military equipment and subsystems  \nGJB 152A-97  \n代替  \nGJB 152-86\n\n# 1 范围\n\n# 1.1 主题内容  \n本标准规定了电子、电气和机电设备及分系统电磁发射和敏感度特性的测量方法，用于测量并确定电子、电气和机电设备及分系统是否符合GJB151A《军用设备和分系统电磁发射和敏感度要求》的规定。\n\n# 1.2 适用范围  \n本标准适用于各种军用电子、电气和机电设备及分系统。\n\n# 2、引用文件  \nGB/T6113-95 无线电干扰和抗扰度测量设备规范  \nGB8702-88 电磁辐射防护规定  \nGJB 72-85 电磁干扰和电磁兼容性名词术语  \nGJB 151A-97 军用设备和分系统电磁发射和敏感度要求  \nQJ 2840-96 电磁兼容性测量天线的天线系数校准方法\n\n# 3 定义\n\n# 3.1 术语  \n本标准使用的术语符合GJB7",
+      "content_length": 1031,
+      "score": 0.0026,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "c05d010b3f5aa563_p2",
+      "doc_id": "c05d010b3f5aa563",
+      "doc_title": "gjb152a-97军用设备和分系统电磁发射和敏感度测量",
+      "content": "# 4.2 电磁环境电平  \n当在屏蔽室内进行测试时，EUT断电和所有辅助设备通电时测得的电磁环境电平应至少低于规定的极限值6dB。电源线上的传导环境电平应在断开EUT但连接一个电阻负载情况下测量，该电阻负载应流过与EUT相同的额定电流。  \n当在屏蔽室内按GJB151A对EUT进行考核试验时，电磁环境电平没必要记录在EMITR中；在屏蔽室外进行测试时，则测试应在电磁环境电平处于最低点的时间和条件下进行，电磁环境电平应记录在GJB151A要求的EMITR中，并不应影响考核试验结果。\n\n# 4.3 屏蔽室  \n为防止 EUT 和外部环境互相影响, 通常在屏蔽室内进行试验。屏蔽室必须具有足够的屏蔽效能以满足 4.2 条电磁环境电平要求。屏蔽室必须足够大以满足 4.7 条 EUT 配置要求和单项测试方法所需的天线配置要求。\n\n# 4.3.1 射频吸波材料  \n当在屏蔽室内进行辐射发射和辐射敏感度测试时，为减少反射，改善准确性和重复性，应采用射频吸波材料(浸碳泡沫尖劈、铁氧体瓦、铁氧体瓦与尖劈组合等)。射频吸波材料应位于EUT上面、后面和两侧面以及辐射和接收天线后面，如图1所示。吸波材料最低性",
+      "content_length": 1106,
+      "score": 0.0025,
+      "chunk_type": "parent",
+      "parent_id": null
+    },
+    {
+      "chunk_id": "c05d010b3f5aa563_p3",
+      "doc_id": "c05d010b3f5aa563",
+      "doc_title": "gjb152a-97军用设备和分系统电磁发射和敏感度测量",
+      "content": "# 4.4.2 复合材料接地平板  \n当EUT安装在导电性复合材料的接地平板上时，应满足实际安装的表面电阻率要求，并应使用适合于该接地平板材料的方法搭接到屏蔽室上。  \n在金属(铜)或复合材料接地平板上进行的测试表明, 二者在电磁耦合测试结果上有差别。因此, 尽可能复现实际的安装条件。在某些情况下, 如果同一EUT的不同单元分别安装在不同材料的装备上, 则测试配置有必要采用几种接地平板。\n\n# 4.5 电源阻抗  \n除非在单项测试方法中另有说明，本标准所有测试方法都使用LISN来隔离电源干扰并为EUT提供规定的电源阻抗。LISN电路应符合图6,其阻抗特性应符合图7。  \nLISN阻抗特性至少每年在下列条件下测量一次：  \na. 阻抗应在 LISN 的负载端的电源输出线与 LISN 金属壳体之间进行测试；\nb. LIsN 的信号输出端口应端接 $50\\Omega$ 电阻；\nc. LISN 的电源输入端应空置。  \n阻抗测量结果应在EMITR中提供。\n\n# 4.6.1 辅助设备  \n与测量接收机一起使用的辅助设备不应降低测试的完善性。\n\n# 4.6.2 无关人员和设备  \n测试区内应没有无",
+      "content_length": 1323,
+      "score": 0.0023,
+      "chunk_type": "parent",
+      "parent_id": null
+    }
+  ],
+  "token_usage": {
+    "prompt_tokens": 38817,
+    "completion_tokens": 1312,
+    "total_tokens": 40129
+  },
+  "timing": {
+    "total": 56.71
+  },
+  "error": null
+}

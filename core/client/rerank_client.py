@@ -40,7 +40,10 @@ class RerankClient:
                 )
                 response.raise_for_status()
                 data = response.json()
-                return [(doc, score) for doc, score in data["results"]]
+                return [
+                    (r["document"]["text"], r["relevance_score"])
+                    for r in data["results"]
+                ]
         except Exception as e:
             logger.error(f"Rerank 失败: {e}")
             return [(doc, 1.0 - i * 0.01) for i, doc in enumerate(documents)]

@@ -137,7 +137,6 @@ class RAGPipelineEvaluator:
                 use_rewrite=self.use_rewrite,
                 use_rerank=True,
                 rerank_top_k=self.rerank_top_k,
-                use_dag=False,
                 use_generation=self.use_generation,
             )
 

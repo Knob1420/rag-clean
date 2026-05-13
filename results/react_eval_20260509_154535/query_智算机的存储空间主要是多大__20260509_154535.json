@@ -1,0 +1,56 @@
+{
+  "eval_id": "20260509_154535",
+  "timestamp": "2026-05-09T16:17:43.332675",
+  "query": "智算机的存储空间主要是多大？",
+  "answer": "根据知识库检索结果，智算机（星载智能计算机）的存储空间因型号不同而有所差异。以下是各系列型号的存储空间配置：\n\n## 智加NX系列（GPU+FPGA架构）\n- **智加NX1**：GPU-SOC: 4TB；FPGA-SOC: 4TB [来源: 产品参数表]\n- **智加NX2**：GPU-SOC: 2TB；FPGA-SOC: 4TB [来源: 产品参数表]\n- **智加NX3**：GPU-SOC: 4TB；FPGA-SOC: 4TB [来源: 产品参数表]\n- **智加NX4**：GPU-SOC: 4TB；FPGA-SOC: 4TB [来源: 产品参数表]\n\n## 智加G系列（纯GPU架构）\n- **智加G1**：4TB [来源: 产品参数表]\n- **智加G1A**：4TB [来源: 产品参数表]\n- **智加G1B**：4TB [来源: 产品参数表]\n- **智加G2**：4TB [来源: 产品参数表]\n- **智加G3**：4TB [来源: 产品参数表]\n\n## 智加X系列（国产化架构）\n- **智加X1**：1TB [来源: 产品参数表]\n- **智加X2**：64GB [来源: 产品参数表]\n- **智加X3**：4TB(SSD) [来源: 产品参数表]\n- **智加X4**：2TB(SSD) [来源: 产品参数表]\n- **智加X100**：16TB [来源: 产品参数表]\n- **智加X100-GPU**：4TB [来源: 产品参数表]\n\n## 存储空间总结\n1. **主流配置**：大多数型号采用4TB存储空间，这是智算机最常见的配置。\n2. **高端型号**：智加X100提供最大的16TB存储空间。\n3. **入门型号**：智加X2存储空间最小，为64GB。\n4. **双存储架构**：NX系列采用GPU-SOC和FPGA-SOC双存储设计，总存储空间可达8TB（如NX1、NX3、NX4）。\n5. **存储类型**：部分型号明确标注使用SSD固态存储（如X3、X4）。\n\n如果您需要了解特定型号的更多详细信息，请告诉我具体型号名称。",
+  "terminated_reason": "finish",
+  "total_iterations": 3,
+  "steps": [
+    {
+      "iteration": 0,
+      "thought": "",
+      "action": "resolve_entities",
+      "action_input": {
+        "entities": [
+          "智算机"
+        ]
+      },
+      "observation": "【实体解析结果】\n\n输入: 智算机\n  类型: 大类\n  标准名: 星载智能计算机\n  子实体: 智加NX1, 智加NX2, 智加NX3, 智加NX4, 智加G1, 智加G1A, 智加G1B, 智加G2, 智加G3, 智加X1, 智加X2, 智加X3, 智加X4, 智加X100, 智加X100-GPU",
+      "duration": 3.039
+    },
+    {
+      "iteration": 1,
+      "thought": "",
+      "action": "spec_query",
+      "action_input": {
+        "entities": [
+          "星载智能计算机"
+        ],
+        "fields": [
+          "存储空间",
+          "型号"
+        ]
+      },
+      "observation": "【产品参数表查询结果】\n\n## 系列：智加NX系列\n\n### 1. 智加NX1\n   分类: 星载智能计算机\n   合作单位: 国星宇航\n   架构: 英伟达GPU-SOC+赛灵思FPGA-SOC\n   算力: 248TOPS@INT8\n   重量: 2.35kg（带盖）/ 2.07±0.1kg（不带盖）\n   功耗: 开机静置51W / 普通业务93.5W / 峰值128W\n   尺寸: 231mm×160mm×52.5mm（带盖）/ 231mm×160mm×45.5mm（不带盖）\n   内存: GPU-SOC: 64GB+ECC； FPGA-SOC: 4GB(PS)+4GB(PL)+ECC\n   存储: GPU-SOC: 4TB； FPGA-SOC: 4TB\n   对外接口: CAN×4、PPS×2、千兆以太网×4、万兆以太网×2\n   核心芯片: (非国产) ORIN+XCZU19EG\n   输入电压: 28V±20%（一次电源）\n   工作温度: -20℃~50℃\n   储存温度: -25℃~55℃\n   操作系统: Ubuntu 22.04.4 LTS\n   设计寿命: 5年",
+      "duration": 3.375
+    },
+    {
+      "iteration": 2,
+      "thought": "",
+      "action": "finish",
+      "action_input": {},
+      "observation": "提交最终回答（887 字）",
+      "duration": 19.925
+    }
+  ],
+  "accumulated_chunks": [],
+  "token_usage": {
+    "prompt_tokens": 13340,
+    "completion_tokens": 805,
+    "total_tokens": 14145
+  },
+  "timing": {
+    "total": 26.339
+  },
+  "error": null
+}

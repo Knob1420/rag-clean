@@ -1,14 +1,12 @@
-# Welcome to Chainlit! 🚀🤖
+# 之江太空计算 RAG 助手
 
-Hi there, Developer! 👋 We're excited to have you on board. Chainlit is a powerful tool designed to help you prototype, debug and share applications built on top of LLMs.
+基于文档的智能问答系统。输入问题即可获得回答，回答末尾附带参考文档来源。
 
-## Useful Links 🔗
+## 使用方式
 
-- **Documentation:** Get started with our comprehensive [Chainlit Documentation](https://docs.chainlit.io) 📚
-- **Discord Community:** Join our friendly [Chainlit Discord](https://discord.gg/k73SQ3FyUh) to ask questions, share your projects, and connect with other developers! 💬
+直接在输入框中输入问题，系统将自动检索知识库并生成回答。
 
-We can't wait to see what you create with Chainlit! Happy coding! 💻😊
-
-## Welcome screen
-
-To modify the welcome screen, edit the `chainlit.md` file at the root of your project. If you do not want a welcome screen, just leave this file empty.
+示例问题：
+- G1星载计算机的功耗是多少？
+- 哪些产品支持抗辐照设计？
+- 对比 X200 和 X300 的接口规格

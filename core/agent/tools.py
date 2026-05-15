@@ -8,7 +8,8 @@ ReAct Agent 工具定义与执行
 - finish         : 提交最终答案（终止信号）
 """
 
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Any, Dict, List, Optional, Set, Tuple, Union
+from dataclasses import dataclass
 
 from loguru import logger
 
@@ -182,8 +183,15 @@ def _truncate_output(text: str, max_chars: int = MAX_TOOL_OUTPUT_CHARS) -> str:
     )
 
 
+CHUNK_SUMMARY_LEN = 200  # observation 中每个 chunk 截断字数
+
+
 def _format_chunks_summary(chunks: List[RetrievedChunk]) -> str:
-    """将检索结果格式化为摘要供 LLM 消费（完整内容）"""
+    """将检索结果格式化为摘要供 LLM 消费（截断内容节省 token）
+
+    注意：这里只传截断后的摘要给 LLM，减少 token 消耗。
+    原始完整 chunk 内容保存在 accumulated_chunks 中，用于 finish 时 expand。
+    """
     if not chunks:
         return "未找到匹配结果。"
 
@@ -191,10 +199,13 @@ def _format_chunks_summary(chunks: List[RetrievedChunk]) -> str:
     for i, chunk in enumerate(chunks):
         doc_name = chunk.doc_title or chunk.doc_id
         score_str = f"{chunk.score:.4f}" if chunk.score else "N/A"
+        content = chunk.content
+        if len(content) > CHUNK_SUMMARY_LEN:
+            content = content[:CHUNK_SUMMARY_LEN] + "..."
         parts.append(
             f"[{i+1}] 文档={doc_name} | "
             f"分数={score_str}\n"
-            f"  内容: {chunk.content}"
+            f"  内容: {content}"
         )
     return "\n".join(parts)
 
@@ -207,6 +218,8 @@ def _format_chunks_summary(chunks: List[RetrievedChunk]) -> str:
 class ToolExecutor:
     """工具执行器 — 管理工具调用分发和状态"""
 
+    SEMANTIC_DEDUP_THRESHOLD = 0.92  # cosine similarity threshold
+
     def __init__(
         self,
         retrieval_service: Optional[RetrievalService] = None,
@@ -214,55 +227,65 @@ class ToolExecutor:
     ):
         self._retrieval = retrieval_service or RetrievalService()
         self._store = store or get_store()
-        # 累积的 chunks（跨步骤）
-        self.accumulated_chunks: List[RetrievedChunk] = []
+        # 累积的 chunks（dict 自动去重，key=chunk_id）
+        self.accumulated_chunks: Dict[str, RetrievedChunk] = {}
+        # spec_query 结果单独存储
+        self.spec_results: Dict[str, RetrievedChunk] = {}
+        # 用于语义去重的 embedding cache
+        self._embedding_cache: Dict[str, List[float]] = {}
 
-    def execute(self, tool_name: str, arguments: Dict[str, Any]) -> str:
+    def execute(
+        self, tool_name: str, arguments: Dict[str, Any]
+    ) -> Tuple[str, List[RetrievedChunk]]:
         """
-        执行工具调用，返回结果字符串。
-
-        Args:
-            tool_name: 工具名称
-            arguments: 解析后的参数字典
+        执行工具调用，返回结果字符串和真正新增的 chunks（用于判断是否有实质新信息）。
 
         Returns:
-            工具执行结果（已截断）
+            (observation: str, truly_new_chunks: List[RetrievedChunk])
         """
+        truly_new: List[RetrievedChunk] = []
         try:
             if tool_name == "bm25_search":
-                result = self._exec_bm25_search(arguments)
+                result, truly_new = self._exec_bm25_search(arguments)
             elif tool_name == "vector_search":
-                result = self._exec_vector_search(arguments)
+                result, truly_new = self._exec_vector_search(arguments)
             elif tool_name == "search_knowledge":
                 # 兼容旧调用：路由到 BM25
                 logger.warning(
                     "[ToolExecutor] search_knowledge 已拆分，路由到 bm25_search"
                 )
-                result = self._exec_bm25_search(arguments)
+                result, truly_new = self._exec_bm25_search(arguments)
             elif tool_name == "spec_query":
-                result = self._exec_spec_query(arguments)
+                result, _ = self._exec_spec_query(arguments)
             elif tool_name == "finish":
                 result = arguments.get("answer", "")
             else:
                 result = f"错误：未知工具 '{tool_name}'"
 
-            return _truncate_output(result)
+            return _truncate_output(result), truly_new
 
         except Exception as e:
             logger.error(f"[ToolExecutor] 工具 {tool_name} 执行失败: {e}")
-            return f"工具执行出错: {str(e)}。请分析错误并尝试不同方法。"
+            return f"工具执行出错: {str(e)}。请分析错误并尝试不同方法。", []
 
     # ── bm25_search（关键词检索）───────────────────────────────────────
 
-    def _exec_bm25_search(self, args: Dict[str, Any]) -> str:
+    def _exec_bm25_search(
+        self, args: Dict[str, Any]
+    ) -> Tuple[str, List[RetrievedChunk]]:
         """
-        BM25 关键词检索：支持分组并发，按分组返回结果。
+        BM25 关键词检索：支持分组并发，每个 group 内的多个关键词合并为一条 ES 查询。
+
+        LLM 传的 queries 格式:
+          [{"label": "子问题1", "queries": ["关键词A", "关键词B"]}, ...]
+
+        每个 group 的 queries 用 | 合并成一条 Lucene query_string，一次 ES 查询。
         """
         raw_queries = args.get("queries", [])
         top_k = args.get("top_k", 10)
 
         if not raw_queries:
-            return "错误：queries 不能为空"
+            return "错误：queries 不能为空", []
 
         # 兼容旧格式
         if raw_queries and isinstance(raw_queries[0], str):
@@ -270,66 +293,62 @@ class ToolExecutor:
         else:
             groups = raw_queries
 
-        from concurrent.futures import ThreadPoolExecutor, as_completed
-
         options = RetrievalOptions(top_k=top_k, use_rerank=False)
 
-        def _search_single_bm25(q: str) -> Tuple[str, List[RetrievedChunk]]:
+        def _search_single_group(
+            label: str, queries: List[str]
+        ) -> Tuple[str, str, List[RetrievedChunk]]:
+            """一个 group 合并为一条 ES 查询"""
+            # 用 | 合并关键词，Lucene query_string 支持 OR 交替
+            combined_query = "|".join(queries)
             try:
-                # 跳过 _build_bm25_query：LLM 已决定关键词策略，直接作为 Lucene query_string 发给 ES
-                # Lucene query_string 语法支持 | 交替、+ - 布尔、引号短语 等
-                chunks = self._retrieval._execute_bm25(q, options, top_k)
+                chunks = self._retrieval._execute_bm25(combined_query, options, top_k)
             except Exception as e:
-                logger.warning(f"[bm25_search] query='{q}' 失败: {e}")
-                return (q, [])
+                logger.warning(
+                    f"[bm25_search] group='{label}' query='{combined_query}' 失败: {e}"
+                )
+                return (label, combined_query, [])
             if chunks:
                 from core.query_engineer.rerank_query import build_rerank_query
 
-                rerank_q = build_rerank_query(q)
+                rerank_q = build_rerank_query(combined_query)
                 chunks = self._auto_rerank(chunks, rerank_q, top_k)
-            return (q, chunks)
+            return (label, combined_query, chunks)
+
+        # 并发执行所有 groups（每个 group 一次 ES 查询）
+        from concurrent.futures import ThreadPoolExecutor, as_completed
 
         group_results: List[Tuple[str, str, List[RetrievedChunk]]] = []
         all_futures = {}
 
-        with ThreadPoolExecutor(
-            max_workers=min(sum(len(g["queries"]) for g in groups), 5)
-        ) as pool:
+        with ThreadPoolExecutor(max_workers=min(len(groups), 5)) as pool:
             for group in groups:
                 label = group.get("label", "查询")
-                for q in group["queries"]:
-                    future = pool.submit(_search_single_bm25, q)
-                    all_futures[future] = (label, q)
+                queries = group.get("queries", [])
+                if queries:
+                    future = pool.submit(_search_single_group, label, queries)
+                    all_futures[future] = (label, queries)
 
             for future in as_completed(all_futures):
-                label, q = all_futures[future]
                 try:
-                    query, chunks = future.result()
-                    group_results.append((label, query, chunks))
+                    label, combined, chunks = future.result()
+                    group_results.append((label, combined, chunks))
                 except Exception as e:
-                    logger.warning(
-                        f"[bm25_search] group='{label}' query='{q}' 执行异常: {e}"
-                    )
+                    label, queries = all_futures[future]
+                    logger.warning(f"[bm25_search] group='{label}' 执行异常: {e}")
 
-        # 保持原始顺序
-        group_order = {}
-        idx = 0
-        for group in groups:
-            label = group.get("label", "查询")
-            for q in group["queries"]:
-                group_order[(label, q)] = idx
-                idx += 1
-        group_results.sort(key=lambda x: group_order.get((x[0], x[1]), 0))
+        # 保持原始 group 顺序
+        group_order = {g["label"]: i for i, g in enumerate(groups)}
+        group_results.sort(key=lambda x: group_order.get(x[0], 0))
 
-        # 累积 chunks
-        global_seen: Set[str] = set()
-        for _, _, chunks in group_results:
-            for chunk in chunks:
-                if chunk.chunk_id not in global_seen:
-                    self.accumulated_chunks.append(chunk)
-                    global_seen.add(chunk.chunk_id)
+        # 累积 chunks（内部自动去重 + 上限 + 语义去重）
+        all_chunks = [c for _, _, chunks in group_results for c in chunks]
+        truly_new = self._accumulate_chunks(all_chunks)
 
-        return self._format_grouped_results(group_results, search_type="BM25")
+        return (
+            self._format_grouped_results(group_results, search_type="BM25"),
+            truly_new,
+        )
 
     # ── vector_search（语义检索 + HyDE）─────────────────────────────────
 
@@ -383,14 +402,10 @@ class ToolExecutor:
             rerank_q = build_rerank_query(query)
             chunks = self._auto_rerank(chunks, rerank_q, top_k)
 
-        # 累积 chunks
-        global_seen: Set[str] = set()
-        for chunk in chunks:
-            if chunk.chunk_id not in global_seen:
-                self.accumulated_chunks.append(chunk)
-                global_seen.add(chunk.chunk_id)
+        # 累积 chunks（内部自动去重 + 上限 + 语义去重）
+        truly_new = self._accumulate_chunks(chunks)
 
-        return self._format_vector_results(query, chunks)
+        return self._format_vector_results(query, chunks), truly_new
 
     def _format_grouped_results(
         self,
@@ -415,14 +430,16 @@ class ToolExecutor:
             for qi, (query, chunks) in enumerate(query_items):
                 parts.append(f'  ═══ 查询 {qi+1}: "{query}" ═══\n')
                 if not chunks:
-                    parts.append("  未找到匹配结果。\n")
+                    parts.append(
+                        "  ⚠️ 未找到匹配结果。如果这是关键信息，建议换不同关键词重试。\n"
+                    )
                 else:
                     parts.append(f"  找到 {len(chunks)} 条匹配结果：")
                     for j, chunk in enumerate(chunks):
                         doc_name = chunk.doc_title or chunk.doc_id
                         score_str = f"{chunk.score:.4f}" if chunk.score else "N/A"
                         parts.append(
-                            f"  [{j+1}] 文档={doc_name} | "
+                            f"  [{j+1}] chunk_id={chunk.chunk_id} | 文档={doc_name} | "
                             f"分数={score_str}\n"
                             f"    内容: {chunk.content}"
                         )
@@ -448,7 +465,7 @@ class ToolExecutor:
             doc_name = chunk.doc_title or chunk.doc_id
             score_str = f"{chunk.score:.4f}" if chunk.score else "N/A"
             parts.append(
-                f"  [{j+1}] 文档={doc_name} | 分数={score_str}\n"
+                f"  [{j+1}] chunk_id={chunk.chunk_id} | 文档={doc_name} | 分数={score_str}\n"
                 f"    内容: {chunk.content}"
             )
         return "\n".join(parts)
@@ -592,7 +609,7 @@ class ToolExecutor:
 
     # ── spec_query ──────────────────────────────────────────────────
 
-    def _exec_spec_query(self, args: Dict[str, Any]) -> str:
+    def _exec_spec_query(self, args: Dict[str, Any]) -> Tuple[str, List[RetrievedChunk]]:
         entities = args.get("entities", [])
         fields = args.get("fields", [])
         constraints = args.get("constraints", {})
@@ -610,25 +627,191 @@ class ToolExecutor:
             return f"未找到匹配 '{', '.join(entities)}' 的产品参数。"
 
         formatted = format_spec_context(results, "recommend")
-        return formatted
+        # spec_results 单独存储，不计入 30 上限
+        return formatted, []  # 返回空 truly_new，因为 spec_query 不走 chunks 累积
 
     # ── 内部辅助 ────────────────────────────────────────────────────
 
-    def _accumulate_chunks(self, new_chunks: List[RetrievedChunk]) -> None:
-        """将新检索结果累积到状态中（去重）"""
-        seen_ids = {c.chunk_id for c in self.accumulated_chunks}
-        for chunk in new_chunks:
-            if chunk.chunk_id not in seen_ids:
-                self.accumulated_chunks.append(chunk)
-                seen_ids.add(chunk.chunk_id)
+    def _accumulate_chunks(
+        self, new_chunks: List[RetrievedChunk]
+    ) -> List[RetrievedChunk]:
+        """将新检索结果累积到状态中（去重 + 语义去重）
 
-    def expand_accumulated_chunks(self) -> None:
-        """将累积的 child/summary chunks 统一展开为 parent chunks（finish 时调用）"""
+        Returns:
+            实际新增的 chunks 列表（用于判断是否有实质新信息）
+        """
+        if not new_chunks:
+            return []
+
+        # 1. 语义去重 — 与已累积 chunks 做 cosine similarity
+        filtered_chunks = self._semantic_dedup(new_chunks)
+
+        # 2. 检查是否真的新（用于返回给 caller 判断是否有实质进展）
+        truly_new: List[RetrievedChunk] = []
+        for chunk in filtered_chunks:
+            if chunk.chunk_id not in self.accumulated_chunks:
+                truly_new.append(chunk)
+
+        # 3. 追加到累积
+        for chunk in truly_new:
+            self.accumulated_chunks[chunk.chunk_id] = chunk
+
+        logger.info(
+            f"[ToolExecutor] 累积 chunks: {len(self.accumulated_chunks)} "
+            f"(新增 {len(truly_new)})"
+        )
+        return truly_new
+
+    def _semantic_dedup(self, chunks: List[RetrievedChunk]) -> List[RetrievedChunk]:
+        """语义去重：新 chunk 与已累积 chunk embedding cosine > threshold 则跳过"""
+        if not chunks or not self.accumulated_chunks:
+            return chunks
+
+        try:
+            from core.client.embedder import encode
+
+            result = []
+            for chunk in chunks:
+                # 批量编码新 chunks（按需）
+                if chunk.chunk_id not in self._embedding_cache:
+                    vec = encode(chunk.content[:500])  # 取前 500 字符编码
+                    if vec is not None:
+                        self._embedding_cache[chunk.chunk_id] = (
+                            vec.tolist() if hasattr(vec, "tolist") else vec
+                        )
+                    else:
+                        self._embedding_cache[chunk.chunk_id] = None
+
+                new_vec = self._embedding_cache.get(chunk.chunk_id)
+                if new_vec is None:
+                    # 编码失败，保留（不做过滤）
+                    result.append(chunk)
+                    continue
+
+                # 与已累积 chunks 做 cosine
+                is_duplicate = False
+                for acc_id, acc_chunk in self.accumulated_chunks.items():
+                    acc_vec = self._embedding_cache.get(acc_id)
+                    if acc_vec is None:
+                        # 尝试编码已累积 chunk
+                        acc_vec = encode(acc_chunk.content[:500])
+                        if acc_vec is not None:
+                            self._embedding_cache[acc_id] = (
+                                acc_vec.tolist()
+                                if hasattr(acc_vec, "tolist")
+                                else acc_vec
+                            )
+                        else:
+                            self._embedding_cache[acc_id] = None
+                            continue
+
+                    cosine = self._cosine(new_vec, acc_vec)
+                    if cosine > self.SEMANTIC_DEDUP_THRESHOLD:
+                        is_duplicate = True
+                        break
+
+                if not is_duplicate:
+                    result.append(chunk)
+
+            return result
+        except Exception as e:
+            logger.warning(f"[ToolExecutor] 语义去重失败，降级不做过滤: {e}")
+            return chunks
+
+    def _cosine(self, vec1: List[float], vec2: List[float]) -> float:
+        """计算两个向量的 cosine similarity"""
+        import math
+
+        dot = sum(a * b for a, b in zip(vec1, vec2))
+        norm1 = math.sqrt(sum(a * a for a in vec1))
+        norm2 = math.sqrt(sum(b * b for b in vec2))
+        if norm1 == 0 or norm2 == 0:
+            return 0.0
+        return dot / (norm1 * norm2)
+
+    def rerank_all(
+        self,
+        chunks: Union[List[RetrievedChunk], Dict[str, RetrievedChunk]],
+        query: str,
+        top_k: int = 10,
+    ) -> List[RetrievedChunk]:
+        """对所有累积 chunks 做全局 rerank，返回统一分数排序的 top_k
+
+        Args:
+            chunks: accumulated_chunks（dict 或 list）
+            query: 原始用户问题（用于 rerank）
+            top_k: 返回数量
+
+        Returns:
+            按全局 rerank 分数排序的 chunks（仅返回 top_k）
+        """
+        if isinstance(chunks, dict):
+            chunk_list = list(chunks.values())
+        else:
+            chunk_list = list(chunks)
+
+        if not chunk_list:
+            return []
+
+        try:
+            from core.client.rerank_client import rerank_documents
+
+            documents = [c.content for c in chunk_list]
+            rerank_results = rerank_documents(
+                query=query, documents=documents, top_k=len(documents)
+            )
+            reranked_map = {doc: score for doc, score in rerank_results}
+
+            for chunk in chunk_list:
+                if chunk.content in reranked_map:
+                    chunk.score = reranked_map[chunk.content]
+
+            chunk_list.sort(key=lambda c: c.score if c.score else 0, reverse=True)
+            logger.info(
+                f"[ToolExecutor] 全局 rerank 完成，返回 top {min(top_k, len(chunk_list))}"
+            )
+            return chunk_list[:top_k]
+
+        except Exception as e:
+            logger.warning(
+                f"[ToolExecutor] 全局 rerank 失败: {e}，返回 top_k by original score"
+            )
+            chunk_list.sort(key=lambda c: c.score if c.score else 0, reverse=True)
+            return chunk_list[:top_k]
+
+    def expand_accumulated_chunks(self, query: str = "") -> None:
+        """将累积的 child/summary chunks 展开为 parent chunks（finish 时调用）
+
+        策略：top10 expand parent，其余保留 child content
+        """
         if not self.accumulated_chunks:
             return
-        self.accumulated_chunks = self._expand_to_parent_chunks(self.accumulated_chunks)
+
+        # 1. 全局 rerank 得到统一分数体系
+        if query:
+            ranked_chunks = self.rerank_all(
+                self.accumulated_chunks, query, top_k=len(self.accumulated_chunks)
+            )
+        else:
+            ranked_chunks = list(self.accumulated_chunks.values())
+            ranked_chunks.sort(key=lambda c: c.score if c.score else 0, reverse=True)
+
+        # 2. 分 top10 和 rest
+        top10 = ranked_chunks[:10]
+        rest = ranked_chunks[10:]
+
+        # 3. top10 expand parent
+        top10_expanded = self._expand_to_parent_chunks(top10)
+
+        # 4. 构建新的 accumulated_chunks
+        # top10 用 expanded，rest 用原始
+        self.accumulated_chunks = {c.chunk_id: c for c in top10_expanded}
+        for chunk in rest:
+            self.accumulated_chunks[chunk.chunk_id] = chunk
+
         logger.info(
-            f"[ToolExecutor] parent 展开完成，当前累积 chunks: {len(self.accumulated_chunks)}"
+            f"[ToolExecutor] parent expand 完成: top10 → {len(top10_expanded)} 条 expand, "
+            f"rest {len(rest)} 条保留原始"
         )
 
     def set_current_query(self, query: str) -> None:
@@ -637,4 +820,6 @@ class ToolExecutor:
 
     def reset(self) -> None:
         """重置累积状态（新查询时调用）"""
-        self.accumulated_chunks = []
+        self.accumulated_chunks = {}
+        self.spec_results = {}
+        self._embedding_cache = {}

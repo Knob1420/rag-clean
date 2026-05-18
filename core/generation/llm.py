@@ -13,7 +13,7 @@ import asyncio
 import json
 import re
 import time
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Generator, List, Optional
 from loguru import logger
 from openai import OpenAI
 
@@ -75,32 +75,23 @@ class LLMClient:
         )
         return content
 
-    def call_with_tools(
+    def call_with_tools_stream(
         self,
         messages: List[Dict[str, Any]],
         tools: List[Dict[str, Any]],
         max_retries: int = 2,
         temperature: float = 0.1,
-        max_tokens: int = 4096,
-    ) -> Optional[Dict[str, Any]]:
+        max_tokens: int = 1500,
+    ) -> Generator[Dict[str, Any], None, Dict[str, Any]]:
         """
-        调用 LLM（带 tool calling），支持瞬态错误重试。
+        流式调用 LLM（带 tool calling），支持瞬态错误重试。
 
-        供 ReAct Agent 使用。
+        yield 事件片段，return 最终结果字典（包含 message + usage）。
 
-        Args:
-            messages: 消息列表
-            tools: OpenAI Function Calling 工具定义
-            max_retries: 最大重试次数（默认 2）
-            temperature: 温度参数
-            max_tokens: 最大 token 数
-
-        Returns:
-            {"message": dict, "usage": TokenUsage} 或 None
+        注意：流式调用时 response.usage 通常为 None，需通过完整 content 估算。
         """
         if not self.api_key:
-            # Mock 模式
-            return {
+            result = {
                 "message": {
                     "role": "assistant",
                     "content": "请配置 API Key 以使用 ReAct Agent。",
@@ -108,47 +99,74 @@ class LLMClient:
                 },
                 "usage": None,
             }
+            yield {"type": "result", "data": result}
+            return result
 
         for attempt in range(max_retries + 1):
             try:
-                response = self.client.chat.completions.create(
+                stream = self.client.chat.completions.create(
                     model=self.model,
                     messages=messages,
                     tools=tools,
                     temperature=temperature,
                     max_tokens=max_tokens,
+                    stream=True,
                 )
 
-                choice = response.choices[0]
-                message = choice.message
+                # 累积变量
+                content_parts: List[str] = []
+                tool_calls_acc: Dict[int, Dict[str, Any]] = {}  # index -> partial tc
 
-                # 构建 assistant message dict（含 tool_calls）
+                for chunk in stream:
+                    delta = chunk.choices[0].delta
+
+                    # 内容 delta
+                    if delta.content:
+                        content_parts.append(delta.content)
+                        # yield 内容片段（可用于前端实时显示）
+                        yield {"type": "content", "delta": delta.content}
+
+                    # tool_call delta
+                    if delta.tool_calls:
+                        for tc_delta in delta.tool_calls:
+                            idx = tc_delta.index
+                            if idx not in tool_calls_acc:
+                                tool_calls_acc[idx] = {"id": "", "function": {"name": "", "arguments": ""}}
+                            if tc_delta.id:
+                                tool_calls_acc[idx]["id"] = tc_delta.id
+                            if tc_delta.function:
+                                if tc_delta.function.name:
+                                    tool_calls_acc[idx]["function"]["name"] = tc_delta.function.name
+                                if tc_delta.function.arguments:
+                                    tool_calls_acc[idx]["function"]["arguments"] += tc_delta.function.arguments
+                                    yield {
+                                        "type": "tool_arg",
+                                        "index": idx,
+                                        "arguments_delta": tc_delta.function.arguments,
+                                    }
+
+                # 构造完整 message
                 msg_dict: Dict[str, Any] = {
                     "role": "assistant",
-                    "content": message.content,
+                    "content": "".join(content_parts),
                 }
-                if message.tool_calls:
+                if tool_calls_acc:
                     msg_dict["tool_calls"] = [
                         {
-                            "id": tc.id,
+                            "id": tc["id"],
                             "type": "function",
                             "function": {
-                                "name": tc.function.name,
-                                "arguments": tc.function.arguments,
+                                "name": tc["function"]["name"],
+                                "arguments": tc["function"]["arguments"],
                             },
                         }
-                        for tc in message.tool_calls
+                        for tc in tool_calls_acc.values()
                     ]
 
-                usage = None
-                if response.usage:
-                    usage = TokenUsage(
-                        prompt_tokens=response.usage.prompt_tokens,
-                        completion_tokens=response.usage.completion_tokens,
-                        total_tokens=response.usage.total_tokens,
-                    )
-
-                return {"message": msg_dict, "usage": usage}
+                # 等待 usage（部分 API 可能在 stream 结束后才返回 usage）
+                # 注意：流式调用 response.usage 通常为 None，需通过 complete 事件获取
+                # 这里返回 None，后续由调用方从完整 response 中统计
+                return {"message": msg_dict, "usage": None}
 
             except Exception as e:
                 error_str = str(e)
@@ -158,15 +176,15 @@ class LLMClient:
                 )
 
                 if is_transient and attempt < max_retries:
-                    wait_time = attempt + 1  # 线性退避：1s, 2s
+                    wait_time = attempt + 1
                     logger.warning(
-                        f"[LLM] 瞬态错误 (attempt {attempt+1}/{max_retries+1}): "
+                        f"[LLM] 流式调用瞬态错误 (attempt {attempt+1}/{max_retries+1}): "
                         f"{error_str[:100]}, {wait_time}s 后重试"
                     )
                     time.sleep(wait_time)
                     continue
 
-                logger.error(f"[LLM] tool calling 调用失败: {e}")
+                logger.error(f"[LLM] 流式 tool calling 调用失败: {e}")
                 return None
 
         return None

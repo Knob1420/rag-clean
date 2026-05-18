@@ -275,11 +275,39 @@ class ReActAgent:
                 },
             )
 
-            # ── 1. THINK ──
+            # ── 1. THINK（流式）────────────────────────────
             t_think_start = time.time()
-            response_data = self.llm.call_with_tools(
+
+            response_data: Optional[Dict[str, Any]] = None
+            stream_gen = self.llm.call_with_tools_stream(
                 messages, TOOL_DEFINITIONS, max_retries=self.max_llm_retries
             )
+            try:
+                # 用 send(None) 而非 for 循环，以获取 generator 的 return 值
+                while True:
+                    try:
+                        event = stream_gen.send(None)
+                    except StopIteration as e:
+                        response_data = e.value if e.value else None
+                        break
+
+                    etype = event.get("type", "")
+                    if etype == "content":
+                        yield StreamEvent(
+                            event_type="answer_token", data={"content": event["delta"]}
+                        )
+                    elif etype == "tool_arg":
+                        yield StreamEvent(
+                            event_type="tool_arg",
+                            data={
+                                "index": event["index"],
+                                "arguments_delta": event.get("arguments_delta", ""),
+                            },
+                        )
+            except Exception as e:
+                logger.error(f"[ReAct] 流式 LLM 调用异常: {e}")
+                response_data = None
+
             t_think = time.time() - t_think_start
 
             if response_data is None:

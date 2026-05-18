@@ -272,6 +272,7 @@ class ReActAgent:
                 data={
                     "iteration": iteration + 1,
                     "max_iterations": self.max_iterations,
+                    "action": "",  # 待 LLM 返回后填入
                 },
             )
 
@@ -341,57 +342,25 @@ class ReActAgent:
             messages.append(assistant_msg)
 
             # ── 2. ANALYZE ──
-            tool_calls = assistant_msg.get("tool_calls")
-            content = (assistant_msg.get("content") or "").strip()
+            tool_calls = assistant_msg.get("tool_calls") or []
 
-            # 推送 thought 内容，让前端实时更新 step 名称
-            if content:
+            # 推送 thought 内容到前端（LLM 推理内容）
+            thought_content = (assistant_msg.get("content") or "").strip()
+            if thought_content:
                 yield StreamEvent(
                     event_type="thought",
                     data={
                         "iteration": iteration + 1,
-                        "thought": content[:300],  # 截断防超长
+                        "thought": thought_content[:300],
                     },
                 )
-
-            # 空响应重试
-            if not tool_calls and not content:
-                tool_calls, content, assistant_msg = self._retry_empty_response(
-                    messages, total_usage
-                )
-
-                if not tool_calls and not content:
-                    self.tool_executor.expand_accumulated_chunks(self._original_query)
-                    answer, syn_usage = self._synthesize_from_accumulated(query)
-                    _accumulate_usage(total_usage, syn_usage)
-                    yield StreamEvent(
-                        event_type="error",
-                        data={"error": "Agent 空响应，已降级合成回答"},
-                    )
-                    for char in answer:
-                        yield StreamEvent(
-                            event_type="answer_token", data={"content": char}
-                        )
-                    self._collected_answer = answer
-                    self._collected_steps = steps
-                    yield StreamEvent(
-                        event_type="done",
-                        data=_build_done_data(
-                            iteration + 1,
-                            "stuck",
-                            self.tool_executor.accumulated_chunks,
-                            start_time,
-                            total_usage,
-                        ),
-                    )
-                    return
 
             # 无工具调用 → 自然停止
             if not tool_calls:
                 self.tool_executor.expand_accumulated_chunks(self._original_query)
                 step = AgentStep(
                     iteration=iteration,
-                    thought=content,
+                    thought=thought_content,
                     duration=time.time() - step_start,
                 )
                 steps.append(step)
@@ -406,9 +375,9 @@ class ReActAgent:
                     },
                 )
 
-                for char in content:
+                for char in thought_content:
                     yield StreamEvent(event_type="answer_token", data={"content": char})
-                self._collected_answer = content
+                self._collected_answer = thought_content
                 self._collected_steps = steps
                 yield StreamEvent(
                     event_type="done",
@@ -461,7 +430,7 @@ class ReActAgent:
                     t_expand_start = time.time()
                     self.tool_executor.expand_accumulated_chunks(self._original_query)
                     t_expand = time.time() - t_expand_start
-                    answer = tool_args.get("answer", content or "")
+                    answer = tool_args.get("answer", thought_content or "")
                     step = AgentStep(
                         iteration=iteration,
                         action="finish",
@@ -537,7 +506,6 @@ class ReActAgent:
                         "action": tool_name,
                         "duration": round(step.duration, 2),
                         "timing": step.timing,
-                        "observation_preview": observation[:200] if observation else "",
                     },
                 )
 
@@ -555,6 +523,7 @@ class ReActAgent:
                 logger.warning(
                     f"[ReAct] 连续 {consecutive_empty} 次无实质新信息，强制终止"
                 )
+                thought_content = ""  # 重置避免引用未定义变量
                 self.tool_executor.expand_accumulated_chunks(self._original_query)
                 answer, syn_usage = self._synthesize_from_accumulated(query)
                 _accumulate_usage(total_usage, syn_usage)

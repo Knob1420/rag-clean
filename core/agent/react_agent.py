@@ -53,7 +53,7 @@ class AgentStep:
 class StreamEvent:
     """Agent 流式事件（供 SSE 推送）"""
 
-    event_type: str  # step_start | step_end | answer_token | done | error
+    event_type: str  # step_start | step_end | answer_token | thought_token | thought | done | error
     data: Dict[str, Any] = field(default_factory=dict)
 
 
@@ -82,6 +82,42 @@ def _accumulate_usage(total: TokenUsage, delta: Optional[TokenUsage]) -> None:
     total.prompt_tokens += delta.prompt_tokens
     total.completion_tokens += delta.completion_tokens
     total.total_tokens += delta.total_tokens
+
+
+def _summarize_tool_result(
+    tool_name: str,
+    tool_args: Dict[str, Any],
+    new_chunks: Any,
+    observation: str,
+) -> str:
+    """生成工具执行结果的可读摘要"""
+    n_chunks = len(new_chunks) if new_chunks else 0
+
+    if tool_name == "bm25_search":
+        raw_queries = tool_args.get("queries", [])
+        # queries 可能是 [{"label": "...", "queries": ["kw1", "kw2"]}, ...]
+        if raw_queries and isinstance(raw_queries[0], dict):
+            kw_list = []
+            for g in raw_queries[:3]:
+                kw_list.append(g.get("label", ""))
+            q_str = ", ".join(kw_list)
+        else:
+            q_str = ", ".join(str(q) for q in raw_queries[:3])
+        return f"搜索: {q_str} → {n_chunks} 条新结果"
+
+    if tool_name == "vector_search":
+        query = tool_args.get("query", "")
+        return f"语义搜索: {query[:30]} → {n_chunks} 条新结果"
+
+    if tool_name == "spec_query":
+        entities = tool_args.get("entities", [])
+        entity_str = ", ".join(str(e) for e in entities[:3])
+        fields = tool_args.get("fields", [])
+        field_str = ", ".join(str(f) for f in fields[:3]) if fields else "全部字段"
+        return f"参数查询: {entity_str} ({field_str}) → {n_chunks} 条匹配"
+
+    # Fallback
+    return f"{tool_name} → {observation[:60]}"
 
 
 # ════════════════════════════════════════════════════════════════
@@ -272,7 +308,7 @@ class ReActAgent:
                 data={
                     "iteration": iteration + 1,
                     "max_iterations": self.max_iterations,
-                    "action": "",  # 待 LLM 返回后填入
+                    "action": "thinking",  # 正在推理
                 },
             )
 
@@ -295,7 +331,7 @@ class ReActAgent:
                     etype = event.get("type", "")
                     if etype == "content":
                         yield StreamEvent(
-                            event_type="answer_token", data={"content": event["delta"]}
+                            event_type="thought_token", data={"content": event["delta"]}
                         )
                     elif etype == "tool_arg":
                         yield StreamEvent(
@@ -312,15 +348,23 @@ class ReActAgent:
             t_think = time.time() - t_think_start
 
             if response_data is None:
-                self.tool_executor.expand_accumulated_chunks(self._original_query)
-                answer, syn_usage = self._synthesize_from_accumulated(query)
-                _accumulate_usage(total_usage, syn_usage)
+                try:
+                    self.tool_executor.expand_accumulated_chunks(self._original_query)
+                except Exception as e:
+                    logger.warning(f"[ReAct] expand 失败: {e}")
                 yield StreamEvent(
                     event_type="error",
                     data={"error": "LLM 调用失败，已降级合成回答"},
                 )
-                for char in answer:
-                    yield StreamEvent(event_type="answer_token", data={"content": char})
+                answer = ""
+                try:
+                    for token in self._synthesize_stream(query):
+                        answer += token
+                        yield StreamEvent(event_type="answer_token", data={"content": token})
+                except Exception as e:
+                    logger.warning(f"[ReAct] synthesize 失败: {e}")
+                    answer = "LLM 调用失败，合成回答时出错。"
+                    yield StreamEvent(event_type="answer_token", data={"content": answer})
                 self._collected_answer = answer
                 self._collected_steps = steps
                 yield StreamEvent(
@@ -357,26 +401,44 @@ class ReActAgent:
 
             # 无工具调用 → 自然停止
             if not tool_calls:
-                self.tool_executor.expand_accumulated_chunks(self._original_query)
+                try:
+                    self.tool_executor.expand_accumulated_chunks(self._original_query)
+                except Exception as e:
+                    logger.warning(f"[ReAct] expand 失败: {e}")
+
+                # 先发 step_end，让前端知道"推理"阶段结束
+                yield StreamEvent(
+                    event_type="step_end",
+                    data={
+                        "iteration": iteration + 1,
+                        "action": "thinking",
+                        "duration": round(time.time() - step_start, 2),
+                        "step_content": "正在合成最终回答...",
+                    },
+                )
+
+                # 合成回答（流式，保持 SSE 连接活跃）
+                answer = ""
+                try:
+                    if self.tool_executor.accumulated_chunks:
+                        for token in self._synthesize_stream(query):
+                            answer += token
+                            yield StreamEvent(event_type="answer_token", data={"content": token})
+                    else:
+                        answer = thought_content or "未能生成回答。"
+                        yield StreamEvent(event_type="answer_token", data={"content": answer})
+                except Exception as e:
+                    logger.warning(f"[ReAct] 合成回答失败: {e}")
+                    fallback = thought_content or "合成回答时出错，请重试。"
+                    yield StreamEvent(event_type="answer_token", data={"content": fallback})
+                    answer = fallback
+
                 step = AgentStep(
                     iteration=iteration,
                     thought=thought_content,
                     duration=time.time() - step_start,
                 )
                 steps.append(step)
-
-                yield StreamEvent(
-                    event_type="step_end",
-                    data={
-                        "iteration": iteration + 1,
-                        "action": "think",
-                        "duration": round(step.duration, 2),
-                        "timing": {"think": round(t_think, 3)},
-                    },
-                )
-
-                for char in thought_content:
-                    yield StreamEvent(event_type="answer_token", data={"content": char})
                 self._collected_answer = thought_content
                 self._collected_steps = steps
                 yield StreamEvent(
@@ -447,12 +509,16 @@ class ReActAgent:
                             "action": "finish",
                             "duration": round(step.duration, 2),
                             "timing": step.timing,
+                            "step_content": f"生成最终回答（{len(answer)} 字）",
                         },
                     )
 
-                    for char in answer:
+                    # 分批发送 answer，避免逐字符产生过多 SSE 事件
+                    CHUNK_SIZE = 20
+                    for i in range(0, len(answer), CHUNK_SIZE):
                         yield StreamEvent(
-                            event_type="answer_token", data={"content": char}
+                            event_type="answer_token",
+                            data={"content": answer[i : i + CHUNK_SIZE]},
                         )
                     self._collected_answer = answer
                     self._collected_steps = steps
@@ -499,6 +565,12 @@ class ReActAgent:
                 )
                 steps.append(step)
 
+                # Build step_content summary
+                try:
+                    step_content = _summarize_tool_result(tool_name, tool_args, truly_new_chunks, observation)
+                except Exception:
+                    step_content = f"{tool_name} 完成"
+
                 yield StreamEvent(
                     event_type="step_end",
                     data={
@@ -506,6 +578,7 @@ class ReActAgent:
                         "action": tool_name,
                         "duration": round(step.duration, 2),
                         "timing": step.timing,
+                        "step_content": step_content,
                     },
                 )
 
@@ -523,17 +596,24 @@ class ReActAgent:
                 logger.warning(
                     f"[ReAct] 连续 {consecutive_empty} 次无实质新信息，强制终止"
                 )
-                thought_content = ""  # 重置避免引用未定义变量
-                self.tool_executor.expand_accumulated_chunks(self._original_query)
-                answer, syn_usage = self._synthesize_from_accumulated(query)
-                _accumulate_usage(total_usage, syn_usage)
+                try:
+                    self.tool_executor.expand_accumulated_chunks(self._original_query)
+                except Exception as e:
+                    logger.warning(f"[ReAct] expand 失败: {e}")
 
                 yield StreamEvent(
                     event_type="error",
                     data={"error": "Agent 卡住，已降级合成回答"},
                 )
-                for char in answer:
-                    yield StreamEvent(event_type="answer_token", data={"content": char})
+                answer = ""
+                try:
+                    for token in self._synthesize_stream(query):
+                        answer += token
+                        yield StreamEvent(event_type="answer_token", data={"content": token})
+                except Exception as e:
+                    logger.warning(f"[ReAct] synthesize 失败: {e}")
+                    answer = "Agent 卡住，合成回答时出错。"
+                    yield StreamEvent(event_type="answer_token", data={"content": answer})
                 self._collected_answer = answer
                 self._collected_steps = steps
                 yield StreamEvent(
@@ -550,16 +630,24 @@ class ReActAgent:
 
         # 超过最大迭代数 → 优雅降级
         logger.warning(f"[ReAct] 达到最大迭代数 {self.max_iterations}，优雅降级")
-        self.tool_executor.expand_accumulated_chunks(self._original_query)
-        answer, syn_usage = self._synthesize_from_accumulated(query)
-        _accumulate_usage(total_usage, syn_usage)
+        try:
+            self.tool_executor.expand_accumulated_chunks(self._original_query)
+        except Exception as e:
+            logger.warning(f"[ReAct] expand_accumulated_chunks 失败: {e}")
 
         yield StreamEvent(
             event_type="error",
             data={"error": f"达到最大迭代数 {self.max_iterations}，已降级合成回答"},
         )
-        for char in answer:
-            yield StreamEvent(event_type="answer_token", data={"content": char})
+        answer = ""
+        try:
+            for token in self._synthesize_stream(query):
+                answer += token
+                yield StreamEvent(event_type="answer_token", data={"content": token})
+        except Exception as e:
+            logger.warning(f"[ReAct] 降级合成也失败: {e}")
+            answer = "抱歉，Agent 已达到最大迭代数，且合成回答时出错。"
+            yield StreamEvent(event_type="answer_token", data={"content": answer})
         self._collected_answer = answer
         self._collected_steps = steps
         yield StreamEvent(
@@ -620,6 +708,65 @@ class ReActAgent:
 
     # ── 优雅降级：从累积 chunks 合成回答 ────────────────────────
 
+    def _build_synthesis_context(self) -> str:
+        """从累积 chunks 构建合成用的上下文"""
+        chunks = self.tool_executor.accumulated_chunks
+        if isinstance(chunks, dict):
+            chunk_list = list(chunks.values()) if chunks else []
+        else:
+            chunk_list = chunks
+        if not chunk_list:
+            return ""
+
+        context_parts = []
+        for chunk in chunk_list:
+            if isinstance(chunk, str):
+                context_parts.append(f"[来源: 未知]\n{chunk}")
+            else:
+                doc_name = chunk.doc_title or chunk.doc_id
+                context_parts.append(f"[来源: {doc_name}]\n{chunk.content}")
+
+        context = "\n\n---\n\n".join(context_parts)
+        if len(context) > 16000:
+            context = context[:16000] + "\n\n... [内容已截断] ..."
+        return context
+
+    def _synthesize_stream(self, query: str) -> Generator[str, None, None]:
+        """流式合成回答 — 逐 token yield，保持 SSE 连接活跃"""
+        context = self._build_synthesis_context()
+        if not context:
+            yield "抱歉，未能检索到相关信息来回答您的问题。"
+            return
+
+        if not self.llm.api_key:
+            chunks = self.tool_executor.accumulated_chunks
+            chunk_list = list(chunks.values()) if isinstance(chunks, dict) else chunks
+            yield f"基于检索到的 {len(chunk_list)} 条信息：\n\n"
+            for c in chunk_list[:5]:
+                text = c.content[:200] if hasattr(c, 'content') else str(c)[:200]
+                yield f"- {text}...\n"
+            return
+
+        try:
+            for token in self.llm.call_stream(
+                [
+                    {
+                        "role": "system",
+                        "content": "你是知识库助手。请基于以下检索到的信息片段，简要回答用户问题。"
+                        "如果信息不足，请明确说明。",
+                    },
+                    {
+                        "role": "user",
+                        "content": f"问题：{query}\n\n检索到的信息：\n{context}",
+                    },
+                ],
+                temperature=0.3,
+            ):
+                yield token
+        except Exception as e:
+            logger.warning(f"[ReAct] 流式合成失败: {e}")
+            yield "合成回答时出错，请重试。"
+
     def _synthesize_from_accumulated(
         self, query: str
     ) -> Tuple[str, Optional[TokenUsage]]:
@@ -638,8 +785,11 @@ class ReActAgent:
         # 构建简单的上下文（按 accumulated_chunks 顺序，截断 10000 字）
         context_parts = []
         for chunk in chunk_list:
-            doc_name = chunk.doc_title or chunk.doc_id
-            context_parts.append(f"[来源: {doc_name}]\n{chunk.content}")
+            if isinstance(chunk, str):
+                context_parts.append(f"[来源: 未知]\n{chunk}")
+            else:
+                doc_name = chunk.doc_title or chunk.doc_id
+                context_parts.append(f"[来源: {doc_name}]\n{chunk.content}")
 
         context = "\n\n---\n\n".join(context_parts)
         if len(context) > 16000:
@@ -650,7 +800,10 @@ class ReActAgent:
             # 无 API Key 时直接返回原始片段
             return (
                 f"基于检索到的 {len(chunk_list)} 条信息：\n\n"
-                + "\n".join(f"- {c.content[:200]}..." for c in chunk_list[:5]),
+                + "\n".join(
+                    f"- {c.content[:200] if hasattr(c, 'content') else str(c)[:200]}..."
+                    for c in chunk_list[:5]
+                ),
                 None,
             )
 

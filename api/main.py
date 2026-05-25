@@ -12,6 +12,7 @@ RAG API 服务 — FastAPI 接口
 - 文档上传/管理端点（rag-clean 有自己的 pipeline）
 """
 
+import asyncio
 import json
 import time
 from typing import Optional, List, Any
@@ -51,7 +52,6 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -291,32 +291,74 @@ async def chat_stream(request: ChatRequest):
 
                 accumulated_sources = []
 
-                for event in agent.run_stream(query=request.query):
+                # 在线程中运行同步生成器，通过 queue 传递事件到 async 生成器
+                # 这样 async 事件循环不会被同步 LLM 调用阻塞
+                queue: asyncio.Queue = asyncio.Queue()
+
+                def _sync_producer():
+                    """在线程中运行同步生成器，把事件放入 queue"""
+                    try:
+                        for event in agent.run_stream(query=request.query):
+                            queue.put_nowait(event)
+                    except Exception as e:
+                        queue.put_nowait(type('E', (), {'event_type': 'error', 'data': {'error': str(e)}})())
+                    finally:
+                        queue.put_nowait(None)  # sentinel
+
+                import asyncio as _aio
+                loop = _aio.get_event_loop()
+                fut = loop.run_in_executor(None, _sync_producer)
+
+                while True:
+                    try:
+                        event = await asyncio.wait_for(queue.get(), timeout=30)
+                    except asyncio.TimeoutError:
+                        yield ": keepalive\n\n"
+                        continue
+                    if event is None:
+                        break
+
+                    sse = None
+
                     if event.event_type == "step_start":
-                        yield f"event: step_start\ndata: {json.dumps(event.data, ensure_ascii=False)}\n\n"
+                        sse = f"event: step_start\ndata: {json.dumps(event.data, ensure_ascii=False)}\n\n"
 
                     elif event.event_type == "step_end":
-                        yield f"event: step_end\ndata: {json.dumps(event.data, ensure_ascii=False)}\n\n"
+                        sse = f"event: step_end\ndata: {json.dumps(event.data, ensure_ascii=False)}\n\n"
 
                     elif event.event_type == "answer_token":
-                        yield f"event: token\ndata: {json.dumps({'content': event.data.get('content', '')}, ensure_ascii=False)}\n\n"
+                        sse = f"event: token\ndata: {json.dumps({'content': event.data.get('content', '')}, ensure_ascii=False)}\n\n"
+
+                    elif event.event_type == "thought_token":
+                        sse = f"event: thought_token\ndata: {json.dumps({'content': event.data.get('content', '')}, ensure_ascii=False)}\n\n"
+
+                    elif event.event_type == "thought":
+                        sse = f"event: thought\ndata: {json.dumps(event.data, ensure_ascii=False)}\n\n"
+
+                    elif event.event_type == "tool_arg":
+                        sse = f"event: tool_arg\ndata: {json.dumps(event.data, ensure_ascii=False)}\n\n"
 
                     elif event.event_type == "done":
                         # done 事件中收集 sources
-                        chunks = agent.tool_executor.accumulated_chunks
-                        sources = chunks_to_sources(chunks)
+                        acc_chunks = agent.tool_executor.accumulated_chunks
+                        chunk_list = list(acc_chunks.values()) if isinstance(acc_chunks, dict) else acc_chunks
+                        chunk_list = [c for c in chunk_list if hasattr(c, "chunk_id")]
+                        sources = chunks_to_sources(chunk_list)
                         sources_data = [s.model_dump() for s in sources]
                         if sources_data:
                             yield f"event: sources\ndata: {json.dumps({'sources': sources_data}, ensure_ascii=False)}\n\n"
 
                         done_data = {
                             **event.data,
-                            "chunks_count": len(chunks),
+                            "chunks_count": len(chunk_list),
                         }
-                        yield f"event: done\ndata: {json.dumps(done_data, ensure_ascii=False)}\n\n"
+                        sse = f"event: done\ndata: {json.dumps(done_data, ensure_ascii=False)}\n\n"
 
                     elif event.event_type == "error":
-                        yield f"event: error\ndata: {json.dumps(event.data, ensure_ascii=False)}\n\n"
+                        sse = f"event: error\ndata: {json.dumps(event.data, ensure_ascii=False)}\n\n"
+
+                    if sse:
+                        yield sse
 
             else:
                 # ---- Quick 快速问答模式（SimplePipeline + 真流式） ----
@@ -480,8 +522,33 @@ async def search(request: SearchRequest):
 
 
 # ============================================================
-# 产品参数查询
+# Wiki 知识图谱
+# ══════════════════════════════════════════════════════════════════════════════
+
+
+@app.get("/api/v1/wiki/graph")
+async def get_wiki_graph(project: str = "data/wiki-ds"):
+    """
+    获取 Wiki 知识图谱数据
+
+    返回节点、边和社区信息，用于前端可视化
+
+    Args:
+        project: wiki 项目目录路径（默认 data/wiki-ds）
+    """
+    try:
+        from core.wiki.wiki_graph import build_wiki_graph
+
+        result = build_wiki_graph(project)
+        return result
+    except Exception as e:
+        logger.error(f"获取 Wiki 图谱失败: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f"获取图谱失败: {str(e)}")
+
+
 # ============================================================
+# 产品参数查询
+# ══════════════════════════════════════════════════════════════════════════════
 
 
 @app.get("/api/v1/products/specs")

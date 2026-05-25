@@ -75,6 +75,22 @@ class LLMClient:
         )
         return content
 
+    def call_stream(self, messages: List[Dict[str, str]], temperature: float = 0.3, max_tokens: int = 2000):
+        """
+        简单流式调用（不带 tools），逐 token 返回。
+        """
+        stream = self.client.chat.completions.create(
+            model=self.model,
+            messages=messages,
+            temperature=temperature,
+            max_tokens=max_tokens,
+            stream=True,
+        )
+        for chunk in stream:
+            delta = chunk.choices[0].delta
+            if delta.content:
+                yield delta.content
+
     def call_with_tools_stream(
         self,
         messages: List[Dict[str, Any]],

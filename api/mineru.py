@@ -31,7 +31,8 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from config import settings
 
 # MinerU 可用性检测 — 复用 core/ingestion/extractor.py
-from core.ingestion.extractor import MinerUPDFProcessor, MINERU_AVAILABLE
+import core.ingestion.extractor as extractor_module
+from core.ingestion.extractor import MinerUPDFProcessor, _ensure_mineru
 
 
 # ============================================================
@@ -164,7 +165,10 @@ async def lifespan(app: FastAPI):
     PARSE_STORAGE_DIR.mkdir(parents=True, exist_ok=True)
     logger.info(f"存储目录: {PARSE_STORAGE_DIR}")
 
-    if MINERU_AVAILABLE:
+    # 触发 MinerU 延迟导入（必须在 extractor_module.MINERU_AVAILABLE 判断前执行）
+    _ensure_mineru()
+
+    if extractor_module.MINERU_AVAILABLE:
         processor = MinerUPDFProcessor()
         logger.success("MinerU 处理器就绪")
     else:
@@ -199,7 +203,7 @@ async def root():
     return {
         "service": "MinerU Parse Service",
         "version": "1.0.0",
-        "mineru_available": MINERU_AVAILABLE,
+        "mineru_available": extractor_module.MINERU_AVAILABLE,
         "storage_dir": str(PARSE_STORAGE_DIR),
     }
 
@@ -207,8 +211,8 @@ async def root():
 @app.get("/health", response_model=HealthResponse)
 async def health():
     return HealthResponse(
-        status="ok" if MINERU_AVAILABLE else "unavailable",
-        mineru_available=MINERU_AVAILABLE,
+        status="ok" if extractor_module.MINERU_AVAILABLE else "unavailable",
+        mineru_available=extractor_module.MINERU_AVAILABLE,
     )
 
 

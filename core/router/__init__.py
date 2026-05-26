@@ -1,28 +1,12 @@
 """
-Intent Router 模块
+Intent Router 模块（已精简）
 
-提供基于 embedding 相似度的意图分类和路由。
+Intent 常量已迁移到 prompt.py。
+仅保留 RoutingResult 数据模型供 legacy eval 脚本使用。
 """
 
-from core.router.models import (
-    RoutingResult,
-    INTENT_SIMPLE_LOOKUP,
-    INTENT_COMPARE,
-    INTENT_RECOMMEND,
-    INTENT_AGGREGATE,
-    ALL_INTENTS,
-)
-from core.router.semantic_router import SemanticRouter, get_semantic_router
-from core.router.intent_prototypes import INTENT_PROTOTYPES
+from core.router.models import RoutingResult
 
 __all__ = [
     "RoutingResult",
-    "SemanticRouter",
-    "get_semantic_router",
-    "INTENT_PROTOTYPES",
-    "INTENT_SIMPLE_LOOKUP",
-    "INTENT_COMPARE",
-    "INTENT_RECOMMEND",
-    "INTENT_AGGREGATE",
-    "ALL_INTENTS",
 ]

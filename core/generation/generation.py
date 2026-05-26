@@ -12,14 +12,12 @@ from typing import Dict, Generator, List, Optional, Tuple
 from loguru import logger
 
 from core.generation.llm import get_llm_client
-from core.router.models import (
+from core.products.specs_service import build_specs_context
+from prompt import (
     INTENT_SIMPLE_LOOKUP,
     INTENT_COMPARE,
     INTENT_RECOMMEND,
     INTENT_AGGREGATE,
-)
-from core.products.specs_service import build_specs_context
-from prompt import (
     RAG_SYSTEM_PROMPT,
     RAG_USER_PROMPT_TEMPLATE,
     SIMPLE_LOOKUP_SYSTEM_PROMPT,

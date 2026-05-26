@@ -34,7 +34,7 @@ from core.model.models import (
     Document,
 )
 
-from core.preprocessing.cleaner_ext import clean_and_normalize, TextCleaner
+from tools.preprocessing.cleaner_ext import clean_and_normalize, TextCleaner
 
 # ── 配置 ──────────────────────────────────────────────────────
 

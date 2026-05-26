@@ -10,6 +10,13 @@
 
 from typing import List
 
+# ── 意图类型常量 ──────────────────────────────────
+
+INTENT_SIMPLE_LOOKUP = "simple_lookup"
+INTENT_COMPARE = "compare"
+INTENT_RECOMMEND = "recommend"
+INTENT_AGGREGATE = "aggregate"
+
 # ════════════════════════════════════════════════════════════
 # 4. RAG 回答生成（原 services/generation.py）
 # ════════════════════════════════════════════════════════════

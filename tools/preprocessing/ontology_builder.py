@@ -1,4 +1,4 @@
-"""core/preprocessing/ontology_builder.py — 轻量本体构建
+"""tools/preprocessing/ontology_builder.py — 轻量本体构建
 
 从 entity_raw + product_params + cooperation 数据构建轻量本体图。
 """

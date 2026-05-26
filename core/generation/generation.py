@@ -12,14 +12,12 @@ from typing import Dict, Generator, List, Optional, Tuple
 from loguru import logger
 
 from core.generation.llm import get_llm_client
-from core.router.models import (
+from core.products.specs_service import build_specs_context
+from prompt import (
     INTENT_SIMPLE_LOOKUP,
     INTENT_COMPARE,
     INTENT_RECOMMEND,
     INTENT_AGGREGATE,
-)
-from core.products.specs_service import build_specs_context
-from prompt import (
     RAG_SYSTEM_PROMPT,
     RAG_USER_PROMPT_TEMPLATE,
     SIMPLE_LOOKUP_SYSTEM_PROMPT,
@@ -236,41 +234,16 @@ class GenerationService:
 
         # 调用 LLM
         try:
-            import openai
             from config import settings
 
-            if not settings.deepseek_api_key:
-                return (
-                    "抱歉，当前使用 Mock 模式。请配置 API Key 以获得真实回复。",
-                    TokenUsage(prompt_tokens=0, completion_tokens=0, total_tokens=0),
-                )
-
-            client = openai.OpenAI(
-                api_key=settings.deepseek_api_key,
-                base_url=settings.deepseek_base_url,
-            )
-            response = client.chat.completions.create(
-                model=settings.deepseek_r2_model
+            model = (
+                settings.deepseek_r2_model
                 if query_intent in (INTENT_COMPARE, INTENT_RECOMMEND)
-                else settings.deepseek_model,
-                messages=messages,
-                temperature=0.3,
-                max_tokens=2000,
+                else None
             )
-
-            content = response.choices[0].message.content
-            usage = TokenUsage(
-                prompt_tokens=response.usage.prompt_tokens,
-                completion_tokens=response.usage.completion_tokens,
-                total_tokens=response.usage.total_tokens,
+            content, usage = self.llm.call_with_usage(
+                messages, temperature=0.3, max_tokens=2000, model=model,
             )
-
-            logger.info(
-                f"LLM 生成成功: "
-                f"prompt_tokens={usage.prompt_tokens}, "
-                f"completion_tokens={usage.completion_tokens}"
-            )
-
             return content, usage
 
         except Exception as e:
@@ -299,7 +272,6 @@ class GenerationService:
         Yields:
             逐个 token 字符串
         """
-        import openai
         from config import settings
 
         if not settings.deepseek_api_key:
@@ -320,26 +292,15 @@ class GenerationService:
         ]
 
         try:
-            client = openai.OpenAI(
-                api_key=settings.deepseek_api_key,
-                base_url=settings.deepseek_base_url,
-            )
-            stream = client.chat.completions.create(
-                model=settings.deepseek_r2_model
+            model = (
+                settings.deepseek_r2_model
                 if (intent or query_intent) in (INTENT_COMPARE, INTENT_RECOMMEND)
-                else settings.deepseek_model,
-                messages=messages,
-                temperature=0.3,
-                max_tokens=2000,
-                stream=True,
+                else None
             )
-
-            for chunk in stream:
-                if not chunk.choices:
-                    continue
-                delta = chunk.choices[0].delta
-                if delta.content:
-                    yield delta.content
+            for token in self.llm.call_stream(
+                messages, temperature=0.3, max_tokens=2000, model=model,
+            ):
+                yield token
 
         except Exception as e:
             logger.error(f"LLM 流式生成失败: {e}")
@@ -359,12 +320,11 @@ class GenerationService:
         spec_context: str = "",
     ):
         """
-        异步流式生成 RAG 回答（使用 AsyncOpenAI，不阻塞事件循环）
+        异步流式生成 RAG 回答（不阻塞事件循环）
 
         Yields:
             逐个 token 字符串
         """
-        from openai import AsyncOpenAI
         from config import settings
 
         if not settings.deepseek_api_key:
@@ -385,25 +345,15 @@ class GenerationService:
         ]
 
         try:
-            client = AsyncOpenAI(
-                api_key=settings.deepseek_api_key,
-                base_url=settings.deepseek_base_url,
-            )
-            stream = await client.chat.completions.create(
-                model=settings.deepseek_r2_model
+            model = (
+                settings.deepseek_r2_model
                 if (intent or query_intent) in (INTENT_COMPARE, INTENT_RECOMMEND)
-                else settings.deepseek_model,
-                messages=messages,
-                temperature=0.3,
-                max_tokens=2000,
-                stream=True,
+                else None
             )
-            async for chunk in stream:
-                if not chunk.choices:
-                    continue
-                delta = chunk.choices[0].delta
-                if delta.content:
-                    yield delta.content
+            async for token in self.llm.async_call_stream(
+                messages, temperature=0.3, max_tokens=2000, model=model,
+            ):
+                yield token
 
         except Exception as e:
             logger.error(f"LLM 异步流式生成失败: {e}")

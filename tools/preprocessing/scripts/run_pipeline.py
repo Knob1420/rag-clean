@@ -3,24 +3,24 @@
 
 用法：
     # 完整流水线（步骤1+2+3）
-    python -m core.preprocessing.scripts.run_pipeline \
+    python -m tools.preprocessing.scripts.run_pipeline \
         --input data/cache/converters/*.md \
         --output data/preprocessing/
 
     # 仅步骤1（清洗+分片）
-    python -m core.preprocessing.scripts.run_pipeline \
+    python -m tools.preprocessing.scripts.run_pipeline \
         --input data/cache/converters/*.md \
         --output data/preprocessing/ \
         --steps 1
 
     # 增量更新（单个新文档）
-    python -m core.preprocessing.scripts.run_pipeline \
+    python -m tools.preprocessing.scripts.run_pipeline \
         --input data/cache/converters/new_doc.md \
         --output data/preprocessing/ \
         --incremental
 
     # 禁用 LLM（仅规则抽取，用于测试）
-    python -m core.preprocessing.scripts.run_pipeline \
+    python -m tools.preprocessing.scripts.run_pipeline \
         --input data/cache/converters/*.md \
         --output data/preprocessing/ \
         --no-llm
@@ -68,7 +68,7 @@ def run_step1(
     Returns:
         chunks 列表
     """
-    from core.preprocessing.chunker_ext import SmartChunker
+    from tools.preprocessing.chunker_ext import SmartChunker
 
     all_chunks: List[dict] = []
 
@@ -162,7 +162,7 @@ async def run_step2(
     Returns:
         (entity_raw_list, alias_candidates_list)
     """
-    from core.preprocessing.entity_extractor import extract_entities, save_results
+    from tools.preprocessing.entity_extractor import extract_entities, save_results
 
     logger.info(f"[Step2] 开始实体抽取，chunks={len(chunks)}, merge={merge}")
 
@@ -205,7 +205,7 @@ async def run_step3(
     Returns:
         {"product_params": [...], "cooperation": [...]}
     """
-    from core.preprocessing.struct_extractor import (
+    from tools.preprocessing.struct_extractor import (
         extract_product_params,
         extract_cooperation,
         save_results as save_struct,
@@ -217,7 +217,7 @@ async def run_step3(
     products_specs_path = (
         Path(__file__).parent.parent.parent.parent / "data" / "products_specs.json"
     )
-    from core.preprocessing.struct_extractor import _load_products_specs
+    from tools.preprocessing.struct_extractor import _load_products_specs
 
     products_specs = _load_products_specs(products_specs_path)
 
@@ -289,7 +289,7 @@ async def run_step4(
     Returns:
         {"metadata": {...}, "nodes": [...], "edges": [...]}
     """
-    from core.preprocessing.ontology_builder import (
+    from tools.preprocessing.ontology_builder import (
         load_entity_raw,
         load_product_params,
         load_cooperation,

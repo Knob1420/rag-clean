@@ -168,6 +168,7 @@ class LLMClient:
                                         "type": "tool_arg",
                                         "index": idx,
                                         "arguments_delta": tc_delta.function.arguments,
+                                        "tool_name": tool_calls_acc[idx]["function"]["name"],
                                     }
 
                 # 构造完整 message

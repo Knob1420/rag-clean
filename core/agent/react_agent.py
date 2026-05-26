@@ -494,11 +494,22 @@ class ReActAgent:
 
                 # finish 工具 → 终止
                 if tool_name == "finish":
-                    # finish 时统一展开 parent chunks
+                    answer = tool_args.get("answer", thought_content or "")
+
+                    # 先流式发送 answer（分块，保持 SSE 活跃），
+                    # 再做 expand（可能耗时 10-60s）
+                    chunk_size = 20
+                    for i in range(0, len(answer), chunk_size):
+                        yield StreamEvent(
+                            event_type="answer_token",
+                            data={"content": answer[i:i + chunk_size]},
+                        )
+
+                    # 然后展开 parent chunks（耗时操作）
                     t_expand_start = time.time()
                     self.tool_executor.expand_accumulated_chunks(self._original_query)
                     t_expand = time.time() - t_expand_start
-                    answer = tool_args.get("answer", thought_content or "")
+
                     step = AgentStep(
                         iteration=iteration,
                         action="finish",
@@ -519,13 +530,6 @@ class ReActAgent:
                         },
                     )
 
-                    # 分批发送 answer，避免逐字符产生过多 SSE 事件
-                    CHUNK_SIZE = 20
-                    for i in range(0, len(answer), CHUNK_SIZE):
-                        yield StreamEvent(
-                            event_type="answer_token",
-                            data={"content": answer[i : i + CHUNK_SIZE]},
-                        )
                     self._collected_answer = answer
                     self._collected_steps = steps
                     yield StreamEvent(

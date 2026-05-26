@@ -41,7 +41,7 @@ class LLMClient:
             self._client = OpenAI(
                 api_key=self.api_key,
                 base_url=self.base_url,
-                timeout=120.0,
+                timeout=300.0,  # 5 min — agent 末轮上下文很长，TTFT 可能超过 120s
             )
         return self._client
 
@@ -78,6 +78,8 @@ class LLMClient:
     def call_stream(self, messages: List[Dict[str, str]], temperature: float = 0.3, max_tokens: int = 2000):
         """
         简单流式调用（不带 tools），逐 token 返回。
+        注意：DeepSeek 推理 token（reasoning_content）会被跳过，
+        只返回正式的 content 内容。
         """
         stream = self.client.chat.completions.create(
             model=self.model,
@@ -88,6 +90,8 @@ class LLMClient:
         )
         for chunk in stream:
             delta = chunk.choices[0].delta
+            # DeepSeek 推理 token 会在 content 之前到达，这里跳过
+            # （如需转发推理内容，应由调用方自行处理 streaming chunk）
             if delta.content:
                 yield delta.content
 
@@ -135,6 +139,11 @@ class LLMClient:
 
                 for chunk in stream:
                     delta = chunk.choices[0].delta
+
+                    # DeepSeek 推理内容（reasoning_content）→ 作为 thought_token 转发
+                    reasoning = getattr(delta, "reasoning_content", None) or ""
+                    if reasoning:
+                        yield {"type": "reasoning", "delta": reasoning}
 
                     # 内容 delta
                     if delta.content:

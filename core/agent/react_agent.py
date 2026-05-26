@@ -333,6 +333,12 @@ class ReActAgent:
                         yield StreamEvent(
                             event_type="thought_token", data={"content": event["delta"]}
                         )
+                    elif etype == "reasoning":
+                        # DeepSeek 推理 token → 作为 thought_token 转发到前端
+                        yield StreamEvent(
+                            event_type="thought_token",
+                            data={"content": event["delta"]},
+                        )
                     elif etype == "tool_arg":
                         yield StreamEvent(
                             event_type="tool_arg",

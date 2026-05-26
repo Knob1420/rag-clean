@@ -200,21 +200,57 @@ export const useAppStore = create<AppState>((set, get) => ({
       }))
     }
 
-    // ─── 立即处理 SSE 事件（不等队列）───
+    // ─── SSE 事件处理（带缓冲批处理）───
     let sources: Source[] = []
 
+    // 缓冲区：避免每个 token 都触发昂贵的 state 更新
+    let tokenBuffer = ''           // answer token 缓冲
+    let thoughtBuffer = ''         // thought_token 缓冲
+    let flushTimerId: ReturnType<typeof setTimeout> | null = null
+
+    function flushBuffers() {
+      flushTimerId = null
+      const tokens = tokenBuffer
+      const thoughts = thoughtBuffer
+      tokenBuffer = ''
+      thoughtBuffer = ''
+      if (!tokens && !thoughts) return
+
+      set((state) => ({
+        messages: state.messages.map((m) => {
+          if (m.id !== assistantMessage.id) return m
+          const steps = m.thinkingSteps || []
+          const currentIteration = steps.length > 0 ? steps[steps.length - 1].iteration : 0
+          return {
+            ...m,
+            content: m.content + tokens,
+            thinkingSteps: thoughts
+              ? steps.map((s) =>
+                  s.iteration === currentIteration
+                    ? { ...s, thought: (s.thought || '') + thoughts }
+                    : s
+                )
+              : steps,
+          }
+        }),
+      }))
+    }
+
+    function scheduleFlush() {
+      if (!flushTimerId) {
+        flushTimerId = setTimeout(flushBuffers, 80)  // 每 80ms 批量刷新一次
+      }
+    }
+
     function handleEvent(eventType: string, data: any) {
-      console.log('[handleEvent]', eventType, data.iteration || data.content?.slice(0, 50))
       if (eventType === 'token') {
         const token = data.content || ''
-        set((state) => ({
-          messages: state.messages.map((m) =>
-            m.id === assistantMessage.id
-              ? { ...m, content: m.content + token }
-              : m
-          ),
-        }))
+        if (token) {
+          tokenBuffer += token
+          scheduleFlush()
+        }
       } else if (eventType === 'sources') {
+        flushBuffers()  // 先刷新挂起的 token
         sources = data.sources || []
         set((state) => ({
           messages: state.messages.map((m) =>
@@ -222,6 +258,7 @@ export const useAppStore = create<AppState>((set, get) => ({
           ),
         }))
       } else if (eventType === 'step_start') {
+        flushBuffers()  // 先刷新挂起的 token
         if (settings.mode === 'agent') {
           const action = data.action || 'think'
           const step = {
@@ -240,6 +277,7 @@ export const useAppStore = create<AppState>((set, get) => ({
           }))
         }
       } else if (eventType === 'step_end') {
+        flushBuffers()  // 先刷新挂起的 token
         if (settings.mode === 'agent') {
           set((state) => ({
             messages: state.messages.map((m) =>
@@ -257,6 +295,7 @@ export const useAppStore = create<AppState>((set, get) => ({
           }))
         }
       } else if (eventType === 'thought') {
+        flushBuffers()
         if (settings.mode === 'agent') {
           set((state) => {
             const msg = state.messages.find((m) => m.id === assistantMessage.id)
@@ -288,43 +327,32 @@ export const useAppStore = create<AppState>((set, get) => ({
       } else if (eventType === 'thought_token') {
         if (settings.mode === 'agent') {
           const content = data.content || ''
-          if (!content) return
-          set((state) => {
-            const msg = state.messages.find((m) => m.id === assistantMessage.id)
-            const steps = msg?.thinkingSteps || []
-            const currentIteration = steps.length > 0 ? steps[steps.length - 1].iteration : 0
-            return {
-              messages: state.messages.map((m) =>
-                m.id === assistantMessage.id
-                  ? {
-                      ...m,
-                      thinkingSteps: (m.thinkingSteps || []).map((s) =>
-                        s.iteration === currentIteration
-                          ? { ...s, thought: (s.thought || '') + content }
-                          : s
-                      ),
-                    }
-                  : m
-              ),
-            }
-          })
+          if (content) {
+            thoughtBuffer += content
+            scheduleFlush()
+          }
         }
-      } else if (eventType === 'tool_arg') {
-        // tool_arg events indicate the LLM is calling a tool — no action needed
-        // The tool name will be set in the step_end event
+      } else if (eventType === 'done') {
+        flushBuffers()  // 确保所有挂起的 token 都已刷新
       }
+      // heartbeat, tool_arg 等事件无需处理
     }
 
-    // SSE 解析 + 立即处理
+    // SSE 解析
     let eventBuffer = { event: '', data: '' }
 
     async function processStream() {
+      // 10 分钟超时 — agent 查询可能很慢
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 10 * 60 * 1000)
+
       try {
         console.log('[SSE] connecting to', `${API_BASE}/api/v1/chat/stream`)
         const response = await fetch(`${API_BASE}/api/v1/chat/stream`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload),
+          signal: controller.signal,
         })
 
         console.log('[SSE] response status:', response.status, response.statusText)
@@ -362,9 +390,6 @@ export const useAppStore = create<AppState>((set, get) => ({
               handleEvent(eventType, data)
 
               eventBuffer = { event: '', data: '' }
-
-              // 让出主线程，让浏览器渲染
-              await new Promise(resolve => setTimeout(resolve, 0))
             }
           }
         }
@@ -372,16 +397,31 @@ export const useAppStore = create<AppState>((set, get) => ({
         console.error('[SSE] error:', e?.name, e?.message, e?.cause)
         console.error('[SSE] API_BASE was:', API_BASE)
         console.error('[SSE] URL was:', `${API_BASE}/api/v1/chat/stream`)
+
+        // 区分超时 / 网络错误 / 其他错误，给出可读提示
+        let userMsg: string
+        if (e?.name === 'AbortError') {
+          userMsg = '请求超时，Agent 推理时间过长，请稍后重试。'
+        } else if (e instanceof TypeError && e.message === 'Failed to fetch') {
+          userMsg = '网络连接中断，请检查网络后重试。'
+        } else if (e?.message?.startsWith('HTTP')) {
+          userMsg = `服务器错误（${e.message}），请稍后重试。`
+        } else {
+          userMsg = `连接异常：${e?.message || e}，请重试。`
+        }
+
         const errorMsg: Message = {
           id: Date.now().toString(36) + Math.random().toString(36).slice(2),
           session_id: sessionId!,
           role: 'assistant',
-          content: `Error: ${e}`,
+          content: userMsg,
           sources: [],
           created_at: new Date().toISOString(),
         }
         set((state) => ({ messages: [...state.messages, errorMsg] }))
       } finally {
+        clearTimeout(timeoutId)
+        flushBuffers()  // 确保最后一批 token 不丢失
         set({ isStreaming: false, uploadedFile: null })
         // 流式结束后持久化消息
         const { currentSessionId, messages } = get()

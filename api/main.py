@@ -305,57 +305,68 @@ async def chat_stream(request: ChatRequest):
                     finally:
                         queue.put_nowait(None)  # sentinel
 
-                import asyncio as _aio
-                loop = _aio.get_event_loop()
+                loop = asyncio.get_running_loop()
                 fut = loop.run_in_executor(None, _sync_producer)
 
                 while True:
                     try:
-                        event = await asyncio.wait_for(queue.get(), timeout=30)
+                        event = await asyncio.wait_for(queue.get(), timeout=10)
                     except asyncio.TimeoutError:
-                        yield ": keepalive\n\n"
+                        # 用实际 SSE 事件而非注释做心跳，确保 http-proxy 正确转发
+                        yield f"event: heartbeat\ndata: {{}}\n\n"
                         continue
                     if event is None:
                         break
 
                     sse = None
 
-                    if event.event_type == "step_start":
-                        sse = f"event: step_start\ndata: {json.dumps(event.data, ensure_ascii=False)}\n\n"
+                    try:
+                        if event.event_type == "step_start":
+                            sse = f"event: step_start\ndata: {json.dumps(event.data, ensure_ascii=False)}\n\n"
 
-                    elif event.event_type == "step_end":
-                        sse = f"event: step_end\ndata: {json.dumps(event.data, ensure_ascii=False)}\n\n"
+                        elif event.event_type == "step_end":
+                            sse = f"event: step_end\ndata: {json.dumps(event.data, ensure_ascii=False)}\n\n"
 
-                    elif event.event_type == "answer_token":
-                        sse = f"event: token\ndata: {json.dumps({'content': event.data.get('content', '')}, ensure_ascii=False)}\n\n"
+                        elif event.event_type == "answer_token":
+                            sse = f"event: token\ndata: {json.dumps({'content': event.data.get('content', '')}, ensure_ascii=False)}\n\n"
 
-                    elif event.event_type == "thought_token":
-                        sse = f"event: thought_token\ndata: {json.dumps({'content': event.data.get('content', '')}, ensure_ascii=False)}\n\n"
+                        elif event.event_type == "thought_token":
+                            sse = f"event: thought_token\ndata: {json.dumps({'content': event.data.get('content', '')}, ensure_ascii=False)}\n\n"
 
-                    elif event.event_type == "thought":
-                        sse = f"event: thought\ndata: {json.dumps(event.data, ensure_ascii=False)}\n\n"
+                        elif event.event_type == "thought":
+                            sse = f"event: thought\ndata: {json.dumps(event.data, ensure_ascii=False)}\n\n"
 
-                    elif event.event_type == "tool_arg":
-                        sse = f"event: tool_arg\ndata: {json.dumps(event.data, ensure_ascii=False)}\n\n"
+                        elif event.event_type == "tool_arg":
+                            sse = f"event: tool_arg\ndata: {json.dumps(event.data, ensure_ascii=False)}\n\n"
 
-                    elif event.event_type == "done":
-                        # done 事件中收集 sources
-                        acc_chunks = agent.tool_executor.accumulated_chunks
-                        chunk_list = list(acc_chunks.values()) if isinstance(acc_chunks, dict) else acc_chunks
-                        chunk_list = [c for c in chunk_list if hasattr(c, "chunk_id")]
-                        sources = chunks_to_sources(chunk_list)
-                        sources_data = [s.model_dump() for s in sources]
-                        if sources_data:
-                            yield f"event: sources\ndata: {json.dumps({'sources': sources_data}, ensure_ascii=False)}\n\n"
+                        elif event.event_type == "done":
+                            # done 事件中收集 sources（包裹在 try 中防止单个步骤崩溃整个流）
+                            chunks_count = 0
+                            try:
+                                acc_chunks = agent.tool_executor.accumulated_chunks
+                                chunk_list = list(acc_chunks.values()) if isinstance(acc_chunks, dict) else acc_chunks
+                                chunk_list = [c for c in chunk_list if hasattr(c, "chunk_id")]
+                                chunks_count = len(chunk_list)
+                                sources = chunks_to_sources(chunk_list)
+                                sources_data = [s.model_dump() for s in sources]
+                                if sources_data:
+                                    yield f"event: sources\ndata: {json.dumps({'sources': sources_data}, ensure_ascii=False)}\n\n"
+                            except Exception as e:
+                                logger.warning(f"[SSE] sources 序列化失败（不影响回答）: {e}")
 
-                        done_data = {
-                            **event.data,
-                            "chunks_count": len(chunk_list),
-                        }
-                        sse = f"event: done\ndata: {json.dumps(done_data, ensure_ascii=False)}\n\n"
+                            done_data = {
+                                **event.data,
+                                "chunks_count": chunks_count,
+                            }
+                            sse = f"event: done\ndata: {json.dumps(done_data, ensure_ascii=False)}\n\n"
 
-                    elif event.event_type == "error":
-                        sse = f"event: error\ndata: {json.dumps(event.data, ensure_ascii=False)}\n\n"
+                        elif event.event_type == "error":
+                            sse = f"event: error\ndata: {json.dumps(event.data, ensure_ascii=False)}\n\n"
+
+                    except Exception as e:
+                        logger.error(f"[SSE] 事件序列化失败: {e}", exc_info=True)
+                        # 序列化失败不应中断整个流，继续处理后续事件
+                        continue
 
                     if sse:
                         yield sse

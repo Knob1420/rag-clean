@@ -15,6 +15,7 @@ from loguru import logger
 
 from core.retrieve.retrieval import RetrievalService, RetrievalOptions
 from core.retrieve.retrieval_models import RetrievedChunk
+from core.pipeline.parent_expand import expand_to_parent_chunks
 from core.products.spec_matcher import query_products, format_spec_context
 from store import DocumentStore, get_store
 
@@ -519,94 +520,6 @@ class ToolExecutor:
             logger.warning(f"[search_knowledge] 自动 rerank 失败: {e}")
             return chunks[:top_k]
 
-    # ── 自动 parent 展开 ──────────────────────────────────────────────────
-
-    def _expand_to_parent_chunks(
-        self,
-        chunks: List[RetrievedChunk],
-    ) -> List[RetrievedChunk]:
-        """
-        将检索到的 child/summary chunks 做智能展开。
-
-        逻辑（同 rag_pipeline）：
-        - summary chunk → 展开为 parent chunk
-        - 同一个 parent 有 >= 1 个 child chunk → 展开为 parent chunk
-        - 无 parent_id 的 chunk → 保持原样
-        """
-        if not chunks:
-            return chunks
-
-        # 1. 按 parent_id 分组
-        parent_children: Dict[str, List[RetrievedChunk]] = {}
-        for chunk in chunks:
-            if chunk.parent_id:
-                parent_children.setdefault(chunk.parent_id, []).append(chunk)
-
-        if not parent_children:
-            return chunks
-
-        # 2. 收集需要展开的 parent_id
-        parent_ids_to_expand = list(parent_children.keys())
-
-        # 3. 批量拉取 parent chunks
-        from config import settings
-
-        parent_map: Dict[str, Dict] = {}
-        if parent_ids_to_expand:
-            try:
-                resp = self._store.es.mget(
-                    index=settings.es_index_chunks,
-                    body={"ids": parent_ids_to_expand},
-                )
-                for doc in resp.get("docs", []):
-                    if doc.get("found") and doc.get("_source"):
-                        parent_map[doc["_id"]] = doc["_source"]
-            except Exception as e:
-                logger.warning(f"[ToolExecutor] 批量获取 parent chunk 失败: {e}")
-
-        # 4. 构建结果
-        result: List[RetrievedChunk] = []
-        seen_ids = set()
-
-        for chunk in chunks:
-            if chunk.chunk_id in seen_ids:
-                continue
-
-            if not chunk.parent_id:
-                result.append(chunk)
-                seen_ids.add(chunk.chunk_id)
-                continue
-
-            children = parent_children[chunk.parent_id]
-
-            # 展开：summary 或 >=1 child from same parent → parent chunk
-            if chunk.parent_id in parent_map:
-                if chunk.parent_id not in seen_ids:
-                    parent_src = parent_map[chunk.parent_id]
-                    max_score = max(c.score for c in children)
-                    parent_chunk = RetrievedChunk(
-                        chunk_id=parent_src.get("chunk_id", chunk.parent_id),
-                        doc_id=parent_src.get("doc_id", ""),
-                        content=parent_src.get("content", ""),
-                        score=max_score,
-                        doc_title=parent_src.get("doc_title"),
-                        dataset_id=parent_src.get("dataset_id"),
-                        chunk_type="parent",
-                        doc_hash=parent_src.get("doc_hash"),
-                        parent_id=None,
-                    )
-                    result.append(parent_chunk)
-                    seen_ids.add(chunk.parent_id)
-                # 同 parent 的其他 child 跳过（已展开为 parent）
-                continue
-            else:
-                # parent 未找到，保留原 child
-                if chunk.chunk_id not in seen_ids:
-                    result.append(chunk)
-                    seen_ids.add(chunk.chunk_id)
-
-        return result
-
     # ── spec_query ──────────────────────────────────────────────────
 
     def _exec_spec_query(self, args: Dict[str, Any]) -> Tuple[str, List[RetrievedChunk]]:
@@ -801,7 +714,7 @@ class ToolExecutor:
         rest = ranked_chunks[10:]
 
         # 3. top10 expand parent
-        top10_expanded = self._expand_to_parent_chunks(top10)
+        top10_expanded = expand_to_parent_chunks(top10, self._store)
 
         # 4. 构建新的 accumulated_chunks
         # top10 用 expanded，rest 用原始

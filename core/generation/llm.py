@@ -45,44 +45,69 @@ class LLMClient:
             )
         return self._client
 
-    def call(self, messages: List[Dict[str, str]], temperature: float = 0.3, max_tokens: int = 2000) -> str:
+    def call(self, messages: List[Dict[str, str]], temperature: float = 0.3, max_tokens: int = 2000, model: Optional[str] = None) -> str:
         """
-        调用 DeepSeek API。
+        调用 DeepSeek API，返回文本内容。
 
         Args:
             messages: 消息列表
             temperature: 温度参数
             max_tokens: 最大生成 token 数
+            model: 可选模型名称，默认使用 self.model
 
         Returns:
             LLM 回复文本
         """
+        content, _ = self.call_with_usage(messages, temperature, max_tokens, model)
+        return content
+
+    def call_with_usage(self, messages: List[Dict[str, str]], temperature: float = 0.3, max_tokens: int = 2000, model: Optional[str] = None) -> tuple:
+        """
+        调用 DeepSeek API，返回 (content, TokenUsage) 元组。
+
+        Args:
+            messages: 消息列表
+            temperature: 温度参数
+            max_tokens: 最大生成 token 数
+            model: 可选模型名称，默认使用 self.model
+
+        Returns:
+            (content: str, usage: TokenUsage) 元组
+        """
         if not self.api_key:
             logger.warning("使用 Mock 模式（未配置 API Key）")
-            return '{"doc_type": "其他", "domain": "Product_Tech", "entities": {}, "filter_terms": [], "topics": [], "doc_intent": null, "summary": "暂无摘要", "confidence": 0}'
+            return (
+                "抱歉，当前使用 Mock 模式。请配置 API Key 以获得真实回复。",
+                TokenUsage(prompt_tokens=0, completion_tokens=0, total_tokens=0),
+            )
 
         response = self.client.chat.completions.create(
-            model=self.model,
+            model=model or self.model,
             messages=messages,
             temperature=temperature,
             max_tokens=max_tokens,
         )
         content = response.choices[0].message.content
+        usage = TokenUsage(
+            prompt_tokens=response.usage.prompt_tokens,
+            completion_tokens=response.usage.completion_tokens,
+            total_tokens=response.usage.total_tokens,
+        )
         logger.info(
             f"LLM 调用成功: "
-            f"prompt_tokens={response.usage.prompt_tokens}, "
-            f"completion_tokens={response.usage.completion_tokens}"
+            f"prompt_tokens={usage.prompt_tokens}, "
+            f"completion_tokens={usage.completion_tokens}"
         )
-        return content
+        return content, usage
 
-    def call_stream(self, messages: List[Dict[str, str]], temperature: float = 0.3, max_tokens: int = 2000):
+    def call_stream(self, messages: List[Dict[str, str]], temperature: float = 0.3, max_tokens: int = 2000, model: Optional[str] = None):
         """
         简单流式调用（不带 tools），逐 token 返回。
         注意：DeepSeek 推理 token（reasoning_content）会被跳过，
         只返回正式的 content 内容。
         """
         stream = self.client.chat.completions.create(
-            model=self.model,
+            model=model or self.model,
             messages=messages,
             temperature=temperature,
             max_tokens=max_tokens,
@@ -92,6 +117,35 @@ class LLMClient:
             delta = chunk.choices[0].delta
             # DeepSeek 推理 token 会在 content 之前到达，这里跳过
             # （如需转发推理内容，应由调用方自行处理 streaming chunk）
+            if delta.content:
+                yield delta.content
+
+    async def async_call_stream(self, messages: List[Dict[str, str]], temperature: float = 0.3, max_tokens: int = 2000, model: Optional[str] = None):
+        """
+        异步流式调用（不带 tools），逐 token 返回。
+        使用 AsyncOpenAI，不阻塞事件循环。
+        """
+        from openai import AsyncOpenAI
+
+        if not self.api_key:
+            yield "抱歉，当前使用 Mock 模式。请配置 API Key 以获得真实回复。"
+            return
+
+        client = AsyncOpenAI(
+            api_key=self.api_key,
+            base_url=self.base_url,
+        )
+        stream = await client.chat.completions.create(
+            model=model or self.model,
+            messages=messages,
+            temperature=temperature,
+            max_tokens=max_tokens,
+            stream=True,
+        )
+        async for chunk in stream:
+            if not chunk.choices:
+                continue
+            delta = chunk.choices[0].delta
             if delta.content:
                 yield delta.content
 

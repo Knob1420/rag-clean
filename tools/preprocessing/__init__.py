@@ -1,5 +1,5 @@
 """
-core.preprocessing — MD 文档预处理流水线
+tools.preprocessing — MD 文档预处理流水线
 
 步骤1：清洗 + 分片（cleaner_ext.py + chunker_ext.py）
 步骤2：NER + 共现聚类（entity_extractor.py）
@@ -8,15 +8,15 @@ core.preprocessing — MD 文档预处理流水线
 步骤5：固化存储（storage.py）
 """
 
-from core.preprocessing.cleaner_ext import TextCleaner, clean_and_normalize
-from core.preprocessing.chunker_ext import SmartChunker
-from core.preprocessing.entity_extractor import extract_entities, save_results
-from core.preprocessing.struct_extractor import (
+from tools.preprocessing.cleaner_ext import TextCleaner, clean_and_normalize
+from tools.preprocessing.chunker_ext import SmartChunker
+from tools.preprocessing.entity_extractor import extract_entities, save_results
+from tools.preprocessing.struct_extractor import (
     extract_product_params,
     extract_cooperation,
     save_results as save_struct_results,
 )
-from core.preprocessing.ontology_builder import (
+from tools.preprocessing.ontology_builder import (
     load_entity_raw,
     load_product_params,
     load_cooperation,

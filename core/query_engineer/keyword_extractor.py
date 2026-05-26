@@ -156,9 +156,7 @@ class ChineseKeywordExtractor:
     def _load_domain_terms(self):
         """从 terms_seed.json 加载领域术语到 jieba 分词器。
 
-        加载两个位置：
-        1. data/terms_seed.json（主文件，用户维护）
-        2. core/preprocessing/scripts/terms_seed.json（兼容旧路径）
+        加载位置：data/terms_seed.json
         """
         import json
 

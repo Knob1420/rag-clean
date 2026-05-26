@@ -25,6 +25,7 @@ from fastapi.responses import StreamingResponse
 from loguru import logger
 
 from config import settings
+from core.generation.generation import get_generation_service
 from core.pipeline.simple_pipeline import SimplePipeline
 from core.retrieve.retrieval_models import (
     ChatRequest,

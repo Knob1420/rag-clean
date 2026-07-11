@@ -5,11 +5,16 @@
 
 支持的格式及降级策略：
 ├── .md    → 直接读取
-├── .pdf   → MinerU
-├── .doc   → antiword → libreoffice 降级
-├── .docx  → python-docx → XML 解析 → libreoffice 三级降级
-├── .pptx  → python-pptx
-└── .ppt   → 暂不支持
+├── .pdf   → MinerU 3.x (hybrid-engine, 跨页表格合并)
+├── .docx  → MinerU 3.x → MarkItDown (mammoth) → libreoffice 三级降级
+├── .pptx  → MinerU 3.x → MarkItDown → libreoffice 三级降级
+├── .xlsx  → MinerU 3.x → MarkItDown (openpyxl) 二级降级
+├── .csv   → MarkItDown（MinerU 3.x 不支持 CSV）
+├── .doc   → antiword → libreoffice 降级（老格式 MinerU 不支持）
+└── .ppt   → 暂不支持（请先转 pptx）
+
+MinerU 3.x 通过 subprocess + 独立 conda env（settings.mineru3_env）调用，
+避免 vllm/torch 重依赖污染主项目环境。
 
 注意：分块由 chunker 负责，不在此处理。
 """
@@ -19,8 +24,6 @@ import subprocess
 import sys
 import tempfile
 import uuid
-import zipfile
-import xml.etree.ElementTree as ET
 from pathlib import Path
 from typing import List, Optional
 
@@ -51,14 +54,14 @@ def _ensure_mineru():
 # ── 支持的格式 ─────────────────────────────────────────────
 
 
-SUPPORTED_FORMATS = {".pdf", ".doc", ".docx", ".pptx", ".ppt", ".md"}
+SUPPORTED_FORMATS = {".pdf", ".doc", ".docx", ".pptx", ".ppt", ".xlsx", ".xls", ".csv", ".md"}
 
 
 # ── 格式检测 ──────────────────────────────────────────────
 
 
 def detect_format(file_path: str) -> str:
-    """返回格式标识: pdf/doc/docx/pptx/ppt/md/unknown"""
+    """返回格式标识: pdf/doc/docx/pptx/ppt/xlsx/csv/md/unknown"""
     ext = Path(file_path).suffix.lower()
     format_map = {
         ".pdf": "pdf",
@@ -66,6 +69,9 @@ def detect_format(file_path: str) -> str:
         ".docx": "docx",
         ".pptx": "pptx",
         ".ppt": "ppt",
+        ".xlsx": "xlsx",
+        ".xls": "xls",
+        ".csv": "csv",
         ".md": "md",
     }
     return format_map.get(ext, "unknown")
@@ -111,56 +117,51 @@ def _save_cache(path: Path, content: str) -> None:
 # ── 转换实现 ──────────────────────────────────────────────
 
 
-def _convert_pdf(path: Path) -> str:
-    """PDF → Markdown（使用 MinerU）"""
-    _ensure_mineru()
-    if not MINERU_AVAILABLE:
-        raise RuntimeError("MinerU 不可用，请先安装 MinerU")
+def _convert_with_mineru3(path: Path) -> str:
+    """
+    使用 MinerU 3.x CLI 将 PDF/DOCX/PPTX/XLSX 转为 Markdown。
 
-    # 检查缓存
+    通过 core.client.mineru_client.convert_with_mineru() 调用：
+    - 若常驻服务在跑（settings.mineru3_api_url + is_running）→ 走 HTTP，单文件 ~15s
+    - 否则 → 冷启动 CLI，每次重载模型 ~58s
+
+    mineru 直接输出到 parse_backup_dir/{stem}_{hash}/，**完整保留** md + images + json。
+    md 文件单独缓存到 cache/converters/，与其他格式（MarkItDown 等）统一检查入口。
+
+    目录结构：
+        parse_backup_dir/{stem}_{hash}/
+            └── {stem}/{hybrid_auto|office|pipeline}/
+                ├── {stem}.md
+                ├── images/                 ← 图片始终在这里
+                ├── {stem}_middle.json
+                └── ...
+        cache/converters/{stem}_{hash}.md   ← md 文本缓存（检查入口）
+    """
+    from config import settings
+    from core.client.mineru_client import convert_with_mineru
+
+    # 1. 检查 md 缓存（与其他格式统一）
     cached = _load_cache(path)
     if cached:
         return cached
 
-    backend = "hybrid-auto-engine"
+    # 2. mineru 直接输出到持久目录（含图片等完整结构）
+    content_hash = _content_hash(path)
+    output_root = Path(settings.parse_backup_dir) / f"{path.stem}_{content_hash}"
 
-    with tempfile.TemporaryDirectory() as tmpdir:
-        do_parse(
-            output_dir=tmpdir,
-            pdf_file_names=[path.stem],
-            pdf_bytes_list=[path.read_bytes()],
-            p_lang_list=["ch"],
-            backend=backend,
-            parse_method="auto",
-            formula_enable=True,
-            table_enable=True,
-            f_draw_layout_bbox=False,
-            f_draw_span_bbox=False,
-            f_dump_md=True,
-            f_dump_middle_json=True,
-            f_dump_model_output=False,
-            f_dump_orig_pdf=False,
-            f_dump_content_list=False,
-            f_make_md_mode="mm_markdown",
-            start_page_id=0,
-            end_page_id=None,
-        )
+    # 3. 调 mineru（连服务或冷启动）
+    md_file = convert_with_mineru(path, output_root)
+    md_content = md_file.read_text(encoding="utf-8")
 
-        # 查找生成的 Markdown 文件
-        backend_dir = backend.replace("-", "_").replace("_engine", "")
-        md_file = Path(tmpdir) / path.stem / backend_dir / f"{path.stem}.md"
-
-        if not md_file.exists():
-            md_files = list(Path(tmpdir).rglob("*.md"))
-            if md_files:
-                md_file = md_files[0]
-            else:
-                raise RuntimeError("未找到生成的 Markdown 文件")
-
-        md_content = md_file.read_text(encoding="utf-8")
-
+    # 4. md 另存到 cache（与其他格式统一检查）
     _save_cache(path, md_content)
+
     return md_content
+
+
+def _convert_pdf(path: Path) -> str:
+    """PDF → Markdown: MinerU 3.x (hybrid-engine 跨页表格合并)"""
+    return _convert_with_mineru3(path)
 
 
 def _convert_doc(path: Path) -> str:
@@ -185,24 +186,24 @@ def _convert_doc(path: Path) -> str:
 
 
 def _convert_docx(path: Path) -> str:
-    """DOCX → Markdown: python-docx → XML 解析 → libreoffice 三级降级"""
+    """DOCX → Markdown: MinerU 3.x → MarkItDown → libreoffice 三级降级"""
     cached = _load_cache(path)
     if cached:
         return cached
 
-    # 方法 1: python-docx
-    result = _try_python_docx(path)
+    # 方法 1: MinerU 3.x（hybrid-engine，标题层级 + HTML 表格 + rowspan）
+    try:
+        return _convert_with_mineru3(path)
+    except Exception as e:
+        logger.warning(f"MinerU3 DOCX 失败，降级到 MarkItDown: {e}")
+
+    # 方法 2: MarkItDown（mammoth 内核）
+    result = _convert_with_markitdown(path)
     if result:
         _save_cache(path, result)
         return result
 
-    # 方法 2: 直接解析 XML
-    result = _parse_docx_xml(path)
-    if result:
-        _save_cache(path, result)
-        return result
-
-    # 方法 3: libreoffice
+    # 方法 3: libreoffice 兜底
     result = _convert_with_libreoffice(path)
     if result:
         _save_cache(path, result)
@@ -212,17 +213,60 @@ def _convert_docx(path: Path) -> str:
 
 
 def _convert_pptx(path: Path) -> str:
-    """PPTX → Markdown: python-pptx"""
+    """PPTX → Markdown: MinerU 3.x → MarkItDown → libreoffice 三级降级"""
     cached = _load_cache(path)
     if cached:
         return cached
 
-    result = _try_python_pptx(path)
+    try:
+        return _convert_with_mineru3(path)
+    except Exception as e:
+        logger.warning(f"MinerU3 PPTX 失败，降级到 MarkItDown: {e}")
+
+    result = _convert_with_markitdown(path)
     if result:
         _save_cache(path, result)
         return result
 
-    raise RuntimeError(f"PPTX 转换失败: {path.name}")
+    result = _convert_with_libreoffice(path)
+    if result:
+        _save_cache(path, result)
+        return result
+
+    raise RuntimeError(f"PPTX 转换失败（所有方法均不可用）: {path.name}")
+
+
+def _convert_xlsx(path: Path) -> str:
+    """XLSX/XLS → Markdown: MinerU 3.x → MarkItDown 二级降级"""
+    cached = _load_cache(path)
+    if cached:
+        return cached
+
+    try:
+        return _convert_with_mineru3(path)
+    except Exception as e:
+        logger.warning(f"MinerU3 XLSX 失败，降级到 MarkItDown: {e}")
+
+    result = _convert_with_markitdown(path)
+    if result:
+        _save_cache(path, result)
+        return result
+
+    raise RuntimeError(f"XLSX 转换失败: {path.name}")
+
+
+def _convert_csv(path: Path) -> str:
+    """CSV → Markdown: MarkItDown 转 markdown 表格"""
+    cached = _load_cache(path)
+    if cached:
+        return cached
+
+    result = _convert_with_markitdown(path)
+    if result:
+        _save_cache(path, result)
+        return result
+
+    raise RuntimeError(f"CSV 转换失败: {path.name}")
 
 
 # ── 具体转换实现 ───────────────────────────────────────────
@@ -251,96 +295,37 @@ def _try_antiword(path: Path) -> Optional[str]:
     return None
 
 
-def _detect_heading_level(style_name: str) -> Optional[int]:
+def _convert_with_markitdown(path: Path) -> Optional[str]:
     """
-    从段落样式名推断标题级别，返回 Markdown 标题层级 (1-based)。
+    使用 MarkItDown 将 DOCX/PPTX/XLSX 等转为 Markdown。
 
-    支持的样式:
-    - 英文: "Heading 1", "Heading 2", ...
-    - 中文 WPS: "一级标题", "二级标题", "三级标题", ...
-    - 中文带前缀: "!一级标题", "!二级标题", ...
+    - DOCX 走 mammoth 内核（保留表格、列表、样式）
+    - PPTX 走 python-pptx 完整封装（表格/备注/图表/图片描述）
+    - 失败/格式不支持 → 返回 None，调用方走兜底
     """
-    import re
-
-    # 英文样式: "Heading 1" / "Heading1"
-    if style_name.startswith("Heading"):
-        try:
-            return int(style_name.replace("Heading", "").strip())
-        except ValueError:
-            return 1
-
-    # 中文样式: "!一级标题", "一级标题", "二级标题", ...
-    cn_heading_map = {"一": 1, "二": 2, "三": 3, "四": 4, "五": 5, "六": 6}
-    cn_match = re.search(r"([一二三四五六])级标题", style_name)
-    if cn_match:
-        return cn_heading_map[cn_match.group(1)]
-
-    return None
-
-
-def _try_python_docx(path: Path) -> Optional[str]:
-    """使用 python-docx 转换 DOCX 文件"""
     try:
-        from docx import Document
+        import re
 
-        doc = Document(path)
-        md_lines = [f"# {path.stem}\n"]
+        from markitdown import MarkItDown
 
-        for para in doc.paragraphs:
-            text = para.text.strip()
-            if not text:
-                md_lines.append("")
-                continue
+        md = MarkItDown(enable_plugins=False)
+        result = md.convert(str(path))
+        text = (result.text_content or "").strip()
+        if not text:
+            logger.warning(f"MarkItDown 输出为空: {path.name}")
+            return None
 
-            heading_level = _detect_heading_level(para.style.name)
-            if heading_level:
-                md_lines.append(f"{'#' * (heading_level + 1)} {text}")
-            else:
-                md_lines.append(text)
+        # 去掉 mammoth/pptx 嵌入的 base64 图片（避免下游 chunker 切歪）
+        # ponytail: 简单正则足够，等真有非 data: URI 的远程图片再加分支
+        text = re.sub(r"!\[[^\]]*\]\(data:[^)]*\)", "", text)
 
-        return "\n".join(md_lines)
-
+        # 加文档标题，与其他路径格式保持一致
+        return f"# {path.stem}\n\n{text}"
     except ImportError:
-        logger.info("python-docx 未安装，跳过")
+        logger.warning("markitdown 未安装，跳过；请运行 pip install 'markitdown[all]'")
         return None
     except Exception as e:
-        logger.warning(f"python-docx 转换失败: {e}")
-        return None
-
-
-def _parse_docx_xml(path: Path) -> Optional[str]:
-    """直接解析 word/document.xml（处理非标准 DOCX）"""
-    try:
-        with zipfile.ZipFile(path, "r") as zf:
-            doc_xml = None
-            for doc_path in ["word/document.xml", "word\\document.xml"]:
-                try:
-                    doc_xml = zf.read(doc_path)
-                    break
-                except KeyError:
-                    continue
-
-            if doc_xml is None:
-                return None
-
-            root = ET.fromstring(doc_xml)
-            namespaces = {
-                "w": "http://schemas.openxmlformats.org/wordprocessingml/2006/main"
-            }
-
-            md_lines = [f"# {path.stem}\n"]
-            for para in root.findall(".//w:p", namespaces):
-                texts = [t.text or "" for t in para.findall(".//w:t", namespaces)]
-                para_text = "".join(texts)
-                if para_text.strip():
-                    md_lines.append(para_text)
-                else:
-                    md_lines.append("")
-
-            return "\n".join(md_lines)
-
-    except Exception as e:
-        logger.warning(f"XML 解析失败: {e}")
+        logger.warning(f"MarkItDown 转换失败: {e}")
         return None
 
 
@@ -390,34 +375,6 @@ def _convert_with_libreoffice(path: Path) -> Optional[str]:
         return None
 
 
-def _try_python_pptx(path: Path) -> Optional[str]:
-    """使用 python-pptx 转换 PPTX 文件"""
-    try:
-        from pptx import Presentation
-
-        prs = Presentation(path)
-        md_lines = [f"# {path.stem}\n"]
-
-        for slide_num, slide in enumerate(prs.slides, 1):
-            md_lines.append(f"\n## 幻灯片 {slide_num}\n")
-
-            for shape in slide.shapes:
-                if hasattr(shape, "text") and shape.text:
-                    text = shape.text.strip()
-                    if text:
-                        md_lines.append(text)
-                        md_lines.append("")
-
-        return "\n".join(md_lines)
-
-    except ImportError:
-        logger.error("python-pptx 未安装，请运行: pip install python-pptx")
-        return None
-    except Exception as e:
-        logger.error(f"PPTX 转换失败: {e}")
-        return None
-
-
 # ── 主提取函数 ────────────────────────────────────────────
 
 
@@ -455,6 +412,12 @@ def convert_to_markdown(file_path: str) -> str:
 
     if fmt == "pptx":
         return _convert_pptx(path)
+
+    if fmt in ("xlsx", "xls"):
+        return _convert_xlsx(path)
+
+    if fmt == "csv":
+        return _convert_csv(path)
 
     if fmt == "ppt":
         raise RuntimeError("老 PPT 格式暂不支持，请转换为 PPTX")

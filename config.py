@@ -55,6 +55,19 @@ class Settings(BaseSettings):
     cache_dir: str = "./data/cache"  # enrichment 结果缓存，防重复消耗 token
     parse_backup_dir: str = "./data/parsed_backups"  # MinerU 解析输出
 
+    # ========== MinerU 3.x ==========
+    # 通过 subprocess 调 mineru CLI，独立 conda env 隔离 vllm/torch 依赖
+    mineru3_env: str = "memory"              # conda env name
+    mineru3_gpu: str = "2"                   # CUDA_VISIBLE_DEVICES（配合 PCI_BUS_ID）
+    mineru3_backend: str = "hybrid-engine"   # pipeline / vlm-engine / hybrid-engine
+    mineru3_effort: str = "medium"           # medium / high（仅 hybrid-* 生效）
+    mineru3_lang: str = "ch"                 # OCR 语言
+    # 常驻服务（推荐）：先起 mineru-api 服务，convert 自动复用模型，单文件 ~15s
+    # 空 api_url = 走冷启动 CLI（每次重载模型 ~58s）
+    mineru3_host: str = "127.0.0.1"
+    mineru3_port: int = 8004
+    mineru3_api_url: str = "http://127.0.0.1:8004"  # 设空 = 强制冷启动
+
     class Config:
         env_file = str(_PROJECT_ROOT / ".env")
         case_sensitive = False

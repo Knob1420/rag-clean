@@ -1,0 +1,10 @@
+# Qwen3-30B-A3B.yaml
+
+host: 0.0.0.0
+port: 8081
+api-key: Qwen3-30B-A3B
+model: /home/zjlab/Documents/build_LLMs/NLP_course_hf/pretrain_model/Qwen/Qwen3-30B-A3B-Instruct-2507/
+dtype: bfloat16
+served-model-name: Qwen3-30B-A3B
+tensor-parallel-size: 4
+gpu-memory-utilization: 0.85

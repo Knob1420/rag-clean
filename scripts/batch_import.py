@@ -38,6 +38,12 @@ from loguru import logger
 from core.ingestion.extractor import SUPPORTED_FORMATS, detect_format
 from core.ingestion.document_processor import process_document
 
+# 可选依赖：PyYAML（用于 _versions.yaml）
+try:
+    import yaml
+except ImportError:
+    yaml = None
+
 # ── 目录配置 ──────────────────────────────────────────
 DATA_ROOT = Path("/home/zjlab/Documents/build_LLMs/NLP_course_hf/RAG/data")
 RAW_DIR = DATA_ROOT / "raw"
@@ -77,6 +83,37 @@ def collect_files(dataset_id: Optional[str] = None) -> list[tuple[Path, str, str
     return files
 
 
+def load_version_map(dataset_id: str) -> Dict[str, str]:
+    """
+    加载 _versions.yaml：文件名 → source_key 映射。
+
+    位置：data/raw/{dataset_id}/_versions.yaml
+    格式：
+        G1技术规范_v1.md: G1技术规范
+        G1技术规范_v2.md: G1技术规范
+
+    缺失或解析失败 → 返回空 dict（即不启用版本管理）
+    """
+    if yaml is None:
+        logger.warning("PyYAML 未安装，跳过 _versions.yaml 加载")
+        return {}
+
+    path = RAW_DIR / dataset_id / "_versions.yaml"
+    if not path.exists():
+        return {}
+
+    try:
+        data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+        if not isinstance(data, dict):
+            logger.warning(f"_versions.yaml 格式错误（应为 dict）: {path}")
+            return {}
+        logger.info(f"[版本映射] 加载 {len(data)} 条: {path}")
+        return {str(k): str(v) for k, v in data.items()}
+    except Exception as e:
+        logger.warning(f"_versions.yaml 解析失败: {e}")
+        return {}
+
+
 def is_processed(dataset_id: str, filename: str) -> bool:
     """检查中间结果是否已存在"""
     safe_name = Path(filename).stem
@@ -91,6 +128,7 @@ def process_file(
     index_only: bool = False,
     use_summary: bool = True,
     chunk_mode: str = "recursive",
+    version_map: Optional[Dict[str, str]] = None,
 ) -> Dict[str, Any]:
     """
     处理单个文件（在线程中执行）
@@ -108,6 +146,9 @@ def process_file(
             "status": "skipped",
         }
 
+    # 版本链：若文件在 version_map 中，传 source_key 启用版本管理
+    source_key = (version_map or {}).get(f.name)
+
     try:
         documents = process_document(
             file_path=str(f),
@@ -116,12 +157,14 @@ def process_file(
             processed_dir=PROCESSED_DIR,
             use_summary=use_summary,
             chunk_mode=chunk_mode,
+            source_key=source_key,
         )
         return {
             "dataset_id": dataset_id,
             "title": f.stem,
             "status": "ok",
             "doc_count": len(documents),
+            "source_key": source_key or "",
         }
     except Exception as e:
         logger.exception(f"处理失败: {f.name}")
@@ -187,17 +230,27 @@ def main():
     skipped = 0
     results = []
 
-    # 单线程顺序处理
+    # 单线程顺序处理；每个 dataset 的 version_map 缓存（避免重复 IO）
+    version_map_cache: Dict[str, Dict[str, str]] = {}
     for i, file_info in enumerate(files):
         f, fmt, dataset_id = file_info
         print(f"\n{'─'*70}")
         print(f"[{i+1}/{len(files)}] [{dataset_id}] {f.name}")
+
+        # 懒加载该 dataset 的 version_map
+        if dataset_id not in version_map_cache:
+            version_map_cache[dataset_id] = load_version_map(dataset_id)
+        vmap = version_map_cache[dataset_id]
+
+        if f.name in vmap:
+            print(f"  [版本链] source_key = {vmap[f.name]}")
 
         result = process_file(
             file_info,
             args.index_only,
             use_summary=not args.no_summary,
             chunk_mode=args.chunk_mode,
+            version_map=vmap,
         )
         results.append(result)
 

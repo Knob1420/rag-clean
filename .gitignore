@@ -20,6 +20,9 @@ temp/
 # 测试报告
 test_reports/
 
+# eval 结果（本地产物）
+results/
+
 # 数据集、大文件、向量库
 data/
 docs/

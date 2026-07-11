@@ -160,6 +160,7 @@ class SmartChunker:
         title: str,
         doc_id: str,
         mode: str = "recursive",
+        source_key: str = "",
     ) -> List[Document]:
         """
         将 Markdown 内容切分为 Document 列表（父子结构）。
@@ -170,6 +171,7 @@ class SmartChunker:
             mode: 分块模式，"recursive"（默认）或 "semantic"
                   - recursive: 使用 MarkdownHeaderTextSplitter + RecursiveCharacterTextSplitter
                   - semantic: 使用 embedding 相似度找语义边界
+            source_key: 版本键（dataset_id::file_stem），透传到每个 chunk 的 metadata
 
         Returns:
             List[Document]: 每个 parent 对应一个 Document，包含切分后的 children
@@ -178,7 +180,7 @@ class SmartChunker:
         md = clean_text(markdown, remove_images=self._remove_images)
 
         if mode == "semantic":
-            return self._chunk_semantic(md, title, doc_id)
+            return self._chunk_semantic(md, title, doc_id, source_key=source_key)
 
         # ── 2. 按 Markdown 标题切分 parent sections ──────────────────────────
         raw_sections = self._parent_splitter.split_text(md)
@@ -203,7 +205,8 @@ class SmartChunker:
 
             # ── 4a. 切 child chunks ─────────────────────────────────────────
             child_document_list = self._split_children(
-                p_doc.page_content, p_doc.metadata, doc_id, parent_id, child_global_idx
+                p_doc.page_content, p_doc.metadata, doc_id, parent_id, child_global_idx,
+                source_key=source_key,
             )
             if child_document_list:
                 child_global_idx += len(child_document_list)
@@ -217,6 +220,7 @@ class SmartChunker:
                     "doc_title": title,
                     "chunk_id": parent_id,
                     "doc_hash": _generate_doc_hash(parent_content),
+                    "source_key": source_key,
                 },
                 children=child_document_list if child_document_list else None,
             )
@@ -240,6 +244,7 @@ class SmartChunker:
         doc_id: str,
         parent_id: str,
         start_child_idx: int,
+        source_key: str = "",
     ) -> List[ChildDocument]:
         """
         将 parent content 切分为 child chunks。
@@ -384,6 +389,11 @@ class SmartChunker:
 
         # ── 4. 合并过短 chunks ────────────────────────────────────
         child_document_list = self._merge_short_children(child_document_list)
+
+        # 透传 source_key 到所有 child
+        if source_key:
+            for child in child_document_list:
+                child.metadata["source_key"] = source_key
 
         return child_document_list
 
@@ -606,6 +616,7 @@ class SmartChunker:
         md: str,
         title: str,
         doc_id: str,
+        source_key: str = "",
     ) -> List[Document]:
         """
         基于 embedding 相似度的语义分块（支持中文）。
@@ -643,7 +654,7 @@ class SmartChunker:
 
         if len(valid_embeddings) < 2:
             # 无法分块，直接返回一个 Document
-            return self._create_single_document(md, title, doc_id, 0, len(segments))
+            return self._create_single_document(md, title, doc_id, 0, len(segments), source_key=source_key)
 
         # ── 4. 计算相邻 segment 的相似度，找语义断点 ─────────────────────
         SIMILARITY_THRESHOLD = 0.7
@@ -689,6 +700,7 @@ class SmartChunker:
                 doc_id,
                 parent_id,
                 child_global_idx,
+                source_key=source_key,
             )
             if child_document_list:
                 child_global_idx += len(child_document_list)
@@ -700,6 +712,7 @@ class SmartChunker:
                     "doc_title": title,
                     "chunk_id": parent_id,
                     "doc_hash": _generate_doc_hash(chunk_text),
+                    "source_key": source_key,
                 },
                 children=child_document_list if child_document_list else None,
             )
@@ -732,6 +745,7 @@ class SmartChunker:
         doc_id: str,
         parent_idx: int,
         child_global_idx: int,
+        source_key: str = "",
     ) -> List[Document]:
         """当无法分块时，创建单个 Document"""
         parent_id = f"{doc_id}_p{parent_idx}"
@@ -742,6 +756,7 @@ class SmartChunker:
             doc_id,
             parent_id,
             child_global_idx,
+            source_key=source_key,
         )
 
         document = Document(
@@ -751,6 +766,7 @@ class SmartChunker:
                 "doc_title": title,
                 "chunk_id": parent_id,
                 "doc_hash": _generate_doc_hash(md),
+                "source_key": source_key,
             },
             children=child_document_list if child_document_list else None,
         )

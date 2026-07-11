@@ -43,6 +43,7 @@ def process_document(
     processed_dir: Optional[Path] = None,
     use_summary: bool = True,
     chunk_mode: str = "recursive",
+    source_key: Optional[str] = None,
 ) -> List[Document]:
     """
     唯一的数据处理入口（从文件路径）。
@@ -60,6 +61,8 @@ def process_document(
         processed_dir: 中间结果保存目录（默认使用 PROCESSED_DIR）
         use_summary: 是否生成 summary（默认 True，关闭可节省处理时间）
         chunk_mode: 分块模式，"recursive"（默认）或 "semantic"
+        source_key: 版本键；None 时自动生成 f"{dataset_id}::{file_stem}"
+                    同 source_key 视为同文档的新版本，旧版本会被标记 is_latest=False
 
     Returns:
         List[Document]: 处理后的 Document 列表
@@ -79,6 +82,7 @@ def process_document(
     if dataset_id is None:
         dataset_id = path.parent.name
 
+    # source_key: None（默认）= 不启用版本管理；调用方显式传入才启用
     return process_markdown(
         content=md,
         title=title,
@@ -91,6 +95,7 @@ def process_document(
         processed_dir=processed_dir,
         use_summary=use_summary,
         chunk_mode=chunk_mode,
+        source_key=source_key,
     )
 
 
@@ -106,6 +111,7 @@ def process_markdown(
     processed_dir: Optional[Path] = None,
     use_summary: bool = True,
     chunk_mode: str = "recursive",
+    source_key: str = "",
 ) -> List[Document]:
     """
     直接处理 Markdown 文本（不需要文件路径）。
@@ -130,6 +136,7 @@ def process_markdown(
         processed_dir: 中间结果保存目录（默认使用 PROCESSED_DIR）
         use_summary: 是否生成 summary（默认 True）
         chunk_mode: 分块模式，"recursive"（默认）或 "semantic"
+        source_key: 版本键；同 key 视为同文档的新版本
 
     Returns:
         List[Document]: 处理后的 Document 列表
@@ -142,7 +149,8 @@ def process_markdown(
         doc_id = hashlib.sha256(content.encode()).hexdigest()[:16]
 
     logger.info(
-        f"[Pipeline] 开始处理文本: {title} (doc_id={doc_id}, dataset_id={dataset_id})"
+        f"[Pipeline] 开始处理文本: {title} (doc_id={doc_id}, dataset_id={dataset_id}, "
+        f"source_key={source_key or '-'})"
     )
 
     # 尝试加载中间结果
@@ -153,11 +161,12 @@ def process_markdown(
             # 重新计算向量（缓存中没有向量）
             _embed_documents(documents)
             _add_dataset_id(documents, dataset_id)
+            _inject_source_key(documents, source_key)
             _index_documents(store, doc_id, documents)
             return documents
 
     # 1. 父子分块（chunker 内部调用 clean_text）
-    documents = chunker.chunk(content, title, doc_id, mode=chunk_mode)
+    documents = chunker.chunk(content, title, doc_id, mode=chunk_mode, source_key=source_key)
     logger.info(f"  [Chunker] 分块完成: {len(documents)} parent documents")
 
     # 2. 生成 summary（每个 parent 一个 summary chunk，可选）
@@ -246,6 +255,20 @@ def _add_dataset_id(documents: List[Document], dataset_id: str):
                 summary.metadata["dataset_id"] = dataset_id
 
 
+def _inject_source_key(documents: List[Document], source_key: str):
+    """给所有文档注入 source_key（从中间结果加载时，旧缓存可能没有该字段）"""
+    if not source_key:
+        return
+    for doc in documents:
+        doc.metadata["source_key"] = source_key
+        if doc.children:
+            for child in doc.children:
+                child.metadata["source_key"] = source_key
+        if doc.summaries:
+            for summary in doc.summaries:
+                summary.metadata["source_key"] = source_key
+
+
 def _index_documents(store: DocumentStore, doc_id: str, documents: List[Document]):
     """索引文档到 ES"""
     store.ensure_indices()
@@ -297,6 +320,9 @@ def _generate_summaries(documents: List[Document], doc_id: str):
         # 透传 dataset_id（如果 parent 有）
         if "dataset_id" in doc.metadata:
             summary_meta["dataset_id"] = doc.metadata["dataset_id"]
+        # 透传 source_key（如果 parent 有）
+        if "source_key" in doc.metadata:
+            summary_meta["source_key"] = doc.metadata["source_key"]
 
         summary_doc = SummaryDocument(
             content=summary_content,

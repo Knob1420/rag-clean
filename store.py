@@ -30,6 +30,7 @@ CHUNKS_MAPPING = {
         # 文档级信息
         "doc_title": {"type": "text", "analyzer": "ik_max_word"},
         "dataset_id": {"type": "keyword"},     # 知识库ID（后续扩展）
+        "source_key": {"type": "keyword"},     # 版本键: dataset_id::file_stem — 同 key 视为同文档的新版本
         # chunk 级
         "chunk_type": {"type": "keyword"},     # "parent" | "child" | "summary"
         "content": {"type": "text", "analyzer": "ik_max_word", "search_analyzer": "ik_smart"},
@@ -70,12 +71,17 @@ class DocumentStore:
         return self._es
 
     def ensure_indices(self):
-        """确保索引存在，不存在则创建"""
+        """确保索引存在，不存在则创建；已存在则升级 mapping（新增字段）"""
         if not self.es.indices.exists(index=settings.es_index_chunks):
             self.es.indices.create(index=settings.es_index_chunks, mappings=CHUNKS_MAPPING)
             logger.info(f"索引已创建: {settings.es_index_chunks}")
         else:
-            logger.info(f"索引已存在: {settings.es_index_chunks}")
+            # 已有索引：put_mapping 升级（仅新增字段，不改已有字段类型）
+            self.es.indices.put_mapping(
+                index=settings.es_index_chunks,
+                properties=CHUNKS_MAPPING["properties"],
+            )
+            logger.info(f"索引已存在，mapping 已同步: {settings.es_index_chunks}")
 
     def index_document(self, doc_id: str, documents: List[Document]) -> int:
         """
@@ -89,6 +95,16 @@ class DocumentStore:
             成功索引的 chunk 数量
         """
         now = datetime.now().isoformat()
+
+        # 版本链：把同 source_key 的旧 chunks 标记 is_latest=False
+        source_key = None
+        for doc in documents:
+            sk = doc.metadata.get("source_key")
+            if sk:
+                source_key = sk
+                break
+        if source_key:
+            self._deprecate_old_versions(source_key)
 
         # 计算总 chunks 数
         total_chunks = 0
@@ -160,6 +176,38 @@ class DocumentStore:
 
         return success_count
 
+    def _deprecate_old_versions(self, source_key: str) -> int:
+        """
+        把同 source_key 的旧版本 chunks 标记为 is_latest=False。
+        检索侧已用 is_latest=True 过滤，旧版本会自动从结果中消失。
+
+        Returns:
+            受影响的 chunk 数量
+        """
+        try:
+            resp = self.es.update_by_query(
+                index=settings.es_index_chunks,
+                body={
+                    "query": {
+                        "bool": {
+                            "filter": [
+                                {"term": {"source_key": source_key}},
+                                {"term": {"is_latest": True}},
+                            ]
+                        }
+                    },
+                    "script": {"source": "ctx._source.is_latest = false"},
+                },
+                refresh=True,
+            )
+            n = resp.get("updated", 0)
+            if n > 0:
+                logger.info(f"  [版本链] 已标记 {n} 个旧 chunks 为 is_latest=False (source_key={source_key})")
+            return n
+        except Exception as e:
+            logger.warning(f"  [版本链] 旧版本失效失败: {e}")
+            return 0
+
     def _document_to_es_doc(
         self, doc: Document, chunk_id: str, chunk_type: str, created_at: str
     ) -> Dict[str, Any]:
@@ -170,6 +218,7 @@ class DocumentStore:
             "doc_title": doc.metadata.get("doc_title", ""),
             "doc_hash": doc.metadata.get("doc_hash", ""),
             "dataset_id": doc.metadata.get("dataset_id", ""),
+            "source_key": doc.metadata.get("source_key", ""),
             "content": doc.content,
             # chunk 级
             "chunk_type": chunk_type,
@@ -199,6 +248,7 @@ class DocumentStore:
             "doc_title": child.metadata.get("doc_title", ""),
             "doc_hash": child.metadata.get("doc_hash", ""),
             "dataset_id": child.metadata.get("dataset_id", ""),
+            "source_key": child.metadata.get("source_key", ""),
             "content": child.content,
             # chunk 级
             "chunk_type": "child",
@@ -227,6 +277,7 @@ class DocumentStore:
             "doc_title": summary.metadata.get("doc_title", ""),
             "doc_hash": summary.metadata.get("doc_hash", ""),
             "dataset_id": summary.metadata.get("dataset_id", ""),
+            "source_key": summary.metadata.get("source_key", ""),
             "content": summary.content,
             "primary_entity": summary.primary_entity,
             # chunk 级

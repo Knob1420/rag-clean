@@ -84,13 +84,12 @@ class SimplePipeline:
 
         流程：
         1. Embedding — encode(query)；若 use_hyde=True，用 HyDE 获取 fused_embedding
-        2. BM25 检索
-        3. Vector 检索
-        4. RRF 融合
-        5. 低质量过滤
-        6. Rerank（可选）
-        7. Parent Expand
-        8. Spec 查询
+        2. 检索（BM25 + Vector + RRF 融合，委托 RetrievalService._hybrid_search）
+        3. 低质量过滤
+        4. Rerank（可选）
+        5. 截断
+        6. Parent Expand
+        7. Spec 查询
 
         Args:
             query: 用户原始查询
@@ -121,40 +120,20 @@ class SimplePipeline:
             query_vector = encode(query)
         timing["embedding"] = time.time() - t0
 
-        # 2. 检索
+        # 2. 检索（BM25 + Vector + RRF 融合）
+        t0 = time.time()
         options = RetrievalOptions(top_k=top_k, use_rerank=False)
-        candidate_k = top_k * 2
-
-        # BM25: 先构建 query_string
-        t0 = time.time()
         query_string = self.retrieval._build_bm25_query(query, options)
-        bm25_chunks = self.retrieval._execute_bm25(query_string, options, candidate_k)
-        timing["bm25"] = time.time() - t0
-
-        # Vector
-        t0 = time.time()
-        vector_chunks = []
-        if query_vector is not None:
-            vector_options = RetrievalOptions(top_k=candidate_k)
-            vector_chunks = self.retrieval._execute_vector_search(
-                query_vector, vector_options, candidate_k
+        chunks, bm25_chunks, vector_chunks, hybrid_timing = (
+            self.retrieval._hybrid_search(
+                query_string, query_vector, options, return_intermediates=True,
             )
-        timing["vector"] = time.time() - t0
-
-        # 3. RRF 融合
-        t0 = time.time()
-        rrf_results = self.retrieval.rrf.fuse(
-            bm25_results=[(c, i) for i, c in enumerate(bm25_chunks)],
-            vector_results=[(c, i) for i, c in enumerate(vector_chunks)],
-            bm25_weight=0.3,
-            vector_weight=0.7,
         )
-        chunks = []
-        for chunk, score in rrf_results:
-            chunk.score = score
-            if not is_low_quality_content(chunk.content):
-                chunks.append(chunk)
-        timing["rrf"] = time.time() - t0
+        timing["retrieval"] = time.time() - t0
+        timing.update(hybrid_timing)
+
+        # 3. 低质量过滤
+        chunks = [c for c in chunks if not is_low_quality_content(c.content)]
 
         # 4. Rerank（构建增强 rerank query）
         if use_rerank and chunks:

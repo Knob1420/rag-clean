@@ -10,6 +10,7 @@
 """
 
 import re
+from functools import lru_cache
 from pathlib import Path
 
 import jieba
@@ -48,6 +49,9 @@ _STOP_WORDS = frozenset({
     "几家", "几次", "几种", "超过", "翻译成", "以内", "之前",
     "颗卫星",
     "支持", "使用", "包括", "提供", "实现", "进行", "采用", "具备", "满足", "达到", "包含",
+    # 常见英文短词（rmWWW 正则要求尾部空格，query 末尾可能漏网）
+    "the", "and", "for", "are", "not", "but", "was", "has", "all", "can", "did",
+    "may", "who", "why", "how", "out", "its", "let", "say", "our", "use",
 })
 
 
@@ -123,8 +127,9 @@ def _rm_www(txt: str) -> str:
 
 # 型号模式: G1, G2, NX1, NX2, MN300, 3D 等
 _MODEL_PATTERN = re.compile(r"^[A-Z]{1,3}\d{1,4}[A-Z]?$", re.IGNORECASE)
-# 系列前缀模式: NX, G, X 等独立出现的系列名
-_SERIES_PREFIX_PATTERN = re.compile(r"^[A-Z]{1,3}$", re.IGNORECASE)
+# 合法的产品系列前缀（来自 synonym.json / terms_seed.json）
+# 只有这些才会被保留为关键词，避免误匹配 the/are/for 等英文短词
+_VALID_SERIES_PREFIXES = frozenset({"g", "x", "nx", "r", "rh"})
 
 
 def _is_model_name(token: str) -> bool:
@@ -173,6 +178,7 @@ class ChineseKeywordExtractor:
                 jieba.add_word(term_lower, freq=1000)
                 self._domain_terms.add(term_lower)
 
+    @lru_cache(maxsize=64)
     def extract(self, query: str) -> list[tuple[str, float]]:
         """
         从查询中提取关键词并附带权重。
@@ -212,7 +218,7 @@ class ChineseKeywordExtractor:
                 keywords.append(t)
                 continue
             # 系列前缀保留（如 nx, g, x — 来自 "NX系列" "G系列"）
-            if _SERIES_PREFIX_PATTERN.match(t):
+            if t in _VALID_SERIES_PREFIXES:
                 keywords.append(t)
                 continue
             # 单字中文通常无意义

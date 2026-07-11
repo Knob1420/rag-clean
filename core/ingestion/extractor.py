@@ -251,6 +251,33 @@ def _try_antiword(path: Path) -> Optional[str]:
     return None
 
 
+def _detect_heading_level(style_name: str) -> Optional[int]:
+    """
+    从段落样式名推断标题级别，返回 Markdown 标题层级 (1-based)。
+
+    支持的样式:
+    - 英文: "Heading 1", "Heading 2", ...
+    - 中文 WPS: "一级标题", "二级标题", "三级标题", ...
+    - 中文带前缀: "!一级标题", "!二级标题", ...
+    """
+    import re
+
+    # 英文样式: "Heading 1" / "Heading1"
+    if style_name.startswith("Heading"):
+        try:
+            return int(style_name.replace("Heading", "").strip())
+        except ValueError:
+            return 1
+
+    # 中文样式: "!一级标题", "一级标题", "二级标题", ...
+    cn_heading_map = {"一": 1, "二": 2, "三": 3, "四": 4, "五": 5, "六": 6}
+    cn_match = re.search(r"([一二三四五六])级标题", style_name)
+    if cn_match:
+        return cn_heading_map[cn_match.group(1)]
+
+    return None
+
+
 def _try_python_docx(path: Path) -> Optional[str]:
     """使用 python-docx 转换 DOCX 文件"""
     try:
@@ -265,12 +292,9 @@ def _try_python_docx(path: Path) -> Optional[str]:
                 md_lines.append("")
                 continue
 
-            if para.style.name.startswith("Heading"):
-                try:
-                    level = int(para.style.name.replace("Heading ", "").strip())
-                    md_lines.append(f"{'#' * (level + 1)} {text}")
-                except ValueError:
-                    md_lines.append(f"## {text}")
+            heading_level = _detect_heading_level(para.style.name)
+            if heading_level:
+                md_lines.append(f"{'#' * (heading_level + 1)} {text}")
             else:
                 md_lines.append(text)
 

@@ -26,7 +26,7 @@ from typing import Any, Dict, Generator, List, Optional, Tuple
 
 from loguru import logger
 
-from core.agent.prompts import REACT_SYSTEM_PROMPT
+from prompt import REACT_SYSTEM_PROMPT
 from core.agent.tools import TOOL_DEFINITIONS, ToolExecutor
 from core.generation.llm import LLMClient, get_llm_client
 from core.retrieve.retrieval_models import RetrievedChunk, TokenUsage

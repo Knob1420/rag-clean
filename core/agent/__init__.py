@@ -7,7 +7,7 @@ ReAct Agent — 推理 + 行动智能体
 
 from core.agent.react_agent import ReActAgent, ReActResult, AgentStep
 from core.agent.tools import ToolExecutor, TOOL_DEFINITIONS
-from core.agent.prompts import REACT_SYSTEM_PROMPT
+from prompt import REACT_SYSTEM_PROMPT
 
 __all__ = [
     "ReActAgent",

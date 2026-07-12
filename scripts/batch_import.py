@@ -51,6 +51,41 @@ DATA_ROOT = _PROJECT_ROOT / "data"
 RAW_DIR = DATA_ROOT / "raw"
 PROCESSED_DIR = DATA_ROOT / "processed"
 
+
+def _version_sort_key(filename: str) -> tuple:
+    """
+    生成版本排序 key：旧版本在前，新版本在后。
+
+    排序优先级（从小到大 = 从旧到新）：
+      0: 日期前缀（20240607-xxx）← 最旧
+      1: 版本号（v1.5 / V2.0）
+      2: 无版本标记
+      3: final/终版/定稿/会签版/签字版 ← 最新
+
+    确保接入顺序正确：后接入 = latest。
+    """
+    import re
+
+    name_lower = filename.lower()
+    # final/终版 等标记 → 排最后
+    final_keywords = [
+        "final", "终版", "定稿", "终稿", "最新",
+        "签字版", "会签版", "签发版", "发布版",
+    ]
+    if any(kw in name_lower for kw in final_keywords):
+        return (3, filename)
+    # 版本号 v2.0 / V1.5
+    v_match = re.search(r"[vV](\d+(?:\.\d+)*)", filename)
+    if v_match:
+        version_tuple = tuple(int(x) for x in v_match.group(1).split("."))
+        return (1, version_tuple, filename)
+    # 日期 20240607
+    d_match = re.search(r"(20\d{6})", filename)
+    if d_match:
+        return (0, d_match.group(1), filename)
+    # 无版本标记
+    return (2, filename)
+
 # 支持扫描的扩展名（小写、含点）
 # 注意：.ppt extractor 当前会抛"暂不支持"错误，扫描进来会让用户看到失败提示
 SCAN_EXTS = {".doc", ".docx", ".pdf", ".ppt", ".pptx", ".csv", ".xlsx", ".md"}
@@ -212,6 +247,21 @@ def main():
     # 收集文件
     files = collect_files(args.dataset)
 
+    # 预加载所有 version_map，按版本排序（同 source_key 内按新旧排序）
+    version_map_cache: Dict[str, Dict[str, str]] = {}
+    for _, _, ds in files:
+        if ds not in version_map_cache:
+            version_map_cache[ds] = load_version_map(ds)
+
+    # 排序：同 dataset + 同 source_key 的文件按版本新旧排序（旧→新）
+    # 不同 dataset / 不同 source_key 之间按 dataset 名排序
+    def _sort_key(file_info):
+        f, fmt, ds = file_info
+        sk = version_map_cache.get(ds, {}).get(f.name, "")
+        return (ds, sk, _version_sort_key(f.name))
+
+    files.sort(key=_sort_key)
+
     if not files:
         print("未找到任何文件")
         return
@@ -243,17 +293,14 @@ def main():
     skipped = 0
     results = []
 
-    # 单线程顺序处理；每个 dataset 的 version_map 缓存（避免重复 IO）
-    version_map_cache: Dict[str, Dict[str, str]] = {}
+    # 单线程顺序处理（version_map 已在排序前预加载到 version_map_cache）
     for i, file_info in enumerate(files):
         f, fmt, dataset_id = file_info
         print(f"\n{'─'*70}")
         print(f"[{i+1}/{len(files)}] [{dataset_id}] {f.name}")
 
-        # 懒加载该 dataset 的 version_map
-        if dataset_id not in version_map_cache:
-            version_map_cache[dataset_id] = load_version_map(dataset_id)
-        vmap = version_map_cache[dataset_id]
+        # version_map 已在排序前预加载
+        vmap = version_map_cache.get(dataset_id, {})
 
         if f.name in vmap:
             print(f"  [版本链] source_key = {vmap[f.name]}")

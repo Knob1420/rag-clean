@@ -153,16 +153,26 @@ def process_markdown(
         f"source_key={source_key or '-'})"
     )
 
-    # 尝试加载中间结果
+    # 尝试加载中间结果（跳过 chunker，但仍跑 summary + embed + index）
     if load_intermediate and dataset_id and title:
         documents = _load_intermediate(dataset_id, title, processed_dir)
         if documents is not None:
             logger.info(f"  [Intermediate] 从缓存加载: {len(documents)} documents")
-            # 重新计算向量（缓存中没有向量）
+
+            # 补跑 summary（batch_chunker 产物不含 summary，需要 LLM 生成）
+            if use_summary and any(not d.summaries for d in documents):
+                _generate_summaries(documents, doc_id)
+                logger.info(f"  [Summary] 补跑完成（从缓存加载后）")
+                # 更新 JSON（含 summary 后重新保存）
+                if save_intermediate and dataset_id and title:
+                    _save_intermediate(documents, dataset_id, title, processed_dir)
+
+            # 重新计算向量（含 summary 的 vector）
             _embed_documents(documents)
             _add_dataset_id(documents, dataset_id)
             _inject_source_key(documents, source_key)
             _index_documents(store, doc_id, documents)
+            logger.info(f"[Pipeline] 处理完成（从缓存）: {len(documents)} documents")
             return documents
 
     # 1. 父子分块（chunker 内部调用 clean_text）

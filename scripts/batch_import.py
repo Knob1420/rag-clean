@@ -151,18 +151,13 @@ def process_file(
     """
     处理单个文件（在线程中执行）
 
+    如果 data/processed/{ds}/{title}.json 存在 → 从 JSON 加载（跳过 chunker）
+    否则 → 从头跑 chunker
+
     Returns:
         {"status": "ok"|"skipped"|"failed", "dataset_id": ..., "title": ..., "error": ...}
     """
     f, _fmt, dataset_id = file_info
-
-    # 跳过检查
-    if is_processed(dataset_id, f.name):
-        return {
-            "dataset_id": dataset_id,
-            "title": f.stem,
-            "status": "skipped",
-        }
 
     # 版本链：若文件在 version_map 中，传 source_key 启用版本管理
     source_key = (version_map or {}).get(f.name)
@@ -171,7 +166,7 @@ def process_file(
         documents = process_document(
             file_path=str(f),
             dataset_id=dataset_id,
-            load_intermediate=index_only,
+            load_intermediate=True,  # 默认尝试加载 JSON（batch_chunker 产物）
             processed_dir=PROCESSED_DIR,
             use_summary=use_summary,
             chunk_mode=chunk_mode,

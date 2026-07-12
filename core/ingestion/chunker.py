@@ -615,7 +615,7 @@ class SmartChunker:
                 skip_next = False
                 continue
 
-            # 表格块不参与合并
+            # 表格块不参与合并（当前 child 是表格 → 直接 append）
             if child.content.strip().startswith("|"):
                 result.append(child)
                 continue
@@ -623,8 +623,13 @@ class SmartChunker:
             # 检查是否过短
             if len(child.content) < self.MIN_CHILD_CHUNK_SIZE:
                 if result:
-                    # 合并到前一个（size guard: 不超过 CHILD_CHUNK_SIZE * 1.5）
                     prev = result[-1]
+                    # 前一个是表格：短 child 作为表格的 caption/note 始终合并（跳过 size guard）
+                    if prev.content.strip().startswith("|"):
+                        prev.content = prev.content.rstrip() + "\n\n" + child.content
+                        prev.metadata["doc_hash"] = _generate_doc_hash(prev.content)
+                        continue
+                    # 前一个是文本：size guard（不超过 CHILD_CHUNK_SIZE * 1.5）
                     merged_len = len(prev.content) + len(child.content) + 2
                     if merged_len <= CHILD_CHUNK_SIZE * 1.5:
                         prev.content = prev.content.rstrip() + "\n\n" + child.content
@@ -634,19 +639,21 @@ class SmartChunker:
                         result.append(child)
                     continue
                 elif i < len(children) - 1:
-                    # 没有前一个，合并到后一个（size guard）
+                    # 没有前一个，合并到后一个
                     next_child = children[i + 1]
-                    if not next_child.content.strip().startswith("|"):
-                        merged_len = len(child.content) + len(next_child.content) + 2
-                        if merged_len <= CHILD_CHUNK_SIZE * 1.5:
-                            next_child.content = child.content.rstrip() + "\n\n" + next_child.content.lstrip()
-                            next_child.metadata["doc_hash"] = _generate_doc_hash(next_child.content)
-                        else:
-                            result.append(child)
+                    # 后一个是表格：短 child 作为 caption 合并到表格（跳过 size guard）
+                    if next_child.content.strip().startswith("|"):
+                        next_child.content = child.content.rstrip() + "\n\n" + next_child.content.lstrip()
+                        next_child.metadata["doc_hash"] = _generate_doc_hash(next_child.content)
                         continue
+                    # 后一个是文本：size guard 检查
+                    merged_len = len(child.content) + len(next_child.content) + 2
+                    if merged_len <= CHILD_CHUNK_SIZE * 1.5:
+                        next_child.content = child.content.rstrip() + "\n\n" + next_child.content.lstrip()
+                        next_child.metadata["doc_hash"] = _generate_doc_hash(next_child.content)
                     else:
                         result.append(child)
-                        continue
+                    continue
                 else:
                     # 最后一个且没有前一个，保留
                     result.append(child)

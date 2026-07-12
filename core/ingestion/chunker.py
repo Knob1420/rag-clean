@@ -151,6 +151,59 @@ def _generate_doc_hash(text: str) -> str:
     return hashlib.sha256(text.encode()).hexdigest()[:16]
 
 
+def _split_large_md_table(md_table: str, max_size: int = 1000) -> list[str]:
+    """
+    把大 markdown 表格按行切成多个小表，每个切片自带表头。
+
+    输入：完整 markdown 表格（| 表头 | + | --- | + 数据行）
+    输出：list[str]，每个元素是一个完整 markdown 表格（表头 + 若干数据行）
+
+    切分逻辑：
+    - 第 1 行（表头）+ 第 2 行（| --- |）固定作为每个切片的开头
+    - 数据行按字符数累加，超过 max_size 时输出当前切片
+    - 单行很长（> max_size）时，单行单独成片
+    - 极小表格（< 4 行）或总长 ≤ max_size 时原样返回
+    """
+    lines = md_table.split("\n")
+    # 去掉末尾空行
+    while lines and not lines[-1].strip():
+        lines.pop()
+
+    if len(lines) < 4 or len(md_table) <= max_size:
+        return [md_table]
+
+    header = lines[0]
+    separator = lines[1]
+    data_rows = lines[2:]
+
+    # 验证 separator 是 markdown 表格分隔符（避免误切非表格文本）
+    if not re.match(r"^\s*\|[\s\-:|]+\|\s*$", separator):
+        return [md_table]
+
+    # 表头开销（每个切片都带）
+    header_len = len(header) + 1 + len(separator) + 1  # +2 个 \n
+
+    pieces: list[str] = []
+    current_rows: list[str] = []
+    current_len = header_len
+
+    for row in data_rows:
+        # 累加会超 max_size 且当前已有累加行 → 输出当前切片
+        if current_rows and current_len + len(row) + 1 > max_size:
+            pieces.append("\n".join([header, separator] + current_rows))
+            current_rows = [row]
+            current_len = header_len + len(row) + 1
+        else:
+            current_rows.append(row)
+            current_len += len(row) + 1
+
+    # 输出剩余
+    if current_rows:
+        pieces.append("\n".join([header, separator] + current_rows))
+
+    return pieces if pieces else [md_table]
+
+
 # ── 分块器 ─────────────────────────────────────────────────────────────────────
 
 
@@ -330,10 +383,14 @@ class SmartChunker:
                 if text_buffer:
                     pieces.extend(_flush_text(text_buffer))
                     text_buffer = ""
-                # 表格转 markdown，作为独立 piece
+                # 表格转 markdown
                 md = _html_table_to_text(unit)
                 if md:
-                    pieces.append(md)
+                    # 大表格按行切分（每片自带表头，~CHILD_CHUNK_SIZE*2 字符）
+                    if len(md) > CHILD_CHUNK_SIZE * 2:
+                        pieces.extend(_split_large_md_table(md, max_size=CHILD_CHUNK_SIZE * 2))
+                    else:
+                        pieces.append(md)
             else:  # text
                 # 累加到 buffer；超过 2× CHILD_CHUNK_SIZE 时提前 flush（避免 buffer 过大）
                 if text_buffer and len(text_buffer) + len(unit) > CHILD_CHUNK_SIZE * 2:

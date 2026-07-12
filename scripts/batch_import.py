@@ -45,17 +45,27 @@ except ImportError:
     yaml = None
 
 # ── 目录配置 ──────────────────────────────────────────
-DATA_ROOT = Path("/home/zjlab/Documents/build_LLMs/NLP_course_hf/RAG/data")
+# 项目根 = batch_import.py 所在目录的父目录
+_PROJECT_ROOT = Path(__file__).parent.parent
+DATA_ROOT = _PROJECT_ROOT / "data"
 RAW_DIR = DATA_ROOT / "raw"
-PROCESSED_DIR = DATA_ROOT / "processed-0509"
+PROCESSED_DIR = DATA_ROOT / "processed"
+
+# 支持扫描的扩展名（小写、含点）
+# 注意：.ppt extractor 当前会抛"暂不支持"错误，扫描进来会让用户看到失败提示
+SCAN_EXTS = {".doc", ".docx", ".pdf", ".ppt", ".pptx", ".csv", ".xlsx", ".md"}
 
 
 def collect_files(dataset_id: Optional[str] = None) -> list[tuple[Path, str, str]]:
     """
     扫描 raw 目录下所有支持格式的文件。
 
+    Args:
+        dataset_id: 指定数据集（= raw 下的子目录名）；None = 扫描所有子目录
+
     Returns:
         [(文件路径, 格式, dataset_id), ...]
+        格式由 extractor.detect_format 推断（md/doc/docx/pdf/ppt/pptx/csv/xlsx）
     """
     files: list[tuple[Path, str, str]] = []
 
@@ -72,13 +82,21 @@ def collect_files(dataset_id: Optional[str] = None) -> list[tuple[Path, str, str
 
     for search_dir in search_dirs:
         current_dataset_id = search_dir.name
-        # 只收集 .md 文件，排除重复（以 filename 为准）
-        seen_names: set[str] = set()
-        for f in sorted(search_dir.rglob("*.md")):
-            if f.name in seen_names:
+        # 扫描所有支持格式（按相对路径去重，避免软链/重复备份产生多次接入）
+        seen_paths: set[str] = set()
+        for f in sorted(search_dir.rglob("*")):
+            if not f.is_file():
                 continue
-            seen_names.add(f.name)
-            files.append((f, "md", current_dataset_id))
+            if f.suffix.lower() not in SCAN_EXTS:
+                continue
+            # 跳过隐藏文件 / 临时文件
+            if f.name.startswith("~$") or f.name.startswith("."):
+                continue
+            rel = str(f.relative_to(search_dir))
+            if rel in seen_paths:
+                continue
+            seen_paths.add(rel)
+            files.append((f, detect_format(f), current_dataset_id))
 
     return files
 

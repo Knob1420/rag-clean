@@ -55,24 +55,65 @@ _BROKEN_TABLE_PATTERN = re.compile(
 
 def _html_table_to_text(html: str) -> str:
     """
-    将 HTML 表格转为 Markdown 格式。
-    转换失败返回空字符串（而非原始 HTML，避免 HTML 碎片进入向量库）。
+    将 HTML 表格转为 Markdown 格式（用 pandas，支持 rowspan/colspan）。
+
+    pandas.read_html 自动展开合并单元格：
+    - rowspan="N": 内容重复填充到下方 N 行
+    - colspan="M": 内容重复填充到右侧 M 列
+
+    解析失败时回退到简单的 <td>/<th> 正则提取（不展开合并单元格，但至少保留文本）。
+    最终失败返回空字符串（让调用方过滤）。
+    """
+    import re as _re
+    from io import StringIO
+
+    # 优先用 pandas 解析（处理 rowspan/colspan）
+    try:
+        import pandas as pd
+        import warnings
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            has_th = bool(_re.search(r"<th[^>]*>", html, _re.IGNORECASE))
+            dfs = pd.read_html(StringIO(html), header=0 if has_th else None)
+        if dfs:
+            df = dfs[0].fillna("")
+            # 删除全空列（colspan 展开后多出的列、纯空数据列）
+            df = df.loc[:, (df.astype(str) != "").any()]
+            if not df.empty:
+                # 无 <th> 时，pandas 给的列名是 0,1,2,...，重命名为 col1/col2/...
+                if not has_th:
+                    df.columns = [f"col{i+1}" for i in range(len(df.columns))]
+                md = df.to_markdown(index=False)
+                # 内容检查：去 markdown 表格语法后是否有实质文本
+                content_check = _re.sub(r"[|\- \n]", "", md)
+                if len(content_check) >= 3:
+                    return md
+    except Exception as e:
+        from loguru import logger
+        logger.debug(f"[chunker] pandas 表格解析失败，回退到简单提取: {e}")
+
+    # 回退方案：简单正则提取（不展开 rowspan/colspan，至少保留文本）
+    return _html_table_to_text_simple(html)
+
+
+def _html_table_to_text_simple(html: str) -> str:
+    """简单 HTML→Markdown 表格转换（不支持 rowspan/colspan）。
+
+    作为 pandas 解析失败的兜底。提取 <th>/<td> 文本，过滤全空行，
+    第一行作为表头。
     """
     import re as _re
 
     def _strip_tags(s: str) -> str:
         return _re.sub(r"<[^>]+>", "", s).strip()
 
-    # 提取所有行
     rows = _re.findall(r"<tr[^>]*>(.*?)</tr>", html, _re.DOTALL | _re.IGNORECASE)
     if not rows:
         return ""
 
-    # 提取表头（<th>）
     th_cells_all = _re.findall(r"<th[^>]*>(.*?)</th>", html, _re.DOTALL | _re.IGNORECASE)
     headers = [_strip_tags(h) for h in th_cells_all]
 
-    # 提取每行的 <td> 单元格
     parsed_rows: list[list[str]] = []
     for row in rows:
         cells = _re.findall(r"<td[^>]*>(.*?)</td>", row, _re.DOTALL | _re.IGNORECASE)
@@ -80,7 +121,6 @@ def _html_table_to_text(html: str) -> str:
         if stripped:
             parsed_rows.append(stripped)
 
-    # 过滤全空行（所有单元格都为空）
     parsed_rows = [r for r in parsed_rows if any(c for c in r)]
 
     if not parsed_rows:
@@ -89,12 +129,10 @@ def _html_table_to_text(html: str) -> str:
     md_lines = []
 
     if headers:
-        # 有 <th> 表头：标准转换
         md_lines.append("| " + " | ".join(headers) + " |")
         md_lines.append("| " + " | ".join(["---"] * len(headers)) + " |")
         data_rows = parsed_rows
     elif parsed_rows:
-        # 无 <th> 表头：第一行作为表头
         first_row = parsed_rows[0]
         md_lines.append("| " + " | ".join(first_row) + " |")
         md_lines.append("| " + " | ".join(["---"] * len(first_row)) + " |")
@@ -103,7 +141,6 @@ def _html_table_to_text(html: str) -> str:
     for row in data_rows:
         md_lines.append("| " + " | ".join(row) + " |")
 
-    # 检查有效内容：去掉 markdown 表格语法后是否有实质文本
     content_check = _re.sub(r"[|\- \n]", "", "\n".join(md_lines))
     if len(content_check) < 3:
         return ""
@@ -442,17 +479,48 @@ class SmartChunker:
         return merged
 
     def _split_large_parents(self, sections: list) -> list:
-        """将超过 MAX_PARENT_SIZE 的 section 拆分"""
+        """
+        将超过 MAX_PARENT_SIZE 的 section 拆分。
+
+        表格保护：<table>...</table> 作为不可分割单元，整体保留。
+        切分逻辑：按 _TABLE_PATTERN 把 section 切成 [文本段, 表格, 文本段, 表格, ...] 单元序列，
+        然后按字符数累加，累加超过 MAX_PARENT_SIZE 时输出当前 chunk，开启新 chunk。
+        表格作为整体进入某个 chunk（即使单独超过 MAX_PARENT_SIZE，也保留完整）。
+        """
         result = []
         for sec in sections:
             if len(sec.page_content) <= MAX_PARENT_SIZE:
                 result.append(sec)
-            else:
-                splitter = RecursiveCharacterTextSplitter(
-                    chunk_size=MAX_PARENT_SIZE,
-                    chunk_overlap=CHILD_CHUNK_OVERLAP,
-                )
-                result.extend(splitter.split_documents([sec]))
+                continue
+
+            # 1. 切成"单元"序列（表格整体 + 文本段）
+            units: list[str] = []
+            last_end = 0
+            for m in _TABLE_PATTERN.finditer(sec.page_content):
+                if m.start() > last_end:
+                    units.append(sec.page_content[last_end:m.start()])
+                units.append(m.group(0))  # 整个 <table>...</table>
+                last_end = m.end()
+            if last_end < len(sec.page_content):
+                units.append(sec.page_content[last_end:])
+
+            # 2. 按字符数累加，表格作为不可分单元
+            chunks: list[str] = []
+            current = ""
+            for unit in units:
+                if current and len(current) + len(unit) > MAX_PARENT_SIZE:
+                    chunks.append(current)
+                    current = unit
+                else:
+                    current += unit
+            if current:
+                chunks.append(current)
+
+            # 3. 转 LCDocument（保留原 section 的 metadata：H1/H2/H3 路径）
+            for ch in chunks:
+                new_doc = LCDocument(page_content=ch, metadata=dict(sec.metadata))
+                result.append(new_doc)
+
         return result
 
     def _clean_small_chunks(self, sections: list) -> list:
@@ -495,7 +563,7 @@ class SmartChunker:
 
     # ── 丢弃无用 section ───────────────────────────────────────────
 
-    # 需丢弃的 section header 关键词（大小写不敏感）
+    # 需丢弃的 section header 关键词（大小写不敏感，子串匹配）
     _META_HEADER_KEYWORDS: list[str] = [
         "目录", "table of contents", "index",
         "版本修订记录", "修订记录", "变更记录", "changelog", "版本历史",
@@ -506,30 +574,43 @@ class SmartChunker:
         "参考文献", "reference", "references",
     ]
 
+    # section header 正则模式（处理 MinerU 把目录条目识别成 H1 的情况）
+    # 例: H1='5 单机试验要求.. 25'  H1='6.2.2 太空计算标准体系 ..... 56'
+    _META_HEADER_PATTERNS: list[re.Pattern] = [
+        # 目录条目格式：章节号 + 文字 + 连续点/空格 + 末尾页码
+        re.compile(r"^\s*\d+(?:\.\d+)*\s+\S.+[\.\s]{2,}\d{1,4}\s*$"),
+        # "目 录"（中间任意空格数）
+        re.compile(r"^目\s*录\s*$"),
+    ]
+
     def _drop_meta_sections(
         self, sections: list
     ) -> list:
         """
         丢弃目录、索引、版本修订记录、免责声明等文档元信息 section。
 
-        判断逻辑：section 的 header 包含 _META_HEADER_KEYWORDS 中的任意关键词。
+        判断逻辑（任一命中即丢弃）：
+        1. section header 含 _META_HEADER_KEYWORDS 关键词（子串匹配）
+        2. section header 匹配 _META_HEADER_PATTERNS 正则（目录条目格式 / 目 录）
         """
         import re
 
         def is_meta_section(sec) -> bool:
             # MarkdownHeaderTextSplitter 的 metadata 用 H1/H2/H3 作为 key
-            header = (
-                sec.metadata.get("H1")
-                or sec.metadata.get("H2")
-                or sec.metadata.get("H3")
-                or ""
-            )
-            if not header:
-                return False
-            header_lower = header.lower()
-            for kw in self._META_HEADER_KEYWORDS:
-                if kw.lower() in header_lower:
-                    return True
+            # 三个都检查（最深的优先），任意一个命中即丢
+            for key in ("H1", "H2", "H3"):
+                header = sec.metadata.get(key, "")
+                if not header:
+                    continue
+                header_lower = header.lower()
+                # 关键词子串匹配
+                for kw in self._META_HEADER_KEYWORDS:
+                    if kw.lower() in header_lower:
+                        return True
+                # 正则模式匹配
+                for pat in self._META_HEADER_PATTERNS:
+                    if pat.search(header):
+                        return True
             return False
 
         before = len(sections)

@@ -185,11 +185,59 @@ def _convert_doc(path: Path) -> str:
     raise RuntimeError(f"DOC 转换失败（antiword 和 libreoffice 均不可用）: {path.name}")
 
 
+def _normalize_docx_paths(path: Path) -> Path:
+    """
+    检测 docx 内部 zip 路径是否用反斜杠（Windows 工具如 WPS 创建）。
+    标准 OOXML 要求正斜杠（zip 规范），但 Windows 上某些工具用 `\\`，
+    导致 python-docx / mammoth / MinerU 找不到 `word/document.xml`。
+
+    检测到反斜杠就**就地修复**原文件（原子替换：先写临时文件再 move）。
+    修复后变成标准 docx，后续所有解析器都能正常工作。
+    标准 docx 不动（零开销）。
+    """
+    import zipfile
+    import tempfile
+    import shutil
+
+    try:
+        with zipfile.ZipFile(path) as z:
+            names = z.namelist()
+    except zipfile.BadZipFile:
+        return path  # 不是 zip，让下游报错
+
+    if not any("\\" in n for n in names):
+        return path  # 标准 docx，无需修复
+
+    # 先写临时文件（保证原子性），完成后替换原文件
+    fd, tmp_path = tempfile.mkstemp(suffix=".docx", prefix="fixed_")
+    import os
+    os.close(fd)
+    tmp = Path(tmp_path)
+
+    with zipfile.ZipFile(path) as zin, zipfile.ZipFile(
+        tmp, "w", zipfile.ZIP_DEFLATED
+    ) as zout:
+        for item in zin.infolist():
+            new_name = item.filename.replace("\\", "/")
+            new_info = zipfile.ZipInfo(filename=new_name, date_time=item.date_time)
+            new_info.compress_type = item.compress_type
+            new_info.external_attr = item.external_attr
+            zout.writestr(new_info, zin.read(item.filename))
+
+    # 原子替换：保留同样的 path，让后续 cache key 一致
+    shutil.move(str(tmp), str(path))
+    logger.info(f"[docx fix] Windows 路径修复（就地）: {path.name}")
+    return path
+
+
 def _convert_docx(path: Path) -> str:
     """DOCX → Markdown: MinerU 3.x → MarkItDown → libreoffice 三级降级"""
     cached = _load_cache(path)
     if cached:
         return cached
+
+    # 预处理：修复 Windows 工具创建的 docx（反斜杠路径）
+    path = _normalize_docx_paths(path)
 
     # 方法 1: MinerU 3.x（hybrid-engine，标题层级 + HTML 表格 + rowspan）
     try:

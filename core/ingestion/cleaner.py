@@ -181,6 +181,9 @@ class TextCleaner:
         # 7. 页眉页脚清洗
         text = cls._clean_headers_footers(text)
 
+        # 8. 目录页内容清洗（章节号+省略号+页码，如"4 力学环境试验条件.. 6"）
+        text = cls._clean_toc_pages(text)
+
         return text.strip()
 
     @staticmethod
@@ -382,6 +385,8 @@ class TextCleaner:
         re.compile(r"Page\s*\d+", re.IGNORECASE),
         re.compile(r"-\s*\d+\s*-"),
         re.compile(r"\b\d+\s*/\s*\d+\b"),
+        # 共N页 / 共 页 / 共N（独立行）— MinerU 经常输出"共3"、"共 页"残留
+        re.compile(r"^[\s]*共\s*\d*\s*页?[\s]*$", re.MULTILINE),
         # 原理图/电路图标记: SHEET 1/3, DWG-001, 电路图, 原理图
         re.compile(r"SHEET\s*\d+\s*/\s*\d+", re.IGNORECASE),
         re.compile(r"DWG[_-]?\d+", re.IGNORECASE),
@@ -400,9 +405,22 @@ class TextCleaner:
         re.compile(r"机密|保密|NDA|CONFIDENTIAL", re.IGNORECASE),
         # 签字区/审批区残留
         re.compile(r"编制\s*[:-]?\s*\S+|审核\s*[:-]?\s*\S+|批准\s*[:-]?\s*\S+"),
-        # 表格分页残留（如 "续表"）
-        re.compile(r"^续表\s*$", re.MULTILINE),
+        # 续表 / 续表A1 / 续表 3 / 表X（续）（独立行）
+        re.compile(r"^[\s]*续表\s*[A-Z]?[\d]*[\s]*$", re.MULTILINE),
+        re.compile(r"^[\s]*表\s*\d+\s*[（(]续[)）][\s]*$", re.MULTILINE),
+        # 元信息 section header 独立行（修订记录/参考文献/目录等）
+        re.compile(
+            r"^[\s]*(修订记录|修订履历|版本历史|变更记录|参考文献|目录|目  录|索引)[\s]*$",
+            re.MULTILINE,
+        ),
     ]
+
+    # 目录页内容正则（章节号 + 标题 + 末尾页码）
+    # 例: "4 力学环境试验条件.. 6"  "3.2 星上仪器设备.. .12"  "6.2.2 标准 ..... 56"
+    # 放宽：要求末尾数字前有"连续点或空格"（避免误匹配'见表 3.5'这种正文引用）
+    _TOC_LINE_PATTERN = re.compile(
+        r"^\s*\d+(?:\.\d+)*\s+\S[^\n]*?[\.\s]{2,}\d{1,4}\s*$", re.MULTILINE
+    )
 
     @classmethod
     def _clean_headers_footers(cls, text: str) -> str:
@@ -410,6 +428,27 @@ class TextCleaner:
         for pattern in cls._HEADER_FOOTER_PATTERNS:
             text = pattern.sub("", text)
         # 清理替换后产生的多余空白
+        text = cls._clean_extra_spaces(text)
+        return text
+
+    @classmethod
+    def _clean_toc_pages(cls, text: str) -> str:
+        """
+        清洗目录页内容行（章节号 + 标题 + 连续点 + 页码）。
+
+        匹配形如：
+            4 力学环境试验条件.. 6
+            3.2 星上仪器设备的试验顺序.. .12
+            6.2.2 太空计算标准体系 ..... 56
+            3.7 试验设备要求. .. 16
+
+        特征：行首是章节号（1 / 1.1 / 1.1.1），行末是页码（数字），
+        中间含 2 个或更多连续点（.... 或 . .. 等）作为页码引导。
+
+        只删整行，不动普通段落（行内引用如"见表 3.5"不匹配）。
+        """
+        text = cls._TOC_LINE_PATTERN.sub("", text)
+        # 清理删除后的多余空行
         text = cls._clean_extra_spaces(text)
         return text
 

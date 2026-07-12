@@ -228,6 +228,7 @@ def main():
     parser = argparse.ArgumentParser(description="批量导入文件到 RAG")
     parser.add_argument("--dry-run", action="store_true", help="只列出文件，不执行导入")
     parser.add_argument("--dataset", type=str, help="指定数据集 ID（默认全部）")
+    parser.add_argument("--limit", type=int, help="只处理前 N 个文件（测试用）")
     parser.add_argument(
         "--skip-existing", action="store_true", help="跳过已有中间结果的文件"
     )
@@ -261,6 +262,9 @@ def main():
         return (ds, sk, _version_sort_key(f.name))
 
     files.sort(key=_sort_key)
+
+    if args.limit:
+        files = files[: args.limit]
 
     if not files:
         print("未找到任何文件")

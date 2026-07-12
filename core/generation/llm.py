@@ -321,7 +321,7 @@ class LLMClient:
             return data["choices"][0]["message"]["content"]
 
     def generate_summary_batch(
-        self, contents: List[str], max_concurrency: int = 10
+        self, contents: List[str], max_concurrency: int = 3
     ) -> List[Dict[str, Any]]:
         """
         批量为多个文档片段生成 summary（asyncio 并发）。
@@ -346,17 +346,25 @@ class LLMClient:
                         {"role": "system", "content": SUMMARY_SYSTEM_PROMPT},
                         {"role": "user", "content": prompt},
                     ]
-                    try:
-                        response = await self._call_async(messages)
-                        result = parse_json_response(response)
-                        return idx, {
-                            "summary": result.get("summary", ""),
-                        }
-                    except Exception as e:
-                        logger.warning(f"Summary 批量生成失败 [{idx}]: {e}，使用默认值")
-                        return idx, {
-                            "summary": content[:100] + "...",
-                        }
+                    # 最多重试 3 次（429 限流时等待）
+                    for attempt in range(3):
+                        try:
+                            response = await self._call_async(messages)
+                            result = parse_json_response(response)
+                            return idx, {
+                                "summary": result.get("summary", ""),
+                            }
+                        except Exception as e:
+                            if "429" in str(e) and attempt < 2:
+                                import asyncio as _aio
+                                wait = (attempt + 1) * 5  # 5s, 10s
+                                logger.warning(f"Summary [{idx}] 429 限流，{wait}s 后重试 ({attempt+1}/3)")
+                                await _aio.sleep(wait)
+                                continue
+                            logger.warning(f"Summary 批量生成失败 [{idx}]: {e}，使用默认值")
+                            return idx, {
+                                "summary": content[:100] + "...",
+                            }
 
             tasks = [_call_one(i, c) for i, c in enumerate(contents)]
             results = await asyncio.gather(*tasks)

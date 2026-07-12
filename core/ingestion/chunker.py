@@ -248,8 +248,9 @@ class SmartChunker:
             if child_document_list:
                 child_global_idx += len(child_document_list)
 
-            # parent 内容也做 HTML→MD 转换（保持与 child 一致）
-            parent_content = self._convert_tables_to_markdown(p_doc.page_content)
+            # parent 内容也做 HTML→MD 转换（保持与 child 一致），加 H1/H2/H3 路径前缀
+            path_prefix = self._build_path_prefix(p_doc.metadata)
+            parent_content = path_prefix + self._convert_tables_to_markdown(p_doc.page_content)
             document = Document(
                 content=parent_content,
                 metadata={
@@ -258,6 +259,10 @@ class SmartChunker:
                     "chunk_id": parent_id,
                     "doc_hash": _generate_doc_hash(parent_content),
                     "source_key": source_key,
+                    # 透传 H1/H2/H3 路径，让下游 generation 可用
+                    "H1": p_doc.metadata.get("H1", ""),
+                    "H2": p_doc.metadata.get("H2", ""),
+                    "H3": p_doc.metadata.get("H3", ""),
                 },
                 children=child_document_list if child_document_list else None,
             )
@@ -432,6 +437,13 @@ class SmartChunker:
             for child in child_document_list:
                 child.metadata["source_key"] = source_key
 
+        # 透传 H1/H2/H3 到所有 child metadata（不加 content 前缀，避免稀释向量）
+        for hk in ("H1", "H2", "H3"):
+            hv = parent_metadata.get(hk, "")
+            if hv:
+                for child in child_document_list:
+                    child.metadata[hk] = hv
+
         return child_document_list
 
     # ── parent 合并/拆分/清理 ───────────────────────────────────────────────
@@ -551,13 +563,34 @@ class SmartChunker:
         return _TABLE_PATTERN.sub(lambda m: _html_table_to_text(m.group(0)), text)
 
     @staticmethod
+    def _build_path_prefix(metadata: dict) -> str:
+        """
+        从 metadata 构建路径前缀，用于让每个 parent 自带 H1/H2/H3 上下文。
+
+        例：metadata = {H1: "1. 总体设计", H2: "1.1 系统", H3: "1.1.1 硬件"}
+            → "[路径: 1. 总体设计 / 1.1 系统 / 1.1.1 硬件]\\n\\n"
+
+        无标题路径时返回空字符串。
+        """
+        parts = [metadata.get(k, "") for k in ("H1", "H2", "H3") if metadata.get(k)]
+        if not parts:
+            return ""
+        return f"[路径: {' / '.join(parts)}]\n\n"
+
+    @staticmethod
     def _merge_metadata(target, source):
-        """将 source.metadata 合并到 target.metadata"""
+        """将 source.metadata 合并到 target.metadata。
+
+        相同 key 相同值时不拼接（避免 "A -> A -> A" 重复），
+        仅当值不同时拼接为 "原值 -> 新值"（记录多个不同 section 的合并路径）。
+        """
         if not hasattr(source, "metadata"):
             return
         for k, v in source.metadata.items():
             if k in target.metadata:
-                target.metadata[k] = f"{target.metadata[k]} -> {v}"
+                if target.metadata[k] != v:
+                    target.metadata[k] = f"{target.metadata[k]} -> {v}"
+                # 相同值不动
             else:
                 target.metadata[k] = v
 

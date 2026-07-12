@@ -329,6 +329,7 @@ class TextCleaner:
             return text
 
         # 第二遍：对连续的（间隔 <50 字符的）表格分组
+        # 元信息表格关键词（去掉 "共" 和 "页" — 太宽泛，正常数据表格里也常见）
         _META_KEYWORDS = [
             "编制",
             "审核",
@@ -340,8 +341,6 @@ class TextCleaner:
             "阶段标记",
             "文档编号",
             "版次",
-            "共",
-            "页",
         ]
 
         groups: list[list[dict]] = []
@@ -364,6 +363,13 @@ class TextCleaner:
         for group in groups:
             combined = " ".join(t["content"] for t in group)
             combined_lower = combined.lower()
+
+            # 行数保护：元信息表格（签字/封面/审批）通常 < 20 行
+            # 数据表格（参数表/清单）通常 > 20 行 — 绝不能删
+            row_count = len(re.findall(r"<tr", combined, re.IGNORECASE))
+            if row_count > 20:
+                continue
+
             hit_count = sum(1 for kw in _META_KEYWORDS if kw in combined_lower)
             if hit_count >= 2:
                 # 整组删除

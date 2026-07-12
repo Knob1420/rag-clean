@@ -46,11 +46,6 @@ CHILD_CHUNK_OVERLAP = 100
 
 # 表格匹配正则（完整闭合表格）
 _TABLE_PATTERN = re.compile(r"<table[^>]*>.*?</table>", re.DOTALL | re.IGNORECASE)
-# 残缺表格：有 <table 开头但缺少 </table> 闭合
-# 从 <table> 开始到下一个段落边界（\n\n）之前的所有内容
-_BROKEN_TABLE_PATTERN = re.compile(
-    r"<table[^>]*>[^\n]*(?:\n(?!\n)[^\n]*)*", re.IGNORECASE
-)
 
 
 def _html_table_to_text(html: str) -> str:
@@ -291,160 +286,97 @@ class SmartChunker:
         """
         将 parent content 切分为 child chunks。
 
-        策略：
-        1. 先提取所有完整 HTML 表格，替换为占位符
-        2. 对剩余文本用 RecursiveCharacterTextSplitter 切分
-        3. 恢复占位符：每个表格转为 Markdown 后作为独立 child chunk
-        4. 过滤 HTML 标签占比过高的碎片
+        策略（简化版）：
+        1. 按 <table>...</table> 边界把 parent 切成单元序列
+           [文本段1, 表格1, 文本段2, 表格2, ...]
+        2. 文本段累加到 ~CHILD_CHUNK_SIZE 后输出；
+           单段超长用 RecursiveCharacterTextSplitter 切（保留语义边界）
+        3. 每个表格用 _html_table_to_text 转 markdown，作为独立 child
+        4. 统一构造 ChildDocument（1 处，不重复）
+        5. _merge_short_children 合并过短 chunks（< 50 字符）
         """
-        # ── 1. 提取完整 HTML 表格并替换为占位符 ───────────────────
-        tables: list[str] = []
+        # ── 1. 按表格边界切成单元 ─────────────────────────────────
+        units: list[tuple[str, str]] = []  # [("text", ...), ("table", ...)]
+        last_end = 0
+        for m in _TABLE_PATTERN.finditer(content):
+            if m.start() > last_end:
+                units.append(("text", content[last_end:m.start()]))
+            units.append(("table", m.group(0)))
+            last_end = m.end()
+        if last_end < len(content):
+            units.append(("text", content[last_end:]))
 
-        def _extract_table(match: re.Match) -> str:
-            tables.append(match.group(0))
-            return f"\n__TABLE_PLACEHOLDER_{len(tables) - 1}__\n"
+        # ── 2. 处理每个单元，收集到 pieces: list[str] ──────────────
+        pieces: list[str] = []
+        text_buffer = ""
 
-        text_no_tables = _TABLE_PATTERN.sub(_extract_table, content)
-
-        # ── 1b. 处理残缺 HTML 表格（缺少 </table> 闭合标签） ──────────
-        # MinerU 经常输出不完整的 <table>，需要收集残缺表格内容
-        broken_tables: list[str] = []
-
-        def _extract_broken_table(match: re.Match) -> str:
-            """提取残缺表格：<table> 开头到段落结束都没有 </table>"""
-            broken_tables.append(match.group(0))
-            return f"\n__BROKEN_TABLE_PLACEHOLDER_{len(broken_tables) - 1}__\n"
-
-        text_no_tables = _BROKEN_TABLE_PATTERN.sub(_extract_broken_table, text_no_tables)
-
-        # ── 2. 用 RecursiveCharacterTextSplitter 切分 ───────────────
-        parent_doc = LCDocument(page_content=text_no_tables, metadata=parent_metadata)
-        child_docs = self._child_splitter.split_documents([parent_doc])
-
-        # ── 3. 恢复占位符 + 生成 child chunks ──────────────────────
-        child_document_list: List[ChildDocument] = []
-        child_idx = start_child_idx
-
-        for c_doc in child_docs:
-            child_content = c_doc.page_content.strip()
-            if not child_content:
-                continue
-
-            # 检查是否含表格占位符（完整表格 + 残缺表格）
-            full_placeholder_matches = list(
-                re.finditer(r"__TABLE_PLACEHOLDER_(\d+)__", child_content)
-            )
-            broken_placeholder_matches = list(
-                re.finditer(r"__BROKEN_TABLE_PLACEHOLDER_(\d+)__", child_content)
-            )
-            all_placeholders = [
-                (m, "full") for m in full_placeholder_matches
-            ] + [
-                (m, "broken") for m in broken_placeholder_matches
+        def _flush_text(buf: str) -> list[str]:
+            """切分或保留文本 buffer，返回 pieces 列表。"""
+            buf = buf.strip()
+            if not buf or is_low_quality_content(buf):
+                return []
+            if len(buf) <= CHILD_CHUNK_SIZE:
+                return [buf]
+            # 超长：用 RecursiveCharacterTextSplitter 切（保留段落/句子边界）
+            return [
+                s.strip()
+                for s in self._child_splitter.split_text(buf)
+                if s.strip() and not is_low_quality_content(s)
             ]
-            all_placeholders.sort(key=lambda x: x[0].start())
 
-            if not all_placeholders:
-                # 无表格占位符：普通文本 chunk
-                # 过滤 HTML 碎片
-                if is_low_quality_content(child_content):
-                    continue
-                child_id = f"{doc_id}_c{child_idx}"
-                child_document_list.append(
-                    ChildDocument(
-                        content=child_content,
-                        metadata={
-                            "doc_id": doc_id,
-                            "doc_title": parent_metadata.get("doc_title", ""),
-                            "chunk_id": child_id,
-                            "doc_hash": _generate_doc_hash(child_content),
-                            "parent_id": parent_id,
-                        },
-                    )
+        for typ, unit in units:
+            if typ == "table":
+                # 表格前先 flush 文本 buffer
+                if text_buffer:
+                    pieces.extend(_flush_text(text_buffer))
+                    text_buffer = ""
+                # 表格转 markdown，作为独立 piece
+                md = _html_table_to_text(unit)
+                if md:
+                    pieces.append(md)
+            else:  # text
+                # 累加到 buffer；超过 2× CHILD_CHUNK_SIZE 时提前 flush（避免 buffer 过大）
+                if text_buffer and len(text_buffer) + len(unit) > CHILD_CHUNK_SIZE * 2:
+                    pieces.extend(_flush_text(text_buffer))
+                    text_buffer = unit
+                else:
+                    text_buffer += unit
+
+        # 末尾 flush
+        if text_buffer:
+            pieces.extend(_flush_text(text_buffer))
+
+        # ── 3. 统一构造 ChildDocument ──────────────────────────────
+        children: List[ChildDocument] = []
+        for i, text in enumerate(pieces):
+            child_id = f"{doc_id}_c{start_child_idx + i}"
+            children.append(
+                ChildDocument(
+                    content=text,
+                    metadata={
+                        "doc_id": doc_id,
+                        "doc_title": parent_metadata.get("doc_title", ""),
+                        "chunk_id": child_id,
+                        "doc_hash": _generate_doc_hash(text),
+                        "parent_id": parent_id,
+                    },
                 )
-                child_idx += 1
-            else:
-                # 含表格占位符：拆分为文本段 + 独立表格 child
-                last_end = 0
-                for pm, table_type in all_placeholders:
-                    # 占位符前的文本段
-                    text_before = child_content[last_end : pm.start()].strip()
-                    if text_before and not is_low_quality_content(text_before):
-                        child_id = f"{doc_id}_c{child_idx}"
-                        child_document_list.append(
-                            ChildDocument(
-                                content=text_before,
-                                metadata={
-                                    "doc_id": doc_id,
-                                    "doc_title": parent_metadata.get("doc_title", ""),
-                                    "chunk_id": child_id,
-                                    "doc_hash": _generate_doc_hash(text_before),
-                                    "parent_id": parent_id,
-                                },
-                            )
-                        )
-                        child_idx += 1
+            )
 
-                    # 表格转为 Markdown 作为独立 child
-                    table_idx = int(pm.group(1))
-                    if table_type == "full" and table_idx < len(tables):
-                        md_table = _html_table_to_text(tables[table_idx])
-                    elif table_type == "broken" and table_idx < len(broken_tables):
-                        md_table = _html_table_to_text(broken_tables[table_idx])
-                    else:
-                        md_table = ""
-                    if md_table:  # 转换成功且非空
-                        child_id = f"{doc_id}_c{child_idx}"
-                        child_document_list.append(
-                            ChildDocument(
-                                content=md_table,
-                                metadata={
-                                    "doc_id": doc_id,
-                                    "doc_title": parent_metadata.get("doc_title", ""),
-                                    "chunk_id": child_id,
-                                    "doc_hash": _generate_doc_hash(md_table),
-                                    "parent_id": parent_id,
-                                },
-                            )
-                        )
-                        child_idx += 1
+        # ── 4. 合并过短 chunks（< 50 字符）────────────────────────
+        children = self._merge_short_children(children)
 
-                    last_end = pm.end()
-
-                # 占位符后的文本段
-                text_after = child_content[last_end:].strip()
-                if text_after and not is_low_quality_content(text_after):
-                    child_id = f"{doc_id}_c{child_idx}"
-                    child_document_list.append(
-                        ChildDocument(
-                            content=text_after,
-                            metadata={
-                                "doc_id": doc_id,
-                                "doc_title": parent_metadata.get("doc_title", ""),
-                                "chunk_id": child_id,
-                                "doc_hash": _generate_doc_hash(text_after),
-                                "parent_id": parent_id,
-                            },
-                        )
-                    )
-                    child_idx += 1
-
-        # ── 4. 合并过短 chunks ────────────────────────────────────
-        child_document_list = self._merge_short_children(child_document_list)
-
-        # 透传 source_key 到所有 child
+        # ── 5. 透传 source_key + H1/H2/H3 到 child metadata ──────
         if source_key:
-            for child in child_document_list:
+            for child in children:
                 child.metadata["source_key"] = source_key
-
-        # 透传 H1/H2/H3 到所有 child metadata（不加 content 前缀，避免稀释向量）
         for hk in ("H1", "H2", "H3"):
             hv = parent_metadata.get(hk, "")
             if hv:
-                for child in child_document_list:
+                for child in children:
                     child.metadata[hk] = hv
 
-        return child_document_list
+        return children
 
     # ── parent 合并/拆分/清理 ───────────────────────────────────────────────
 

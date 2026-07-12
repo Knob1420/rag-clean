@@ -280,8 +280,8 @@ class DocumentStore:
             "source_key": summary.metadata.get("source_key", ""),
             "content": summary.content,
             "primary_entity": summary.primary_entity,
-            # chunk 级
-            "chunk_type": "summary",
+            # chunk 级（支持 doc_summary 类型，从 metadata 读）
+            "chunk_type": summary.metadata.get("chunk_type") or "summary",
             # 父子关系
             "parent_id": parent_id,
             # 基础

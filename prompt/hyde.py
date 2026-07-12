@@ -15,22 +15,19 @@ HYDE_USER_TEMPLATE = "问题：{query}\n假设性回答："
 
 SUMMARY_SYSTEM_PROMPT = """你是一个文档分析专家，擅长提取核心信息。
 
-你的任务是为给定的文档片段生成：
-1. **summary**: 50-100字的简洁摘要，概括核心内容
-2. **primary_entity**: 文档片段中最重要的实体（如产品名、项目名、技术名称等）
+你的任务是为给定的文档片段生成 50-100 字的简洁摘要，概括核心内容。
 
 只返回 JSON 格式，不要任何其他内容。
 
 输出格式：
 {
-    "summary": "简洁摘要（50-100字）",
-    "primary_entity": "核心实体名称"
+    "summary": "简洁摘要（50-100字）"
 }"""
 
 
 def build_summary_prompt(content: str) -> str:
     """构建 summary 生成的 prompt"""
-    return f"""为以下文档片段生成摘要和核心实体：
+    return f"""为以下文档片段生成摘要：
 
 {content[:2000]}
 

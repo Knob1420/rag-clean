@@ -271,13 +271,13 @@ class LLMClient:
 
     def generate_summary(self, content: str) -> Dict[str, Any]:
         """
-        为文档片段生成 summary 和 primary_entity。
+        为文档片段生成 summary。
 
         Args:
             content: 文档内容
 
         Returns:
-            {"summary": str, "primary_entity": str}
+            {"summary": str}
         """
         prompt = build_summary_prompt(content)
 
@@ -291,13 +291,11 @@ class LLMClient:
             result = parse_json_response(response)
             return {
                 "summary": result.get("summary", ""),
-                "primary_entity": result.get("primary_entity", ""),
             }
         except Exception as e:
             logger.warning(f"Summary 生成失败: {e}，使用默认值")
             return {
                 "summary": content[:100] + "...",
-                "primary_entity": "",
             }
 
     async def _call_async(self, messages: List[Dict[str, str]], max_tokens: int = 2000) -> str:
@@ -353,13 +351,11 @@ class LLMClient:
                         result = parse_json_response(response)
                         return idx, {
                             "summary": result.get("summary", ""),
-                            "primary_entity": result.get("primary_entity", ""),
                         }
                     except Exception as e:
                         logger.warning(f"Summary 批量生成失败 [{idx}]: {e}，使用默认值")
                         return idx, {
                             "summary": content[:100] + "...",
-                            "primary_entity": "",
                         }
 
             tasks = [_call_one(i, c) for i, c in enumerate(contents)]

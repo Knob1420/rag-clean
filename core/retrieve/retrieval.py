@@ -268,7 +268,7 @@ class RetrievalService:
         """构建 filter 条件（BM25 和 kNN 共用）"""
         filters = [
             {"term": {"is_latest": True}},
-            {"terms": {"chunk_type": ["child", "summary"]}},
+            {"terms": {"chunk_type": ["child", "summary", "doc_summary"]}},
         ]
         if options.doc_ids:
             filters.append({"terms": {"doc_id": options.doc_ids}})

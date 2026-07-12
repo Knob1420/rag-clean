@@ -162,7 +162,8 @@ def process_markdown(
             # 补跑 summary（batch_chunker 产物不含 summary，需要 LLM 生成）
             if use_summary and any(not d.summaries for d in documents):
                 _generate_summaries(documents, doc_id)
-                logger.info(f"  [Summary] 补跑完成（从缓存加载后）")
+                _generate_doc_summary(documents, doc_id)
+                logger.info(f"  [Summary] 补跑完成（含全文摘要）")
                 # 更新 JSON（含 summary 后重新保存）
                 if save_intermediate and dataset_id and title:
                     _save_intermediate(documents, dataset_id, title, processed_dir)
@@ -182,7 +183,9 @@ def process_markdown(
     # 2. 生成 summary（每个 parent 一个 summary chunk，可选）
     if use_summary:
         _generate_summaries(documents, doc_id)
-        logger.info(f"  [Summary] 生成完成")
+        # 全文摘要（基于 parent 摘要的摘要，1 次 LLM 调用）
+        _generate_doc_summary(documents, doc_id)
+        logger.info(f"  [Summary] 生成完成（含全文摘要）")
 
     # 3. 计算向量
     _embed_documents(documents)
@@ -291,10 +294,9 @@ def _index_documents(store: DocumentStore, doc_id: str, documents: List[Document
 
 def _generate_summaries(documents: List[Document], doc_id: str):
     """
-    为每个 Document 生成 summary chunk（批量并发 LLM 调用）。
+    为每个 Document 生成 parent 级 summary chunk（批量并发 LLM 调用）。
 
     summary 作为特殊的 child chunk 保存，关联到对应的 parent_id。
-    同时设置 doc.summary、doc.primary_entity，以及每个 child 的 primary_entity。
     """
     if not documents:
         return
@@ -312,11 +314,9 @@ def _generate_summaries(documents: List[Document], doc_id: str):
         parent_id = doc.metadata.get("chunk_id", "")
 
         summary_content = result["summary"]
-        primary_entity = result["primary_entity"]
 
-        # 设置 parent chunk 的 summary 和 primary_entity 字段
+        # 设置 parent chunk 的 summary 字段
         doc.summary = summary_content
-        doc.primary_entity = primary_entity
 
         # 创建 summary chunk
         summary_id = f"{doc_id}_s{summary_idx}"
@@ -327,27 +327,74 @@ def _generate_summaries(documents: List[Document], doc_id: str):
             "parent_id": parent_id,
             "doc_hash": doc.metadata.get("doc_hash", ""),
         }
-        # 透传 dataset_id（如果 parent 有）
         if "dataset_id" in doc.metadata:
             summary_meta["dataset_id"] = doc.metadata["dataset_id"]
-        # 透传 source_key（如果 parent 有）
         if "source_key" in doc.metadata:
             summary_meta["source_key"] = doc.metadata["source_key"]
 
         summary_doc = SummaryDocument(
             content=summary_content,
-            primary_entity=primary_entity,
+            primary_entity="",
             metadata=summary_meta,
         )
         summary_idx += 1
 
-        # 设置每个 child 的 primary_entity 字段
-        if doc.children:
-            for child in doc.children:
-                child.primary_entity = primary_entity
-
         # 保存 summary 到 document.summaries
         doc.summaries = [summary_doc]
+
+
+def _generate_doc_summary(documents: List[Document], doc_id: str):
+    """
+    生成全文摘要（基于 parent 摘要的摘要）。
+
+    拼接所有 parent.summary → LLM → 全文摘要
+    全文摘要作为 chunk_type="doc_summary" 的 SummaryDocument，
+    追加到 documents[0].summaries，由 store 写入 ES。
+
+    parent_id = None（文档级，不属于任何 parent）。
+    """
+    if not documents:
+        return
+
+    parent_summaries = [doc.summary for doc in documents if doc.summary]
+    if len(parent_summaries) < 2:
+        return  # 只有 0-1 个 parent，不需要全文摘要
+
+    combined = "\n\n".join(parent_summaries)
+    if len(combined) < 50:
+        return
+
+    from core.generation.llm import get_llm_client
+    llm = get_llm_client()
+
+    result = llm.generate_summary_batch([combined])[0]
+    doc_summary_content = result["summary"]
+
+    # 创建全文摘要 chunk
+    summary_id = f"{doc_id}_ds0"
+    summary_meta = {
+        "doc_id": doc_id,
+        "doc_title": documents[0].metadata.get("doc_title", ""),
+        "chunk_id": summary_id,
+        "parent_id": "",  # 文档级，不属于任何 parent
+        "doc_hash": "",
+        "chunk_type": "doc_summary",  # store.py 读这个字段设 chunk_type
+    }
+    if "dataset_id" in documents[0].metadata:
+        summary_meta["dataset_id"] = documents[0].metadata["dataset_id"]
+    if "source_key" in documents[0].metadata:
+        summary_meta["source_key"] = documents[0].metadata["source_key"]
+
+    doc_summary_doc = SummaryDocument(
+        content=doc_summary_content,
+        primary_entity="",
+        metadata=summary_meta,
+    )
+
+    # 追加到 documents[0].summaries（让 store 自动写入 ES）
+    if not documents[0].summaries:
+        documents[0].summaries = []
+    documents[0].summaries.append(doc_summary_doc)
 
 
 def _embed_documents(documents: List[Document]):
